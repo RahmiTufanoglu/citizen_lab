@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:citizen_lab/route_generator.dart';
+import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

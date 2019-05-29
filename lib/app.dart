@@ -1,10 +1,10 @@
 import 'package:citizen_lab/splash_page.dart';
-import 'package:citizen_lab/theme_changer.dart';
+import 'package:citizen_lab/themes/theme_changer.dart';
 import 'package:flutter/material.dart';
-import 'package:citizen_lab/route_generator.dart';
-import 'package:citizen_lab/theme.dart';
+import 'package:citizen_lab/utils/route_generator.dart';
+import 'package:citizen_lab/themes/theme.dart';
 
-import 'constants.dart';
+import 'package:citizen_lab/utils/constants.dart';
 import 'package:provider/provider.dart';
 
 class App extends StatefulWidget {
