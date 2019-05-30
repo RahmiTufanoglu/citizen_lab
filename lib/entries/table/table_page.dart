@@ -51,8 +51,14 @@ class _TablePageState extends State<TablePage> {
 
   final csvCodec = CsvCodec();
 
+  bool _tableExists = false;
+  int _oldRow;
+  int _oldColumn;
+
   List<String> data;
   int _size;
+
+  List<List> list = [];
 
   @override
   void initState() {
@@ -72,6 +78,12 @@ class _TablePageState extends State<TablePage> {
       _createdAt = widget.note.dateCreated;
 
       _size = _column * _row;
+      _oldColumn = _column;
+      _oldRow = _row;
+
+      for (int i = 0; i < _size; i++) {
+        _listTextEditingController.add(TextEditingController());
+      }
     } else {
       _titleEditingController.text = '';
       _createdAt = dateFormatted();
@@ -97,30 +109,41 @@ class _TablePageState extends State<TablePage> {
     super.dispose();
   }
 
-  //List<int> generateTable() {
+  List<int> generateTable2() {
+    return List<int>.generate(
+      _column * _row,
+      (i) {
+        widget.note == null
+            ? _listTextEditingController.add(TextEditingController())
+            : _csvToList();
+        return i;
+      },
+    );
+  }
+
   generateTable() {
     if (widget.note == null) {
-      for (int x = 0; x < _row; x++) {
-        for (int y = 0; y < _column; y++) {
-          _listTextEditingController.add(TextEditingController());
+      if (_row != null && _column != null) {
+        for (int x = 0; x < _row; x++) {
+          for (int y = 0; y < _column; y++) {
+            _listTextEditingController.add(TextEditingController());
+          }
         }
       }
     } else {
       _csvToList();
-      _openCsvTable();
     }
 
-//return _size;
-
-/*return List<int>.generate(_size, (i) {
-      widget.note == null
-          ? _listTextEditingController.add(TextEditingController())
-          : _openCsvTable();
-      return i;
-    });*/
+    /*return List<int>.generate(
+      _column * _row,
+      (i) {
+        widget.note == null
+            ? _listTextEditingController.add(TextEditingController())
+            : _csvToList();
+        return i;
+      },
+    );*/
   }
-
-  List<List> list = [];
 
   Future<String> _loadCsv(String path) async {
     return await rootBundle.loadString(path);
@@ -130,14 +153,19 @@ class _TablePageState extends State<TablePage> {
     final csvData = await _loadCsv(_csv.path);
     final List<List> csvTable = CsvToListConverter().convert(csvData);
     list = csvTable;
+
+    _openCsvTable();
   }
 
-  _openCsvTable() async {
+  Future<void> _openCsvTable() async {
+    int i = 0;
     for (int x = 0; x < _row; x++) {
       for (int y = 0; y < _column; y++) {
-        _listTextEditingController.add(
+        //_listTextEditingController[i++].text = list[x][y];
+        _listTextEditingController[i++].text = list[x][y].toString();
+        /*_listTextEditingController.add(
           TextEditingController(text: list[x][y]),
-        );
+        );*/
       }
     }
   }
@@ -220,14 +248,59 @@ class _TablePageState extends State<TablePage> {
     );
   }
 
+  Widget _buildBody2() {
+    var size = MediaQuery.of(context).size;
+    final double itemHeight = (size.height - kToolbarHeight - 24.0) / 2.0;
+    final double itemWidth = size.width / 0.5;
+
+    return WillPopScope(
+      onWillPop: () => _saveNote(),
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 88.0),
+        child: (_row != null || _column != null)
+            ? GridView.count(
+                crossAxisCount: _column,
+                crossAxisSpacing: 0.0,
+                childAspectRatio: (itemWidth / itemHeight),
+                shrinkWrap: false,
+                children: generateTable().map((int i) {
+                  return Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                    ),
+                    child: TextFormField(
+                      controller: _listTextEditingController[i],
+                      decoration: InputDecoration(
+                        hintText: i.toString(),
+                        contentPadding: const EdgeInsets.all(16.0),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black),
+                        ),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.transparent),
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              )
+            : Center(
+                child: Icon(
+                  Icons.table_chart,
+                  color: Colors.grey,
+                  size: 100.0,
+                ),
+              ),
+      ),
+    );
+  }
+
   Widget _buildBody() {
     var size = MediaQuery.of(context).size;
     final double itemHeight = (size.height - kToolbarHeight - 24.0) / 2.0;
     final double itemWidth = size.width / 0.5;
 
-    widget.note == null
-        ? _listTextEditingController.add(TextEditingController())
-        : generateTable();
+    generateTable();
 
     return WillPopScope(
       onWillPop: () => _saveNote(),
@@ -235,41 +308,41 @@ class _TablePageState extends State<TablePage> {
         padding: const EdgeInsets.only(bottom: 88.0),
         child: (_column != null || _row != null)
             ? GridView.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: _column,
-            crossAxisSpacing: 0.0,
-            childAspectRatio: (itemWidth / itemHeight),
-          ),
-          itemCount: _column * _row,
-          shrinkWrap: false,
-          itemBuilder: (context, index) {
-            return Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-              ),
-              child: TextFormField(
-                controller: _listTextEditingController[index],
-                decoration: InputDecoration(
-                  hintText: index.toString(),
-                  contentPadding: const EdgeInsets.all(16.0),
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black),
-                  ),
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.transparent),
-                  ),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: _column,
+                  crossAxisSpacing: 0.0,
+                  childAspectRatio: (itemWidth / itemHeight),
+                ),
+                itemCount: (_size == null) ? _column * _row : _size,
+                shrinkWrap: false,
+                itemBuilder: (context, index) {
+                  return Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                    ),
+                    child: TextFormField(
+                      controller: _listTextEditingController[index],
+                      decoration: InputDecoration(
+                        hintText: index.toString(),
+                        contentPadding: const EdgeInsets.all(16.0),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black),
+                        ),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.transparent),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              )
+            : Center(
+                child: Icon(
+                  Icons.table_chart,
+                  color: Colors.grey,
+                  size: 100.0,
                 ),
               ),
-            );
-          },
-        )
-            : Center(
-          child: Icon(
-            Icons.table_chart,
-            color: Colors.grey,
-            size: 100.0,
-          ),
-        ),
       ),
     );
   }
@@ -326,7 +399,7 @@ class _TablePageState extends State<TablePage> {
   Future<String> _createCsv(String title) async {
     List<List<String>> graphArray = List.generate(
       _row,
-          (i) => List<String>(_column),
+      (i) => List<String>(_column),
     );
 
     int i = 0;
@@ -399,13 +472,13 @@ class _TablePageState extends State<TablePage> {
       ProjectDatabaseProvider.columnNoteDescription: note.description,
       ProjectDatabaseProvider.columnNoteContent: _csv.path,
       ProjectDatabaseProvider.columnNoteTableColumn:
-      _columnTextEditingController.text.isEmpty
-          ? _column
-          : _columnTextEditingController.text,
+          _columnTextEditingController.text.isEmpty
+              ? _column
+              : _columnTextEditingController.text,
       ProjectDatabaseProvider.columnNoteTableRow:
-      _rowTextEditingController.text.isEmpty
-          ? _row
-          : _rowTextEditingController.text,
+          _rowTextEditingController.text.isEmpty
+              ? _row
+              : _rowTextEditingController.text,
       ProjectDatabaseProvider.columnNoteCreatedAt: note.dateCreated,
       ProjectDatabaseProvider.columnNoteUpdatedAt: dateFormatted(),
     });
@@ -471,159 +544,161 @@ class _TablePageState extends State<TablePage> {
     return await showDialog(
       context: context,
       builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(8.0),
-          ),
-        ),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                tableSize,
-                style: TextStyle(fontSize: 16.0),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(8.0),
               ),
-              SizedBox(height: 16.0),
-              Row(
+            ),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.only(
-                        top: 8.0,
-                        bottom: 8.0,
-                        right: 8.0,
-                      ),
-                      child: TextField(
-                        controller: _columnTextEditingController,
-                        keyboardType: TextInputType.number,
-                        maxLines: 1,
-                        decoration: InputDecoration(
-                          hintText: 'Spalten',
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.grey,
+                  Text(
+                    tableSize,
+                    style: TextStyle(fontSize: 16.0),
+                  ),
+                  SizedBox(height: 16.0),
+                  Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.only(
+                            top: 8.0,
+                            bottom: 8.0,
+                            right: 8.0,
+                          ),
+                          child: TextField(
+                            controller: _columnTextEditingController,
+                            keyboardType: TextInputType.number,
+                            maxLines: 1,
+                            decoration: InputDecoration(
+                              hintText: 'Spalten',
+                              border: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.grey,
+                                ),
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.only(
-                        top: 8.0,
-                        bottom: 8.0,
-                        left: 8.0,
-                      ),
-                      child: TextField(
-                        controller: _rowTextEditingController,
-                        keyboardType: TextInputType.number,
-                        maxLines: 1,
-                        decoration: InputDecoration(
-                          hintText: 'Zeilen',
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.grey,
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.only(
+                            top: 8.0,
+                            bottom: 8.0,
+                            left: 8.0,
+                          ),
+                          child: TextField(
+                            controller: _rowTextEditingController,
+                            keyboardType: TextInputType.number,
+                            maxLines: 1,
+                            decoration: InputDecoration(
+                              hintText: 'Zeilen',
+                              border: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.grey,
+                                ),
+                              ),
                             ),
                           ),
                         ),
                       ),
+                    ],
+                  ),
+                  TextField(
+                    controller: _descriptionEditingController,
+                    keyboardType: TextInputType.text,
+                    maxLines: 2,
+                    maxLength: 50,
+                    decoration: InputDecoration(
+                      hintText: 'Titel',
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.grey,
+                        ),
+                      ),
                     ),
                   ),
-                ],
-              ),
-              TextField(
-                controller: _descriptionEditingController,
-                keyboardType: TextInputType.text,
-                maxLines: 2,
-                maxLength: 50,
-                decoration: InputDecoration(
-                  hintText: 'Titel',
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.grey,
+                  SizedBox(height: 8.0),
+                  TextField(
+                    controller: _titleEditingController,
+                    keyboardType: TextInputType.text,
+                    maxLines: 10,
+                    maxLength: 200,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.grey,
+                        ),
+                      ),
+                      hintText: 'Beschreibung',
                     ),
                   ),
-                ),
-              ),
-              SizedBox(height: 8.0),
-              TextField(
-                controller: _titleEditingController,
-                keyboardType: TextInputType.text,
-                maxLines: 10,
-                maxLength: 200,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.grey,
-                    ),
+                  SizedBox(height: 8.0),
+                  Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: RaisedButton(
+                          elevation: 4.0,
+                          highlightElevation: 16.0,
+                          child: Icon(Icons.close),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                      ),
+                      SizedBox(width: 16.0),
+                      Expanded(
+                        child: RaisedButton(
+                          elevation: 4.0,
+                          highlightElevation: 16.0,
+                          child: Icon(Icons.delete),
+                          onPressed: () {
+                            if (_columnTextEditingController.text.isNotEmpty) {
+                              _columnTextEditingController.clear();
+                            }
+
+                            if (_rowTextEditingController.text.isNotEmpty) {
+                              _rowTextEditingController.clear();
+                            }
+
+                            if (_titleEditingController.text.isNotEmpty) {
+                              _titleEditingController.clear();
+                            }
+
+                            if (_descriptionEditingController.text.isNotEmpty) {
+                              _descriptionEditingController.clear();
+                            }
+                          },
+                        ),
+                      ),
+                    ],
                   ),
-                  hintText: 'Beschreibung',
-                ),
-              ),
-              SizedBox(height: 8.0),
-              Row(
-                children: <Widget>[
-                  Expanded(
+                  Container(
+                    width: double.infinity,
                     child: RaisedButton(
                       elevation: 4.0,
                       highlightElevation: 16.0,
-                      child: Icon(Icons.close),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ),
-                  SizedBox(width: 16.0),
-                  Expanded(
-                    child: RaisedButton(
-                      elevation: 4.0,
-                      highlightElevation: 16.0,
-                      child: Icon(Icons.delete),
+                      child: Icon(Icons.check),
                       onPressed: () {
-                        if (_columnTextEditingController.text.isNotEmpty) {
-                          _columnTextEditingController.clear();
-                        }
+                        _column = int.parse(_columnTextEditingController.text);
+                        _row = int.parse(_rowTextEditingController.text);
 
-                        if (_rowTextEditingController.text.isNotEmpty) {
-                          _rowTextEditingController.clear();
-                        }
+                        setState(() {
+                          _title = _titleEditingController.text;
+                        });
 
-                        if (_titleEditingController.text.isNotEmpty) {
-                          _titleEditingController.clear();
-                        }
+                        _tableExists = true;
 
-                        if (_descriptionEditingController.text.isNotEmpty) {
-                          _descriptionEditingController.clear();
-                        }
+                        Navigator.pop(context);
                       },
                     ),
                   ),
                 ],
               ),
-              Container(
-                width: double.infinity,
-                child: RaisedButton(
-                  elevation: 4.0,
-                  highlightElevation: 16.0,
-                  child: Icon(Icons.check),
-                  onPressed: () {
-                    _column = int.parse(_columnTextEditingController.text);
-                    _row = int.parse(_rowTextEditingController.text);
-
-                    setState(() {
-                      _title = _titleEditingController.text;
-                    });
-
-                    Navigator.pop(context);
-                  },
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
-      ),
     );
   }
 
