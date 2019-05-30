@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:citizen_lab/entries/text/text_info_page_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:citizen_lab/utils/date_formater.dart';
@@ -108,25 +109,26 @@ class _TextPageState extends State<TextPage> {
         ),
         IconButton(
           icon: Icon(Icons.home),
-          onPressed: () {
-            final String cancel =
-                'Notiz abbrechen und zur Hauptseite zurückkehren?';
-
-            showDialog(
-              context: context,
-              builder: (_) => NoYesDialog(
-                    text: cancel,
-                    onPressed: () {
-                      Navigator.popUntil(
-                        context,
-                        ModalRoute.withName(RouteGenerator.routeHomePage),
-                      );
-                    },
-                  ),
-            );
-          },
+          onPressed: () => _backToHomePage(),
         ),
       ],
+    );
+  }
+
+  void _backToHomePage() {
+    final String cancel = 'Notiz abbrechen und zur Hauptseite zurückkehren?';
+
+    showDialog(
+      context: context,
+      builder: (_) => NoYesDialog(
+            text: cancel,
+            onPressed: () {
+              Navigator.popUntil(
+                context,
+                ModalRoute.withName(RouteGenerator.routeHomePage),
+              );
+            },
+          ),
     );
   }
 
@@ -137,49 +139,8 @@ class _TextPageState extends State<TextPage> {
       arguments: {
         'title': 'Text-Info',
         'tabLength': 3,
-        'tabs': [
-          Tab(
-            child: Text(
-              '1',
-              style: TextStyle(
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          Tab(
-            child: Text(
-              '2',
-              style: TextStyle(
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          Tab(
-            child: Text(
-              '3',
-              style: TextStyle(
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
-        'tabChildren': [
-          SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(lorem + lorem + lorem + lorem + lorem + lorem),
-          ),
-          SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(lorem + lorem + lorem + lorem + lorem),
-          ),
-          SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(lorem + lorem + lorem + lorem),
-          ),
-        ],
+        'tabs': textTabList,
+        'tabChildren': textSingleChildScrollViewList,
       },
     );
   }

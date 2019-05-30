@@ -8,6 +8,8 @@ import 'package:citizen_lab/utils/route_generator.dart';
 
 import 'package:citizen_lab/utils/constants.dart';
 
+import 'create_project_info_page_data.dart';
+
 class CreateProjectPage extends StatefulWidget {
   @override
   _CreateProjectPageState createState() => _CreateProjectPageState();
@@ -89,11 +91,22 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
       actions: <Widget>[
         IconButton(
           icon: Icon(Icons.info_outline),
-          onPressed: () {
-            //TODO: INFO
-          },
+          onPressed: () => _setInfoPage(),
         ),
       ],
+    );
+  }
+
+  void _setInfoPage() {
+    Navigator.pushNamed(
+      context,
+      RouteGenerator.infoPage,
+      arguments: {
+        'title': 'Text-Info',
+        'tabLength': 2,
+        'tabs': createProjectTabList,
+        'tabChildren': createProjectSingleChildScrollViewList,
+      },
     );
   }
 
@@ -142,10 +155,10 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
                   keyboardType: TextInputType.text,
                   maxLength: 500,
                   maxLines: 10,
+                  decoration: InputDecoration(hintText: '$desc_here.'),
                   validator: (text) {
                     return text.isEmpty ? enter_a_desc : null;
                   },
-                  decoration: InputDecoration(hintText: '$desc_here.'),
                 ),
               ],
             ),

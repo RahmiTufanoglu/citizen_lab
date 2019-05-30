@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:citizen_lab/project/project.dart';
+import 'package:citizen_lab/projects/project.dart';
 
 class ProjectItem extends StatelessWidget {
   final Project project;

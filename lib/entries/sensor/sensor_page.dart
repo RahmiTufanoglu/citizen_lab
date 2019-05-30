@@ -1,4 +1,5 @@
 import 'package:citizen_lab/database/project_database_provider.dart';
+import 'package:citizen_lab/entries/sensor/sensor_info_page_data.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:citizen_lab/custom_widgets/simple_timer_dialog.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +9,6 @@ import 'package:share/share.dart';
 
 import 'dart:async';
 import 'package:citizen_lab/entries/note.dart';
-import 'package:citizen_lab/utils/constants.dart';
 import 'package:citizen_lab/utils/date_formater.dart';
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 
@@ -141,36 +141,8 @@ class _SensorPageState extends State<SensorPage>
       arguments: {
         'title': 'Text-Info',
         'tabLength': 2,
-        'tabs': [
-          Tab(
-            child: Text(
-              '1',
-              style: TextStyle(
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          Tab(
-            child: Text(
-              '2',
-              style: TextStyle(
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
-        'tabChildren': [
-          SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(lorem + lorem + lorem + lorem + lorem + lorem),
-          ),
-          SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(lorem + lorem + lorem + lorem + lorem),
-          ),
-        ],
+        'tabs': sensorTabList,
+        'tabChildren': sensorSingleChildScrollViewList,
       },
     );
   }
@@ -224,31 +196,35 @@ class _SensorPageState extends State<SensorPage>
               ),
             ),
           ),
-          Align(
-            alignment: Alignment.topCenter,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
               children: <Widget>[
-                SizedBox(height: 16.0),
-                Text(
-                  'Alte Location:',
-                  style: TextStyle(
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.bold,
+                Padding(
+                  padding: const EdgeInsets.only(top: 16.0, left: 16.0),
+                  child: Text(
+                    'Alte Location:\n',
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-                SizedBox(height: 8.0),
-                Text(
-                  _content != null
-                      ? _content
-                      : """
-                      Latitude: ${_position.latitude}\n
-                      Longitude: ${_position.longitude}\n
-                      Accuracy: ${_position.accuracy}
-                      """,
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold,
+                SizedBox(width: 16.0),
+                Padding(
+                  padding: const EdgeInsets.only(top: 16.0, right: 16.0),
+                  child: Text(
+                    _content != null
+                        ? _content
+                        : """
+                        Latitude: ${_position.latitude}
+                        Longitude: ${_position.longitude}
+                        Accuracy: ${_position.accuracy}
+                        """,
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ],

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class CollapsingAppBarPage extends StatelessWidget {
   final double fontSize;
   final double appBarElevation;
+  final String image;
   final Widget text;
   final Widget body;
 
@@ -10,6 +11,7 @@ class CollapsingAppBarPage extends StatelessWidget {
     this.fontSize = 16.0,
     this.appBarElevation = 4.0,
     @required this.text,
+    @required this.image,
     @required this.body,
   });
 
@@ -35,16 +37,18 @@ class CollapsingAppBarPage extends StatelessWidget {
             ),
             flexibleSpace: FlexibleSpaceBar(
               title: text,
+              collapseMode: CollapseMode.parallax,
               //background: Container(color: backgroundColor),
-              background: Image.network(
-                "https://images.pexels.com/photos/396547/pexels-photo-396547.jpeg?auto=compress&cs=tinysrgb&h=350",
+              background: Image.asset(
+                //"https://images.pexels.com/photos/396547/pexels-photo-396547.jpeg?auto=compress&cs=tinysrgb&h=350",
+                image,
                 fit: BoxFit.cover,
               ),
             ),
           ),
         ];
       },
-      body: body,
+      body: Center(child: body),
     );
   }
 }

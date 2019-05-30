@@ -1,9 +1,6 @@
-import 'dart:math';
-
 import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:flutter/material.dart';
 
-import 'package:citizen_lab/citizen_science/card_scroll_widget.dart';
 import 'package:citizen_lab/citizen_science/citizen_science_data.dart';
 import 'package:citizen_lab/custom_widgets/card_image_with_text.dart';
 import 'package:citizen_lab/citizen_science/citizen_science_model.dart';
@@ -41,6 +38,7 @@ class _CitizenSciencePageState extends State<CitizenSciencePage> {
       _citizenScienceList.add(
         CitizenScienceModel(
           citizenScienceTitles[i],
+          citizenScienceContent[i],
           citizenScienceImages[i],
         ),
       );
@@ -139,6 +137,11 @@ class _CitizenSciencePageState extends State<CitizenSciencePage> {
             onTap: () => Navigator.pushNamed(
                   context,
                   RouteGenerator.detailPage,
+                  arguments: {
+                    'title': _citizenScienceList[index].title,
+                    'content': _citizenScienceList[index].content,
+                    'image': _citizenScienceList[index].image,
+                  },
                 ),
           ),
         );

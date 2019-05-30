@@ -1,13 +1,14 @@
-import 'package:citizen_lab/entries/sensor_page.dart';
+import 'package:citizen_lab/citizen_science/about_page.dart';
+import 'package:citizen_lab/entries/sensor/sensor_page.dart';
 import 'package:citizen_lab/splash_page.dart';
 import 'package:flutter/material.dart';
 import 'package:citizen_lab/projects/create_project_page.dart';
 import 'package:citizen_lab/entries/entry_page.dart';
-import 'package:citizen_lab/entries/image_page.dart';
+import 'package:citizen_lab/entries/image/image_page.dart';
 import 'package:citizen_lab/projects/project_page.dart';
 import 'package:citizen_lab/entries/sketch_page.dart';
-import 'package:citizen_lab/entries/table_page.dart';
-import 'package:citizen_lab/entries/text_page.dart';
+import 'package:citizen_lab/entries/table/table_page.dart';
+import 'package:citizen_lab/entries/text/text_page.dart';
 
 import 'package:citizen_lab/citizen_science/citizen_science_page.dart';
 import 'package:citizen_lab/custom_widgets/detail_page.dart';
@@ -19,6 +20,7 @@ class RouteGenerator {
   static const String home = '/home_page';
   static const String splashPage = '/splash_page';
   static const String createProject = '/create_project';
+  static const String aboutPage = '/about';
   static const String entry = '/entry';
   static const String projectPage = '/project_page';
   static const String textPage = '/text_page';
@@ -34,6 +36,7 @@ class RouteGenerator {
   static const String routeHomePage = 'home';
   static const String routeSplashPage = 'splash_page';
   static const String routeCreateProject = 'create_project';
+  static const String routeAboutPage = 'about';
   static const String routeEntry = 'entry';
   static const String routeProjectPage = 'project_page';
   static const String routeTextPage = 'text_page';
@@ -123,12 +126,20 @@ class RouteGenerator {
           route = routeCitizenSciencePage;
           break;
         case detailPage:
-          page = DetailPage();
+          page = DetailPage(
+            title: args['title'],
+            content: args['content'],
+            image: args['image'],
+          );
           route = routeDetailPage;
           break;
         case onboardingPage:
           page = Onboarding();
           route = routeOnboardingPage;
+          break;
+        case aboutPage:
+          page = AboutPage();
+          route = routeAboutPage;
           break;
         default:
           return null;

@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:citizen_lab/database/project_database_provider.dart';
+import 'package:citizen_lab/entries/table/table_info_page_data.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:citizen_lab/custom_widgets/simple_timer_dialog.dart';
 import 'package:flutter/material.dart';
@@ -125,7 +126,7 @@ class _TablePageState extends State<TablePage> {
     list = csvTable;
 
     print(list.length);
-    for(int i = 0; i < list.length; i++) {
+    for (int i = 0; i < list.length; i++) {
       print(list[i]);
     }
   }
@@ -212,46 +213,7 @@ class _TablePageState extends State<TablePage> {
       actions: <Widget>[
         IconButton(
           icon: Icon(Icons.info),
-          onPressed: () {
-            Navigator.pushNamed(
-              context,
-              RouteGenerator.infoPage,
-              arguments: {
-                'title': 'Tabellen-Info',
-                'tabLength': 2,
-                'tabs': [
-                  Tab(
-                    child: Text(
-                      '1',
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  Tab(
-                    child: Text(
-                      '2',
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
-                'tabChildren': [
-                  SingleChildScrollView(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Text(how_to_open_csv_in_excel),
-                  ),
-                  SingleChildScrollView(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Text(lorem + lorem + lorem),
-                  ),
-                ],
-              },
-            );
-          },
+          onPressed: () => _setInfoPage(),
         ),
         IconButton(
           icon: Icon(Icons.delete),
@@ -273,6 +235,19 @@ class _TablePageState extends State<TablePage> {
           },
         ),
       ],
+    );
+  }
+
+  void _setInfoPage() {
+    Navigator.pushNamed(
+      context,
+      RouteGenerator.infoPage,
+      arguments: {
+        'title': 'Tabellen-Info',
+        'tabLength': 2,
+        'tabs': tableTabList,
+        'tabChildren': tableSingleChildScrollViewList,
+      },
     );
   }
 

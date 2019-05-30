@@ -18,6 +18,8 @@ import 'package:citizen_lab/utils/date_formater.dart';
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/entries/note.dart';
 
+import 'image_info_page_data.dart';
+
 class ImagePage extends StatefulWidget {
   final Key key;
   final Note note;
@@ -116,36 +118,8 @@ class _ImagePageState extends State<ImagePage> {
       arguments: {
         'title': 'Bild-Info',
         'tabLength': 2,
-        'tabs': [
-          Tab(
-            child: Text(
-              '1',
-              style: TextStyle(
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          Tab(
-            child: Text(
-              '2',
-              style: TextStyle(
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
-        'tabChildren': [
-          SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(lorem + lorem + lorem + lorem),
-          ),
-          SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(lorem),
-          ),
-        ],
+        'tabs': imageTabList,
+        'tabChildren': imageSingleChildScrollViewList,
       },
     );
   }
@@ -174,7 +148,7 @@ class _ImagePageState extends State<ImagePage> {
       child: WillPopScope(
         onWillPop: () => _saveNote(),
         child: Center(
-          child: _image != null
+          child: (_image != null && _image.path.isNotEmpty)
               ? PhotoView(
                   backgroundDecoration: BoxDecoration(),
                   minScale: PhotoViewComputedScale.contained * 0.5,
@@ -292,29 +266,33 @@ class _ImagePageState extends State<ImagePage> {
     final String noNote =
         'Kein Bild hinzugefügt.\nWollen sie die Notiz abbrechen?';
 
-    if (_image != null) {
-      if (widget.note == null) {
-        Note newNote = Note(
-          widget.projectTitle,
-          'Bild',
-          _titleEditingController.text,
-          _descEditingController.text,
-          _image.path,
-          null,
-          null,
-          _createdAt,
-          dateFormatted(),
-        );
-        await _noteDb.insertNote(note: newNote);
-      } else {
-        _updateNote(widget.note);
-      }
-      Navigator.pop(context, true);
+    //if (_image != null) {
+    if (widget.note == null) {
+      Note newNote = Note(
+        widget.projectTitle,
+        'Bild',
+        //_titleEditingController.text,
+        _titleEditingController.text.isEmpty
+            ? _titleEditingController.text = 'Bildnotiz'
+            : _titleEditingController.text,
+        _descEditingController.text,
+        //_image.path,
+        (_image != null) ? _image.path : '',
+        null,
+        null,
+        _createdAt,
+        dateFormatted(),
+      );
+      await _noteDb.insertNote(note: newNote);
     } else {
+      _updateNote(widget.note);
+    }
+    Navigator.pop(context, true);
+    /*} else {
       _scaffoldKey.currentState.showSnackBar(
         _buildSnackBarWithButton(noNote),
       );
-    }
+    }*/
   }
 
   void _updateNote(Note note) async {
@@ -355,7 +333,11 @@ class _ImagePageState extends State<ImagePage> {
                 _descEditingController.clear();
               }
             },
-            onPressedUpdate: () => Navigator.pop(context),
+            onPressedUpdate: () {
+              //_updateNote(widget.note);
+              _createCachedImage();
+              Navigator.pop(context);
+            },
           ),
     );
   }
@@ -379,7 +361,7 @@ class _ImagePageState extends State<ImagePage> {
 
     return SnackBar(
       backgroundColor: Colors.black.withOpacity(0.5),
-      duration: Duration(seconds: 3),
+      duration: Duration(seconds: 2),
       content: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[

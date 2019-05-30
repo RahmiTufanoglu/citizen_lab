@@ -155,7 +155,10 @@ class _HomePageState extends State<HomePage>
               context: context,
               icon: Icons.info,
               title: 'Über',
-              onTap: () => null,
+              onTap: () => Navigator.pushNamed(
+                    context,
+                    RouteGenerator.aboutPage,
+                  ),
             ),
           ],
         ),
