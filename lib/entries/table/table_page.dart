@@ -1,8 +1,8 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/database/project_database_provider.dart';
 import 'package:citizen_lab/entries/table/table_info_page_data.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
@@ -12,7 +12,6 @@ import 'package:csv/csv.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 
-import 'package:citizen_lab/utils/constants.dart';
 import 'package:citizen_lab/utils/date_formater.dart';
 import 'package:citizen_lab/entries/note.dart';
 
@@ -42,31 +41,27 @@ class _TablePageState extends State<TablePage> {
 
   File _csv;
   int _column;
-  int _columnOld;
   int _row;
   String _title;
   String _createdAt;
   String csv;
   String _timeString;
-  Timer _timer;
+
+  //Timer _timer;
 
   final csvCodec = CsvCodec();
 
-  bool _tableSizeChanged = false;
-
-  //
-  List<String> _splitCsv = [];
-  String test = '';
   List<String> data;
+  int _size;
 
   @override
   void initState() {
     super.initState();
     _timeString = dateFormatted();
-    _timer = Timer.periodic(
+    /*_timer = Timer.periodic(
       Duration(seconds: 1),
       (Timer t) => _getTime(),
-    );
+    );*/
 
     if (widget.note != null) {
       _titleEditingController.text = widget.note.title;
@@ -75,10 +70,10 @@ class _TablePageState extends State<TablePage> {
       _row = widget.note.tableRow;
       _csv = File(widget.note.content);
       _createdAt = widget.note.dateCreated;
-      _columnOld = widget.note.tableColumn;
 
-      _splitCsv = test.split(',');
+      _size = _column * _row;
     } else {
+      _titleEditingController.text = '';
       _createdAt = dateFormatted();
     }
 
@@ -91,7 +86,6 @@ class _TablePageState extends State<TablePage> {
 
   @override
   void dispose() {
-    super.dispose();
     _titleEditingController.dispose();
     _descriptionEditingController.dispose();
     _columnTextEditingController.dispose();
@@ -99,22 +93,34 @@ class _TablePageState extends State<TablePage> {
     for (int i = 0; i < _listTextEditingController.length; i++) {
       _listTextEditingController[i].dispose();
     }
-    _timer.cancel();
+    //_timer.cancel();
+    super.dispose();
   }
 
   //List<int> generateTable() {
-  void generateTable() {
-    final int _size = _column * _row;
-    _csvToList();
-    //_openCsvTable();
+  generateTable() {
+    if (widget.note == null) {
+      for (int x = 0; x < _row; x++) {
+        for (int y = 0; y < _column; y++) {
+          _listTextEditingController.add(TextEditingController());
+        }
+      }
+    } else {
+      _csvToList();
+      _openCsvTable();
+    }
 
-    /*return List<int>.generate(_size, (i) {
+//return _size;
+
+/*return List<int>.generate(_size, (i) {
       widget.note == null
           ? _listTextEditingController.add(TextEditingController())
           : _openCsvTable();
       return i;
     });*/
   }
+
+  List<List> list = [];
 
   Future<String> _loadCsv(String path) async {
     return await rootBundle.loadString(path);
@@ -124,57 +130,16 @@ class _TablePageState extends State<TablePage> {
     final csvData = await _loadCsv(_csv.path);
     final List<List> csvTable = CsvToListConverter().convert(csvData);
     list = csvTable;
-
-    print(list.length);
-    for (int i = 0; i < list.length; i++) {
-      print(list[i]);
-    }
   }
-
-  List<List> list = [];
 
   _openCsvTable() async {
     for (int x = 0; x < _row; x++) {
       for (int y = 0; y < _column; y++) {
-        print('TMP: ${list[x][y]}');
         _listTextEditingController.add(
           TextEditingController(text: list[x][y]),
         );
       }
     }
-
-    /*data = _splitCsv;
-
-    for (int x = 0; x < data.length; x++) {
-      _listTextEditingController.add(TextEditingController(text: data[x]));
-    }
-
-    test = '';*/
-
-    /*if (!_tableSizeChanged) {
-      for (int x = 0; x < _row; x++) {
-        for (int y = 0; y < _column; y++) {
-          _listTextEditingController.add(
-            TextEditingController(text: list[x][y]),
-          );
-        }
-      }
-    } else {
-      for (int x = 0; x < _row; x++) {
-        for (int y = 0; y < _column; y++) {
-          if (_columnOld < _column) {
-            _listTextEditingController.add(
-              TextEditingController(text: list[x][y]),
-            );
-          } else {
-            _listTextEditingController.insert(
-              y,
-              TextEditingController(text: ''),
-            );
-          }
-        }
-      }
-    }*/
   }
 
   @override
@@ -212,27 +177,12 @@ class _TablePageState extends State<TablePage> {
       ),
       actions: <Widget>[
         IconButton(
-          icon: Icon(Icons.info),
+          icon: Icon(Icons.info_outline),
           onPressed: () => _setInfoPage(),
         ),
         IconButton(
-          icon: Icon(Icons.delete),
-          onPressed: () async {
-            await _noteDb.deleteNote(id: widget.note.id);
-
-            _csv.delete();
-
-            Navigator.pop(context, 'gelöscht.');
-          },
-        ),
-        IconButton(
           icon: Icon(Icons.home),
-          onPressed: () {
-            Navigator.popUntil(
-              context,
-              ModalRoute.withName(RouteGenerator.routeHomePage),
-            );
-          },
+          onPressed: () => _backToHomePage(),
         ),
       ],
     );
@@ -251,10 +201,33 @@ class _TablePageState extends State<TablePage> {
     );
   }
 
+  void _backToHomePage() {
+    final String cancel = 'Notiz abbrechen und zur Hauptseite zurückkehren?';
+
+    showDialog(
+      context: context,
+      builder: (_) {
+        return NoYesDialog(
+          text: cancel,
+          onPressed: () {
+            Navigator.popUntil(
+              context,
+              ModalRoute.withName(RouteGenerator.routeHomePage),
+            );
+          },
+        );
+      },
+    );
+  }
+
   Widget _buildBody() {
     var size = MediaQuery.of(context).size;
     final double itemHeight = (size.height - kToolbarHeight - 24.0) / 2.0;
     final double itemWidth = size.width / 0.5;
+
+    widget.note == null
+        ? _listTextEditingController.add(TextEditingController())
+        : generateTable();
 
     return WillPopScope(
       onWillPop: () => _saveNote(),
@@ -262,45 +235,41 @@ class _TablePageState extends State<TablePage> {
         padding: const EdgeInsets.only(bottom: 88.0),
         child: (_column != null || _row != null)
             ? GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: _column,
-                  crossAxisSpacing: 0.0,
-                  childAspectRatio: (itemWidth / itemHeight),
-                ),
-                itemCount: _column * _row,
-                shrinkWrap: false,
-                itemBuilder: (context, index) {
-                  widget.note == null
-                      ? _listTextEditingController.add(TextEditingController())
-                      : generateTable();
-
-                  return Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                    ),
-                    child: TextFormField(
-                      controller: _listTextEditingController[index],
-                      decoration: InputDecoration(
-                        hintText: index.toString(),
-                        contentPadding: const EdgeInsets.all(16.0),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black),
-                        ),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.transparent),
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              )
-            : Center(
-                child: Icon(
-                  Icons.table_chart,
-                  color: Colors.grey,
-                  size: 100.0,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: _column,
+            crossAxisSpacing: 0.0,
+            childAspectRatio: (itemWidth / itemHeight),
+          ),
+          itemCount: _column * _row,
+          shrinkWrap: false,
+          itemBuilder: (context, index) {
+            return Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey),
+              ),
+              child: TextFormField(
+                controller: _listTextEditingController[index],
+                decoration: InputDecoration(
+                  hintText: index.toString(),
+                  contentPadding: const EdgeInsets.all(16.0),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black),
+                  ),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.transparent),
+                  ),
                 ),
               ),
+            );
+          },
+        )
+            : Center(
+          child: Icon(
+            Icons.table_chart,
+            color: Colors.grey,
+            size: 100.0,
+          ),
+        ),
       ),
     );
   }
@@ -357,13 +326,13 @@ class _TablePageState extends State<TablePage> {
   Future<String> _createCsv(String title) async {
     List<List<String>> graphArray = List.generate(
       _row,
-      (i) => List<String>(_column),
+          (i) => List<String>(_column),
     );
 
     int i = 0;
     for (int x = 0; x < _row; x++) {
       for (int y = 0; y < _column; y++) {
-        //debugPrint('$x/$y = ${_listTextEditingController[i].text}');
+        debugPrint('$x/$y = ${_listTextEditingController[i].text}');
         graphArray[x][y] = _listTextEditingController[i++].text;
       }
     }
@@ -374,7 +343,6 @@ class _TablePageState extends State<TablePage> {
 
     // TODO CHECK TITLE NAME IS NOT NULL!!!
     _csv = File('$dir' + '$title.csv');
-    //_csv = File('$dir' + 'table.csv');
     _csv.writeAsString(csv);
 
     return _csv.path;
@@ -431,17 +399,16 @@ class _TablePageState extends State<TablePage> {
       ProjectDatabaseProvider.columnNoteDescription: note.description,
       ProjectDatabaseProvider.columnNoteContent: _csv.path,
       ProjectDatabaseProvider.columnNoteTableColumn:
-          _columnTextEditingController.text.isEmpty
-              ? _column
-              : _columnTextEditingController.text,
+      _columnTextEditingController.text.isEmpty
+          ? _column
+          : _columnTextEditingController.text,
       ProjectDatabaseProvider.columnNoteTableRow:
-          _rowTextEditingController.text.isEmpty
-              ? _row
-              : _rowTextEditingController.text,
+      _rowTextEditingController.text.isEmpty
+          ? _row
+          : _rowTextEditingController.text,
       ProjectDatabaseProvider.columnNoteCreatedAt: note.dateCreated,
       ProjectDatabaseProvider.columnNoteUpdatedAt: dateFormatted(),
     });
-
     await _noteDb.updateNote(newNote: newNote);
   }
 
@@ -452,13 +419,11 @@ class _TablePageState extends State<TablePage> {
         final Uint8List list = bytes.buffer.asUint8List();
 
         final tempDir = await getTemporaryDirectory();
-        //final file = await File('${tempDir.path}/table.csv').create();
         final file = await File('${tempDir.path}/$_title.csv').create();
         file.writeAsBytesSync(list);
 
         const channelName = 'rahmitufanoglu.citizenlab';
         final channel = const MethodChannel('channel:$channelName.share/share');
-        //channel.invokeMethod('shareTable', 'table.csv');
         channel.invokeMethod('shareTable', '$_title.csv');
       } else {
         _globalKey.currentState.showSnackBar(
@@ -479,6 +444,7 @@ class _TablePageState extends State<TablePage> {
           textEditingController: _titleEditingController,
           descEditingController: _descriptionEditingController,
           descExists: false,
+          onPressedClose: () => Navigator.of(context).pop(),
           onPressedClear: () {
             if (_titleEditingController.text.isNotEmpty) {
               _titleEditingController.clear();
@@ -491,10 +457,6 @@ class _TablePageState extends State<TablePage> {
             setState(() {
               _title = _titleEditingController.text;
             });
-
-            if (widget.note != null) {
-              _tableSizeChanged = true;
-            }
 
             Navigator.pop(context);
           },
@@ -509,159 +471,159 @@ class _TablePageState extends State<TablePage> {
     return await showDialog(
       context: context,
       builder: (context) => Dialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(
-                Radius.circular(8.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(8.0),
+          ),
+        ),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                tableSize,
+                style: TextStyle(fontSize: 16.0),
               ),
-            ),
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
+              SizedBox(height: 16.0),
+              Row(
                 children: <Widget>[
-                  Text(
-                    tableSize,
-                    style: TextStyle(fontSize: 16.0),
-                  ),
-                  SizedBox(height: 16.0),
-                  Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.only(
-                            top: 8.0,
-                            bottom: 8.0,
-                            right: 8.0,
-                          ),
-                          child: TextField(
-                            controller: _columnTextEditingController,
-                            keyboardType: TextInputType.number,
-                            maxLines: 1,
-                            decoration: InputDecoration(
-                              hintText: 'Spalten',
-                              border: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.grey,
-                                ),
-                              ),
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.only(
+                        top: 8.0,
+                        bottom: 8.0,
+                        right: 8.0,
+                      ),
+                      child: TextField(
+                        controller: _columnTextEditingController,
+                        keyboardType: TextInputType.number,
+                        maxLines: 1,
+                        decoration: InputDecoration(
+                          hintText: 'Spalten',
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.grey,
                             ),
                           ),
                         ),
                       ),
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.only(
-                            top: 8.0,
-                            bottom: 8.0,
-                            left: 8.0,
-                          ),
-                          child: TextField(
-                            controller: _rowTextEditingController,
-                            keyboardType: TextInputType.number,
-                            maxLines: 1,
-                            decoration: InputDecoration(
-                              hintText: 'Zeilen',
-                              border: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.grey,
-                                ),
-                              ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.only(
+                        top: 8.0,
+                        bottom: 8.0,
+                        left: 8.0,
+                      ),
+                      child: TextField(
+                        controller: _rowTextEditingController,
+                        keyboardType: TextInputType.number,
+                        maxLines: 1,
+                        decoration: InputDecoration(
+                          hintText: 'Zeilen',
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.grey,
                             ),
                           ),
                         ),
                       ),
-                    ],
-                  ),
-                  TextField(
-                    controller: _descriptionEditingController,
-                    keyboardType: TextInputType.text,
-                    maxLines: 2,
-                    maxLength: 50,
-                    decoration: InputDecoration(
-                      hintText: 'Titel',
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.grey,
-                        ),
-                      ),
                     ),
                   ),
-                  SizedBox(height: 8.0),
-                  TextField(
-                    controller: _titleEditingController,
-                    keyboardType: TextInputType.text,
-                    maxLines: 10,
-                    maxLength: 200,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.grey,
-                        ),
-                      ),
-                      hintText: 'Beschreibung',
+                ],
+              ),
+              TextField(
+                controller: _descriptionEditingController,
+                keyboardType: TextInputType.text,
+                maxLines: 2,
+                maxLength: 50,
+                decoration: InputDecoration(
+                  hintText: 'Titel',
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.grey,
                     ),
                   ),
-                  SizedBox(height: 8.0),
-                  Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: RaisedButton(
-                          elevation: 4.0,
-                          highlightElevation: 16.0,
-                          child: Icon(Icons.close),
-                          onPressed: () => Navigator.pop(context),
-                        ),
-                      ),
-                      SizedBox(width: 16.0),
-                      Expanded(
-                        child: RaisedButton(
-                          elevation: 4.0,
-                          highlightElevation: 16.0,
-                          child: Icon(Icons.delete),
-                          onPressed: () {
-                            if (_columnTextEditingController.text.isNotEmpty) {
-                              _columnTextEditingController.clear();
-                            }
-
-                            if (_rowTextEditingController.text.isNotEmpty) {
-                              _rowTextEditingController.clear();
-                            }
-
-                            if (_titleEditingController.text.isNotEmpty) {
-                              _titleEditingController.clear();
-                            }
-
-                            if (_descriptionEditingController.text.isNotEmpty) {
-                              _descriptionEditingController.clear();
-                            }
-                          },
-                        ),
-                      ),
-                    ],
+                ),
+              ),
+              SizedBox(height: 8.0),
+              TextField(
+                controller: _titleEditingController,
+                keyboardType: TextInputType.text,
+                maxLines: 10,
+                maxLength: 200,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.grey,
+                    ),
                   ),
-                  Container(
-                    width: double.infinity,
+                  hintText: 'Beschreibung',
+                ),
+              ),
+              SizedBox(height: 8.0),
+              Row(
+                children: <Widget>[
+                  Expanded(
                     child: RaisedButton(
                       elevation: 4.0,
                       highlightElevation: 16.0,
-                      child: Icon(Icons.check),
+                      child: Icon(Icons.close),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ),
+                  SizedBox(width: 16.0),
+                  Expanded(
+                    child: RaisedButton(
+                      elevation: 4.0,
+                      highlightElevation: 16.0,
+                      child: Icon(Icons.delete),
                       onPressed: () {
-                        _column = int.parse(_columnTextEditingController.text);
-                        _row = int.parse(_rowTextEditingController.text);
+                        if (_columnTextEditingController.text.isNotEmpty) {
+                          _columnTextEditingController.clear();
+                        }
 
-                        setState(() {
-                          _title = _titleEditingController.text;
-                        });
+                        if (_rowTextEditingController.text.isNotEmpty) {
+                          _rowTextEditingController.clear();
+                        }
 
-                        Navigator.pop(context);
+                        if (_titleEditingController.text.isNotEmpty) {
+                          _titleEditingController.clear();
+                        }
+
+                        if (_descriptionEditingController.text.isNotEmpty) {
+                          _descriptionEditingController.clear();
+                        }
                       },
                     ),
                   ),
                 ],
               ),
-            ),
+              Container(
+                width: double.infinity,
+                child: RaisedButton(
+                  elevation: 4.0,
+                  highlightElevation: 16.0,
+                  child: Icon(Icons.check),
+                  onPressed: () {
+                    _column = int.parse(_columnTextEditingController.text);
+                    _row = int.parse(_rowTextEditingController.text);
+
+                    setState(() {
+                      _title = _titleEditingController.text;
+                    });
+
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+            ],
           ),
+        ),
+      ),
     );
   }
 

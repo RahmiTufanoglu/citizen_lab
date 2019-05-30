@@ -137,7 +137,7 @@ class CardItem extends StatelessWidget {
         return Icon(Icons.camera_alt, color: Colors.white);
         break;
       case 'Sensor':
-        return Icon(Icons.extension, color: Colors.white);
+        return Icon(Icons.location_on, color: Colors.white);
       default:
         return null;
         break;

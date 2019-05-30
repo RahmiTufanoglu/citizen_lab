@@ -206,6 +206,7 @@ class _SensorPageState extends State<SensorPage>
                     'Alte Location:\n',
                     style: TextStyle(
                       fontSize: 16.0,
+                      fontStyle: FontStyle.italic,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
