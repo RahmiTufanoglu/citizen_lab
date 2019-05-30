@@ -81,7 +81,7 @@ class _TablePageState extends State<TablePage> {
       _oldColumn = _column;
       _oldRow = _row;
 
-      for (int i = 0; i < _size; i++) {
+      for (int i = 0; i < (_column * _row); i++) {
         _listTextEditingController.add(TextEditingController());
       }
     } else {
@@ -109,7 +109,7 @@ class _TablePageState extends State<TablePage> {
     super.dispose();
   }
 
-  List<int> generateTable2() {
+  /*List<int> generateTable2() {
     return List<int>.generate(
       _column * _row,
       (i) {
@@ -119,9 +119,9 @@ class _TablePageState extends State<TablePage> {
         return i;
       },
     );
-  }
+  }*/
 
-  generateTable() {
+  void generateTable() {
     if (widget.note == null) {
       if (_row != null && _column != null) {
         for (int x = 0; x < _row; x++) {
@@ -161,11 +161,16 @@ class _TablePageState extends State<TablePage> {
     int i = 0;
     for (int x = 0; x < _row; x++) {
       for (int y = 0; y < _column; y++) {
-        //_listTextEditingController[i++].text = list[x][y];
         _listTextEditingController[i++].text = list[x][y].toString();
-        /*_listTextEditingController.add(
-          TextEditingController(text: list[x][y]),
-        );*/
+
+        /*if (_oldColumn < y + 1) {
+          _listTextEditingController[i++].text = ' ';
+        } else {
+          _listTextEditingController[i++].text = list[x][y].toString();
+        }
+        if (_oldRow < x + 1) {
+          _listTextEditingController[i++].text = 'Y';
+        }*/
       }
     }
   }
@@ -248,7 +253,7 @@ class _TablePageState extends State<TablePage> {
     );
   }
 
-  Widget _buildBody2() {
+  /*Widget _buildBody2() {
     var size = MediaQuery.of(context).size;
     final double itemHeight = (size.height - kToolbarHeight - 24.0) / 2.0;
     final double itemWidth = size.width / 0.5;
@@ -293,12 +298,12 @@ class _TablePageState extends State<TablePage> {
               ),
       ),
     );
-  }
+  }*/
 
   Widget _buildBody() {
     var size = MediaQuery.of(context).size;
     final double itemHeight = (size.height - kToolbarHeight - 24.0) / 2.0;
-    final double itemWidth = size.width / 0.5;
+    final double itemWidth = size.width / 2;
 
     generateTable();
 
@@ -363,6 +368,14 @@ class _TablePageState extends State<TablePage> {
           ),
           FloatingActionButton(
             heroTag: null,
+            tooltip: 'Tabelle leeren.',
+            elevation: 4.0,
+            highlightElevation: 16.0,
+            child: Icon(Icons.remove),
+            onPressed: () => _clearTableContent(),
+          ),
+          FloatingActionButton(
+            heroTag: null,
             tooltip: 'Tabelle erstellen.',
             elevation: 4.0,
             highlightElevation: 16.0,
@@ -394,6 +407,14 @@ class _TablePageState extends State<TablePage> {
         ],
       ),
     );
+  }
+
+  void _clearTableContent() {
+    for (int i = 0; i < _listTextEditingController.length; i++) {
+      _listTextEditingController[i].text = ' ';
+    }
+
+
   }
 
   Future<String> _createCsv(String title) async {
