@@ -396,14 +396,14 @@ class _EntryPageState extends State<EntryPage> {
         );
         break;
       case 'Tabelle':
-        final String result = await Navigator.pushNamed(
+        final result = await Navigator.pushNamed(
           context,
           RouteGenerator.tablePage,
           arguments: {
             'project': widget.projectTitle,
             'note': note,
           },
-        ) as String;
+        );
 
         if (result != null) {
           _loadNoteList();

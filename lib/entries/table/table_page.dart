@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
+import 'package:citizen_lab/custom_widgets/table_widget.dart';
 import 'package:citizen_lab/database/project_database_provider.dart';
 import 'package:citizen_lab/entries/table/table_info_page_data.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
@@ -131,7 +132,8 @@ class _TablePageState extends State<TablePage> {
         }
       }
     } else {
-      _csvToList();
+      //_csvToList();
+      test();
     }
 
     /*return List<int>.generate(
@@ -149,30 +151,50 @@ class _TablePageState extends State<TablePage> {
     return await rootBundle.loadString(path);
   }
 
+  //
+  void test() {
+    List test = [];
+    File myCsvFile = _csv;
+    List<List<dynamic>> csv = csvToList(myCsvFile);
+    /*for (int i = 0; i < csv.length; i++) {
+      test.add(csv[i][0].toString());
+      print(test);
+    }*/
+    int tmp = 0;
+    for(int i = 0; i < 2; i++) {
+      for(int j = 0; j < 2; j++) {
+        test.add(csv[i][j].toString());
+        print(test);
+        _listTextEditingController[tmp++].text = csv[i][j].toString();
+      }
+    }
+  }
+
+  List<List> csvToList(File myCsvFile) {
+    List<List> listCreated =
+        CsvToListConverter().convert(myCsvFile.readAsStringSync());
+    return listCreated;
+  }
+
   void _csvToList() async {
     final csvData = await _loadCsv(_csv.path);
     final List<List> csvTable = CsvToListConverter().convert(csvData);
     list = csvTable;
 
-    _openCsvTable();
+    _openCsvTable(csvTable);
   }
 
-  Future<void> _openCsvTable() async {
+  Future<void> _openCsvTable(List<List<dynamic>> csv) async {
     int i = 0;
     for (int x = 0; x < _row; x++) {
       for (int y = 0; y < _column; y++) {
         _listTextEditingController[i++].text = list[x][y].toString();
-
-        /*if (_oldColumn < y + 1) {
-          _listTextEditingController[i++].text = ' ';
-        } else {
-          _listTextEditingController[i++].text = list[x][y].toString();
-        }
-        if (_oldRow < x + 1) {
-          _listTextEditingController[i++].text = 'Y';
-        }*/
       }
     }
+
+    /*for (int i = 0; i < list.length; i++) {
+      _listTextEditingController[i].text = list[i][0].toString();
+    }*/
   }
 
   @override
@@ -253,58 +275,7 @@ class _TablePageState extends State<TablePage> {
     );
   }
 
-  /*Widget _buildBody2() {
-    var size = MediaQuery.of(context).size;
-    final double itemHeight = (size.height - kToolbarHeight - 24.0) / 2.0;
-    final double itemWidth = size.width / 0.5;
-
-    return WillPopScope(
-      onWillPop: () => _saveNote(),
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 88.0),
-        child: (_row != null || _column != null)
-            ? GridView.count(
-                crossAxisCount: _column,
-                crossAxisSpacing: 0.0,
-                childAspectRatio: (itemWidth / itemHeight),
-                shrinkWrap: false,
-                children: generateTable().map((int i) {
-                  return Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                    ),
-                    child: TextFormField(
-                      controller: _listTextEditingController[i],
-                      decoration: InputDecoration(
-                        hintText: i.toString(),
-                        contentPadding: const EdgeInsets.all(16.0),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black),
-                        ),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.transparent),
-                        ),
-                      ),
-                    ),
-                  );
-                }).toList(),
-              )
-            : Center(
-                child: Icon(
-                  Icons.table_chart,
-                  color: Colors.grey,
-                  size: 100.0,
-                ),
-              ),
-      ),
-    );
-  }*/
-
   Widget _buildBody() {
-    var size = MediaQuery.of(context).size;
-    final double itemHeight = (size.height - kToolbarHeight - 24.0) / 2.0;
-    final double itemWidth = size.width / 2;
-
     generateTable();
 
     return WillPopScope(
@@ -312,34 +283,10 @@ class _TablePageState extends State<TablePage> {
       child: Padding(
         padding: const EdgeInsets.only(bottom: 88.0),
         child: (_column != null || _row != null)
-            ? GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: _column,
-                  crossAxisSpacing: 0.0,
-                  childAspectRatio: (itemWidth / itemHeight),
-                ),
-                itemCount: (_size == null) ? _column * _row : _size,
-                shrinkWrap: false,
-                itemBuilder: (context, index) {
-                  return Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                    ),
-                    child: TextFormField(
-                      controller: _listTextEditingController[index],
-                      decoration: InputDecoration(
-                        hintText: index.toString(),
-                        contentPadding: const EdgeInsets.all(16.0),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black),
-                        ),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.transparent),
-                        ),
-                      ),
-                    ),
-                  );
-                },
+            ? TableWidget(
+                listTextEditingController: _listTextEditingController,
+                column: _column,
+                row: _row,
               )
             : Center(
                 child: Icon(
@@ -410,11 +357,15 @@ class _TablePageState extends State<TablePage> {
   }
 
   void _clearTableContent() {
-    for (int i = 0; i < _listTextEditingController.length; i++) {
+    /*for (int i = 0; i < _listTextEditingController.length; i++) {
       _listTextEditingController[i].text = ' ';
+    }*/
+    int i = 0;
+    for (int x = 0; x < _row; x++) {
+      for (int y = 0; y < _column; y++) {
+        _listTextEditingController[i++].text = ' ';
+      }
     }
-
-
   }
 
   Future<String> _createCsv(String title) async {
@@ -431,12 +382,16 @@ class _TablePageState extends State<TablePage> {
       }
     }
 
-    csv = const ListToCsvConverter().convert(graphArray);
-
     String dir = (await getTemporaryDirectory()).absolute.path + '/';
 
-    // TODO CHECK TITLE NAME IS NOT NULL!!!
-    _csv = File('$dir' + '$title.csv');
+    _csv = File('$dir$title.csv');
+
+    /*if (await _csv.exists()) {
+      _csv.delete();
+      print('GELÖSCHT');
+    }*/
+
+    csv = const ListToCsvConverter().convert(graphArray);
     _csv.writeAsString(csv);
 
     return _csv.path;
@@ -470,6 +425,7 @@ class _TablePageState extends State<TablePage> {
         message = 'gespeichert';
       } else {
         _updateNote(widget.note);
+        print('UPDATE!');
         message = 'editiert';
       }
       Navigator.pop(context, message);
@@ -484,21 +440,22 @@ class _TablePageState extends State<TablePage> {
   }
 
   void _updateNote(Note note) async {
+    String path = await _createCsv(_title);
     Note newNote = Note.fromMap({
       ProjectDatabaseProvider.columnNoteId: note.id,
       ProjectDatabaseProvider.columnNoteProject: note.project,
       ProjectDatabaseProvider.columnNoteType: note.type,
       ProjectDatabaseProvider.columnNoteTitle: _title,
-      // TODO description updaten
       ProjectDatabaseProvider.columnNoteDescription: note.description,
-      ProjectDatabaseProvider.columnNoteContent: _csv.path,
+      //ProjectDatabaseProvider.columnNoteContent: path,
+      ProjectDatabaseProvider.columnNoteContent: path,
       ProjectDatabaseProvider.columnNoteTableColumn:
           _columnTextEditingController.text.isEmpty
-              ? _column
+              ? _oldColumn
               : _columnTextEditingController.text,
       ProjectDatabaseProvider.columnNoteTableRow:
           _rowTextEditingController.text.isEmpty
-              ? _row
+              ? _oldRow
               : _rowTextEditingController.text,
       ProjectDatabaseProvider.columnNoteCreatedAt: note.dateCreated,
       ProjectDatabaseProvider.columnNoteUpdatedAt: dateFormatted(),
@@ -545,12 +502,14 @@ class _TablePageState extends State<TablePage> {
             }
           },
           onPressedUpdate: () {
-            _row = int.parse(_columnTextEditingController.text);
-            _column = int.parse(_rowTextEditingController.text);
+            if (_oldRow == null && _oldColumn == null) {
+              _row = int.parse(_columnTextEditingController.text);
+              _column = int.parse(_rowTextEditingController.text);
+            }
 
-            setState(() {
-              _title = _titleEditingController.text;
-            });
+            //setState(() {
+            _title = _titleEditingController.text;
+            //});
 
             Navigator.pop(context);
           },
