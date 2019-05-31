@@ -13,7 +13,6 @@ import 'package:citizen_lab/database/project_database_provider.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:path_provider/path_provider.dart';
 
-import 'package:citizen_lab/utils/constants.dart';
 import 'package:citizen_lab/utils/date_formater.dart';
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/entries/note.dart';
@@ -48,8 +47,6 @@ class _ImagePageState extends State<ImagePage> {
 
   @override
   void initState() {
-    super.initState();
-
     if (widget.note != null) {
       _titleEditingController.text = widget.note.title;
       _title = _titleEditingController.text;
@@ -65,6 +62,8 @@ class _ImagePageState extends State<ImagePage> {
         _title = _titleEditingController.text;
       });
     });
+
+    super.initState();
   }
 
   @override

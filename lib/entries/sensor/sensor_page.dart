@@ -49,8 +49,6 @@ class _SensorPageState extends State<SensorPage>
 
   @override
   void initState() {
-    super.initState();
-
     if (mounted) {
       _timer = Timer.periodic(Duration(seconds: 1), (_) {
         setState(() {
@@ -85,6 +83,8 @@ class _SensorPageState extends State<SensorPage>
         _title = _titleEditingController.text;
       });
     });
+
+    super.initState();
   }
 
   @override
@@ -203,15 +203,14 @@ class _SensorPageState extends State<SensorPage>
                 Padding(
                   padding: const EdgeInsets.only(top: 16.0, left: 16.0),
                   child: Text(
-                    'Alte Location:\n',
+                    'Alte Location:',
                     style: TextStyle(
                       fontSize: 16.0,
-                      fontStyle: FontStyle.italic,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
-                SizedBox(width: 16.0),
+                SizedBox(width: 8.0),
                 Padding(
                   padding: const EdgeInsets.only(top: 16.0, right: 16.0),
                   child: Text(

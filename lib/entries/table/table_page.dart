@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:citizen_lab/custom_widgets/ColumnRowEditWidget.dart';
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/custom_widgets/table_widget.dart';
 import 'package:citizen_lab/database/project_database_provider.dart';
@@ -41,35 +42,19 @@ class _TablePageState extends State<TablePage> {
   final List<TextEditingController> _listTextEditingController = [];
 
   File _csv;
+
   int _column;
   int _row;
   String _title;
   String _createdAt;
   String csv;
-  String _timeString;
-
-  //Timer _timer;
-
-  final csvCodec = CsvCodec();
-
-  bool _tableExists = false;
   int _oldRow;
   int _oldColumn;
-
   List<String> data;
-  int _size;
-
-  List<List> list = [];
+  List<List<dynamic>> list = [];
 
   @override
   void initState() {
-    super.initState();
-    _timeString = dateFormatted();
-    /*_timer = Timer.periodic(
-      Duration(seconds: 1),
-      (Timer t) => _getTime(),
-    );*/
-
     if (widget.note != null) {
       _titleEditingController.text = widget.note.title;
       _title = _titleEditingController.text;
@@ -78,7 +63,6 @@ class _TablePageState extends State<TablePage> {
       _csv = File(widget.note.content);
       _createdAt = widget.note.dateCreated;
 
-      _size = _column * _row;
       _oldColumn = _column;
       _oldRow = _row;
 
@@ -95,6 +79,8 @@ class _TablePageState extends State<TablePage> {
         _title = _titleEditingController.text;
       });
     });
+
+    super.initState();
   }
 
   @override
@@ -106,95 +92,7 @@ class _TablePageState extends State<TablePage> {
     for (int i = 0; i < _listTextEditingController.length; i++) {
       _listTextEditingController[i].dispose();
     }
-    //_timer.cancel();
     super.dispose();
-  }
-
-  /*List<int> generateTable2() {
-    return List<int>.generate(
-      _column * _row,
-      (i) {
-        widget.note == null
-            ? _listTextEditingController.add(TextEditingController())
-            : _csvToList();
-        return i;
-      },
-    );
-  }*/
-
-  void generateTable() {
-    if (widget.note == null) {
-      if (_row != null && _column != null) {
-        for (int x = 0; x < _row; x++) {
-          for (int y = 0; y < _column; y++) {
-            _listTextEditingController.add(TextEditingController());
-          }
-        }
-      }
-    } else {
-      //_csvToList();
-      test();
-    }
-
-    /*return List<int>.generate(
-      _column * _row,
-      (i) {
-        widget.note == null
-            ? _listTextEditingController.add(TextEditingController())
-            : _csvToList();
-        return i;
-      },
-    );*/
-  }
-
-  Future<String> _loadCsv(String path) async {
-    return await rootBundle.loadString(path);
-  }
-
-  //
-  void test() {
-    List test = [];
-    File myCsvFile = _csv;
-    List<List<dynamic>> csv = csvToList(myCsvFile);
-    /*for (int i = 0; i < csv.length; i++) {
-      test.add(csv[i][0].toString());
-      print(test);
-    }*/
-    int tmp = 0;
-    for(int i = 0; i < 2; i++) {
-      for(int j = 0; j < 2; j++) {
-        test.add(csv[i][j].toString());
-        print(test);
-        _listTextEditingController[tmp++].text = csv[i][j].toString();
-      }
-    }
-  }
-
-  List<List> csvToList(File myCsvFile) {
-    List<List> listCreated =
-        CsvToListConverter().convert(myCsvFile.readAsStringSync());
-    return listCreated;
-  }
-
-  void _csvToList() async {
-    final csvData = await _loadCsv(_csv.path);
-    final List<List> csvTable = CsvToListConverter().convert(csvData);
-    list = csvTable;
-
-    _openCsvTable(csvTable);
-  }
-
-  Future<void> _openCsvTable(List<List<dynamic>> csv) async {
-    int i = 0;
-    for (int x = 0; x < _row; x++) {
-      for (int y = 0; y < _column; y++) {
-        _listTextEditingController[i++].text = list[x][y].toString();
-      }
-    }
-
-    /*for (int i = 0; i < list.length; i++) {
-      _listTextEditingController[i].text = list[i][0].toString();
-    }*/
   }
 
   @override
@@ -207,18 +105,9 @@ class _TablePageState extends State<TablePage> {
     );
   }
 
-  void _getTime() async {
-    final String formattedDateTime = dateFormatted();
-    if (mounted) {
-      setState(() {
-        _timeString = formattedDateTime;
-      });
-    }
-  }
-
   Widget _buildAppBar() {
-    final back = 'Zurück';
-    final noteType = 'Tabellennotiz';
+    final String back = 'Zurück';
+    final String noteType = 'Tabellennotiz';
 
     return AppBar(
       leading: IconButton(
@@ -228,7 +117,7 @@ class _TablePageState extends State<TablePage> {
       ),
       title: Tooltip(
         message: noteType,
-        child: Text(_title != null ? _title : noteType),
+        child: Text((_title != null) ? _title : noteType),
       ),
       actions: <Widget>[
         IconButton(
@@ -299,6 +188,45 @@ class _TablePageState extends State<TablePage> {
     );
   }
 
+  void generateTable() {
+    if (widget.note == null) {
+      if (_row != null && _column != null) {
+        for (int x = 0; x < _row; x++) {
+          for (int y = 0; y < _column; y++) {
+            _listTextEditingController.add(TextEditingController());
+          }
+        }
+      }
+    } else {
+      _csvRead();
+    }
+  }
+
+  void _csvRead() {
+    List<List<dynamic>> csv = _csvToList(_csv);
+
+    List csvList = [];
+    int tmp = 0;
+    for (int i = 0; i < _row; i++) {
+      for (int j = 0; j < _column; j++) {
+        csvList.add(csv[i][j].toString());
+        print(_csvRead);
+        _listTextEditingController[tmp++].text = csv[i][j].toString();
+      }
+    }
+  }
+
+  List<List> _csvToList(File myCsvFile) {
+    List<List<dynamic>> listCreated =
+        CsvToListConverter().convert(myCsvFile.readAsStringSync());
+    return listCreated;
+  }
+
+  String _listToCsv(List listToConvert) {
+    String csvPath = ListToCsvConverter().convert(listToConvert);
+    return csvPath;
+  }
+
   Widget _buildFabs() {
     return Padding(
       padding: const EdgeInsets.only(left: 32.0),
@@ -335,35 +263,36 @@ class _TablePageState extends State<TablePage> {
             elevation: 4.0,
             highlightElevation: 16.0,
             child: Icon(Icons.share),
-            onPressed: () {
-              if (_title.isNotEmpty) {
-                _createCsv(_title);
-                _globalKey.currentState.showSnackBar(
-                  _buildSnackBarWithButton(
-                    text: 'Tabelle erstellt. Teilen?',
-                    onPressed: () => _shareCsv(),
-                  ),
-                );
-              } else {
-                _globalKey.currentState.showSnackBar(
-                  _buildSnackBar(text: 'Bitte einen Titel eingeben.'),
-                );
-              }
-            },
+            onPressed: () => _onShareButtonClicked(),
           ),
         ],
       ),
     );
   }
 
+  void _onShareButtonClicked() {
+    if (_title.isNotEmpty) {
+      _createCsv(_title);
+      _globalKey.currentState.showSnackBar(
+        _buildSnackBarWithButton(
+          text: 'Tabelle erstellt. Teilen?',
+          onPressed: () => _shareCsv(),
+        ),
+      );
+    } else {
+      _globalKey.currentState.showSnackBar(
+        _buildSnackBar(text: 'Bitte einen Titel eingeben.'),
+      );
+    }
+  }
+
   void _clearTableContent() {
-    /*for (int i = 0; i < _listTextEditingController.length; i++) {
-      _listTextEditingController[i].text = ' ';
-    }*/
     int i = 0;
     for (int x = 0; x < _row; x++) {
       for (int y = 0; y < _column; y++) {
-        _listTextEditingController[i++].text = ' ';
+        if (_listTextEditingController[i].text.isNotEmpty) {
+          _listTextEditingController[i++].clear();
+        }
       }
     }
   }
@@ -383,16 +312,10 @@ class _TablePageState extends State<TablePage> {
     }
 
     String dir = (await getTemporaryDirectory()).absolute.path + '/';
-
     _csv = File('$dir$title.csv');
 
-    /*if (await _csv.exists()) {
-      _csv.delete();
-      print('GELÖSCHT');
-    }*/
-
-    csv = const ListToCsvConverter().convert(graphArray);
-    _csv.writeAsString(csv);
+    String path = _listToCsv(graphArray);
+    _csv.writeAsString(path);
 
     return _csv.path;
   }
@@ -412,9 +335,7 @@ class _TablePageState extends State<TablePage> {
           _titleEditingController.text.isEmpty
               ? _titleEditingController.text = ''
               : _titleEditingController.text,
-          _descriptionEditingController.text.isEmpty
-              ? _descriptionEditingController.text = ''
-              : _descriptionEditingController.text,
+          _descriptionEditingController.text,
           path,
           _column,
           _row,
@@ -447,7 +368,6 @@ class _TablePageState extends State<TablePage> {
       ProjectDatabaseProvider.columnNoteType: note.type,
       ProjectDatabaseProvider.columnNoteTitle: _title,
       ProjectDatabaseProvider.columnNoteDescription: note.description,
-      //ProjectDatabaseProvider.columnNoteContent: path,
       ProjectDatabaseProvider.columnNoteContent: path,
       ProjectDatabaseProvider.columnNoteTableColumn:
           _columnTextEditingController.text.isEmpty
@@ -463,7 +383,7 @@ class _TablePageState extends State<TablePage> {
     await _noteDb.updateNote(newNote: newNote);
   }
 
-  _shareCsv() async {
+  Future<void> _shareCsv() async {
     try {
       if (_csv.path != null) {
         final ByteData bytes = await rootBundle.load(_csv.path);
@@ -486,7 +406,7 @@ class _TablePageState extends State<TablePage> {
     }
   }
 
-  _showDialogEditImage() async {
+  Future<void> _showDialogEditImage() async {
     await showDialog(
       context: context,
       builder: (context) {
@@ -494,11 +414,15 @@ class _TablePageState extends State<TablePage> {
           createdAt: _createdAt,
           textEditingController: _titleEditingController,
           descEditingController: _descriptionEditingController,
-          descExists: false,
+          descExists: true,
           onPressedClose: () => Navigator.of(context).pop(),
           onPressedClear: () {
             if (_titleEditingController.text.isNotEmpty) {
               _titleEditingController.clear();
+            }
+
+            if (_descriptionEditingController.text.isNotEmpty) {
+              _descriptionEditingController.clear();
             }
           },
           onPressedUpdate: () {
@@ -507,9 +431,7 @@ class _TablePageState extends State<TablePage> {
               _column = int.parse(_rowTextEditingController.text);
             }
 
-            //setState(() {
             _title = _titleEditingController.text;
-            //});
 
             Navigator.pop(context);
           },
@@ -518,168 +440,51 @@ class _TablePageState extends State<TablePage> {
     );
   }
 
-  _buildTableCreate() async {
+  Future<void> _buildTableCreate() async {
     final String tableSize = 'Titel und Tabellengröße festlegen.';
 
     return await showDialog(
-      context: context,
-      builder: (context) => Dialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(
-                Radius.circular(8.0),
-              ),
-            ),
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    tableSize,
-                    style: TextStyle(fontSize: 16.0),
-                  ),
-                  SizedBox(height: 16.0),
-                  Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.only(
-                            top: 8.0,
-                            bottom: 8.0,
-                            right: 8.0,
-                          ),
-                          child: TextField(
-                            controller: _columnTextEditingController,
-                            keyboardType: TextInputType.number,
-                            maxLines: 1,
-                            decoration: InputDecoration(
-                              hintText: 'Spalten',
-                              border: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.only(
-                            top: 8.0,
-                            bottom: 8.0,
-                            left: 8.0,
-                          ),
-                          child: TextField(
-                            controller: _rowTextEditingController,
-                            keyboardType: TextInputType.number,
-                            maxLines: 1,
-                            decoration: InputDecoration(
-                              hintText: 'Zeilen',
-                              border: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  TextField(
-                    controller: _descriptionEditingController,
-                    keyboardType: TextInputType.text,
-                    maxLines: 2,
-                    maxLength: 50,
-                    decoration: InputDecoration(
-                      hintText: 'Titel',
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 8.0),
-                  TextField(
-                    controller: _titleEditingController,
-                    keyboardType: TextInputType.text,
-                    maxLines: 10,
-                    maxLength: 200,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.grey,
-                        ),
-                      ),
-                      hintText: 'Beschreibung',
-                    ),
-                  ),
-                  SizedBox(height: 8.0),
-                  Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: RaisedButton(
-                          elevation: 4.0,
-                          highlightElevation: 16.0,
-                          child: Icon(Icons.close),
-                          onPressed: () => Navigator.pop(context),
-                        ),
-                      ),
-                      SizedBox(width: 16.0),
-                      Expanded(
-                        child: RaisedButton(
-                          elevation: 4.0,
-                          highlightElevation: 16.0,
-                          child: Icon(Icons.delete),
-                          onPressed: () {
-                            if (_columnTextEditingController.text.isNotEmpty) {
-                              _columnTextEditingController.clear();
-                            }
+        context: context,
+        builder: (context) {
+          return ColumnRowEditingWidget(
+            title: tableSize,
+            columnEditingController: _columnTextEditingController,
+            rowEditingController: _rowTextEditingController,
+            titleEditingController: _titleEditingController,
+            descEditingController: _descriptionEditingController,
+            onPressedClear: _clearAllFields,
+            onPressedCheck: _checkAllFields,
+          );
+        });
+  }
 
-                            if (_rowTextEditingController.text.isNotEmpty) {
-                              _rowTextEditingController.clear();
-                            }
+  void _clearAllFields() {
+    if (_columnTextEditingController.text.isNotEmpty) {
+      _columnTextEditingController.clear();
+    }
 
-                            if (_titleEditingController.text.isNotEmpty) {
-                              _titleEditingController.clear();
-                            }
+    if (_rowTextEditingController.text.isNotEmpty) {
+      _rowTextEditingController.clear();
+    }
 
-                            if (_descriptionEditingController.text.isNotEmpty) {
-                              _descriptionEditingController.clear();
-                            }
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                  Container(
-                    width: double.infinity,
-                    child: RaisedButton(
-                      elevation: 4.0,
-                      highlightElevation: 16.0,
-                      child: Icon(Icons.check),
-                      onPressed: () {
-                        _column = int.parse(_columnTextEditingController.text);
-                        _row = int.parse(_rowTextEditingController.text);
+    if (_titleEditingController.text.isNotEmpty) {
+      _titleEditingController.clear();
+    }
 
-                        setState(() {
-                          _title = _titleEditingController.text;
-                        });
+    if (_descriptionEditingController.text.isNotEmpty) {
+      _descriptionEditingController.clear();
+    }
+  }
 
-                        _tableExists = true;
+  void _checkAllFields() {
+    _column = int.parse(_rowTextEditingController.text);
+    _row = int.parse(_columnTextEditingController.text);
 
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-    );
+    _title = _titleEditingController.text;
+
+    setState(() {});
+
+    Navigator.pop(context);
   }
 
   Widget _buildSnackBar({@required String text}) {

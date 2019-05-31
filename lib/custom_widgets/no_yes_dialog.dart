@@ -33,6 +33,7 @@ class NoYesDialog extends StatelessWidget {
       ),
       title: Text(
         text,
+        textAlign: TextAlign.center,
         style: TextStyle(
           fontSize: 16.0,
           fontWeight: FontWeight.bold,

@@ -32,7 +32,7 @@ class _TableWidgetState extends State<TableWidget> {
         childAspectRatio: screenHeight / screenWidth,
       ),
       itemCount: (size == null) ? widget.column * widget.row : size,
-      itemBuilder: (context, index) {
+      itemBuilder: (BuildContext context, int index) {
         return Container(
           decoration: BoxDecoration(
             border: Border.all(color: Colors.grey),
@@ -44,7 +44,7 @@ class _TableWidgetState extends State<TableWidget> {
               hintText: index.toString(),
               contentPadding: const EdgeInsets.all(8.0),
               focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.black),
+                borderSide: BorderSide(color: Colors.transparent),
               ),
               enabledBorder: UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.transparent),

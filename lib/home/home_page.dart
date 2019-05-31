@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/themes/theme.dart';
 import 'package:citizen_lab/themes/theme_changer.dart';
 import 'package:flutter/gestures.dart';
@@ -8,6 +11,7 @@ import 'package:citizen_lab/home/main_drawer.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:local_auth/local_auth.dart';
 
 import 'package:citizen_lab/utils/constants.dart';
 
@@ -29,8 +33,6 @@ class _HomePageState extends State<HomePage>
 
   @override
   void initState() {
-    super.initState();
-
     _animationController = AnimationController(
       duration: Duration(milliseconds: 800),
       vsync: this,
@@ -42,6 +44,8 @@ class _HomePageState extends State<HomePage>
     ).animate(_animationController);
 
     _animationController.forward();
+
+    super.initState();
   }
 
   void _checkIfDarkModeEnabled() {
@@ -242,10 +246,12 @@ class _HomePageState extends State<HomePage>
                         asset: 'assets/images/notes_2.jpg',
                         title: 'Projekt erstellen',
                         fontColor: Colors.white,
-                        onTap: () => Navigator.pushNamed(
-                              context,
-                              RouteGenerator.createProject,
-                            ),
+                        onTap: () {
+                          Navigator.pushNamed(
+                            context,
+                            RouteGenerator.createProject,
+                          );
+                        },
                       ),
                     ),
                     SizedBox(height: 8.0),
@@ -254,10 +260,12 @@ class _HomePageState extends State<HomePage>
                         asset: 'assets/images/notes_1.jpg',
                         title: 'Projekt öffnen',
                         fontColor: Colors.white,
-                        onTap: () => Navigator.pushNamed(
-                              context,
-                              RouteGenerator.projectPage,
-                            ),
+                        onTap: () {
+                          return Navigator.pushNamed(
+                            context,
+                            RouteGenerator.projectPage,
+                          );
+                        },
                       ),
                     ),
                   ],

@@ -36,8 +36,6 @@ class _EditProjectDialogState extends State<EditProjectDialog> {
 
   @override
   void initState() {
-    super.initState();
-
     _timeString = dateFormatted();
     _timer = Timer.periodic(
       Duration(seconds: 1),
@@ -51,6 +49,8 @@ class _EditProjectDialogState extends State<EditProjectDialog> {
         _title = widget.titleProjectController.text;
       });
     });*/
+
+    super.initState();
   }
 
   @override

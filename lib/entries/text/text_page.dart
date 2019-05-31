@@ -8,7 +8,6 @@ import 'package:citizen_lab/database/project_database_provider.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:share/share.dart';
 
-import 'package:citizen_lab/utils/constants.dart';
 import 'package:citizen_lab/entries/experiment_item.dart';
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/entries/note.dart';
@@ -41,8 +40,6 @@ class _TextPageState extends State<TextPage> {
 
   @override
   void initState() {
-    super.initState();
-
     _timeString = dateFormatted();
     _timer = Timer.periodic(Duration(seconds: 1), (_) => _getTime());
 
@@ -60,6 +57,8 @@ class _TextPageState extends State<TextPage> {
         _title = _titleEditingController.text;
       });
     });
+
+    super.initState();
   }
 
   @override

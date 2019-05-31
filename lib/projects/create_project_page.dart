@@ -24,7 +24,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
 
   List<Project> _projectList = [];
 
-  Color _buttonColor = Colors.white.withOpacity(0.8);
+  Color _buttonColor = Colors.white;
   Color _buttonIconColor = Colors.black;
 
   _CreateProjectPageState() {
@@ -47,8 +47,8 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
 
   @override
   void initState() {
-    super.initState();
     _loadProjectList();
+    super.initState();
   }
 
   _loadProjectList() async {
@@ -79,14 +79,10 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
     return AppBar(
       leading: IconButton(
         tooltip: 'Zurück',
-        icon: Icon(
-          Icons.arrow_back,
-        ),
+        icon: Icon(Icons.arrow_back),
         onPressed: () => Navigator.pop(context),
       ),
-      title: Text(
-        create_project,
-      ),
+      title: Text(create_project),
       elevation: 4.0,
       actions: <Widget>[
         IconButton(

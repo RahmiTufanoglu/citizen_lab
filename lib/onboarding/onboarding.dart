@@ -19,8 +19,6 @@ class _OnboardingState extends State<Onboarding> with TickerProviderStateMixin {
 
   @override
   void initState() {
-    super.initState();
-
     _controller = PageController(initialPage: _currentPage);
 
     _animationController = AnimationController(
@@ -31,6 +29,8 @@ class _OnboardingState extends State<Onboarding> with TickerProviderStateMixin {
     _scaleAnimation = Tween(begin: 0.0, end: 1.0).animate(
       _animationController,
     );
+
+    super.initState();
   }
 
   @override
@@ -131,6 +131,8 @@ class _OnboardingState extends State<Onboarding> with TickerProviderStateMixin {
                 scale: _scaleAnimation,
                 child: _lastPage
                     ? FloatingActionButton(
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.black,
                         child: Icon(Icons.arrow_forward),
                         onPressed: () {
                           Navigator.pushNamed(

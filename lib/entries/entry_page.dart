@@ -76,8 +76,8 @@ class _EntryPageState extends State<EntryPage> {
 
   @override
   void dispose() {
-    super.dispose();
     _textEditingController.dispose();
+    super.dispose();
   }
 
   void _checkIfDarkModeEnabled() {
@@ -539,35 +539,24 @@ class _EntryPageState extends State<EntryPage> {
             ),
           ),
           contentPadding: const EdgeInsets.all(16.0),
-          titlePadding: const EdgeInsets.all(0.0),
+          titlePadding: const EdgeInsets.only(left: 16.0),
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(left: 16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    SizedBox(height: 16.0),
-                    Text(
-                      'TEST',
-                      style: TextStyle(
-                        fontSize: 14.0,
-                        fontWeight: FontWeight.bold,
-                      ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  SizedBox(height: 16.0),
+                  Text(
+                    '$createdAt: '
+                    '${_noteList[index].dateCreated}',
+                    style: TextStyle(
+                      fontSize: 14.0,
+                      fontWeight: FontWeight.bold,
                     ),
-                    SizedBox(height: 8.0),
-                    Text(
-                      '$createdAt: '
-                      '${_noteList[index].dateCreated}',
-                      style: TextStyle(
-                        fontSize: 14.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 16.0),
-                  ],
-                ),
+                  ),
+                  SizedBox(height: 16.0),
+                ],
               ),
               IconButton(
                 icon: Icon(Icons.close),
@@ -598,7 +587,7 @@ class _EntryPageState extends State<EntryPage> {
             ),
             SizedBox(height: 8.0),
             Text(
-              _noteList[index].content,
+              _noteList[index].description,
               style: TextStyle(fontSize: 16.0),
             ),
             SizedBox(height: 8.0),

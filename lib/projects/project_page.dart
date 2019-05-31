@@ -20,8 +20,8 @@ class _ProjectPageState extends State<ProjectPage> {
 
   @override
   void initState() {
-    super.initState();
     _loadProjectList();
+    super.initState();
   }
 
   @override
@@ -30,6 +30,7 @@ class _ProjectPageState extends State<ProjectPage> {
       key: _scaffoldKey,
       appBar: _buildAppBar(),
       body: _buildBody(),
+      floatingActionButton: _buildFab(),
     );
   }
 
@@ -72,14 +73,28 @@ class _ProjectPageState extends State<ProjectPage> {
           },
         ),
         Builder(
-          builder: (contextSnackBar) => IconButton(
-                highlightColor: Colors.red.withOpacity(0.2),
-                splashColor: Colors.red.withOpacity(0.8),
-                icon: Icon(Icons.delete),
-                onPressed: () => _deleteAllProjects(contextSnackBar),
-              ),
+          builder: (contextSnackBar) {
+            return IconButton(
+              highlightColor: Colors.red.withOpacity(0.2),
+              splashColor: Colors.red.withOpacity(0.8),
+              icon: Icon(Icons.delete),
+              onPressed: () => _deleteAllProjects(contextSnackBar),
+            );
+          },
         ),
       ],
+    );
+  }
+
+  Widget _buildFab() {
+    return FloatingActionButton(
+      child: Icon(Icons.add),
+      onPressed: () {
+        Navigator.pushNamed(
+          context,
+          RouteGenerator.createProject,
+        );
+      },
     );
   }
 
