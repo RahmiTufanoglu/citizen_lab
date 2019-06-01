@@ -103,6 +103,10 @@ class _TextPageState extends State<TextPage> {
       ),
       actions: <Widget>[
         IconButton(
+          icon: Icon(Icons.share),
+          onPressed: () => _shareContent(),
+        ),
+        IconButton(
           icon: Icon(Icons.info_outline),
           onPressed: () => _setInfoPage(),
         ),
@@ -112,6 +116,12 @@ class _TextPageState extends State<TextPage> {
         ),
       ],
     );
+  }
+
+  void _shareContent() {
+    String fullContent =
+        _titleEditingController.text + '\n' + _descEditingController.text;
+    Share.share(fullContent);
   }
 
   void _backToHomePage() {
@@ -323,16 +333,6 @@ class _TextPageState extends State<TextPage> {
             heroTag: null,
             child: Icon(Icons.content_copy),
             onPressed: () => _copyContent(),
-          ),
-          FloatingActionButton(
-            heroTag: null,
-            child: Icon(Icons.share),
-            onPressed: () {
-              String fullContent = _titleEditingController.text +
-                  '\n' +
-                  _descEditingController.text;
-              Share.share(fullContent);
-            },
           ),
         ],
       ),

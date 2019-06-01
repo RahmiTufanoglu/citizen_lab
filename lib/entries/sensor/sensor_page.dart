@@ -123,6 +123,10 @@ class _SensorPageState extends State<SensorPage>
       ),
       actions: <Widget>[
         IconButton(
+          icon: Icon(Icons.share),
+          onPressed: () => Share.share(_content),
+        ),
+        IconButton(
           icon: Icon(Icons.info_outline),
           onPressed: () => _setInfoPage(),
         ),
@@ -250,11 +254,6 @@ class _SensorPageState extends State<SensorPage>
             heroTag: null,
             child: Icon(Icons.content_copy),
             onPressed: () => _copyContent(),
-          ),
-          FloatingActionButton(
-            heroTag: null,
-            child: Icon(Icons.share),
-            onPressed: () => Share.share(_content),
           ),
         ],
       ),

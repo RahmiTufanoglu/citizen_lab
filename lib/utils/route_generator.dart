@@ -16,6 +16,8 @@ import 'package:citizen_lab/home/home_page.dart';
 import 'package:citizen_lab/custom_widgets/info_page.dart';
 import 'package:citizen_lab/onboarding/onboarding.dart';
 
+import '../aeyrium_sensor.dart';
+
 class RouteGenerator {
   static const String home = '/home_page';
   static const String splashPage = '/splash_page';
@@ -31,6 +33,7 @@ class RouteGenerator {
   static const String citizenSciencePage = '/citizen_science_page';
   static const String detailPage = '/detail_page';
   static const String sensorPage = '/sensor_page';
+  static const String aeyriumPage = '/aeyrium_page';
   static const String onboardingPage = '/onboarding_page';
 
   static const String routeHomePage = 'home';
@@ -47,6 +50,7 @@ class RouteGenerator {
   static const String routeDetailPage = 'detail_page';
   static const String routeCitizenSciencePage = 'citizen_science_page';
   static const String routeSensorPage = 'sensor_page';
+  static const String routeAeyriumPage = 'aeyrium_page';
   static const String routeOnboardingPage = 'onboarding_page';
 
   static RouteFactory routes() {
@@ -107,6 +111,13 @@ class RouteGenerator {
           break;
         case sensorPage:
           page = SensorPage(
+            projectTitle: args['project'],
+            note: args['note'],
+          );
+          route = routeSensorPage;
+          break;
+        case aeyriumPage:
+          page = AeyriumPage(
             projectTitle: args['project'],
             note: args['note'],
           );

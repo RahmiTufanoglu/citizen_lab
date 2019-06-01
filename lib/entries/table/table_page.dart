@@ -16,6 +16,7 @@ import 'package:path_provider/path_provider.dart';
 
 import 'package:citizen_lab/utils/date_formater.dart';
 import 'package:citizen_lab/entries/note.dart';
+import 'package:file_picker/file_picker.dart';
 
 class TablePage extends StatefulWidget {
   final Key key;
@@ -42,16 +43,24 @@ class _TablePageState extends State<TablePage> {
   final List<TextEditingController> _listTextEditingController = [];
 
   File _csv;
-
   int _column;
   int _row;
   String _title;
   String _createdAt;
-  String csv;
   int _oldRow;
   int _oldColumn;
   List<String> data;
   List<List<dynamic>> list = [];
+
+  // FILE-PICKER
+  String _fileName;
+  String _path;
+  Map<String, String> _paths;
+  String _extension;
+  bool _multiPick = false;
+  bool _hasValidMime = false;
+  FileType _pickingType;
+  bool _imported = false;
 
   @override
   void initState() {
@@ -79,6 +88,23 @@ class _TablePageState extends State<TablePage> {
         _title = _titleEditingController.text;
       });
     });
+
+    // TODO
+    if(_imported) {
+      _titleEditingController.text = '';
+      _title = '';
+      _column = 2;
+      _row = 2;
+      _csv = File(widget.note.content);
+      _createdAt = widget.note.dateCreated;
+
+      _oldColumn = _column;
+      _oldRow = _row;
+
+      for (int i = 0; i < (_column * _row); i++) {
+        _listTextEditingController.add(TextEditingController());
+      }
+    }
 
     super.initState();
   }
@@ -121,6 +147,10 @@ class _TablePageState extends State<TablePage> {
       ),
       actions: <Widget>[
         IconButton(
+          icon: Icon(Icons.share),
+          onPressed: () => _shareContent(),
+        ),
+        IconButton(
           icon: Icon(Icons.info_outline),
           onPressed: () => _setInfoPage(),
         ),
@@ -130,6 +160,22 @@ class _TablePageState extends State<TablePage> {
         ),
       ],
     );
+  }
+
+  void _shareContent() {
+    if (_title.isNotEmpty) {
+      _createCsv(_title);
+      _globalKey.currentState.showSnackBar(
+        _buildSnackBarWithButton(
+          text: 'Tabelle erstellt. Teilen?',
+          onPressed: () => _shareCsv(),
+        ),
+      );
+    } else {
+      _globalKey.currentState.showSnackBar(
+        _buildSnackBar(text: 'Bitte einen Titel eingeben.'),
+      );
+    }
   }
 
   void _setInfoPage() {
@@ -243,6 +289,14 @@ class _TablePageState extends State<TablePage> {
           ),
           FloatingActionButton(
             heroTag: null,
+            tooltip: 'Beschreibung editieren.',
+            elevation: 4.0,
+            highlightElevation: 16.0,
+            child: Icon(Icons.folder),
+            onPressed: () => _openFileExplorer(),
+          ),
+          FloatingActionButton(
+            heroTag: null,
             tooltip: 'Tabelle leeren.',
             elevation: 4.0,
             highlightElevation: 16.0,
@@ -257,33 +311,37 @@ class _TablePageState extends State<TablePage> {
             child: Icon(Icons.add),
             onPressed: () => _buildTableCreate(),
           ),
-          FloatingActionButton(
-            heroTag: null,
-            tooltip: 'Tabelle teilen.',
-            elevation: 4.0,
-            highlightElevation: 16.0,
-            child: Icon(Icons.share),
-            onPressed: () => _onShareButtonClicked(),
-          ),
         ],
       ),
     );
   }
 
-  void _onShareButtonClicked() {
-    if (_title.isNotEmpty) {
-      _createCsv(_title);
-      _globalKey.currentState.showSnackBar(
-        _buildSnackBarWithButton(
-          text: 'Tabelle erstellt. Teilen?',
-          onPressed: () => _shareCsv(),
-        ),
+  // TODO
+  void _openFileExplorer() async {
+    //if (_pickingType != FileType.ANY || _hasValidMime) {
+    //if (_pickingType != FileType.ANY || true) {
+    try {
+      //_paths = null;
+      _path = await FilePicker.getFilePath(
+        type: _pickingType,
+        fileExtension: _extension,
       );
-    } else {
-      _globalKey.currentState.showSnackBar(
-        _buildSnackBar(text: 'Bitte einen Titel eingeben.'),
-      );
+    } on PlatformException catch (e) {
+      print("Unsupported operation" + e.toString());
     }
+    if (!mounted) return;
+
+    _csv = File(_path);
+    setState(() {
+      _imported = true;
+    });
+
+    /*setState(() {
+        _fileName = _path != null
+            ? _path.split('/').last
+            : _paths != null ? _paths.keys.toString() : '...';
+      });*/
+    //}
   }
 
   void _clearTableContent() {

@@ -99,6 +99,10 @@ class _ImagePageState extends State<ImagePage> {
       ),
       actions: <Widget>[
         IconButton(
+          icon: Icon(Icons.share),
+          onPressed: () => _shareContent(),
+        ),
+        IconButton(
           icon: Icon(Icons.info_outline),
           onPressed: () => _setInfoPage(),
         ),
@@ -108,6 +112,20 @@ class _ImagePageState extends State<ImagePage> {
         ),
       ],
     );
+  }
+
+  void _shareContent() {
+    try {
+      final channelName = 'rahmitufanoglu.citizenlab';
+      final channel = MethodChannel('channel:$channelName.share/share');
+      channel.invokeMethod('shareImage', '$_title');
+    } catch (error) {
+      print('Share error: $error');
+      final String sharingNotPossible = 'Teilvorgang nicht möglich';
+      _scaffoldKey.currentState.showSnackBar(
+        _buildSnackBar('$sharingNotPossible.'),
+      );
+    }
   }
 
   void _setInfoPage() {
@@ -193,12 +211,6 @@ class _ImagePageState extends State<ImagePage> {
             child: Icon(Icons.camera_alt),
             onPressed: () => _createImage(),
           ),
-          FloatingActionButton(
-            heroTag: null,
-            tooltip: 'Foto teilen.',
-            child: Icon(Icons.share),
-            onPressed: () => _shareImage(),
-          ),
         ],
       ),
     );
@@ -245,20 +257,6 @@ class _ImagePageState extends State<ImagePage> {
     File file = File('${tempDir.path}/$_title.jpg');
     await file.create();
     file.writeAsBytesSync(uint8List);
-  }
-
-  void _shareImage() async {
-    try {
-      final channelName = 'rahmitufanoglu.citizenlab';
-      final channel = MethodChannel('channel:$channelName.share/share');
-      channel.invokeMethod('shareImage', '$_title');
-    } catch (error) {
-      print('Share error: $error');
-      final String sharingNotPossible = 'Teilvorgang nicht möglich';
-      _scaffoldKey.currentState.showSnackBar(
-        _buildSnackBar('$sharingNotPossible.'),
-      );
-    }
   }
 
   _saveNote() async {

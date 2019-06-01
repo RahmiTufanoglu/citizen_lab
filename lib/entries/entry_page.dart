@@ -350,6 +350,11 @@ class _EntryPageState extends State<EntryPage> {
           Colors.brown,
           sensor,
         ),
+        _buildSpeedDialChild(
+          Icon(Icons.add),
+          Colors.brown,
+          'Aeyrium',
+        ),
       ],
     );
   }
@@ -445,6 +450,16 @@ class _EntryPageState extends State<EntryPage> {
             _buildSnackBar(text: 'Notiz hinzugefügt.'),
           );
         }
+        break;
+      case 'Aeyrium':
+        Navigator.pushNamed(
+          context,
+          RouteGenerator.aeyriumPage,
+          arguments: {
+            'project': widget.projectTitle,
+            'note': note,
+          },
+        );
         break;
       default:
         break;
