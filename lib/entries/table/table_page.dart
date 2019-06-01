@@ -16,7 +16,6 @@ import 'package:path_provider/path_provider.dart';
 
 import 'package:citizen_lab/utils/date_formater.dart';
 import 'package:citizen_lab/entries/note.dart';
-import 'package:file_picker/file_picker.dart';
 
 class TablePage extends StatefulWidget {
   final Key key;
@@ -37,47 +36,37 @@ class _TablePageState extends State<TablePage> {
   final _globalKey = GlobalKey<ScaffoldState>();
   final _titleEditingController = TextEditingController();
   final _descriptionEditingController = TextEditingController();
-  final _columnTextEditingController = TextEditingController();
   final _rowTextEditingController = TextEditingController();
+  final _columnTextEditingController = TextEditingController();
   final _noteDb = ProjectDatabaseProvider();
-  final List<TextEditingController> _listTextEditingController = [];
+  final _listTextEditingController = <TextEditingController>[];
 
   File _csv;
   int _column;
   int _row;
   String _title;
   String _createdAt;
-  int _oldRow;
-  int _oldColumn;
   List<String> data;
   List<List<dynamic>> list = [];
 
-  // FILE-PICKER
-  String _fileName;
-  String _path;
-  Map<String, String> _paths;
-  String _extension;
-  bool _multiPick = false;
-  bool _hasValidMime = false;
-  FileType _pickingType;
-  bool _imported = false;
+  String _oldPath;
 
   @override
   void initState() {
     if (widget.note != null) {
       _titleEditingController.text = widget.note.title;
       _title = _titleEditingController.text;
-      _column = widget.note.tableColumn;
-      _row = widget.note.tableRow;
+      _descriptionEditingController.text = widget.note.description;
       _csv = File(widget.note.content);
       _createdAt = widget.note.dateCreated;
 
-      _oldColumn = _column;
-      _oldRow = _row;
+      _oldPath = _csv.path;
 
-      for (int i = 0; i < (_column * _row); i++) {
-        _listTextEditingController.add(TextEditingController());
-      }
+      List<List<dynamic>> csvList = _csvToList(_csv);
+      _column = csvList[0].length;
+      _row = csvList.length;
+      _columnTextEditingController.text = _column.toString();
+      _rowTextEditingController.text = _row.toString();
     } else {
       _titleEditingController.text = '';
       _createdAt = dateFormatted();
@@ -89,23 +78,6 @@ class _TablePageState extends State<TablePage> {
       });
     });
 
-    // TODO
-    if(_imported) {
-      _titleEditingController.text = '';
-      _title = '';
-      _column = 2;
-      _row = 2;
-      _csv = File(widget.note.content);
-      _createdAt = widget.note.dateCreated;
-
-      _oldColumn = _column;
-      _oldRow = _row;
-
-      for (int i = 0; i < (_column * _row); i++) {
-        _listTextEditingController.add(TextEditingController());
-      }
-    }
-
     super.initState();
   }
 
@@ -113,8 +85,8 @@ class _TablePageState extends State<TablePage> {
   void dispose() {
     _titleEditingController.dispose();
     _descriptionEditingController.dispose();
-    _columnTextEditingController.dispose();
     _rowTextEditingController.dispose();
+    _columnTextEditingController.dispose();
     for (int i = 0; i < _listTextEditingController.length; i++) {
       _listTextEditingController[i].dispose();
     }
@@ -191,10 +163,10 @@ class _TablePageState extends State<TablePage> {
     );
   }
 
-  void _backToHomePage() {
+  Future<void> _backToHomePage() async {
     final String cancel = 'Notiz abbrechen und zur Hauptseite zurückkehren?';
 
-    showDialog(
+    await showDialog(
       context: context,
       builder: (_) {
         return NoYesDialog(
@@ -244,20 +216,25 @@ class _TablePageState extends State<TablePage> {
         }
       }
     } else {
-      _csvRead();
+      List<List<dynamic>> csvList = _csvToList(_csv);
+      _column = csvList[0].length;
+      _row = csvList.length;
+
+      for (int i = 0; i < (_column * _row); i++) {
+        _listTextEditingController.add(TextEditingController());
+      }
+
+      _csvRead(csvList, _column, _row);
     }
   }
 
-  void _csvRead() {
-    List<List<dynamic>> csv = _csvToList(_csv);
-
-    List csvList = [];
+  void _csvRead(List<List<dynamic>> list, int column, int row) {
+    List newCsvList = [];
     int tmp = 0;
-    for (int i = 0; i < _row; i++) {
-      for (int j = 0; j < _column; j++) {
-        csvList.add(csv[i][j].toString());
-        print(_csvRead);
-        _listTextEditingController[tmp++].text = csv[i][j].toString();
+    for (int i = 0; i < row; i++) {
+      for (int j = 0; j < column; j++) {
+        newCsvList.add(list[i][j].toString());
+        _listTextEditingController[tmp++].text = list[i][j].toString();
       }
     }
   }
@@ -293,7 +270,7 @@ class _TablePageState extends State<TablePage> {
             elevation: 4.0,
             highlightElevation: 16.0,
             child: Icon(Icons.folder),
-            onPressed: () => _openFileExplorer(),
+            onPressed: () => null,
           ),
           FloatingActionButton(
             heroTag: null,
@@ -314,34 +291,6 @@ class _TablePageState extends State<TablePage> {
         ],
       ),
     );
-  }
-
-  // TODO
-  void _openFileExplorer() async {
-    //if (_pickingType != FileType.ANY || _hasValidMime) {
-    //if (_pickingType != FileType.ANY || true) {
-    try {
-      //_paths = null;
-      _path = await FilePicker.getFilePath(
-        type: _pickingType,
-        fileExtension: _extension,
-      );
-    } on PlatformException catch (e) {
-      print("Unsupported operation" + e.toString());
-    }
-    if (!mounted) return;
-
-    _csv = File(_path);
-    setState(() {
-      _imported = true;
-    });
-
-    /*setState(() {
-        _fileName = _path != null
-            ? _path.split('/').last
-            : _paths != null ? _paths.keys.toString() : '...';
-      });*/
-    //}
   }
 
   void _clearTableContent() {
@@ -379,43 +328,26 @@ class _TablePageState extends State<TablePage> {
   }
 
   _saveNote() async {
-    final String noNote =
-        'Keine Tabelle erstellt.\nWollen sie die Notiz abbrechen?';
-
-    String message;
-
-    if (_column != null && _row != null && _title != null) {
-      if (widget.note == null) {
-        String path = await _createCsv(_title);
-        Note newNote = Note(
-          widget.projectTitle,
-          'Tabelle',
-          _titleEditingController.text.isEmpty
-              ? _titleEditingController.text = ''
-              : _titleEditingController.text,
-          _descriptionEditingController.text,
-          path,
-          _column,
-          _row,
-          _createdAt,
-          dateFormatted(),
-        );
-        await _noteDb.insertNote(note: newNote);
-        message = 'gespeichert';
-      } else {
-        _updateNote(widget.note);
-        print('UPDATE!');
-        message = 'editiert';
-      }
-      Navigator.pop(context, message);
-    } else {
-      _globalKey.currentState.showSnackBar(
-        _buildSnackBarWithButton(
-          text: noNote,
-          onPressed: () => Navigator.pop(context),
-        ),
+    if (widget.note == null) {
+      String path = await _createCsv(_title);
+      Note newNote = Note(
+        widget.projectTitle,
+        'Tabelle',
+        _titleEditingController.text.isEmpty
+            ? 'Tablenotiz'
+            : _titleEditingController.text,
+        _descriptionEditingController.text,
+        path,
+        null,
+        null,
+        _createdAt,
+        dateFormatted(),
       );
+      await _noteDb.insertNote(note: newNote);
+    } else {
+      _updateNote(widget.note);
     }
+    Navigator.pop(context, true);
   }
 
   void _updateNote(Note note) async {
@@ -424,17 +356,15 @@ class _TablePageState extends State<TablePage> {
       ProjectDatabaseProvider.columnNoteId: note.id,
       ProjectDatabaseProvider.columnNoteProject: note.project,
       ProjectDatabaseProvider.columnNoteType: note.type,
-      ProjectDatabaseProvider.columnNoteTitle: _title,
-      ProjectDatabaseProvider.columnNoteDescription: note.description,
+      ProjectDatabaseProvider.columnNoteTitle:
+          _titleEditingController.text.isEmpty
+              ? 'Tablenotiz'
+              : _titleEditingController.text,
+      ProjectDatabaseProvider.columnNoteDescription:
+          _descriptionEditingController.text,
       ProjectDatabaseProvider.columnNoteContent: path,
-      ProjectDatabaseProvider.columnNoteTableColumn:
-          _columnTextEditingController.text.isEmpty
-              ? _oldColumn
-              : _columnTextEditingController.text,
-      ProjectDatabaseProvider.columnNoteTableRow:
-          _rowTextEditingController.text.isEmpty
-              ? _oldRow
-              : _rowTextEditingController.text,
+      ProjectDatabaseProvider.columnNoteTableColumn: null,
+      ProjectDatabaseProvider.columnNoteTableRow: null,
       ProjectDatabaseProvider.columnNoteCreatedAt: note.dateCreated,
       ProjectDatabaseProvider.columnNoteUpdatedAt: dateFormatted(),
     });
@@ -484,10 +414,8 @@ class _TablePageState extends State<TablePage> {
             }
           },
           onPressedUpdate: () {
-            if (_oldRow == null && _oldColumn == null) {
-              _row = int.parse(_columnTextEditingController.text);
-              _column = int.parse(_rowTextEditingController.text);
-            }
+            //_row = int.parse(_rowTextEditingController.text);
+            //_column = int.parse(_columnTextEditingController.text);
 
             _title = _titleEditingController.text;
 
@@ -502,27 +430,28 @@ class _TablePageState extends State<TablePage> {
     final String tableSize = 'Titel und Tabellengröße festlegen.';
 
     return await showDialog(
-        context: context,
-        builder: (context) {
-          return ColumnRowEditingWidget(
-            title: tableSize,
-            columnEditingController: _columnTextEditingController,
-            rowEditingController: _rowTextEditingController,
-            titleEditingController: _titleEditingController,
-            descEditingController: _descriptionEditingController,
-            onPressedClear: _clearAllFields,
-            onPressedCheck: _checkAllFields,
-          );
-        });
+      context: context,
+      builder: (context) {
+        return ColumnRowEditingWidget(
+          title: tableSize,
+          columnEditingController: _columnTextEditingController,
+          rowEditingController: _rowTextEditingController,
+          titleEditingController: _titleEditingController,
+          descEditingController: _descriptionEditingController,
+          onPressedClear: _clearAllFields,
+          onPressedCheck: _checkAllFields,
+        );
+      },
+    );
   }
 
   void _clearAllFields() {
-    if (_columnTextEditingController.text.isNotEmpty) {
-      _columnTextEditingController.clear();
-    }
-
     if (_rowTextEditingController.text.isNotEmpty) {
       _rowTextEditingController.clear();
+    }
+
+    if (_columnTextEditingController.text.isNotEmpty) {
+      _columnTextEditingController.clear();
     }
 
     if (_titleEditingController.text.isNotEmpty) {
@@ -535,8 +464,8 @@ class _TablePageState extends State<TablePage> {
   }
 
   void _checkAllFields() {
-    _column = int.parse(_rowTextEditingController.text);
-    _row = int.parse(_columnTextEditingController.text);
+    _column = int.parse(_columnTextEditingController.text);
+    _row = int.parse(_rowTextEditingController.text);
 
     _title = _titleEditingController.text;
 

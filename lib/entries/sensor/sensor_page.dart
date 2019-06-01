@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:citizen_lab/database/project_database_provider.dart';
 import 'package:citizen_lab/entries/sensor/sensor_info_page_data.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
@@ -6,8 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:share/share.dart';
-
-import 'dart:async';
 import 'package:citizen_lab/entries/note.dart';
 import 'package:citizen_lab/utils/date_formater.dart';
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
@@ -33,15 +33,11 @@ class _SensorPageState extends State<SensorPage>
   final _titleEditingController = TextEditingController();
   final _descEditingController = TextEditingController();
   final _noteDb = ProjectDatabaseProvider();
-  final Geolocator _geolocator = Geolocator();
+  final _geolocator = Geolocator();
 
+  var _position = Position(latitude: 0.0, longitude: 0.0, accuracy: 0.0);
   AnimationController _animationController;
   Animation<double> _animation;
-  Position _position = Position(
-    latitude: 0.0,
-    longitude: 0.0,
-    accuracy: 0.0,
-  );
   Timer _timer;
   String _title;
   String _createdAt;
@@ -49,13 +45,13 @@ class _SensorPageState extends State<SensorPage>
 
   @override
   void initState() {
-    if (mounted) {
-      _timer = Timer.periodic(Duration(seconds: 1), (_) {
-        setState(() {
-          _getLocation().then((position) => _position = position);
-        });
+    if (!mounted) return;
+
+    _timer = Timer.periodic(Duration(seconds: 1), (_) {
+      setState(() {
+        _getLocation().then((position) => _position = position);
       });
-    }
+    });
 
     _animationController = AnimationController(
       duration: Duration(seconds: 2),
@@ -74,7 +70,6 @@ class _SensorPageState extends State<SensorPage>
       _content = widget.note.content;
       _createdAt = widget.note.dateCreated;
     } else {
-      _content = '';
       _createdAt = dateFormatted();
     }
 
@@ -107,8 +102,9 @@ class _SensorPageState extends State<SensorPage>
   }
 
   Widget _buildAppBar() {
-    final back = 'Zurück';
-    final noteType = 'Sensornotiz';
+    final String back = 'Zurück';
+    final String noteType = 'Sensornotiz';
+    final String sharingNotPossible = 'Teilvorgang nicht möglich.';
 
     return AppBar(
       elevation: 4.0,
@@ -119,12 +115,22 @@ class _SensorPageState extends State<SensorPage>
       leading: IconButton(
         tooltip: back,
         icon: Icon(Icons.arrow_back),
-        onPressed: () => _saveNote(),
+        onPressed: () {
+          _position == null ? Navigator.pop(context, false) : _saveNote();
+        },
       ),
       actions: <Widget>[
         IconButton(
           icon: Icon(Icons.share),
-          onPressed: () => Share.share(_content),
+          onPressed: () {
+            if (_position != null) {
+              Share.share(_content);
+            } else {
+              _scaffoldKey.currentState.showSnackBar(
+                _buildSnackBar(text: sharingNotPossible),
+              );
+            }
+          },
         ),
         IconButton(
           icon: Icon(Icons.info_outline),
@@ -151,10 +157,10 @@ class _SensorPageState extends State<SensorPage>
     );
   }
 
-  void _backToHomePage() {
+  void _backToHomePage() async {
     final String cancel = 'Notiz abbrechen und zur Hauptseite zurückkehren?';
 
-    showDialog(
+    await showDialog(
       context: context,
       builder: (_) => NoYesDialog(
             text: cancel,
@@ -169,26 +175,34 @@ class _SensorPageState extends State<SensorPage>
   }
 
   Widget _buildBody() {
-    double screenHeight = MediaQuery.of(context).size.height;
-    double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenWidth = MediaQuery.of(context).size.width;
 
     return WillPopScope(
-      onWillPop: () => _saveNote(),
+      onWillPop: () {
+        _position == null ? Navigator.pop(context, false) : _saveNote();
+      },
       child: Stack(
         children: <Widget>[
-          Center(
-            child: Text(
-              """
-              Latitude: ${_position.latitude}\n
-              Longitude: ${_position.longitude}\n
-              Accuracy: ${_position.accuracy}
-              """,
-              style: TextStyle(
-                fontSize: 18.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
+          (_position != null)
+              ? Center(
+                  child: Text(
+                    'Latitude: ${_position.latitude.toString()}\nLongitude: ${_position.longitude.toString()}\nAccuracy: ${_position.accuracy.toString()}',
+                    style: TextStyle(
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                )
+              : Center(
+                  child: Text(
+                    'Sensor nicht aktiv.',
+                    style: TextStyle(
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
           Center(
             child: AnimatedContainer(
               duration: Duration(seconds: 1),
@@ -202,36 +216,15 @@ class _SensorPageState extends State<SensorPage>
           ),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
-            child: Row(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(top: 16.0, left: 16.0),
-                  child: Text(
-                    'Alte Location:',
-                    style: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                _content != null ? 'Alte Location:\n$_content' : '',
+                style: TextStyle(
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.bold,
                 ),
-                SizedBox(width: 8.0),
-                Padding(
-                  padding: const EdgeInsets.only(top: 16.0, right: 16.0),
-                  child: Text(
-                    _content != null
-                        ? _content
-                        : """
-                        Latitude: ${_position.latitude}
-                        Longitude: ${_position.longitude}
-                        Accuracy: ${_position.accuracy}
-                        """,
-                    style: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
         ],
@@ -333,11 +326,7 @@ class _SensorPageState extends State<SensorPage>
             ? 'Sensornotiz'
             : _titleEditingController.text,
         _descEditingController.text,
-        """
-        Latitude: ${_position.latitude}\n
-        Longitude: ${_position.longitude}\n
-        Accuracy: ${_position.accuracy}
-        """,
+        'Latitude: ${_position.latitude.toString()}\nLongitude: ${_position.longitude.toString()}\nAccuracy: ${_position.accuracy.toString()}',
         null,
         null,
         _createdAt,
@@ -362,7 +351,7 @@ class _SensorPageState extends State<SensorPage>
       ProjectDatabaseProvider.columnNoteDescription:
           _descEditingController.text,
       ProjectDatabaseProvider.columnNoteContent:
-          'Latitude: ${_position.latitude}\nLongitude: ${_position.longitude}\nAccuracy: ${_position.accuracy}',
+          'Latitude: ${_position.latitude.toString()}\nLongitude: ${_position.longitude.toString()}\nAccuracy: ${_position.accuracy.toString()}',
       ProjectDatabaseProvider.columnNoteTableColumn: null,
       ProjectDatabaseProvider.columnNoteTableRow: null,
       ProjectDatabaseProvider.columnNoteCreatedAt: note.dateCreated,

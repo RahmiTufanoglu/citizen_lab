@@ -16,7 +16,7 @@ import 'package:citizen_lab/home/home_page.dart';
 import 'package:citizen_lab/custom_widgets/info_page.dart';
 import 'package:citizen_lab/onboarding/onboarding.dart';
 
-import '../aeyrium_sensor.dart';
+import '../audio_recording_page.dart';
 
 class RouteGenerator {
   static const String home = '/home_page';
@@ -117,7 +117,7 @@ class RouteGenerator {
           route = routeSensorPage;
           break;
         case aeyriumPage:
-          page = AeyriumPage(
+          page = AudioRecordingPage(
             projectTitle: args['project'],
             note: args['note'],
           );

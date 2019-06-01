@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-
 import 'package:citizen_lab/utils/date_formater.dart';
 
 class SimpleTimerDialog extends StatefulWidget {
@@ -36,18 +35,15 @@ class _SimpleTimerDialogState extends State<SimpleTimerDialog> {
 
   @override
   void initState() {
-    super.initState();
     _timeString = dateFormatted();
-    _timer = Timer.periodic(
-      Duration(seconds: 1),
-      (Timer t) => _getTime(),
-    );
+    _timer = Timer.periodic(Duration(seconds: 1), (Timer t) => _getTime());
+    super.initState();
   }
 
   @override
   void dispose() {
-    super.dispose();
     _timer.cancel();
+    super.dispose();
   }
 
   void _getTime() {

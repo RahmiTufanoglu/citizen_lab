@@ -410,11 +410,8 @@ class _EntryPageState extends State<EntryPage> {
           },
         );
 
-        if (result != null) {
+        if (result != null && result) {
           _loadNoteList();
-          _scaffoldKey.currentState.showSnackBar(
-            _buildSnackBar(text: 'Notiz $result.'),
-          );
         }
         break;
       case 'Bild':

@@ -3,6 +3,8 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
 
+import 'image_info_page_data.dart';
+
 import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:citizen_lab/custom_widgets/set_title_widget.dart';
 import 'package:citizen_lab/custom_widgets/simple_timer_dialog.dart';
@@ -12,12 +14,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:citizen_lab/database/project_database_provider.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:path_provider/path_provider.dart';
-
 import 'package:citizen_lab/utils/date_formater.dart';
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/entries/note.dart';
-
-import 'image_info_page_data.dart';
 
 class ImagePage extends StatefulWidget {
   final Key key;
@@ -41,9 +40,9 @@ class _ImagePageState extends State<ImagePage> {
   final _descEditingController = TextEditingController();
   final _noteDb = ProjectDatabaseProvider();
 
+  File _image;
   String _title;
   String _createdAt;
-  File _image;
 
   @override
   void initState() {
@@ -216,7 +215,7 @@ class _ImagePageState extends State<ImagePage> {
     );
   }
 
-  void _createImage() async {
+  Future<void> _createImage() async {
     if (_image == null) {
       showDialog(
         context: context,
@@ -250,7 +249,7 @@ class _ImagePageState extends State<ImagePage> {
     }
   }
 
-  void _createCachedImage() async {
+  Future<void> _createCachedImage() async {
     final ByteData bytes = await rootBundle.load(_image.path);
     Uint8List uint8List = bytes.buffer.asUint8List();
     final tempDir = await getTemporaryDirectory();
@@ -259,21 +258,15 @@ class _ImagePageState extends State<ImagePage> {
     file.writeAsBytesSync(uint8List);
   }
 
-  _saveNote() async {
-    final String noNote =
-        'Kein Bild hinzugefügt.\nWollen sie die Notiz abbrechen?';
-
-    //if (_image != null) {
+  Future<void> _saveNote() async {
     if (widget.note == null) {
       Note newNote = Note(
         widget.projectTitle,
         'Bild',
-        //_titleEditingController.text,
         _titleEditingController.text.isEmpty
-            ? _titleEditingController.text = 'Bildnotiz'
+            ? 'Bildnotiz'
             : _titleEditingController.text,
         _descEditingController.text,
-        //_image.path,
         (_image != null) ? _image.path : '',
         null,
         null,
@@ -285,21 +278,16 @@ class _ImagePageState extends State<ImagePage> {
       _updateNote(widget.note);
     }
     Navigator.pop(context, true);
-    /*} else {
-      _scaffoldKey.currentState.showSnackBar(
-        _buildSnackBarWithButton(noNote),
-      );
-    }*/
   }
 
-  void _updateNote(Note note) async {
+  Future<void> _updateNote(Note note) async {
     Note newNote = Note.fromMap({
       ProjectDatabaseProvider.columnNoteId: note.id,
       ProjectDatabaseProvider.columnNoteProject: note.project,
       ProjectDatabaseProvider.columnNoteType: note.type,
       ProjectDatabaseProvider.columnNoteTitle:
           _titleEditingController.text.isEmpty
-              ? _titleEditingController.text = 'Bildnotiz'
+              ? 'Bildnotiz'
               : _titleEditingController.text,
       ProjectDatabaseProvider.columnNoteDescription:
           _descEditingController.text,
@@ -312,7 +300,7 @@ class _ImagePageState extends State<ImagePage> {
     await _noteDb.updateNote(newNote: newNote);
   }
 
-  void _showEditDialog() async {
+  Future<void> _showEditDialog() async {
     await showDialog(
       context: context,
       builder: (context) => SimpleTimerDialog(
@@ -331,7 +319,6 @@ class _ImagePageState extends State<ImagePage> {
               }
             },
             onPressedUpdate: () {
-              //_updateNote(widget.note);
               _createCachedImage();
               Navigator.pop(context);
             },
@@ -349,29 +336,6 @@ class _ImagePageState extends State<ImagePage> {
           color: Colors.white,
           fontWeight: FontWeight.bold,
         ),
-      ),
-    );
-  }
-
-  Widget _buildSnackBarWithButton(String text) {
-    final String yes = 'Ja';
-
-    return SnackBar(
-      backgroundColor: Colors.black.withOpacity(0.5),
-      duration: Duration(seconds: 2),
-      content: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Text(
-            text,
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          MaterialButton(
-            color: Colors.red,
-            child: Text(yes),
-            onPressed: () => Navigator.pop(context),
-          ),
-        ],
       ),
     );
   }
