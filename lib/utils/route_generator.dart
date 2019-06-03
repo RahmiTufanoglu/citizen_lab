@@ -1,5 +1,8 @@
 import 'package:citizen_lab/citizen_science/about_page.dart';
+import 'package:citizen_lab/entries/audio_record_page.dart';
 import 'package:citizen_lab/entries/sensor/sensor_page.dart';
+import 'package:citizen_lab/entries/tools/calculator_page.dart';
+import 'package:citizen_lab/entries/tools/stopwatch_page.dart';
 import 'package:citizen_lab/splash_page.dart';
 import 'package:flutter/material.dart';
 import 'package:citizen_lab/projects/create_project_page.dart';
@@ -9,14 +12,11 @@ import 'package:citizen_lab/projects/project_page.dart';
 import 'package:citizen_lab/entries/sketch_page.dart';
 import 'package:citizen_lab/entries/table/table_page.dart';
 import 'package:citizen_lab/entries/text/text_page.dart';
-
 import 'package:citizen_lab/citizen_science/citizen_science_page.dart';
 import 'package:citizen_lab/custom_widgets/detail_page.dart';
 import 'package:citizen_lab/home/home_page.dart';
 import 'package:citizen_lab/custom_widgets/info_page.dart';
 import 'package:citizen_lab/onboarding/onboarding.dart';
-
-import '../audio_recording_page.dart';
 
 class RouteGenerator {
   static const String home = '/home_page';
@@ -33,8 +33,10 @@ class RouteGenerator {
   static const String citizenSciencePage = '/citizen_science_page';
   static const String detailPage = '/detail_page';
   static const String sensorPage = '/sensor_page';
-  static const String aeyriumPage = '/aeyrium_page';
   static const String onboardingPage = '/onboarding_page';
+  static const String calculatorPage = '/calculator_page';
+  static const String stopwatchPage = '/stopwatch_page';
+  static const String audioRecordPage = '/audio_record_page';
 
   static const String routeHomePage = 'home';
   static const String routeSplashPage = 'splash_page';
@@ -50,8 +52,10 @@ class RouteGenerator {
   static const String routeDetailPage = 'detail_page';
   static const String routeCitizenSciencePage = 'citizen_science_page';
   static const String routeSensorPage = 'sensor_page';
-  static const String routeAeyriumPage = 'aeyrium_page';
   static const String routeOnboardingPage = 'onboarding_page';
+  static const String routeCalculatorPage = 'calculator_page';
+  static const String routeStopwatchPage = 'stopwatch_page';
+  static const String routeAudioRecordPage = 'audio_record_page';
 
   static RouteFactory routes() {
     return (settings) {
@@ -116,13 +120,6 @@ class RouteGenerator {
           );
           route = routeSensorPage;
           break;
-        case aeyriumPage:
-          page = AudioRecordingPage(
-            projectTitle: args['project'],
-            note: args['note'],
-          );
-          route = routeSensorPage;
-          break;
         case infoPage:
           page = InfoPage(
             title: args['title'],
@@ -151,6 +148,18 @@ class RouteGenerator {
         case aboutPage:
           page = AboutPage();
           route = routeAboutPage;
+          break;
+        case calculatorPage:
+          page = CalculatorPage();
+          route = routeCalculatorPage;
+          break;
+        case stopwatchPage:
+          page = StopwatchPage();
+          route = routeStopwatchPage;
+          break;
+        case audioRecordPage:
+          page = AudioRecordPage();
+          route = routeAudioRecordPage;
           break;
         default:
           return null;

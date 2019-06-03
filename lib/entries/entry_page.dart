@@ -17,6 +17,8 @@ import 'package:provider/provider.dart';
 import 'package:citizen_lab/custom_widgets/card_item.dart';
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 
+import 'experiment_item.dart';
+
 class EntryPage extends StatefulWidget {
   final Key key;
   final bool isFromCreateProjectPage;
@@ -47,11 +49,11 @@ class _EntryPageState extends State<EntryPage> {
   final _noteDb = ProjectDatabaseProvider();
 
   ThemeChanger _themeChanger;
+  bool _darkModeEnabled = false;
   List<Note> _noteList = [];
   bool _listLoaded = false;
   String _title;
   String _createdAt;
-  bool _darkModeEnabled = false;
 
   @override
   void initState() {
@@ -78,13 +80,6 @@ class _EntryPageState extends State<EntryPage> {
   void dispose() {
     _textEditingController.dispose();
     super.dispose();
-  }
-
-  void _checkIfDarkModeEnabled() {
-    final ThemeData theme = Theme.of(context);
-    theme.brightness == appDarkTheme().brightness
-        ? _darkModeEnabled = true
-        : _darkModeEnabled = false;
   }
 
   @override
@@ -129,12 +124,14 @@ class _EntryPageState extends State<EntryPage> {
           },
         ),
         Builder(
-          builder: (contextSnackBar) => IconButton(
-                highlightColor: Colors.red.withOpacity(0.2),
-                splashColor: Colors.red.withOpacity(0.8),
-                icon: Icon(Icons.delete),
-                onPressed: () => _deleteAllNotes(contextSnackBar),
-              ),
+          builder: (contextSnackBar) {
+            return IconButton(
+              highlightColor: Colors.red.withOpacity(0.2),
+              splashColor: Colors.red.withOpacity(0.8),
+              icon: Icon(Icons.delete),
+              onPressed: () => _deleteAllNotes(contextSnackBar),
+            );
+          },
         ),
         IconButton(
           icon: Icon(Icons.home),
@@ -143,15 +140,17 @@ class _EntryPageState extends State<EntryPage> {
 
             showDialog(
               context: context,
-              builder: (_) => NoYesDialog(
-                    text: cancel,
-                    onPressed: () {
-                      Navigator.popUntil(
-                        context,
-                        ModalRoute.withName(RouteGenerator.routeHomePage),
-                      );
-                    },
-                  ),
+              builder: (_) {
+                return NoYesDialog(
+                  text: cancel,
+                  onPressed: () {
+                    Navigator.popUntil(
+                      context,
+                      ModalRoute.withName(RouteGenerator.routeHomePage),
+                    );
+                  },
+                );
+              },
             );
           },
         ),
@@ -163,55 +162,63 @@ class _EntryPageState extends State<EntryPage> {
     return WillPopScope(
       onWillPop: _onBackPressed,
       child: SafeArea(
-        child: _noteList.isNotEmpty
-            ? ListView.builder(
-                itemCount: _noteList.length,
-                padding: const EdgeInsets.only(
-                  top: 8.0,
-                  bottom: 88.0,
-                  left: 8.0,
-                  right: 8.0,
-                ),
-                itemBuilder: (context, index) {
-                  final _note = _noteList[index];
-                  final key = Key('${_note.hashCode}');
-                  return Dismissible(
-                    key: key,
-                    direction: DismissDirection.startToEnd,
-                    background: Container(
-                      alignment: Alignment.centerLeft,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(8.0),
+        child: GestureDetector(
+          onLongPress: () => _enableDarkMode(),
+          child: _noteList.isNotEmpty
+              ? ListView.builder(
+                  itemCount: _noteList.length,
+                  padding: const EdgeInsets.only(
+                    top: 8.0,
+                    bottom: 88.0,
+                    left: 8.0,
+                    right: 8.0,
+                  ),
+                  itemBuilder: (context, index) {
+                    final _note = _noteList[index];
+                    final key = Key('${_note.hashCode}');
+                    return Dismissible(
+                      key: key,
+                      direction: DismissDirection.startToEnd,
+                      background: Container(
+                        alignment: Alignment.centerLeft,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                        ),
+                        child: Row(
+                          children: <Widget>[
+                            Icon(Icons.arrow_forward, size: 28.0),
+                            SizedBox(width: 8.0),
+                            Icon(Icons.delete, size: 28.0),
+                          ],
                         ),
                       ),
-                      child: Row(
-                        children: <Widget>[
-                          Icon(
-                            Icons.arrow_forward,
-                            size: 28.0,
-                          ),
-                          SizedBox(width: 8.0),
-                          Icon(
-                            Icons.delete,
-                            size: 28.0,
-                          ),
-                        ],
-                      ),
-                    ),
-                    onDismissed: (direction) => _deleteNote(index),
-                    child: _buildItem(index),
-                  );
-                },
-              )
-            : Center(
-                child: Text(
-                  empty_list,
-                  style: TextStyle(fontSize: 24.0),
+                      onDismissed: (direction) => _deleteNote(index),
+                      child: _buildItem(index),
+                    );
+                  },
+                )
+              : Center(
+                  child: Text(
+                    empty_list,
+                    style: TextStyle(fontSize: 24.0),
+                  ),
                 ),
-              ),
+        ),
       ),
     );
+  }
+
+  void _checkIfDarkModeEnabled() {
+    final ThemeData theme = Theme.of(context);
+    theme.brightness == appDarkTheme().brightness
+        ? _darkModeEnabled = true
+        : _darkModeEnabled = false;
+  }
+
+  void _enableDarkMode() {
+    _darkModeEnabled
+        ? _themeChanger.setTheme(appLightTheme())
+        : _themeChanger.setTheme(appDarkTheme());
   }
 
   Widget _buildItem(int index) {
@@ -220,10 +227,7 @@ class _EntryPageState extends State<EntryPage> {
       height: 80.0,
       child: CardItem(
         note: _note,
-        onTap: () => _openNotePage(
-              _note.type,
-              _note,
-            ),
+        onTap: () => _openNotePage(_note.type, _note),
         onLongPress: () => _showContent(index),
       ),
     );
@@ -237,30 +241,22 @@ class _EntryPageState extends State<EntryPage> {
       children: <Widget>[
         Positioned(
           bottom: 0.0,
-          left: ((screenWidth + 32.0) / 2) - 28.0,
+          left: 32.0,
           child: FloatingActionButton(
             heroTag: null,
             child: Icon(Icons.description),
-            tooltip: desc,
-            onPressed: _showDialogEditProject,
+            tooltip: 'Darkmodus',
+            onPressed: () => _showDialogEditProject(),
           ),
         ),
         Positioned(
           bottom: 0.0,
-          left: 32.0,
-          child: Row(
-            children: <Widget>[
-              FloatingActionButton(
-                heroTag: null,
-                child: Icon(Icons.lightbulb_outline),
-                tooltip: 'Darkmodus',
-                onPressed: () {
-                  _darkModeEnabled
-                      ? _themeChanger.setTheme(appLightTheme())
-                      : _themeChanger.setTheme(appDarkTheme());
-                },
-              ),
-            ],
+          left: ((screenWidth + 32.0) / 2) - 28.0,
+          child: FloatingActionButton(
+            heroTag: null,
+            child: Icon(Icons.extension),
+            tooltip: desc,
+            onPressed: () => _openModalBottomSheet(),
           ),
         ),
         _buildSpeedDialFab(),
@@ -269,8 +265,6 @@ class _EntryPageState extends State<EntryPage> {
   }
 
   _showDialogEditProject() async {
-    final title = _title;
-
     await showDialog(
       context: context,
       builder: (context) {
@@ -303,6 +297,80 @@ class _EntryPageState extends State<EntryPage> {
     );
   }
 
+  void _openModalBottomSheet() {
+    List<ExperimentItem> experimentItems = [
+      ExperimentItem('', Icons.keyboard_arrow_down),
+      ExperimentItem('Rechnen', Icons.straighten),
+      ExperimentItem('Stoppuhr', Icons.timer),
+    ];
+
+    List<Widget> experimentItemsWidgets = [];
+    for (int i = 0; i < experimentItems.length; i++) {
+      if (i == 0) {
+        experimentItemsWidgets.add(_createTile(experimentItems[i], true));
+      } else {
+        experimentItemsWidgets.add(_createTile(experimentItems[i], false));
+      }
+    }
+
+    _buildMainBottomSheet(experimentItemsWidgets);
+  }
+
+  void _buildMainBottomSheet(List<Widget> experimentItemsWidgets) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return ListView(
+          shrinkWrap: true,
+          children: experimentItemsWidgets,
+        );
+      },
+    );
+  }
+
+  Widget _createTile(ExperimentItem experimentItem, bool centerIcon) {
+    return Material(
+      child: InkWell(
+        child: Container(
+          height: 50.0,
+          child: Stack(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Center(
+                  child: (!centerIcon)
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: <Widget>[
+                            Text(
+                              experimentItem.name,
+                              style: TextStyle(fontSize: 20.0),
+                            ),
+                            Icon(experimentItem.icon, size: 28.0),
+                          ],
+                        )
+                      : Center(
+                          child: Icon(experimentItem.icon, size: 28.0),
+                        ),
+                ),
+              ),
+              Divider(height: 1.0, color: Colors.black),
+            ],
+          ),
+        ),
+        onTap: () {
+          if (experimentItem.name.isEmpty) {
+            Navigator.pop(context);
+          } else if (experimentItem.name == 'Rechnen') {
+            Navigator.pushNamed(context, RouteGenerator.calculatorPage);
+          } else if (experimentItem.name == 'Stoppuhr') {
+            Navigator.pushNamed(context, RouteGenerator.stopwatchPage);
+          }
+        },
+      ),
+    );
+  }
+
   _updateProject(Project project) async {
     Project updatedProject = Project.fromMap({
       ProjectDatabaseProvider.columnProjectId: project.id,
@@ -328,32 +396,27 @@ class _EntryPageState extends State<EntryPage> {
         _buildSpeedDialChild(
           Icon(Icons.create),
           Colors.green,
-          text,
-        ),
-        _buildSpeedDialChild(
-          Icon(Icons.brush),
-          Colors.blue,
-          sketch,
+          'Text',
         ),
         _buildSpeedDialChild(
           Icon(Icons.table_chart),
-          Colors.deepOrange,
-          table,
+          Colors.indigoAccent,
+          'Tabelle',
         ),
         _buildSpeedDialChild(
           Icon(Icons.camera_alt),
-          Colors.purple,
-          image,
+          Colors.deepOrange,
+          'Bild',
         ),
         _buildSpeedDialChild(
           Icon(Icons.location_on),
-          Colors.brown,
-          sensor,
+          Colors.purple,
+          'Sensor',
         ),
         _buildSpeedDialChild(
-          Icon(Icons.add),
-          Colors.brown,
-          'Aeyrium',
+          Icon(Icons.cloud),
+          Colors.blue,
+          'Wetter',
         ),
       ],
     );
@@ -370,7 +433,7 @@ class _EntryPageState extends State<EntryPage> {
       foregroundColor: Colors.white,
       labelStyle: TextStyle(color: Colors.black),
       elevation: 4.0,
-      label: '$type hinzufügen',
+      label: '${type}notiz hinzufügen',
       onTap: () => _openNotePage(type),
     );
   }
@@ -387,18 +450,7 @@ class _EntryPageState extends State<EntryPage> {
           },
         );
 
-        if (result != null && result) {
-          _loadNoteList();
-          _scaffoldKey.currentState.showSnackBar(
-            _buildSnackBar(text: 'Notiz hinzugefügt.'),
-          );
-        }
-        break;
-      case 'Zeichnung':
-        Navigator.pushNamed(
-          context,
-          RouteGenerator.sketchPage,
-        );
+        if (result) _loadNoteList();
         break;
       case 'Tabelle':
         final result = await Navigator.pushNamed(
@@ -410,9 +462,7 @@ class _EntryPageState extends State<EntryPage> {
           },
         );
 
-        if (result != null && result) {
-          _loadNoteList();
-        }
+        if (result) _loadNoteList();
         break;
       case 'Bild':
         final result = await Navigator.pushNamed(
@@ -424,12 +474,7 @@ class _EntryPageState extends State<EntryPage> {
           },
         );
 
-        if (result != null && result) {
-          _loadNoteList();
-          _scaffoldKey.currentState.showSnackBar(
-            _buildSnackBar(text: 'Notiz hinzugefügt.'),
-          );
-        }
+        if (result) _loadNoteList();
         break;
       case 'Sensor':
         final result = await Navigator.pushNamed(
@@ -441,22 +486,19 @@ class _EntryPageState extends State<EntryPage> {
           },
         );
 
-        if (result != null && result) {
-          _loadNoteList();
-          _scaffoldKey.currentState.showSnackBar(
-            _buildSnackBar(text: 'Notiz hinzugefügt.'),
-          );
-        }
+        if (result) _loadNoteList();
         break;
-      case 'Aeyrium':
-        Navigator.pushNamed(
+      case 'Wetter':
+        final result = await Navigator.pushNamed(
           context,
-          RouteGenerator.aeyriumPage,
+          RouteGenerator.audioRecordPage,
           arguments: {
             'project': widget.projectTitle,
             'note': note,
           },
         );
+
+        if (result) _loadNoteList();
         break;
       default:
         break;

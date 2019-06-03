@@ -121,9 +121,8 @@ class _ImagePageState extends State<ImagePage> {
     } catch (error) {
       print('Share error: $error');
       final String sharingNotPossible = 'Teilvorgang nicht möglich';
-      _scaffoldKey.currentState.showSnackBar(
-        _buildSnackBar('$sharingNotPossible.'),
-      );
+      _scaffoldKey.currentState
+          .showSnackBar(_buildSnackBar('$sharingNotPossible.'));
     }
   }
 
@@ -198,12 +197,12 @@ class _ImagePageState extends State<ImagePage> {
             child: Icon(Icons.description),
             onPressed: () => _showEditDialog(),
           ),
-          FloatingActionButton(
+          /*FloatingActionButton(
             heroTag: null,
             tooltip: '$getImage.',
             child: Icon(Icons.folder),
             onPressed: () async => await _getImage(false),
-          ),
+          ),*/
           FloatingActionButton(
             heroTag: null,
             tooltip: '$createImage.',
@@ -242,18 +241,34 @@ class _ImagePageState extends State<ImagePage> {
         : image = await ImagePicker.pickImage(source: ImageSource.gallery);
 
     if (image != null) {
+      // using your method of getting an image
+      //final File image = await ImagePicker.pickImage(source: imageSource);
+
+      // getting a directory path for saving
+      //final dir = await getApplicationDocumentsDirectory();
+
+      // copy the file to a new path
+      //final File newImage = await image.copy('${dir.path}/image1.png');
+
+      //_test(image);
+      // if image created ...
+
       setState(() {
         _image = image;
       });
+
       _createCachedImage();
     }
   }
 
   Future<void> _createCachedImage() async {
     final ByteData bytes = await rootBundle.load(_image.path);
-    Uint8List uint8List = bytes.buffer.asUint8List();
+    final Uint8List uint8List = bytes.buffer.asUint8List();
     final tempDir = await getTemporaryDirectory();
     File file = File('${tempDir.path}/$_title.jpg');
+    //TODO
+    //final dir = await getApplicationDocumentsDirectory();
+    //filo = await image.copy('${dir.path}/image1.png');
     await file.create();
     file.writeAsBytesSync(uint8List);
   }

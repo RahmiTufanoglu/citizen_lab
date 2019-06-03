@@ -162,15 +162,17 @@ class _SensorPageState extends State<SensorPage>
 
     await showDialog(
       context: context,
-      builder: (_) => NoYesDialog(
-            text: cancel,
-            onPressed: () {
-              Navigator.popUntil(
-                context,
-                ModalRoute.withName(RouteGenerator.routeHomePage),
-              );
-            },
-          ),
+      builder: (_) {
+        return NoYesDialog(
+          text: cancel,
+          onPressed: () {
+            Navigator.popUntil(
+              context,
+              ModalRoute.withName(RouteGenerator.routeHomePage),
+            );
+          },
+        );
+      },
     );
   }
 

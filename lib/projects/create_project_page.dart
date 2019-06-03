@@ -37,9 +37,9 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
       if (_titleEditingController.text.isNotEmpty &&
           _descEditingController.text.isNotEmpty) {
         _buttonColor = Colors.green;
-        _buttonIconColor = Colors.white;
+        _buttonIconColor = Colors.white.withOpacity(0.8);
       } else {
-        _buttonColor = Colors.white;
+        _buttonColor = Colors.white.withOpacity(0.8);
         _buttonIconColor = Colors.black;
       }
     });

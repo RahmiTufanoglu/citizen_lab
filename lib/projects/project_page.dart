@@ -1,3 +1,5 @@
+import 'package:citizen_lab/themes/theme.dart';
+import 'package:citizen_lab/themes/theme_changer.dart';
 import 'package:flutter/material.dart';
 import 'package:citizen_lab/projects/project.dart';
 import 'package:citizen_lab/database/project_database_provider.dart';
@@ -7,6 +9,7 @@ import 'package:citizen_lab/utils/route_generator.dart';
 
 import 'package:citizen_lab/custom_widgets/alarm_dialog.dart';
 import 'package:citizen_lab/utils/constants.dart';
+import 'package:provider/provider.dart';
 
 class ProjectPage extends StatefulWidget {
   @override
@@ -18,6 +21,9 @@ class _ProjectPageState extends State<ProjectPage> {
   final _projectDb = ProjectDatabaseProvider();
   final List<Project> _projectList = [];
 
+  ThemeChanger _themeChanger;
+  bool _darkModeEnabled = false;
+
   @override
   void initState() {
     _loadProjectList();
@@ -26,6 +32,10 @@ class _ProjectPageState extends State<ProjectPage> {
 
   @override
   Widget build(BuildContext context) {
+    _themeChanger = Provider.of<ThemeChanger>(context);
+
+    _checkIfDarkModeEnabled();
+
     return Scaffold(
       key: _scaffoldKey,
       appBar: _buildAppBar(),
@@ -165,71 +175,87 @@ class _ProjectPageState extends State<ProjectPage> {
 
   Widget _buildBody() {
     return SafeArea(
-      child: Container(
-        child: _projectList.isNotEmpty
-            ? ListView.builder(
-                padding: const EdgeInsets.all(8.0),
-                reverse: false,
-                itemCount: _projectList.length,
-                itemBuilder: (context, index) {
-                  final _project = _projectList[index];
-                  final key = Key('${_project.hashCode}');
-                  return Dismissible(
-                    key: key,
-                    direction: DismissDirection.startToEnd,
-                    background: Container(
-                      alignment: Alignment.centerLeft,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(8.0),
+      child: GestureDetector(
+        onLongPress: () => _enableDarkMode(),
+        child: Container(
+          child: _projectList.isNotEmpty
+              ? ListView.builder(
+                  padding: const EdgeInsets.all(8.0),
+                  reverse: false,
+                  itemCount: _projectList.length,
+                  itemBuilder: (context, index) {
+                    final _project = _projectList[index];
+                    final key = Key('${_project.hashCode}');
+                    return Dismissible(
+                      key: key,
+                      direction: DismissDirection.startToEnd,
+                      background: Container(
+                        alignment: Alignment.centerLeft,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(8.0),
+                          ),
+                        ),
+                        child: Row(
+                          children: <Widget>[
+                            Icon(
+                              Icons.arrow_forward,
+                              size: 28.0,
+                            ),
+                            SizedBox(width: 8.0),
+                            Icon(
+                              Icons.delete,
+                              size: 28.0,
+                            ),
+                          ],
                         ),
                       ),
-                      child: Row(
-                        children: <Widget>[
-                          Icon(
-                            Icons.arrow_forward,
-                            size: 28.0,
-                          ),
-                          SizedBox(width: 8.0),
-                          Icon(
-                            Icons.delete,
-                            size: 28.0,
-                          ),
-                        ],
+                      onDismissed: (direction) {
+                        _deleteProject(index);
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        child: ProjectItem(
+                          project: _projectList[index],
+                          onTap: () async {
+                            await Navigator.pushNamed(
+                              context,
+                              RouteGenerator.entry,
+                              arguments: {
+                                'projectTitle': _projectList[index].title,
+                                'isFromCreateProjectPage': false,
+                                'isFromProjectPage': true,
+                                'project': _projectList[index],
+                              },
+                            );
+                          },
+                        ),
                       ),
-                    ),
-                    onDismissed: (direction) {
-                      _deleteProject(index);
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      child: ProjectItem(
-                        project: _projectList[index],
-                        onTap: () async {
-                          await Navigator.pushNamed(
-                            context,
-                            RouteGenerator.entry,
-                            arguments: {
-                              'projectTitle': _projectList[index].title,
-                              'isFromCreateProjectPage': false,
-                              'isFromProjectPage': true,
-                              'project': _projectList[index],
-                            },
-                          );
-                        },
-                      ),
-                    ),
-                  );
-                },
-              )
-            : Center(
-                child: Text(
-                  empty_list,
-                  style: TextStyle(fontSize: 24.0),
+                    );
+                  },
+                )
+              : Center(
+                  child: Text(
+                    empty_list,
+                    style: TextStyle(fontSize: 24.0),
+                  ),
                 ),
-              ),
+        ),
       ),
     );
+  }
+
+  void _checkIfDarkModeEnabled() {
+    final ThemeData theme = Theme.of(context);
+    theme.brightness == appDarkTheme().brightness
+        ? _darkModeEnabled = true
+        : _darkModeEnabled = false;
+  }
+
+  void _enableDarkMode() {
+    _darkModeEnabled
+        ? _themeChanger.setTheme(appLightTheme())
+        : _themeChanger.setTheme(appDarkTheme());
   }
 
   Widget _buildSnackBar({@required String text}) {

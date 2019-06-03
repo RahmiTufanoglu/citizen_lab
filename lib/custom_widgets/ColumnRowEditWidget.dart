@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 
 class ColumnRowEditingWidget extends StatefulWidget {
   final String title;
-  final TextEditingController titleEditingController;
-  final TextEditingController descEditingController;
   final TextEditingController columnEditingController;
   final TextEditingController rowEditingController;
   final GestureTapCallback onPressedClear;
@@ -11,8 +9,6 @@ class ColumnRowEditingWidget extends StatefulWidget {
 
   ColumnRowEditingWidget({
     @required this.title,
-    @required this.titleEditingController,
-    @required this.descEditingController,
     @required this.columnEditingController,
     @required this.rowEditingController,
     @required this.onPressedClear,
@@ -91,19 +87,6 @@ class _ColumnRowEditingWidgetState extends State<ColumnRowEditingWidget> {
               ),
             ),
           ],
-        ),
-        SizedBox(height: 8.0),
-        TextField(
-          controller: widget.titleEditingController,
-          keyboardType: TextInputType.text,
-          maxLines: 2,
-          maxLength: 50,
-          decoration: InputDecoration(
-            hintText: 'Titel',
-            border: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey),
-            ),
-          ),
         ),
         SizedBox(height: 8.0),
         Row(

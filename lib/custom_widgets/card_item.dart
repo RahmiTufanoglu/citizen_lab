@@ -104,17 +104,17 @@ class CardItem extends StatelessWidget {
       case 'Text':
         return Colors.green;
         break;
-      case 'Zeichnung':
-        return Colors.blue;
-        break;
       case 'Tabelle':
-        return Colors.deepOrange;
+        return Colors.indigoAccent;
         break;
       case 'Bild':
-        return Colors.purple;
+        return Colors.deepOrange;
         break;
       case 'Sensor':
-        return Colors.brown;
+        return Colors.purple;
+        break;
+      case 'Wetter':
+        return Colors.blue;
         break;
       default:
         return null;
@@ -127,9 +127,6 @@ class CardItem extends StatelessWidget {
       case 'Text':
         return Icon(Icons.create, color: Colors.white);
         break;
-      case 'Zeichnung':
-        return Icon(Icons.brush, color: Colors.white);
-        break;
       case 'Tabelle':
         return Icon(Icons.table_chart, color: Colors.white);
         break;
@@ -138,6 +135,10 @@ class CardItem extends StatelessWidget {
         break;
       case 'Sensor':
         return Icon(Icons.location_on, color: Colors.white);
+        break;
+      case 'Wetter':
+        return Icon(Icons.cloud, color: Colors.white);
+        break;
       default:
         return null;
         break;

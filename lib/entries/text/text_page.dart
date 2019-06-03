@@ -7,7 +7,6 @@ import 'package:citizen_lab/utils/date_formater.dart';
 import 'package:citizen_lab/database/project_database_provider.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:share/share.dart';
-
 import 'package:citizen_lab/entries/experiment_item.dart';
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/entries/note.dart';
@@ -33,10 +32,10 @@ class _TextPageState extends State<TextPage> {
   final _descEditingController = TextEditingController();
   final _noteDb = ProjectDatabaseProvider();
 
+  Timer _timer;
   String _title;
   String _createdAt;
   String _timeString;
-  Timer _timer;
 
   @override
   void initState() {
@@ -99,7 +98,7 @@ class _TextPageState extends State<TextPage> {
       ),
       title: Tooltip(
         message: noteType,
-        child: Text(_title != null ? _title : noteType),
+        child: Text((_title != null) ? _title : noteType),
       ),
       actions: <Widget>[
         IconButton(
@@ -230,7 +229,7 @@ class _TextPageState extends State<TextPage> {
                     Text(
                       '$content:',
                       style: TextStyle(
-                        fontSize: 18.0,
+                        fontSize: 20.0,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -297,23 +296,6 @@ class _TextPageState extends State<TextPage> {
   }
 
   Widget _buildFabs() {
-    List<ExperimentItem> experimentItems = [
-      ExperimentItem('A', Icons.add),
-      ExperimentItem('B', Icons.add),
-      ExperimentItem('C', Icons.add),
-      ExperimentItem('E', Icons.add),
-      ExperimentItem('F', Icons.add),
-      ExperimentItem('G', Icons.add),
-      ExperimentItem('H', Icons.add),
-      ExperimentItem('I', Icons.add),
-      ExperimentItem('J', Icons.add),
-    ];
-
-    List<Widget> experimentItemsWidgets = [];
-    for (int i = 0; i < experimentItems.length; i++) {
-      experimentItemsWidgets.add(_createTile(experimentItems[i]));
-    }
-
     return Padding(
       padding: const EdgeInsets.only(left: 32.0),
       child: Row(
@@ -322,7 +304,7 @@ class _TextPageState extends State<TextPage> {
           FloatingActionButton(
             heroTag: null,
             child: Icon(Icons.keyboard_arrow_up),
-            onPressed: () => _buildMainBottomSheet(experimentItemsWidgets),
+            onPressed: () => _openModalBottomSheet(),
           ),
           FloatingActionButton(
             heroTag: null,
@@ -371,6 +353,32 @@ class _TextPageState extends State<TextPage> {
     }
   }
 
+  void _openModalBottomSheet() {
+    List<ExperimentItem> experimentItems = [
+      ExperimentItem('', Icons.keyboard_arrow_down),
+      ExperimentItem('A', Icons.add),
+      ExperimentItem('B', Icons.add),
+      ExperimentItem('C', Icons.add),
+      ExperimentItem('E', Icons.add),
+      ExperimentItem('F', Icons.add),
+      ExperimentItem('G', Icons.add),
+      ExperimentItem('H', Icons.add),
+      ExperimentItem('I', Icons.add),
+      ExperimentItem('J', Icons.add),
+    ];
+
+    List<Widget> experimentItemsWidgets = [];
+    for (int i = 0; i < experimentItems.length; i++) {
+      if (i == 0) {
+        experimentItemsWidgets.add(_createTile(experimentItems[i], true));
+      } else {
+        experimentItemsWidgets.add(_createTile(experimentItems[i], false));
+      }
+    }
+
+    _buildMainBottomSheet(experimentItemsWidgets);
+  }
+
   void _buildMainBottomSheet(List<Widget> experimentItemsWidgets) {
     showModalBottomSheet(
       context: context,
@@ -383,7 +391,7 @@ class _TextPageState extends State<TextPage> {
     );
   }
 
-  Widget _createTile(ExperimentItem experimentItem) {
+  Widget _createTile(ExperimentItem experimentItem, bool centerIcon) {
     return Material(
       child: InkWell(
         child: Container(
@@ -393,30 +401,30 @@ class _TextPageState extends State<TextPage> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Center(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text(
-                        experimentItem.name,
-                        style: TextStyle(fontSize: 16.0),
-                      ),
-                      Icon(
-                        experimentItem.icon,
-                        size: 16.0,
-                      ),
-                    ],
-                  ),
+                  child: (!centerIcon)
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Text(
+                              experimentItem.name,
+                              style: TextStyle(fontSize: 16.0),
+                            ),
+                            Icon(experimentItem.icon, size: 20.0),
+                          ],
+                        )
+                      : Center(
+                          child: Icon(experimentItem.icon, size: 28.0),
+                        ),
                 ),
               ),
-              Divider(
-                height: 1.0,
-                color: Colors.black,
-              ),
+              Divider(height: 1.0, color: Colors.black),
             ],
           ),
         ),
         onTap: () {
-          _descEditingController.text += experimentItem.name;
+          if (experimentItem.name.isNotEmpty) {
+            _descEditingController.text += experimentItem.name;
+          }
           Navigator.pop(context);
         },
       ),
@@ -439,33 +447,7 @@ class _TextPageState extends State<TextPage> {
       duration: Duration(milliseconds: 500),
       content: Text(
         text,
-        style: TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSnackBarWithButton(String text) {
-    final String yes = 'Ja';
-
-    return SnackBar(
-      backgroundColor: Colors.black.withOpacity(0.5),
-      duration: Duration(seconds: 3),
-      content: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Text(
-            text,
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          MaterialButton(
-            color: Colors.red,
-            child: Text(yes),
-            onPressed: () => Navigator.pop(context),
-          ),
-        ],
+        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
       ),
     );
   }

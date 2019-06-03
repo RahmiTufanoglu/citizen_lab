@@ -49,8 +49,6 @@ class _TablePageState extends State<TablePage> {
   List<String> data;
   List<List<dynamic>> list = [];
 
-  String _oldPath;
-
   @override
   void initState() {
     if (widget.note != null) {
@@ -60,13 +58,13 @@ class _TablePageState extends State<TablePage> {
       _csv = File(widget.note.content);
       _createdAt = widget.note.dateCreated;
 
-      _oldPath = _csv.path;
-
-      List<List<dynamic>> csvList = _csvToList(_csv);
-      _column = csvList[0].length;
-      _row = csvList.length;
-      _columnTextEditingController.text = _column.toString();
-      _rowTextEditingController.text = _row.toString();
+      if (_column != null && _row != null) {
+        List<List<dynamic>> csvList = _csvToList(_csv);
+        _column = csvList[0].length;
+        _row = csvList.length;
+        _columnTextEditingController.text = _column.toString();
+        _rowTextEditingController.text = _row.toString();
+      }
     } else {
       _titleEditingController.text = '';
       _createdAt = dateFormatted();
@@ -329,7 +327,10 @@ class _TablePageState extends State<TablePage> {
 
   _saveNote() async {
     if (widget.note == null) {
-      String path = await _createCsv(_title);
+      String path = '';
+      if (_column != null && _row != null) {
+        path = await _createCsv(_title);
+      }
       Note newNote = Note(
         widget.projectTitle,
         'Tabelle',
@@ -345,13 +346,14 @@ class _TablePageState extends State<TablePage> {
       );
       await _noteDb.insertNote(note: newNote);
     } else {
-      _updateNote(widget.note);
+      _csv.delete();
+      String path = await _createCsv(_title);
+      _updateNote(widget.note, path);
     }
     Navigator.pop(context, true);
   }
 
-  void _updateNote(Note note) async {
-    String path = await _createCsv(_title);
+  void _updateNote(Note note, String path) async {
     Note newNote = Note.fromMap({
       ProjectDatabaseProvider.columnNoteId: note.id,
       ProjectDatabaseProvider.columnNoteProject: note.project,
@@ -375,11 +377,11 @@ class _TablePageState extends State<TablePage> {
     try {
       if (_csv.path != null) {
         final ByteData bytes = await rootBundle.load(_csv.path);
-        final Uint8List list = bytes.buffer.asUint8List();
+        final Uint8List uint8List = bytes.buffer.asUint8List();
 
         final tempDir = await getTemporaryDirectory();
         final file = await File('${tempDir.path}/$_title.csv').create();
-        file.writeAsBytesSync(list);
+        file.writeAsBytesSync(uint8List);
 
         const channelName = 'rahmitufanoglu.citizenlab';
         final channel = const MethodChannel('channel:$channelName.share/share');
@@ -414,11 +416,7 @@ class _TablePageState extends State<TablePage> {
             }
           },
           onPressedUpdate: () {
-            //_row = int.parse(_rowTextEditingController.text);
-            //_column = int.parse(_columnTextEditingController.text);
-
             _title = _titleEditingController.text;
-
             Navigator.pop(context);
           },
         );
@@ -436,8 +434,6 @@ class _TablePageState extends State<TablePage> {
           title: tableSize,
           columnEditingController: _columnTextEditingController,
           rowEditingController: _rowTextEditingController,
-          titleEditingController: _titleEditingController,
-          descEditingController: _descriptionEditingController,
           onPressedClear: _clearAllFields,
           onPressedCheck: _checkAllFields,
         );
