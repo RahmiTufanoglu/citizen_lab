@@ -1,9 +1,12 @@
 import 'dart:async';
 
+import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/entries/tools/timer_painter.dart';
+import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
+import 'package:share/share.dart';
 
 class StopwatchPage extends StatefulWidget {
   @override
@@ -12,7 +15,7 @@ class StopwatchPage extends StatefulWidget {
 
 class _StopwatchPageState extends State<StopwatchPage>
     with TickerProviderStateMixin {
-  final _globalKey = GlobalKey<ScaffoldState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _timerTextEditingController = TextEditingController();
   final _stopWatch = Stopwatch();
   final _timeout = const Duration(milliseconds: 30);
@@ -40,7 +43,7 @@ class _StopwatchPageState extends State<StopwatchPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _globalKey,
+      key: _scaffoldKey,
       appBar: _buildAppBar(),
       body: _buildBody(),
       floatingActionButton: _buildFabs(),
@@ -50,6 +53,48 @@ class _StopwatchPageState extends State<StopwatchPage>
   Widget _buildAppBar() {
     return AppBar(
       title: Text('Stopwatch'),
+      actions: <Widget>[
+        IconButton(
+          icon: Icon(Icons.share),
+          onPressed: () => _shareContent(),
+        ),
+        IconButton(
+          icon: Icon(Icons.home),
+          onPressed: () => _backToHomePage(),
+        ),
+      ],
+    );
+  }
+
+  void _shareContent() {
+    final String sharingNotPossible = 'Teilvorgang nicht möglich.';
+
+    if (_elapsedTime != '00:00:000') {
+      final String _content = _elapsedTimeList[_elapsedTimeList.length - 1];
+      Share.share(_content);
+    } else {
+      _scaffoldKey.currentState.showSnackBar(
+        _buildSnackBar(text: sharingNotPossible),
+      );
+    }
+  }
+
+  void _backToHomePage() async {
+    final String cancel = 'Notiz abbrechen und zur Hauptseite zurückkehren?';
+
+    await showDialog(
+      context: context,
+      builder: (_) {
+        return NoYesDialog(
+          text: cancel,
+          onPressed: () {
+            Navigator.popUntil(
+              context,
+              ModalRoute.withName(RouteGenerator.routeHomePage),
+            );
+          },
+        );
+      },
     );
   }
 
@@ -208,7 +253,7 @@ class _StopwatchPageState extends State<StopwatchPage>
     if (_elapsedTimeList.isNotEmpty) {
       _setClipboard(content, '$copyContent.');
     } else {
-      _globalKey.currentState.showSnackBar(
+      _scaffoldKey.currentState.showSnackBar(
         _buildSnackBar(text: '$copyNotPossible.'),
       );
     }
@@ -219,7 +264,7 @@ class _StopwatchPageState extends State<StopwatchPage>
       ClipboardData(text: text),
     );
 
-    _globalKey.currentState.showSnackBar(
+    _scaffoldKey.currentState.showSnackBar(
       _buildSnackBar(text: snackText),
     );
   }

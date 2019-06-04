@@ -302,6 +302,7 @@ class _EntryPageState extends State<EntryPage> {
       ExperimentItem('', Icons.keyboard_arrow_down),
       ExperimentItem('Rechnen', Icons.straighten),
       ExperimentItem('Stoppuhr', Icons.timer),
+      ExperimentItem('Ortsbestimmung', Icons.location_on),
     ];
 
     List<Widget> experimentItemsWidgets = [];
@@ -340,13 +341,16 @@ class _EntryPageState extends State<EntryPage> {
                 child: Center(
                   child: (!centerIcon)
                       ? Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: <Widget>[
-                            Text(
-                              experimentItem.name,
-                              style: TextStyle(fontSize: 20.0),
+                            Expanded(
+                              child: Text(
+                                experimentItem.name,
+                                style: TextStyle(fontSize: 20.0),
+                              ),
                             ),
-                            Icon(experimentItem.icon, size: 28.0),
+                            Expanded(
+                              child: Icon(experimentItem.icon, size: 28.0),
+                            ),
                           ],
                         )
                       : Center(
@@ -365,6 +369,8 @@ class _EntryPageState extends State<EntryPage> {
             Navigator.pushNamed(context, RouteGenerator.calculatorPage);
           } else if (experimentItem.name == 'Stoppuhr') {
             Navigator.pushNamed(context, RouteGenerator.stopwatchPage);
+          } else if (experimentItem.name == 'Ortsbestimmung') {
+            Navigator.pushNamed(context, RouteGenerator.sensorPage);
           }
         },
       ),
@@ -409,14 +415,9 @@ class _EntryPageState extends State<EntryPage> {
           'Bild',
         ),
         _buildSpeedDialChild(
-          Icon(Icons.location_on),
+          Icon(Icons.link),
           Colors.purple,
-          'Sensor',
-        ),
-        _buildSpeedDialChild(
-          Icon(Icons.cloud),
-          Colors.blue,
-          'Wetter',
+          'Verlinkung',
         ),
       ],
     );
@@ -476,7 +477,7 @@ class _EntryPageState extends State<EntryPage> {
 
         if (result) _loadNoteList();
         break;
-      case 'Sensor':
+      /*case 'Sensor':
         final result = await Navigator.pushNamed(
           context,
           RouteGenerator.sensorPage,
@@ -487,7 +488,7 @@ class _EntryPageState extends State<EntryPage> {
         );
 
         if (result) _loadNoteList();
-        break;
+        break;*/
       case 'Wetter':
         final result = await Navigator.pushNamed(
           context,

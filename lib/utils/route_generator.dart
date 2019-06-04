@@ -114,10 +114,7 @@ class RouteGenerator {
           route = routeSketchPage;
           break;
         case sensorPage:
-          page = SensorPage(
-            projectTitle: args['project'],
-            note: args['note'],
-          );
+          page = SensorPage();
           route = routeSensorPage;
           break;
         case infoPage:
