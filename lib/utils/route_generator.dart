@@ -1,6 +1,7 @@
 import 'package:citizen_lab/citizen_science/about_page.dart';
 import 'package:citizen_lab/entries/audio_record_page.dart';
-import 'package:citizen_lab/entries/sensor/sensor_page.dart';
+import 'package:citizen_lab/entries/linking_page/linking_page.dart';
+import 'package:citizen_lab/entries/tools/sensor_page.dart';
 import 'package:citizen_lab/entries/tools/calculator_page.dart';
 import 'package:citizen_lab/entries/tools/stopwatch_page.dart';
 import 'package:citizen_lab/splash_page.dart';
@@ -37,6 +38,7 @@ class RouteGenerator {
   static const String calculatorPage = '/calculator_page';
   static const String stopwatchPage = '/stopwatch_page';
   static const String audioRecordPage = '/audio_record_page';
+  static const String audioLinkingPage = '/linking_page';
 
   static const String routeHomePage = 'home';
   static const String routeSplashPage = 'splash_page';
@@ -56,6 +58,7 @@ class RouteGenerator {
   static const String routeCalculatorPage = 'calculator_page';
   static const String routeStopwatchPage = 'stopwatch_page';
   static const String routeAudioRecordPage = 'audio_record_page';
+  static const String routeLinkingRecordPage = 'linking_page';
 
   static RouteFactory routes() {
     return (settings) {
@@ -157,6 +160,14 @@ class RouteGenerator {
         case audioRecordPage:
           page = AudioRecordPage();
           route = routeAudioRecordPage;
+          break;
+        case routeLinkingRecordPage:
+          page = LinkingPage(
+            projectTitle: args['projectImagePage'],
+            note: args['note'],
+            url: args['url'],
+          );
+          route = routeLinkingRecordPage;
           break;
         default:
           return null;

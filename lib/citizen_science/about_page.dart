@@ -1,9 +1,23 @@
+import 'package:citizen_lab/themes/theme.dart';
+import 'package:citizen_lab/themes/theme_changer.dart';
 import 'package:citizen_lab/utils/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class AboutPage extends StatelessWidget {
+class AboutPage extends StatefulWidget {
+  @override
+  _AboutPageState createState() => _AboutPageState();
+}
+
+class _AboutPageState extends State<AboutPage> {
+  ThemeChanger _themeChanger;
+  bool _darkModeEnabled = false;
+
   @override
   Widget build(BuildContext context) {
+    _themeChanger = Provider.of<ThemeChanger>(context);
+    _checkIfDarkModeEnabled();
+
     return Scaffold(
       appBar: _buildAppBar(context),
       body: _buildBody(),
@@ -21,8 +35,27 @@ class AboutPage extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      title: Text('Über'),
+      title: GestureDetector(
+        onDoubleTap: () => _enableDarkMode(),
+        child: Tooltip(
+          message: '',
+          child: Text('Über'),
+        ),
+      ),
     );
+  }
+
+  void _checkIfDarkModeEnabled() {
+    final ThemeData theme = Theme.of(context);
+    theme.brightness == appDarkTheme().brightness
+        ? _darkModeEnabled = true
+        : _darkModeEnabled = false;
+  }
+
+  void _enableDarkMode() {
+    _darkModeEnabled
+        ? _themeChanger.setTheme(appLightTheme())
+        : _themeChanger.setTheme(appDarkTheme());
   }
 
   Widget _buildBody() {

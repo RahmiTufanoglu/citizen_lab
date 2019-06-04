@@ -58,7 +58,6 @@ class _HomePageState extends State<HomePage>
   @override
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChanger>(context);
-
     _checkIfDarkModeEnabled();
 
     return Scaffold(
@@ -72,7 +71,12 @@ class _HomePageState extends State<HomePage>
   Widget _buildAppBar() {
     return AppBar(
       elevation: 4.0,
-      title: Text('Citizen Lab'),
+      title: GestureDetector(
+        child: Tooltip(
+          message: '',
+          child: Text('Citizen Lab'),
+        ),
+      ),
       actions: <Widget>[
         IconButton(
           icon: Icon(Icons.tag_faces),

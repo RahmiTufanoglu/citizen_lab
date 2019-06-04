@@ -85,7 +85,6 @@ class _EntryPageState extends State<EntryPage> {
   @override
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChanger>(context);
-
     _checkIfDarkModeEnabled();
 
     return Scaffold(
@@ -104,7 +103,13 @@ class _EntryPageState extends State<EntryPage> {
         icon: Icon(Icons.arrow_back),
         onPressed: () => _onBackPressed(),
       ),
-      title: Text(_title),
+      title: GestureDetector(
+        onDoubleTap: () => _enableDarkMode(),
+        child: Tooltip(
+          message: _title,
+          child: Text(_title),
+        ),
+      ),
       elevation: 4.0,
       actions: <Widget>[
         PopupMenuButton(
@@ -158,56 +163,6 @@ class _EntryPageState extends State<EntryPage> {
     );
   }
 
-  Widget _buildBody() {
-    return WillPopScope(
-      onWillPop: _onBackPressed,
-      child: SafeArea(
-        child: GestureDetector(
-          onLongPress: () => _enableDarkMode(),
-          child: _noteList.isNotEmpty
-              ? ListView.builder(
-                  itemCount: _noteList.length,
-                  padding: const EdgeInsets.only(
-                    top: 8.0,
-                    bottom: 88.0,
-                    left: 8.0,
-                    right: 8.0,
-                  ),
-                  itemBuilder: (context, index) {
-                    final _note = _noteList[index];
-                    final key = Key('${_note.hashCode}');
-                    return Dismissible(
-                      key: key,
-                      direction: DismissDirection.startToEnd,
-                      background: Container(
-                        alignment: Alignment.centerLeft,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                        ),
-                        child: Row(
-                          children: <Widget>[
-                            Icon(Icons.arrow_forward, size: 28.0),
-                            SizedBox(width: 8.0),
-                            Icon(Icons.delete, size: 28.0),
-                          ],
-                        ),
-                      ),
-                      onDismissed: (direction) => _deleteNote(index),
-                      child: _buildItem(index),
-                    );
-                  },
-                )
-              : Center(
-                  child: Text(
-                    empty_list,
-                    style: TextStyle(fontSize: 24.0),
-                  ),
-                ),
-        ),
-      ),
-    );
-  }
-
   void _checkIfDarkModeEnabled() {
     final ThemeData theme = Theme.of(context);
     theme.brightness == appDarkTheme().brightness
@@ -219,6 +174,53 @@ class _EntryPageState extends State<EntryPage> {
     _darkModeEnabled
         ? _themeChanger.setTheme(appLightTheme())
         : _themeChanger.setTheme(appDarkTheme());
+  }
+
+  Widget _buildBody() {
+    return WillPopScope(
+      onWillPop: _onBackPressed,
+      child: SafeArea(
+        child: _noteList.isNotEmpty
+            ? ListView.builder(
+                itemCount: _noteList.length,
+                padding: const EdgeInsets.only(
+                  top: 8.0,
+                  bottom: 88.0,
+                  left: 8.0,
+                  right: 8.0,
+                ),
+                itemBuilder: (context, index) {
+                  final _note = _noteList[index];
+                  final key = Key('${_note.hashCode}');
+                  return Dismissible(
+                    key: key,
+                    direction: DismissDirection.startToEnd,
+                    background: Container(
+                      alignment: Alignment.centerLeft,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                      ),
+                      child: Row(
+                        children: <Widget>[
+                          Icon(Icons.arrow_forward, size: 28.0),
+                          SizedBox(width: 8.0),
+                          Icon(Icons.delete, size: 28.0),
+                        ],
+                      ),
+                    ),
+                    onDismissed: (direction) => _deleteNote(index),
+                    child: _buildItem(index),
+                  );
+                },
+              )
+            : Center(
+                child: Text(
+                  empty_list,
+                  style: TextStyle(fontSize: 24.0),
+                ),
+              ),
+      ),
+    );
   }
 
   Widget _buildItem(int index) {
@@ -254,7 +256,7 @@ class _EntryPageState extends State<EntryPage> {
           left: ((screenWidth + 32.0) / 2) - 28.0,
           child: FloatingActionButton(
             heroTag: null,
-            child: Icon(Icons.extension),
+            child: Icon(Icons.keyboard_arrow_up),
             tooltip: desc,
             onPressed: () => _openModalBottomSheet(),
           ),
@@ -345,16 +347,16 @@ class _EntryPageState extends State<EntryPage> {
                             Expanded(
                               child: Text(
                                 experimentItem.name,
-                                style: TextStyle(fontSize: 20.0),
+                                style: TextStyle(fontSize: 16.0),
                               ),
                             ),
                             Expanded(
-                              child: Icon(experimentItem.icon, size: 28.0),
+                              child: Icon(experimentItem.icon, size: 24.0),
                             ),
                           ],
                         )
                       : Center(
-                          child: Icon(experimentItem.icon, size: 28.0),
+                          child: Icon(experimentItem.icon, size: 24.0),
                         ),
                 ),
               ),
@@ -366,11 +368,11 @@ class _EntryPageState extends State<EntryPage> {
           if (experimentItem.name.isEmpty) {
             Navigator.pop(context);
           } else if (experimentItem.name == 'Rechnen') {
-            Navigator.pushNamed(context, RouteGenerator.calculatorPage);
+            Navigator.popAndPushNamed(context, RouteGenerator.calculatorPage);
           } else if (experimentItem.name == 'Stoppuhr') {
-            Navigator.pushNamed(context, RouteGenerator.stopwatchPage);
+            Navigator.popAndPushNamed(context, RouteGenerator.stopwatchPage);
           } else if (experimentItem.name == 'Ortsbestimmung') {
-            Navigator.pushNamed(context, RouteGenerator.sensorPage);
+            Navigator.popAndPushNamed(context, RouteGenerator.sensorPage);
           }
         },
       ),
@@ -500,6 +502,20 @@ class _EntryPageState extends State<EntryPage> {
         );
 
         if (result) _loadNoteList();
+        break;
+      case 'Verlinkung':
+        //final result = await Navigator.pushNamed(
+        await Navigator.pushNamed(
+          context,
+          RouteGenerator.routeLinkingRecordPage,
+          arguments: {
+            'project': widget.projectTitle,
+            'note': note,
+            'url': 'http://flutter.dev',
+          },
+        );
+
+        //if (result) _loadNoteList();
         break;
       default:
         break;

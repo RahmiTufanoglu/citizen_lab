@@ -7,6 +7,8 @@ import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/custom_widgets/table_widget.dart';
 import 'package:citizen_lab/database/project_database_provider.dart';
 import 'package:citizen_lab/entries/table/table_info_page_data.dart';
+import 'package:citizen_lab/themes/theme.dart';
+import 'package:citizen_lab/themes/theme_changer.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:citizen_lab/custom_widgets/simple_timer_dialog.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +18,7 @@ import 'package:path_provider/path_provider.dart';
 
 import 'package:citizen_lab/utils/date_formater.dart';
 import 'package:citizen_lab/entries/note.dart';
+import 'package:provider/provider.dart';
 
 class TablePage extends StatefulWidget {
   final Key key;
@@ -41,6 +44,8 @@ class _TablePageState extends State<TablePage> {
   final _noteDb = ProjectDatabaseProvider();
   final _listTextEditingController = <TextEditingController>[];
 
+  ThemeChanger _themeChanger;
+  bool _darkModeEnabled = false;
   File _csv;
   int _column;
   int _row;
@@ -93,6 +98,9 @@ class _TablePageState extends State<TablePage> {
 
   @override
   Widget build(BuildContext context) {
+    _themeChanger = Provider.of<ThemeChanger>(context);
+    _checkIfDarkModeEnabled();
+
     return Scaffold(
       key: _globalKey,
       appBar: _buildAppBar(),
@@ -111,9 +119,12 @@ class _TablePageState extends State<TablePage> {
         icon: Icon(Icons.arrow_back),
         onPressed: () => _saveNote(),
       ),
-      title: Tooltip(
-        message: noteType,
-        child: Text((_title != null) ? _title : noteType),
+      title: GestureDetector(
+        onDoubleTap: () => _enableDarkMode(),
+        child: Tooltip(
+          message: noteType,
+          child: Text((_title != null) ? _title : noteType),
+        ),
       ),
       actions: <Widget>[
         IconButton(
@@ -130,6 +141,19 @@ class _TablePageState extends State<TablePage> {
         ),
       ],
     );
+  }
+
+  void _checkIfDarkModeEnabled() {
+    final ThemeData theme = Theme.of(context);
+    theme.brightness == appDarkTheme().brightness
+        ? _darkModeEnabled = true
+        : _darkModeEnabled = false;
+  }
+
+  void _enableDarkMode() {
+    _darkModeEnabled
+        ? _themeChanger.setTheme(appLightTheme())
+        : _themeChanger.setTheme(appDarkTheme());
   }
 
   void _shareContent() {

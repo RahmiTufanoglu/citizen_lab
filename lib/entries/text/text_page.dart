@@ -1,11 +1,14 @@
 import 'dart:async';
 
 import 'package:citizen_lab/entries/text/text_info_page_data.dart';
+import 'package:citizen_lab/themes/theme.dart';
+import 'package:citizen_lab/themes/theme_changer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:citizen_lab/utils/date_formater.dart';
 import 'package:citizen_lab/database/project_database_provider.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
+import 'package:provider/provider.dart';
 import 'package:share/share.dart';
 import 'package:citizen_lab/entries/experiment_item.dart';
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
@@ -32,6 +35,8 @@ class _TextPageState extends State<TextPage> {
   final _descEditingController = TextEditingController();
   final _noteDb = ProjectDatabaseProvider();
 
+  ThemeChanger _themeChanger;
+  bool _darkModeEnabled = false;
   Timer _timer;
   String _title;
   String _createdAt;
@@ -77,6 +82,9 @@ class _TextPageState extends State<TextPage> {
 
   @override
   Widget build(BuildContext context) {
+    _themeChanger = Provider.of<ThemeChanger>(context);
+    _checkIfDarkModeEnabled();
+
     return Scaffold(
       key: _globalKey,
       appBar: _buildAppBar(),
@@ -96,9 +104,12 @@ class _TextPageState extends State<TextPage> {
         icon: Icon(Icons.arrow_back),
         onPressed: () => _saveNote(),
       ),
-      title: Tooltip(
-        message: noteType,
-        child: Text((_title != null) ? _title : noteType),
+      title: GestureDetector(
+        onDoubleTap: () => _enableDarkMode(),
+        child: Tooltip(
+          message: noteType,
+          child: Text((_title != null) ? _title : noteType),
+        ),
       ),
       actions: <Widget>[
         IconButton(
@@ -115,6 +126,19 @@ class _TextPageState extends State<TextPage> {
         ),
       ],
     );
+  }
+
+  void _checkIfDarkModeEnabled() {
+    final ThemeData theme = Theme.of(context);
+    theme.brightness == appDarkTheme().brightness
+        ? _darkModeEnabled = true
+        : _darkModeEnabled = false;
+  }
+
+  void _enableDarkMode() {
+    _darkModeEnabled
+        ? _themeChanger.setTheme(appLightTheme())
+        : _themeChanger.setTheme(appDarkTheme());
   }
 
   void _shareContent() {

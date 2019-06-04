@@ -1,7 +1,10 @@
+import 'package:citizen_lab/themes/theme.dart';
+import 'package:citizen_lab/themes/theme_changer.dart';
 import 'package:flutter/material.dart';
 import 'package:citizen_lab/collapsing_appbar_page.dart';
+import 'package:provider/provider.dart';
 
-class DetailPage extends StatelessWidget {
+class DetailPage extends StatefulWidget {
   final String title;
   final String content;
   final String image;
@@ -13,19 +16,49 @@ class DetailPage extends StatelessWidget {
   });
 
   @override
+  _DetailPageState createState() => _DetailPageState();
+}
+
+class _DetailPageState extends State<DetailPage> {
+  ThemeChanger _themeChanger;
+  bool _darkModeEnabled = false;
+
+  @override
   Widget build(BuildContext context) {
+    _themeChanger = Provider.of<ThemeChanger>(context);
+    _checkIfDarkModeEnabled();
+
     return Scaffold(
       body: CollapsingAppBarPage(
-        text: Text(
-          title,
-          style: TextStyle(fontSize: 16.0),
+        text: GestureDetector(
+          onDoubleTap: () => _enableDarkMode(),
+          child: Tooltip(
+            message: '',
+            child: Text(
+              widget.title,
+              style: TextStyle(fontSize: 16.0),
+            ),
+          ),
         ),
-        image: image,
+        image: widget.image,
         body: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Text(content),
+          child: Text(widget.content),
         ),
       ),
     );
+  }
+
+  void _checkIfDarkModeEnabled() {
+    final ThemeData theme = Theme.of(context);
+    theme.brightness == appDarkTheme().brightness
+        ? _darkModeEnabled = true
+        : _darkModeEnabled = false;
+  }
+
+  void _enableDarkMode() {
+    _darkModeEnabled
+        ? _themeChanger.setTheme(appLightTheme())
+        : _themeChanger.setTheme(appDarkTheme());
   }
 }

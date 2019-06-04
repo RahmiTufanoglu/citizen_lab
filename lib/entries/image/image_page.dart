@@ -3,6 +3,10 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
 
+import 'package:citizen_lab/themes/theme.dart';
+import 'package:citizen_lab/themes/theme_changer.dart';
+import 'package:provider/provider.dart';
+
 import 'image_info_page_data.dart';
 
 import 'package:citizen_lab/utils/route_generator.dart';
@@ -40,6 +44,8 @@ class _ImagePageState extends State<ImagePage> {
   final _descEditingController = TextEditingController();
   final _noteDb = ProjectDatabaseProvider();
 
+  ThemeChanger _themeChanger;
+  bool _darkModeEnabled = false;
   File _image;
   String _title;
   String _createdAt;
@@ -74,6 +80,9 @@ class _ImagePageState extends State<ImagePage> {
 
   @override
   Widget build(BuildContext context) {
+    _themeChanger = Provider.of<ThemeChanger>(context);
+    _checkIfDarkModeEnabled();
+
     return Scaffold(
       key: _scaffoldKey,
       appBar: _buildAppBar(),
@@ -92,9 +101,12 @@ class _ImagePageState extends State<ImagePage> {
         icon: Icon(Icons.arrow_back),
         onPressed: () => _saveNote(),
       ),
-      title: Tooltip(
-        message: noteType,
-        child: Text(_title != null ? _title : noteType),
+      title: GestureDetector(
+        onDoubleTap: () => _enableDarkMode(),
+        child: Tooltip(
+          message: noteType,
+          child: Text(_title != null ? _title : noteType),
+        ),
       ),
       actions: <Widget>[
         IconButton(
@@ -111,6 +123,19 @@ class _ImagePageState extends State<ImagePage> {
         ),
       ],
     );
+  }
+
+  void _checkIfDarkModeEnabled() {
+    final ThemeData theme = Theme.of(context);
+    theme.brightness == appDarkTheme().brightness
+        ? _darkModeEnabled = true
+        : _darkModeEnabled = false;
+  }
+
+  void _enableDarkMode() {
+    _darkModeEnabled
+        ? _themeChanger.setTheme(appLightTheme())
+        : _themeChanger.setTheme(appDarkTheme());
   }
 
   void _shareContent() {

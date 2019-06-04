@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:citizen_lab/themes/theme.dart';
+import 'package:citizen_lab/themes/theme_changer.dart';
 import 'package:flutter/material.dart';
 import 'package:citizen_lab/utils/date_formater.dart';
 import 'package:citizen_lab/projects/project.dart';
@@ -7,6 +9,7 @@ import 'package:citizen_lab/database/project_database_provider.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
 
 import 'package:citizen_lab/utils/constants.dart';
+import 'package:provider/provider.dart';
 
 import 'create_project_info_page_data.dart';
 
@@ -26,6 +29,9 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
 
   Color _buttonColor = Colors.white;
   Color _buttonIconColor = Colors.black;
+
+  ThemeChanger _themeChanger;
+  bool _darkModeEnabled = false;
 
   _CreateProjectPageState() {
     _titleEditingController.addListener(() => _checkTextsAreNotEmpty());
@@ -67,6 +73,9 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
 
   @override
   Widget build(BuildContext context) {
+    _themeChanger = Provider.of<ThemeChanger>(context);
+    _checkIfDarkModeEnabled();
+
     return Scaffold(
       key: _snackBarKey,
       appBar: _buildAppBar(),
@@ -82,7 +91,13 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
         icon: Icon(Icons.arrow_back),
         onPressed: () => Navigator.pop(context),
       ),
-      title: Text(create_project),
+      title: GestureDetector(
+        onDoubleTap: () => _enableDarkMode(),
+        child: Tooltip(
+          message: create_project,
+          child: Text(create_project),
+        ),
+      ),
       elevation: 4.0,
       actions: <Widget>[
         IconButton(
@@ -91,6 +106,19 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
         ),
       ],
     );
+  }
+
+  void _checkIfDarkModeEnabled() {
+    final ThemeData theme = Theme.of(context);
+    theme.brightness == appDarkTheme().brightness
+        ? _darkModeEnabled = true
+        : _darkModeEnabled = false;
+  }
+
+  void _enableDarkMode() {
+    _darkModeEnabled
+        ? _themeChanger.setTheme(appLightTheme())
+        : _themeChanger.setTheme(appDarkTheme());
   }
 
   void _setInfoPage() {
