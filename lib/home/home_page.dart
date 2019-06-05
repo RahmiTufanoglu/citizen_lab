@@ -31,6 +31,8 @@ class _HomePageState extends State<HomePage>
   ThemeChanger _themeChanger;
   bool _valueSwitch = false;
 
+  bool _darkModeEnabled = false;
+
   @override
   void initState() {
     _animationController = AnimationController(
@@ -53,6 +55,14 @@ class _HomePageState extends State<HomePage>
     theme.brightness == appDarkTheme().brightness
         ? _valueSwitch = true
         : _valueSwitch = false;
+
+    if (theme.brightness == appDarkTheme().brightness) {
+      _valueSwitch = true;
+      _darkModeEnabled = true;
+    } else {
+      _valueSwitch = false;
+      _darkModeEnabled = false;
+    }
   }
 
   @override
@@ -72,19 +82,29 @@ class _HomePageState extends State<HomePage>
     return AppBar(
       elevation: 4.0,
       title: GestureDetector(
-        child: Tooltip(
-          message: '',
-          child: Text('Citizen Lab'),
+        onPanStart: (_) => _enableDarkMode(),
+        child: Container(
+          width: double.infinity,
+          child: Tooltip(
+            message: '',
+            child: Text('Citizen Lab'),
+          ),
         ),
       ),
       actions: <Widget>[
         IconButton(
-          icon: Icon(Icons.tag_faces),
-          onPressed: () {},
+          icon: Icon(Icons.style),
+          onPressed: () => null,
         ),
         SizedBox(width: 8.0),
       ],
     );
+  }
+
+  void _enableDarkMode() {
+    _darkModeEnabled
+        ? _themeChanger.setTheme(appLightTheme())
+        : _themeChanger.setTheme(appDarkTheme());
   }
 
   Widget _buildDrawer() {
@@ -179,7 +199,7 @@ class _HomePageState extends State<HomePage>
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Icon(Icons.lightbulb_outline),
+              Icon(Icons.brightness_2),
               Switch(
                 inactiveTrackColor: Color(0xFF191919),
                 activeTrackColor: Colors.white,

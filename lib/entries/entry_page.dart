@@ -104,10 +104,13 @@ class _EntryPageState extends State<EntryPage> {
         onPressed: () => _onBackPressed(),
       ),
       title: GestureDetector(
-        onDoubleTap: () => _enableDarkMode(),
-        child: Tooltip(
-          message: _title,
-          child: Text(_title),
+        onPanStart: (_) => _enableDarkMode(),
+        child: Container(
+          width: double.infinity,
+          child: Tooltip(
+            message: _title,
+            child: Text(_title),
+          ),
         ),
       ),
       elevation: 4.0,
@@ -522,6 +525,31 @@ class _EntryPageState extends State<EntryPage> {
     }
   }
 
+  void _loadNoteList() async {
+    for (int i = 0; i < _noteList.length; i++) {
+      _noteList.removeWhere((element) {
+        _noteList[i].id = _noteList[i].id;
+      });
+    }
+
+    //List notes = await _noteDb.getAllNotes();
+
+    //List notes = await _noteDb.getAllNotes();
+    //List notes = await _noteDb.getNote(id: widget.projectTitle);
+    //List notes = await _noteDb.getNotesOfProject(id: widget.project.id);
+    List notes = await _noteDb.getNotesOfProject(id: widget.projectTitle);
+    //List notes = await _noteDb.getNotesOfProject(id: 0);
+    //List notes = await _noteDb.getAllNotes(title: widget.projectTitle);
+
+    notes.forEach((note) {
+      setState(() {
+        _noteList.insert(0, Note.map(note));
+      });
+
+      _choiceSortOption(sort_by_release_date_desc);
+    });
+  }
+
   void _deleteNote(int index) async {
     await _noteDb.deleteNote(id: _noteList[index].id);
 
@@ -537,24 +565,6 @@ class _EntryPageState extends State<EntryPage> {
 
     setState(() {
       _noteList.removeAt(index);
-    });
-  }
-
-  void _loadNoteList() async {
-    for (int i = 0; i < _noteList.length; i++) {
-      _noteList.removeWhere((element) {
-        _noteList[i].id = _noteList[i].id;
-      });
-    }
-
-    List notes = await _noteDb.getAllNotes();
-
-    notes.forEach((note) {
-      setState(() {
-        _noteList.insert(0, Note.map(note));
-      });
-
-      _choiceSortOption(sort_by_release_date_desc);
     });
   }
 

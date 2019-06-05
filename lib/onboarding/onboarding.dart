@@ -5,12 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:citizen_lab/utils/constants.dart';
 import 'onboarding_data.dart';
 
-class Onboarding extends StatefulWidget {
+class OnboardingPage extends StatefulWidget {
   @override
-  _OnboardingState createState() => _OnboardingState();
+  _OnboardingPageState createState() => _OnboardingPageState();
 }
 
-class _OnboardingState extends State<Onboarding> with TickerProviderStateMixin {
+class _OnboardingPageState extends State<OnboardingPage> with TickerProviderStateMixin {
   PageController _controller;
   int _currentPage = 0;
   bool _lastPage = false;

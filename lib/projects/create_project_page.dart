@@ -7,7 +7,6 @@ import 'package:citizen_lab/utils/date_formater.dart';
 import 'package:citizen_lab/projects/project.dart';
 import 'package:citizen_lab/database/project_database_provider.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
-
 import 'package:citizen_lab/utils/constants.dart';
 import 'package:provider/provider.dart';
 
@@ -25,13 +24,12 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
   final _descEditingController = TextEditingController();
   final _projectDb = ProjectDatabaseProvider();
 
-  List<Project> _projectList = [];
-
-  Color _buttonColor = Colors.white;
-  Color _buttonIconColor = Colors.black;
-
   ThemeChanger _themeChanger;
   bool _darkModeEnabled = false;
+
+  List<Project> _projectList = [];
+  Color _buttonColor = Colors.white;
+  Color _buttonIconColor = Colors.black;
 
   _CreateProjectPageState() {
     _titleEditingController.addListener(() => _checkTextsAreNotEmpty());
@@ -84,6 +82,13 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
     );
   }
 
+  void _checkIfDarkModeEnabled() {
+    final ThemeData theme = Theme.of(context);
+    theme.brightness == appDarkTheme().brightness
+        ? _darkModeEnabled = true
+        : _darkModeEnabled = false;
+  }
+
   Widget _buildAppBar() {
     return AppBar(
       leading: IconButton(
@@ -92,10 +97,13 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
         onPressed: () => Navigator.pop(context),
       ),
       title: GestureDetector(
-        onDoubleTap: () => _enableDarkMode(),
-        child: Tooltip(
-          message: create_project,
-          child: Text(create_project),
+        onPanStart: (_) => _enableDarkMode(),
+        child: Container(
+          width: double.infinity,
+          child: Tooltip(
+            message: create_project,
+            child: Text(create_project),
+          ),
         ),
       ),
       elevation: 4.0,
@@ -106,13 +114,6 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
         ),
       ],
     );
-  }
-
-  void _checkIfDarkModeEnabled() {
-    final ThemeData theme = Theme.of(context);
-    theme.brightness == appDarkTheme().brightness
-        ? _darkModeEnabled = true
-        : _darkModeEnabled = false;
   }
 
   void _enableDarkMode() {
@@ -180,9 +181,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
                   maxLength: 500,
                   maxLines: 10,
                   decoration: InputDecoration(hintText: '$desc_here.'),
-                  validator: (text) {
-                    return text.isEmpty ? enter_a_desc : null;
-                  },
+                  validator: (text) => text.isEmpty ? enter_a_desc : null,
                 ),
               ],
             ),
@@ -222,7 +221,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
       _titleEditingController.text,
       _descEditingController.text,
       dateFormatted(),
-      dateFormatted(),
+      '',
     );
 
     if (_formKey.currentState.validate() && !_projectExists) {

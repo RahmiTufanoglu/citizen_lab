@@ -65,10 +65,13 @@ class _CitizenSciencePageState extends State<CitizenSciencePage> {
   Widget _buildAppbar() {
     return AppBar(
       title: GestureDetector(
-        onDoubleTap: () => _enableDarkMode(),
-        child: Tooltip(
-          message: '',
-          child: Text('Citizen Science'),
+        onPanStart: (_) => _enableDarkMode(),
+        child: Container(
+          width: double.infinity,
+          child: Tooltip(
+            message: '',
+            child: Text('Citizen Science'),
+          ),
         ),
       ),
       actions: <Widget>[

@@ -31,12 +31,15 @@ class _DetailPageState extends State<DetailPage> {
     return Scaffold(
       body: CollapsingAppBarPage(
         text: GestureDetector(
-          onDoubleTap: () => _enableDarkMode(),
-          child: Tooltip(
-            message: '',
-            child: Text(
-              widget.title,
-              style: TextStyle(fontSize: 16.0),
+          onPanStart: (_) => _enableDarkMode(),
+          child: Container(
+            width: double.infinity,
+            child: Tooltip(
+              message: '',
+              child: Text(
+                widget.title,
+                style: TextStyle(fontSize: 16.0),
+              ),
             ),
           ),
         ),

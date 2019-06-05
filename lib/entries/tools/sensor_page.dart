@@ -1,9 +1,12 @@
 import 'dart:async';
 
+import 'package:citizen_lab/themes/theme.dart';
+import 'package:citizen_lab/themes/theme_changer.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:provider/provider.dart';
 import 'package:share/share.dart';
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 
@@ -25,6 +28,9 @@ class _SensorPageState extends State<SensorPage>
   AnimationController _animationController;
   Animation<double> _animation;
   Timer _timer;
+
+  ThemeChanger _themeChanger;
+  bool _darkModeEnabled = false;
 
   @override
   void initState() {
@@ -58,6 +64,9 @@ class _SensorPageState extends State<SensorPage>
 
   @override
   Widget build(BuildContext context) {
+    _themeChanger = Provider.of<ThemeChanger>(context);
+    _checkIfDarkModeEnabled();
+
     return Scaffold(
       key: _scaffoldKey,
       appBar: _buildAppBar(),
@@ -72,9 +81,15 @@ class _SensorPageState extends State<SensorPage>
 
     return AppBar(
       elevation: 4.0,
-      title: Tooltip(
-        message: noteType,
-        child: Text(noteType),
+      title: GestureDetector(
+        onPanStart: (_) => _enableDarkMode(),
+        child: Container(
+          width: double.infinity,
+          child: Tooltip(
+            message: noteType,
+            child: Text(noteType),
+          ),
+        ),
       ),
       leading: IconButton(
         tooltip: back,
@@ -92,6 +107,19 @@ class _SensorPageState extends State<SensorPage>
         ),
       ],
     );
+  }
+
+  void _checkIfDarkModeEnabled() {
+    final ThemeData theme = Theme.of(context);
+    theme.brightness == appDarkTheme().brightness
+        ? _darkModeEnabled = true
+        : _darkModeEnabled = false;
+  }
+
+  void _enableDarkMode() {
+    _darkModeEnabled
+        ? _themeChanger.setTheme(appLightTheme())
+        : _themeChanger.setTheme(appDarkTheme());
   }
 
   void _shareContent() {

@@ -51,10 +51,13 @@ class _ProjectPageState extends State<ProjectPage> {
         onPressed: () => Navigator.pop(context),
       ),
       title: GestureDetector(
-        onDoubleTap: () => _enableDarkMode(),
-        child: Tooltip(
-          message: '',
-          child: Text('Projekte'),
+        onPanStart: (_) => _enableDarkMode(),
+        child: Container(
+          width: double.infinity,
+          child: Tooltip(
+            message: '',
+            child: Text('Projekte'),
+          ),
         ),
       ),
       elevation: 4.0,
@@ -193,70 +196,68 @@ class _ProjectPageState extends State<ProjectPage> {
 
   Widget _buildBody() {
     return SafeArea(
-      child: Container(
-        child: _projectList.isNotEmpty
-            ? ListView.builder(
-                padding: const EdgeInsets.all(8.0),
-                reverse: false,
-                itemCount: _projectList.length,
-                itemBuilder: (context, index) {
-                  final _project = _projectList[index];
-                  final key = Key('${_project.hashCode}');
-                  return Dismissible(
-                    key: key,
-                    direction: DismissDirection.startToEnd,
-                    background: Container(
-                      alignment: Alignment.centerLeft,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(8.0),
+      child: _projectList.isNotEmpty
+          ? ListView.builder(
+              padding: const EdgeInsets.all(8.0),
+              reverse: false,
+              itemCount: _projectList.length,
+              itemBuilder: (context, index) {
+                final _project = _projectList[index];
+                final key = Key('${_project.hashCode}');
+                return Dismissible(
+                  key: key,
+                  direction: DismissDirection.startToEnd,
+                  background: Container(
+                    alignment: Alignment.centerLeft,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(8.0),
+                      ),
+                    ),
+                    child: Row(
+                      children: <Widget>[
+                        Icon(
+                          Icons.arrow_forward,
+                          size: 28.0,
                         ),
-                      ),
-                      child: Row(
-                        children: <Widget>[
-                          Icon(
-                            Icons.arrow_forward,
-                            size: 28.0,
-                          ),
-                          SizedBox(width: 8.0),
-                          Icon(
-                            Icons.delete,
-                            size: 28.0,
-                          ),
-                        ],
-                      ),
+                        SizedBox(width: 8.0),
+                        Icon(
+                          Icons.delete,
+                          size: 28.0,
+                        ),
+                      ],
                     ),
-                    onDismissed: (direction) {
-                      _deleteProject(index);
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      child: ProjectItem(
-                        project: _projectList[index],
-                        onTap: () async {
-                          await Navigator.pushNamed(
-                            context,
-                            RouteGenerator.entry,
-                            arguments: {
-                              'projectTitle': _projectList[index].title,
-                              'isFromCreateProjectPage': false,
-                              'isFromProjectPage': true,
-                              'project': _projectList[index],
-                            },
-                          );
-                        },
-                      ),
+                  ),
+                  onDismissed: (direction) => _deleteProject(index),
+                  child: Container(
+                    width: double.infinity,
+                    child: ProjectItem(
+                      project: _projectList[index],
+                      onTap: () => _goToEntry(index),
                     ),
-                  );
-                },
-              )
-            : Center(
-                child: Text(
-                  empty_list,
-                  style: TextStyle(fontSize: 24.0),
-                ),
+                  ),
+                );
+              },
+            )
+          : Center(
+              child: Text(
+                empty_list,
+                style: TextStyle(fontSize: 24.0),
               ),
-      ),
+            ),
+    );
+  }
+
+  Future<void> _goToEntry(int index) async {
+    await Navigator.pushNamed(
+      context,
+      RouteGenerator.entry,
+      arguments: {
+        'projectTitle': _projectList[index].title,
+        'isFromCreateProjectPage': false,
+        'isFromProjectPage': true,
+        'project': _projectList[index],
+      },
     );
   }
 

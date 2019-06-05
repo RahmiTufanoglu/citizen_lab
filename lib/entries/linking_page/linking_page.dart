@@ -61,10 +61,13 @@ class _LinkingPageState extends State<LinkingPage> {
         onPressed: () => null,
       ),
       title: GestureDetector(
-        onDoubleTap: () => _enableDarkMode(),
-        child: Tooltip(
-          message: 'Linking',
-          child: Text('Linking'),
+        onPanStart: (_) => _enableDarkMode(),
+        child: Container(
+          width: double.infinity,
+          child: Tooltip(
+            message: 'Linking',
+            child: Text('Linking'),
+          ),
         ),
       ),
       actions: <Widget>[

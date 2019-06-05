@@ -36,10 +36,13 @@ class _AboutPageState extends State<AboutPage> {
         ),
       ),
       title: GestureDetector(
-        onDoubleTap: () => _enableDarkMode(),
-        child: Tooltip(
-          message: '',
-          child: Text('Über'),
+        onPanStart: (_) => _enableDarkMode(),
+        child: Container(
+          width: double.infinity,
+          child: Tooltip(
+            message: '',
+            child: Text('Über'),
+          ),
         ),
       ),
     );

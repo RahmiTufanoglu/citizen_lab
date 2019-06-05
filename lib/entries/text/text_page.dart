@@ -105,10 +105,13 @@ class _TextPageState extends State<TextPage> {
         onPressed: () => _saveNote(),
       ),
       title: GestureDetector(
-        onDoubleTap: () => _enableDarkMode(),
-        child: Tooltip(
-          message: noteType,
-          child: Text((_title != null) ? _title : noteType),
+        onPanStart: (_) => _enableDarkMode(),
+        child: Container(
+          width: double.infinity,
+          child: Tooltip(
+            message: noteType,
+            child: Text((_title != null) ? _title : noteType),
+          ),
         ),
       ),
       actions: <Widget>[

@@ -142,7 +142,7 @@ class RouteGenerator {
           route = routeDetailPage;
           break;
         case onboardingPage:
-          page = Onboarding();
+          page = OnboardingPage();
           route = routeOnboardingPage;
           break;
         case aboutPage:
