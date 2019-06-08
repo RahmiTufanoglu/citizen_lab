@@ -102,7 +102,7 @@ class _ImagePageState extends State<ImagePage> {
         onPressed: () => _saveNote(),
       ),
       title: GestureDetector(
-        onDoubleTap: () => _enableDarkMode(),
+        onPanStart: (_) => _enableDarkMode(),
         child: Tooltip(
           message: noteType,
           child: Text(_title != null ? _title : noteType),
@@ -170,37 +170,39 @@ class _ImagePageState extends State<ImagePage> {
     showDialog(
       context: context,
       builder: (_) => NoYesDialog(
-            text: cancel,
-            onPressed: () {
-              Navigator.popUntil(
-                context,
-                ModalRoute.withName(RouteGenerator.routeHomePage),
-              );
-            },
-          ),
+        text: cancel,
+        onPressed: () {
+          Navigator.popUntil(
+            context,
+            ModalRoute.withName(RouteGenerator.routeHomePage),
+          );
+        },
+      ),
     );
   }
 
   Widget _buildBody() {
-    return Form(
-      key: _formKey,
-      autovalidate: true,
-      child: WillPopScope(
-        onWillPop: () => _saveNote(),
-        child: Center(
-          child: (_image != null && _image.path.isNotEmpty)
-              ? PhotoView(
-                  backgroundDecoration: BoxDecoration(),
-                  minScale: PhotoViewComputedScale.contained * 0.5,
-                  imageProvider: FileImage(_image),
-                )
-              : Center(
-                  child: Icon(
-                    Icons.image,
-                    color: Colors.grey,
-                    size: 100.0,
-                  ),
-                ),
+    return SafeArea(
+      child: Form(
+        key: _formKey,
+        autovalidate: true,
+        child: WillPopScope(
+          onWillPop: () => _saveNote(),
+          child: Center(
+            child: (_image != null && _image.path.isNotEmpty)
+                ? PhotoView(
+              backgroundDecoration: BoxDecoration(),
+              minScale: PhotoViewComputedScale.contained * 0.5,
+              imageProvider: FileImage(_image),
+            )
+                : Center(
+              child: Icon(
+                Icons.image,
+                color: Colors.grey,
+                size: 100.0,
+              ),
+            ),
+          ),
         ),
       ),
     );
@@ -326,11 +328,11 @@ class _ImagePageState extends State<ImagePage> {
       ProjectDatabaseProvider.columnNoteProject: note.project,
       ProjectDatabaseProvider.columnNoteType: note.type,
       ProjectDatabaseProvider.columnNoteTitle:
-          _titleEditingController.text.isEmpty
-              ? 'Bildnotiz'
-              : _titleEditingController.text,
+      _titleEditingController.text.isEmpty
+          ? 'Bildnotiz'
+          : _titleEditingController.text,
       ProjectDatabaseProvider.columnNoteDescription:
-          _descEditingController.text,
+      _descEditingController.text,
       ProjectDatabaseProvider.columnNoteContent: _image.path,
       ProjectDatabaseProvider.columnNoteTableColumn: null,
       ProjectDatabaseProvider.columnNoteTableRow: null,
@@ -344,25 +346,25 @@ class _ImagePageState extends State<ImagePage> {
     await showDialog(
       context: context,
       builder: (context) => SimpleTimerDialog(
-            createdAt: _createdAt,
-            textEditingController: _titleEditingController,
-            descEditingController: _descEditingController,
-            descExists: true,
-            onPressedClose: () => Navigator.pop(context),
-            onPressedClear: () {
-              if (_titleEditingController.text.isNotEmpty) {
-                _titleEditingController.clear();
-              }
+        createdAt: _createdAt,
+        textEditingController: _titleEditingController,
+        descEditingController: _descEditingController,
+        descExists: true,
+        onPressedClose: () => Navigator.pop(context),
+        onPressedClear: () {
+          if (_titleEditingController.text.isNotEmpty) {
+            _titleEditingController.clear();
+          }
 
-              if (_descEditingController.text.isNotEmpty) {
-                _descEditingController.clear();
-              }
-            },
-            onPressedUpdate: () {
-              _createCachedImage();
-              Navigator.pop(context);
-            },
-          ),
+          if (_descEditingController.text.isNotEmpty) {
+            _descEditingController.clear();
+          }
+        },
+        onPressedUpdate: () {
+          _createCachedImage();
+          Navigator.pop(context);
+        },
+      ),
     );
   }
 

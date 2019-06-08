@@ -50,7 +50,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
   }
 
   Widget _buildBody() {
-    return Container();
+    return SafeArea(child: Container(),);
   }
 
   Widget _buildFabs() {

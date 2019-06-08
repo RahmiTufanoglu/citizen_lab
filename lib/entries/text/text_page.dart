@@ -187,94 +187,96 @@ class _TextPageState extends State<TextPage> {
     final content = 'Inhalt';
     final contentHere = 'Inhalt hier';
 
-    return WillPopScope(
-      onWillPop: () => _saveNote(),
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.only(bottom: 88.0),
-        child: Column(
-          children: <Widget>[
-            Card(
-              margin: const EdgeInsets.only(
-                top: 8.0,
-                left: 8.0,
-                right: 8.0,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    Text(
-                      _timeString,
-                      style: TextStyle(
-                        fontSize: 14.0,
-                        fontWeight: FontWeight.bold,
+    return SafeArea(
+      child: WillPopScope(
+        onWillPop: () => _saveNote(),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.only(bottom: 88.0),
+          child: Column(
+            children: <Widget>[
+              Card(
+                margin: const EdgeInsets.only(
+                  top: 8.0,
+                  left: 8.0,
+                  right: 8.0,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      Text(
+                        _timeString,
+                        style: TextStyle(
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 8.0),
-                    Text(
-                      '$created: $_createdAt',
-                      style: TextStyle(
-                        fontSize: 14.0,
-                        fontStyle: FontStyle.italic,
+                      SizedBox(height: 8.0),
+                      Text(
+                        '$created: $_createdAt',
+                        style: TextStyle(
+                          fontSize: 14.0,
+                          fontStyle: FontStyle.italic,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
-            SizedBox(height: 8.0),
-            Card(
-              margin: const EdgeInsets.only(
-                bottom: 8.0,
-                left: 8.0,
-                right: 8.0,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      '$title:',
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.bold,
+              SizedBox(height: 8.0),
+              Card(
+                margin: const EdgeInsets.only(
+                  bottom: 8.0,
+                  left: 8.0,
+                  right: 8.0,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        '$title:',
+                        style: TextStyle(
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    TextFormField(
-                      controller: _titleEditingController,
-                      keyboardType: TextInputType.text,
-                      maxLength: 50,
-                      maxLines: 2,
-                      style: TextStyle(fontSize: 16.0),
-                      decoration: InputDecoration(
-                        hintText: '$titleHere.',
+                      TextFormField(
+                        controller: _titleEditingController,
+                        keyboardType: TextInputType.text,
+                        maxLength: 50,
+                        maxLines: 2,
+                        style: TextStyle(fontSize: 16.0),
+                        decoration: InputDecoration(
+                          hintText: '$titleHere.',
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 42.0),
-                    Text(
-                      '$content:',
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.bold,
+                      SizedBox(height: 42.0),
+                      Text(
+                        '$content:',
+                        style: TextStyle(
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    TextFormField(
-                      controller: _descEditingController,
-                      keyboardType: TextInputType.text,
-                      maxLength: 500,
-                      maxLines: 20,
-                      style: TextStyle(fontSize: 16.0),
-                      decoration: InputDecoration(
-                        hintText: '$contentHere.',
+                      TextFormField(
+                        controller: _descEditingController,
+                        keyboardType: TextInputType.text,
+                        maxLength: 500,
+                        maxLines: 20,
+                        style: TextStyle(fontSize: 16.0),
+                        decoration: InputDecoration(
+                          hintText: '$contentHere.',
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

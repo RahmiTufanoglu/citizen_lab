@@ -150,33 +150,35 @@ class _CitizenSciencePageState extends State<CitizenSciencePage> {
       ),
     );*/
 
-    return GridView.builder(
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: screenWidth / (screenHeight / 1.5),
-        //childAspectRatio: screenWidth / (next(iMin, iMax)).toDouble(),
+    return SafeArea(
+      child: GridView.builder(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: screenWidth / (screenHeight / 1.5),
+          //childAspectRatio: screenWidth / (next(iMin, iMax)).toDouble(),
+        ),
+        itemCount: _citizenScienceList.length,
+        padding: EdgeInsets.all(4.0),
+        itemBuilder: (context, index) {
+          return Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: CardImageWithText(
+              title: _citizenScienceList[index].title,
+              asset: _citizenScienceList[index].image,
+              fontColor: Colors.white,
+              onTap: () => Navigator.pushNamed(
+                    context,
+                    RouteGenerator.detailPage,
+                    arguments: {
+                      'title': _citizenScienceList[index].title,
+                      'content': _citizenScienceList[index].content,
+                      'image': _citizenScienceList[index].image,
+                    },
+                  ),
+            ),
+          );
+        },
       ),
-      itemCount: _citizenScienceList.length,
-      padding: EdgeInsets.all(4.0),
-      itemBuilder: (context, index) {
-        return Padding(
-          padding: const EdgeInsets.all(4.0),
-          child: CardImageWithText(
-            title: _citizenScienceList[index].title,
-            asset: _citizenScienceList[index].image,
-            fontColor: Colors.white,
-            onTap: () => Navigator.pushNamed(
-                  context,
-                  RouteGenerator.detailPage,
-                  arguments: {
-                    'title': _citizenScienceList[index].title,
-                    'content': _citizenScienceList[index].content,
-                    'image': _citizenScienceList[index].image,
-                  },
-                ),
-          ),
-        );
-      },
     );
   }
 }

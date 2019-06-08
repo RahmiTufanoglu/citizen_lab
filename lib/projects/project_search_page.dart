@@ -65,30 +65,32 @@ class ProjectSearchPage extends SearchDelegate<String> {
   Widget buildSuggestions(BuildContext context) {
     final suggestionList =
         query.isEmpty ? [] : _getProjectTitles(projectList, query);
-    return ListView.builder(
-      itemCount: suggestionList == null ? 0 : suggestionList.length,
-      padding: EdgeInsets.all(4.0),
-      itemBuilder: (context, index) {
-        return ProjectItem(
-          project: suggestionList[index],
-          onTap: () async {
-            final result = await Navigator.pushNamed(
-              context,
-              RouteGenerator.entry,
-              arguments: {
-                'projectTitle': suggestionList[index].title,
-                'isFromCreateProjectPage': false,
-                'isFromProjectPage': true,
-                'project': suggestionList[index],
-              },
-            );
+    return SafeArea(
+      child: ListView.builder(
+        itemCount: suggestionList == null ? 0 : suggestionList.length,
+        padding: EdgeInsets.all(4.0),
+        itemBuilder: (context, index) {
+          return ProjectItem(
+            project: suggestionList[index],
+            onTap: () async {
+              final result = await Navigator.pushNamed(
+                context,
+                RouteGenerator.entry,
+                arguments: {
+                  'projectTitle': suggestionList[index].title,
+                  'isFromCreateProjectPage': false,
+                  'isFromProjectPage': true,
+                  'project': suggestionList[index],
+                },
+              );
 
-            if (result) {
-              reloadProjectList();
-            }
-          },
-        );
-      },
+              if (result) {
+                reloadProjectList();
+              }
+            },
+          );
+        },
+      ),
     );
   }
 

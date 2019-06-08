@@ -254,48 +254,50 @@ class _HomePageState extends State<HomePage>
   }
 
   Widget _buildBody() {
-    return WillPopScope(
-      onWillPop: () => SystemNavigator.pop(),
-      child: FadeTransition(
-        opacity: _animation,
-        child: Container(
-          child: Stack(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: <Widget>[
-                    Expanded(
-                      child: CardImageWithText(
-                        asset: 'assets/images/notes_2.jpg',
-                        title: 'Projekt erstellen',
-                        fontColor: Colors.white,
-                        onTap: () {
-                          Navigator.pushNamed(
-                            context,
-                            RouteGenerator.createProject,
-                          );
-                        },
+    return SafeArea(
+      child: WillPopScope(
+        onWillPop: () => SystemNavigator.pop(),
+        child: FadeTransition(
+          opacity: _animation,
+          child: Container(
+            child: Stack(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: <Widget>[
+                      Expanded(
+                        child: CardImageWithText(
+                          asset: 'assets/images/notes_2.jpg',
+                          title: 'Projekt erstellen',
+                          fontColor: Colors.white,
+                          onTap: () {
+                            Navigator.pushNamed(
+                              context,
+                              RouteGenerator.createProject,
+                            );
+                          },
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 8.0),
-                    Expanded(
-                      child: CardImageWithText(
-                        asset: 'assets/images/notes_1.jpg',
-                        title: 'Projekt öffnen',
-                        fontColor: Colors.white,
-                        onTap: () {
-                          return Navigator.pushNamed(
-                            context,
-                            RouteGenerator.projectPage,
-                          );
-                        },
+                      SizedBox(height: 8.0),
+                      Expanded(
+                        child: CardImageWithText(
+                          asset: 'assets/images/notes_1.jpg',
+                          title: 'Projekt öffnen',
+                          fontColor: Colors.white,
+                          onTap: () {
+                            return Navigator.pushNamed(
+                              context,
+                              RouteGenerator.projectPage,
+                            );
+                          },
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

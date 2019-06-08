@@ -180,9 +180,9 @@ class _EntryPageState extends State<EntryPage> {
   }
 
   Widget _buildBody() {
-    return WillPopScope(
-      onWillPop: _onBackPressed,
-      child: SafeArea(
+    return SafeArea(
+      child: WillPopScope(
+        onWillPop: _onBackPressed,
         child: _noteList.isNotEmpty
             ? ListView.builder(
                 itemCount: _noteList.length,
@@ -534,10 +534,11 @@ class _EntryPageState extends State<EntryPage> {
 
     //List notes = await _noteDb.getAllNotes();
 
-    //List notes = await _noteDb.getAllNotes();
+    List notes = await _noteDb.getAllNotes();
+    //List notes = await _noteDb.getNotesOfProject(id: widget.projectTitle);
+
     //List notes = await _noteDb.getNote(id: widget.projectTitle);
     //List notes = await _noteDb.getNotesOfProject(id: widget.project.id);
-    List notes = await _noteDb.getNotesOfProject(id: widget.projectTitle);
     //List notes = await _noteDb.getNotesOfProject(id: 0);
     //List notes = await _noteDb.getAllNotes(title: widget.projectTitle);
 

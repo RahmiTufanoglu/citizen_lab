@@ -159,43 +159,45 @@ class _SensorPageState extends State<SensorPage>
     final double screenHeight = MediaQuery.of(context).size.height;
     final double screenWidth = MediaQuery.of(context).size.width;
 
-    return WillPopScope(
-      onWillPop: () {
-        Navigator.pop(context, false);
-      },
-      child: Stack(
-        children: <Widget>[
-          (_position != null)
-              ? Center(
-                  child: Text(
-                    'Latitude: ${_position.latitude.toString()}\nLongitude: ${_position.longitude.toString()}\nAccuracy: ${_position.accuracy.toString()}',
-                    style: TextStyle(
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold,
+    return SafeArea(
+      child: WillPopScope(
+        onWillPop: () {
+          Navigator.pop(context, false);
+        },
+        child: Stack(
+          children: <Widget>[
+            (_position != null)
+                ? Center(
+                    child: Text(
+                      'Latitude: ${_position.latitude.toString()}\nLongitude: ${_position.longitude.toString()}\nAccuracy: ${_position.accuracy.toString()}',
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  )
+                : Center(
+                    child: Text(
+                      'Sensor nicht aktiv.',
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                )
-              : Center(
-                  child: Text(
-                    'Sensor nicht aktiv.',
-                    style: TextStyle(
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+            Center(
+              child: AnimatedContainer(
+                duration: Duration(seconds: 1),
+                height: _animation.value * screenHeight,
+                width: _animation.value * screenWidth,
+                decoration: BoxDecoration(
+                  color: Colors.grey.withOpacity(0.2),
+                  shape: BoxShape.circle,
                 ),
-          Center(
-            child: AnimatedContainer(
-              duration: Duration(seconds: 1),
-              height: _animation.value * screenHeight,
-              width: _animation.value * screenWidth,
-              decoration: BoxDecoration(
-                color: Colors.grey.withOpacity(0.2),
-                shape: BoxShape.circle,
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

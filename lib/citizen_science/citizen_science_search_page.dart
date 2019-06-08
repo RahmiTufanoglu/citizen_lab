@@ -60,26 +60,28 @@ class CitizenScienceSearchPage extends SearchDelegate<String> {
     final suggestionList = query.isEmpty
         ? []
         : _getCitizenScienceTitles(citizenScienceList, query);
-    return GridView.builder(
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: screenWidth / (screenHeight / 1.5),
+    return SafeArea(
+      child: GridView.builder(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: screenWidth / (screenHeight / 1.5),
+        ),
+        itemCount: suggestionList == null ? 0 : suggestionList.length,
+        padding: EdgeInsets.all(4.0),
+        itemBuilder: (context, index) {
+          return CardImageWithText(
+            title: suggestionList[index].title,
+            asset: suggestionList[index].image,
+            fontColor: Colors.white,
+            onTap: () async {
+              await Navigator.pushNamed(
+                context,
+                RouteGenerator.detailPage,
+              );
+            },
+          );
+        },
       ),
-      itemCount: suggestionList == null ? 0 : suggestionList.length,
-      padding: EdgeInsets.all(4.0),
-      itemBuilder: (context, index) {
-        return CardImageWithText(
-          title: suggestionList[index].title,
-          asset: suggestionList[index].image,
-          fontColor: Colors.white,
-          onTap: () async {
-            await Navigator.pushNamed(
-              context,
-              RouteGenerator.detailPage,
-            );
-          },
-        );
-      },
     );
   }
 

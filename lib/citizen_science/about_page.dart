@@ -62,9 +62,11 @@ class _AboutPageState extends State<AboutPage> {
   }
 
   Widget _buildBody() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Text(lorem),
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Text(lorem),
+      ),
     );
   }
 }

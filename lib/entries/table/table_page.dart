@@ -210,23 +210,25 @@ class _TablePageState extends State<TablePage> {
   Widget _buildBody() {
     generateTable();
 
-    return WillPopScope(
-      onWillPop: () => _saveNote(),
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 88.0),
-        child: (_column != null || _row != null)
-            ? TableWidget(
-                listTextEditingController: _listTextEditingController,
-                column: _column,
-                row: _row,
-              )
-            : Center(
-                child: Icon(
-                  Icons.table_chart,
-                  color: Colors.grey,
-                  size: 100.0,
+    return SafeArea(
+      child: WillPopScope(
+        onWillPop: () => _saveNote(),
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 88.0),
+          child: (_column != null || _row != null)
+              ? TableWidget(
+                  listTextEditingController: _listTextEditingController,
+                  column: _column,
+                  row: _row,
+                )
+              : Center(
+                  child: Icon(
+                    Icons.table_chart,
+                    color: Colors.grey,
+                    size: 100.0,
+                  ),
                 ),
-              ),
+        ),
       ),
     );
   }

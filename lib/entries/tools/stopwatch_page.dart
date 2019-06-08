@@ -129,58 +129,60 @@ class _StopwatchPageState extends State<StopwatchPage>
   Widget _buildBody() {
     final double screenHeight = MediaQuery.of(context).size.height;
 
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Text(
-            _stopWatchText,
-            style: TextStyle(fontSize: 56.0),
-          ),
-          SizedBox(height: 56.0),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              IconButton(
-                icon: _icon,
-                iconSize: 56.0,
-                onPressed: _startStopButtonPressed,
-              ),
-              SizedBox(width: 42.0),
-              IconButton(
-                icon: Icon(Icons.stop),
-                iconSize: 56.0,
-                onPressed: _resetButtonPressed,
-              ),
-            ],
-          ),
-          SizedBox(height: 56.0),
-          Container(
-            padding: const EdgeInsets.all(8.0),
-            height: (screenHeight / 3) - kToolbarHeight - 24.0,
-            decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.1),
+    return SafeArea(
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              _stopWatchText,
+              style: TextStyle(fontSize: 56.0),
             ),
-            child: ListView.builder(
-              controller: _scrollController,
-              shrinkWrap: true,
-              reverse: true,
-              itemCount: _elapsedTimeList.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    (index == _elapsedTimeList.length - 1)
-                        ? 'Letzte Zeit:\t${_elapsedTimeList[index]}'
-                        : _elapsedTimeList[index],
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 20.0),
-                  ),
-                );
-              },
+            SizedBox(height: 56.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                IconButton(
+                  icon: _icon,
+                  iconSize: 56.0,
+                  onPressed: _startStopButtonPressed,
+                ),
+                SizedBox(width: 42.0),
+                IconButton(
+                  icon: Icon(Icons.stop),
+                  iconSize: 56.0,
+                  onPressed: _resetButtonPressed,
+                ),
+              ],
             ),
-          ),
-        ],
+            SizedBox(height: 56.0),
+            Container(
+              padding: const EdgeInsets.all(8.0),
+              height: (screenHeight / 3) - kToolbarHeight - 24.0,
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.1),
+              ),
+              child: ListView.builder(
+                controller: _scrollController,
+                shrinkWrap: true,
+                reverse: true,
+                itemCount: _elapsedTimeList.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      (index == _elapsedTimeList.length - 1)
+                          ? 'Letzte Zeit:\t${_elapsedTimeList[index]}'
+                          : _elapsedTimeList[index],
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 20.0),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -6,7 +6,7 @@ import 'package:sqflite/sqflite.dart';
 
 class ProjectDatabaseProvider {
   static final ProjectDatabaseProvider _instance =
-      ProjectDatabaseProvider.internal();
+  ProjectDatabaseProvider.internal();
 
   factory ProjectDatabaseProvider() => _instance;
 
@@ -19,7 +19,7 @@ class ProjectDatabaseProvider {
 
   static final String projectTable = 'projects';
   static final String columnProjectId = 'id';
-  //static final String columnProjectNoteId = 'note_id';
+  static final String columnProjectNoteId = 'note_id';
   static final String columnProjectTitle = 'title';
   static final String columnProjectDesc = 'description';
   static final String columnProjectCreatedAt = 'created_at';
@@ -36,28 +36,6 @@ class ProjectDatabaseProvider {
   static final String columnNoteTableRow = 'table_row';
   static final String columnNoteCreatedAt = 'created_at';
   static final String columnNoteUpdatedAt = 'updated_at';
-
-  static final String createTableProject = 'CREATE TABLE $projectTable('
-      '$columnProjectId INTEGER PRIMARY KEY AUTOINCREMENT,'
-      //'$columnProjectNoteId INTEGER REFERENCES $noteTable($columnNoteId),'
-      //'FOREIGN KEY ($columnProjectId) REFERENCES $noteTable ($columnNoteId),'
-      '$columnProjectTitle TEXT NOT NULL, '
-      '$columnProjectDesc TEXT NOT NULL, '
-      '$columnProjectCreatedAt TEXT NOT NULL, '
-      '$columnProjectUpdatedAt TEXT NOT NULL)';
-
-  static final String createTableNote = 'CREATE TABLE $noteTable('
-      //'$columnNoteId INTEGER PRIMARY KEY AUTOINCREMENT,'
-      //'FOREIGN KEY($columnProjectId) REFERENCES $projectTable($columnNoteId),'
-      '$columnNoteProject TEXT NOT NULL, '
-      '$columnNoteType TEXT NOT NULL, '
-      '$columnNoteTitle TEXT NOT NULL, '
-      '$columnNoteDescription TEXT, '
-      '$columnNoteContent TEXT NOT NULL, '
-      '$columnNoteTableColumn INTEGER, '
-      '$columnNoteTableRow INTEGER, '
-      '$columnNoteCreatedAt TEXT NOT NULL, '
-      '$columnNoteUpdatedAt TEXT NOT NULL)';
 
   Future<Database> get db async {
     return _db != null ? _db : _db = await initDb();
@@ -76,14 +54,28 @@ class ProjectDatabaseProvider {
 
   void _onCreate(Database db, int version) async {
     print('DB CREATED');
-    await db.execute(createTableProject);
-    await db.execute(createTableNote);
-  }
-
-  // TODO: für später
-  void onUpgrade(Database db) async {
-    await db.execute('DROP TABLE IF EXISTS ' + createTableProject);
-    await db.execute('DROP TABLE IF EXISTS ' + createTableNote);
+    await db.execute(
+      'CREATE TABLE $projectTable('
+          '$columnProjectId INTEGER PRIMARY KEY AUTOINCREMENT,'
+          '$columnProjectNoteId INTEGER REFERENCES $noteTable($columnNoteId),'
+          '$columnProjectTitle TEXT NOT NULL, '
+          '$columnProjectDesc TEXT NOT NULL, '
+          '$columnProjectCreatedAt TEXT NOT NULL, '
+          '$columnProjectUpdatedAt TEXT NOT NULL)',
+    );
+    await db.execute(
+      'CREATE TABLE $noteTable('
+          '$columnNoteId INTEGER PRIMARY KEY AUTOINCREMENT,'
+          '$columnNoteProject TEXT NOT NULL, '
+          '$columnNoteType TEXT NOT NULL, '
+          '$columnNoteTitle TEXT NOT NULL, '
+          '$columnNoteDescription TEXT, '
+          '$columnNoteContent TEXT NOT NULL, '
+          '$columnNoteTableColumn INTEGER, '
+          '$columnNoteTableRow INTEGER, '
+          '$columnNoteCreatedAt TEXT NOT NULL, '
+          '$columnNoteUpdatedAt TEXT NOT NULL)',
+    );
   }
 
   Future<int> insertProject({@required Project project}) async {
@@ -163,8 +155,7 @@ class ProjectDatabaseProvider {
     return result;
   }
 
-  //Future<Note> getNote({@required int id}) async {
-  Future<List> getNote({@required String id}) async {
+  Future<Note> getNote({@required int id}) async {
     final db = await this.db;
     final List<Map> maps = await db.query(
       noteTable,
@@ -172,53 +163,15 @@ class ProjectDatabaseProvider {
       whereArgs: [id],
       orderBy: '$columnNoteCreatedAt DESC',
     );
-    //return maps.isNotEmpty ? Note.fromMap(maps.first) : null;
-    return maps.toList();
+    return maps.isNotEmpty ? Note.fromMap(maps.first) : null;
   }
 
-  //Future<Note> getNotesOfProject({@required int id}) async {
-  //Future<List> getNotesOfProject({@required int id}) async {
-  Future<List> getNotesOfProject({@required String id}) async {
-    List<Note> noteList = [];
-
-    final db = await this.db;
-    //final List<Map> maps = await db.query(
-    final maps = await db.query(
-      noteTable,
-      //where: '$columnNoteId = ?',
-      where: '$columnNoteProject = ?',
-      whereArgs: [id],
-      orderBy: '$columnNoteCreatedAt DESC',
-    );
-    //return maps.isNotEmpty ? Note.fromMap(maps.first) : null;
-    /*while(maps != null) {
-      noteList.add(maps.isNotEmpty ? Note.fromMap(maps.first) : null);
-    }*/
-
-    return maps.toList();
-    //return noteList;
-  }
-
-  /*Future<Note> fetchNoteAndProject(int project) async {
-    List<Map> results = await _db.query(
-      noteTable,
-      columns: Note.columns,
-      where: "id = ?",
-      whereArgs: [storyId],
-    );
-
-    Note note = Note.fromMap(results[0]);
-    note.project = await fetchUser(note.id);
-
-    return note;
-  }*/
-
-  //Future<List> getAllNotes({@required String title}) async {
+  //Future<List> getAllNotes({@required int id}) async {
   Future<List> getAllNotes() async {
     final db = await this.db;
     final result = await db.query(
       noteTable,
-      //where: '$columnProjectTitle = $title',
+      //where: '$columnNoteTitle = ?',
       //where: '$columnNoteId = ?',
       //whereArgs: [title],
       //whereArgs: [id],
