@@ -144,6 +144,29 @@ class ProjectDatabaseProvider {
    *
    */
 
+  //Future<Note> getNotesOfProject({@required int id}) async {
+  //Future<List> getNotesOfProject({@required int id}) async {
+  Future<List> getNotesOfProject({@required String id}) async {
+    List<Note> noteList = [];
+
+    final db = await this.db;
+    //final List<Map> maps = await db.query(
+    final maps = await db.query(
+      noteTable,
+      //where: '$columnNoteId = ?',
+      where: '$columnNoteProject = ?',
+      whereArgs: [id],
+      orderBy: '$columnNoteCreatedAt DESC',
+    );
+    //return maps.isNotEmpty ? Note.fromMap(maps.first) : null;
+    /*while(maps != null) {
+      noteList.add(maps.isNotEmpty ? Note.fromMap(maps.first) : null);
+    }*/
+
+    return maps.toList();
+    //return noteList;
+  }
+
   Future<int> insertNote({@required Note note}) async {
     final db = await this.db;
     final result = await db.insert(

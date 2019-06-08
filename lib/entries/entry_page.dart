@@ -534,8 +534,8 @@ class _EntryPageState extends State<EntryPage> {
 
     //List notes = await _noteDb.getAllNotes();
 
-    List notes = await _noteDb.getAllNotes();
-    //List notes = await _noteDb.getNotesOfProject(id: widget.projectTitle);
+    //List notes = await _noteDb.getAllNotes();
+    List notes = await _noteDb.getNotesOfProject(id: widget.projectTitle);
 
     //List notes = await _noteDb.getNote(id: widget.projectTitle);
     //List notes = await _noteDb.getNotesOfProject(id: widget.project.id);

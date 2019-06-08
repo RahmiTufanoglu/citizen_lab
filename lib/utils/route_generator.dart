@@ -1,5 +1,4 @@
 import 'package:citizen_lab/citizen_science/about_page.dart';
-import 'package:citizen_lab/entries/audio_record_page.dart';
 import 'package:citizen_lab/entries/linking_page/linking_page.dart';
 import 'package:citizen_lab/entries/tools/sensor_page.dart';
 import 'package:citizen_lab/entries/tools/calculator_page.dart';
@@ -10,7 +9,6 @@ import 'package:citizen_lab/projects/create_project_page.dart';
 import 'package:citizen_lab/entries/entry_page.dart';
 import 'package:citizen_lab/entries/image/image_page.dart';
 import 'package:citizen_lab/projects/project_page.dart';
-import 'package:citizen_lab/entries/sketch_page.dart';
 import 'package:citizen_lab/entries/table/table_page.dart';
 import 'package:citizen_lab/entries/text/text_page.dart';
 import 'package:citizen_lab/citizen_science/citizen_science_page.dart';
@@ -112,10 +110,6 @@ class RouteGenerator {
           );
           route = routeTablePage;
           break;
-        case sketchPage:
-          page = SketchPage();
-          route = routeSketchPage;
-          break;
         case sensorPage:
           page = SensorPage();
           route = routeSensorPage;
@@ -156,10 +150,6 @@ class RouteGenerator {
         case stopwatchPage:
           page = StopwatchPage();
           route = routeStopwatchPage;
-          break;
-        case audioRecordPage:
-          page = AudioRecordPage();
-          route = routeAudioRecordPage;
           break;
         case routeLinkingRecordPage:
           page = LinkingPage(
