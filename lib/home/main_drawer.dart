@@ -23,8 +23,10 @@ class MainDrawer extends StatelessWidget {
               child: ListView(children: children),
             ),
             Positioned(
-              child: MadeWithLoveTextBox(
-                place: 'in $location',
+              child: SafeArea(
+                child: MadeWithLoveTextBox(
+                  place: 'in $location',
+                ),
               ),
               width: 300.0,
               bottom: 0.0,

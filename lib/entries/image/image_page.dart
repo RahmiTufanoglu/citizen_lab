@@ -3,24 +3,23 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
 
-import 'package:citizen_lab/themes/theme.dart';
-import 'package:citizen_lab/themes/theme_changer.dart';
-import 'package:provider/provider.dart';
-
-import 'image_info_page_data.dart';
-
-import 'package:citizen_lab/utils/route_generator.dart';
+import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/custom_widgets/set_title_widget.dart';
 import 'package:citizen_lab/custom_widgets/simple_timer_dialog.dart';
+import 'package:citizen_lab/database/project_database_helper.dart';
+import 'package:citizen_lab/entries/note.dart';
+import 'package:citizen_lab/themes/theme.dart';
+import 'package:citizen_lab/themes/theme_changer.dart';
+import 'package:citizen_lab/utils/date_formater.dart';
+import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:citizen_lab/database/project_database_provider.dart';
-import 'package:photo_view/photo_view.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:citizen_lab/utils/date_formater.dart';
-import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
-import 'package:citizen_lab/entries/note.dart';
+import 'package:photo_view/photo_view.dart';
+import 'package:provider/provider.dart';
+
+import 'image_info_page_data.dart';
 
 class ImagePage extends StatefulWidget {
   final Key key;
@@ -42,7 +41,7 @@ class _ImagePageState extends State<ImagePage> {
   final _formKey = GlobalKey<FormState>();
   final _titleEditingController = TextEditingController();
   final _descEditingController = TextEditingController();
-  final _noteDb = ProjectDatabaseProvider();
+  final _noteDb = ProjectDatabaseHelper();
 
   ThemeChanger _themeChanger;
   bool _darkModeEnabled = false;
@@ -80,7 +79,6 @@ class _ImagePageState extends State<ImagePage> {
 
   @override
   Widget build(BuildContext context) {
-    _themeChanger = Provider.of<ThemeChanger>(context);
     _checkIfDarkModeEnabled();
 
     return Scaffold(
@@ -89,6 +87,14 @@ class _ImagePageState extends State<ImagePage> {
       body: _buildBody(),
       floatingActionButton: _buildFabs(),
     );
+  }
+
+  void _checkIfDarkModeEnabled() {
+    _themeChanger = Provider.of<ThemeChanger>(context);
+    final ThemeData theme = Theme.of(context);
+    theme.brightness == appDarkTheme().brightness
+        ? _darkModeEnabled = true
+        : _darkModeEnabled = false;
   }
 
   Widget _buildAppBar() {
@@ -125,13 +131,6 @@ class _ImagePageState extends State<ImagePage> {
     );
   }
 
-  void _checkIfDarkModeEnabled() {
-    final ThemeData theme = Theme.of(context);
-    theme.brightness == appDarkTheme().brightness
-        ? _darkModeEnabled = true
-        : _darkModeEnabled = false;
-  }
-
   void _enableDarkMode() {
     _darkModeEnabled
         ? _themeChanger.setTheme(appLightTheme())
@@ -139,15 +138,24 @@ class _ImagePageState extends State<ImagePage> {
   }
 
   void _shareContent() {
-    try {
-      final channelName = 'rahmitufanoglu.citizenlab';
-      final channel = MethodChannel('channel:$channelName.share/share');
-      channel.invokeMethod('shareImage', '$_title');
-    } catch (error) {
-      print('Share error: $error');
-      final String sharingNotPossible = 'Teilvorgang nicht möglich';
-      _scaffoldKey.currentState
-          .showSnackBar(_buildSnackBar('$sharingNotPossible.'));
+    if (_image != null) {
+      try {
+        final channelName = 'rahmitufanoglu.citizenlab';
+        final channel = MethodChannel('channel:$channelName.share/share');
+        channel.invokeMethod('shareImage', '$_title');
+      } catch (error) {
+        print('Share error: $error');
+        final String sharingNotPossible = 'Teilvorgang nicht möglich';
+        _scaffoldKey.currentState
+            .showSnackBar(_buildSnackBar('$sharingNotPossible.'));
+      }
+    } else {
+      _scaffoldKey.currentState.showSnackBar(
+        _buildSnackBarWithButton(
+          text: 'Bitte ein Foto erstellen.\nFoto schießen?',
+          onPressed: () => _createImage(),
+        ),
+      );
     }
   }
 
@@ -164,20 +172,22 @@ class _ImagePageState extends State<ImagePage> {
     );
   }
 
-  void _backToHomePage() {
+  Future<void> _backToHomePage() async {
     final String cancel = 'Notiz abbrechen und zur Hauptseite zurückkehren?';
 
-    showDialog(
+    await showDialog(
       context: context,
-      builder: (_) => NoYesDialog(
-            text: cancel,
-            onPressed: () {
-              Navigator.popUntil(
-                context,
-                ModalRoute.withName(RouteGenerator.routeHomePage),
-              );
-            },
-          ),
+      builder: (_) {
+        return NoYesDialog(
+          text: cancel,
+          onPressed: () {
+            Navigator.popUntil(
+              context,
+              ModalRoute.withName(RouteGenerator.routeHomePage),
+            );
+          },
+        );
+      },
     );
   }
 
@@ -301,7 +311,7 @@ class _ImagePageState extends State<ImagePage> {
   }
 
   Future<void> _saveNote() async {
-    if (_titleEditingController.text.isNotEmpty) {
+    if (_titleEditingController.text.isNotEmpty && (_image != null)) {
       if (widget.note == null) {
         Note newNote = Note(
           widget.projectTitle,
@@ -310,8 +320,6 @@ class _ImagePageState extends State<ImagePage> {
           _descEditingController.text,
           //(_image != null) ? _image.path : '',
           _image.path,
-          null,
-          null,
           _createdAt,
           dateFormatted(),
         );
@@ -323,24 +331,24 @@ class _ImagePageState extends State<ImagePage> {
     } else {
       _scaffoldKey.currentState.showSnackBar(
         _buildSnackBarWithButton(
-            'Bitte einen Titel eingeben\nNotiz abbrechen?'),
+          text: 'Bitte einen Titel eingeben\nNotiz abbrechen?',
+          onPressed: () => Navigator.pop(context),
+        ),
       );
     }
   }
 
   Future<void> _updateNote(Note note) async {
     Note newNote = Note.fromMap({
-      ProjectDatabaseProvider.columnNoteId: note.id,
-      ProjectDatabaseProvider.columnNoteProject: note.project,
-      ProjectDatabaseProvider.columnNoteType: note.type,
-      ProjectDatabaseProvider.columnNoteTitle: _titleEditingController.text,
-      ProjectDatabaseProvider.columnNoteDescription:
+      ProjectDatabaseHelper.columnNoteId: note.id,
+      ProjectDatabaseHelper.columnNoteProject: note.project,
+      ProjectDatabaseHelper.columnNoteType: note.type,
+      ProjectDatabaseHelper.columnNoteTitle: _titleEditingController.text,
+      ProjectDatabaseHelper.columnNoteDescription:
           _descEditingController.text,
-      ProjectDatabaseProvider.columnNoteContent: _image.path,
-      ProjectDatabaseProvider.columnNoteTableColumn: null,
-      ProjectDatabaseProvider.columnNoteTableRow: null,
-      ProjectDatabaseProvider.columnNoteCreatedAt: note.dateCreated,
-      ProjectDatabaseProvider.columnNoteUpdatedAt: dateFormatted(),
+      ProjectDatabaseHelper.columnNoteContent: _image.path,
+      ProjectDatabaseHelper.columnNoteCreatedAt: note.dateCreated,
+      ProjectDatabaseHelper.columnNoteUpdatedAt: dateFormatted(),
     });
     await _noteDb.updateNote(newNote: newNote);
   }
@@ -386,7 +394,10 @@ class _ImagePageState extends State<ImagePage> {
     );
   }
 
-  Widget _buildSnackBarWithButton(String text) {
+  Widget _buildSnackBarWithButton({
+    @required String text,
+    @required GestureTapCallback onPressed,
+  }) {
     return SnackBar(
       backgroundColor: Colors.black.withOpacity(0.5),
       duration: Duration(seconds: 3),
@@ -401,8 +412,24 @@ class _ImagePageState extends State<ImagePage> {
             ),
           ),
           RaisedButton(
+            child: Text('Nein'),
+            color: Colors.green,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(8.0),
+              ),
+            ),
+            onPressed: () => _scaffoldKey.currentState.hideCurrentSnackBar(),
+          ),
+          RaisedButton(
             child: Text('Ja'),
-            onPressed: () => Navigator.pop(context),
+            color: Colors.red,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(8.0),
+              ),
+            ),
+            onPressed: onPressed,
           ),
         ],
       ),

@@ -5,7 +5,7 @@ import 'package:citizen_lab/themes/theme_changer.dart';
 import 'package:flutter/material.dart';
 import 'package:citizen_lab/utils/date_formater.dart';
 import 'package:citizen_lab/projects/project.dart';
-import 'package:citizen_lab/database/project_database_provider.dart';
+import 'package:citizen_lab/database/project_database_helper.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:citizen_lab/utils/constants.dart';
 import 'package:provider/provider.dart';
@@ -22,7 +22,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
   final _formKey = GlobalKey<FormState>();
   final _titleEditingController = TextEditingController();
   final _descEditingController = TextEditingController();
-  final _projectDb = ProjectDatabaseProvider();
+  final _projectDb = ProjectDatabaseHelper();
 
   ThemeChanger _themeChanger;
   bool _darkModeEnabled = false;

@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/custom_widgets/simple_timer_dialog.dart';
-import 'package:citizen_lab/database/project_database_provider.dart';
+import 'package:citizen_lab/database/project_database_helper.dart';
 import 'package:citizen_lab/themes/theme.dart';
 import 'package:citizen_lab/themes/theme_changer.dart';
 import 'package:citizen_lab/utils/date_formater.dart';
@@ -34,9 +34,9 @@ class _LinkingPageState extends State<LinkingPage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _titleEditingController = TextEditingController();
   final _descEditingController = TextEditingController();
+  final _controller = Completer<WebViewController>();
   final _key = UniqueKey();
-  final _noteDb = ProjectDatabaseProvider();
-  final Completer _controller = Completer<WebViewController>();
+  final _noteDb = ProjectDatabaseHelper();
 
   ThemeChanger _themeChanger;
   bool _darkModeEnabled = false;
@@ -97,7 +97,7 @@ class _LinkingPageState extends State<LinkingPage> {
       leading: IconButton(
         tooltip: 'Zurück',
         icon: Icon(Icons.arrow_back),
-        onPressed: () => _saveNote(),
+        onPressed: _saveNote,
       ),
       title: GestureDetector(
         onPanStart: (_) => _enableDarkMode(),
@@ -225,9 +225,7 @@ class _LinkingPageState extends State<LinkingPage> {
                 _descEditingController.clear();
               }
             },
-            onPressedUpdate: () {
-              Navigator.pop(context);
-            },
+            onPressedUpdate: () => Navigator.pop(context),
           ),
     );
   }
@@ -241,8 +239,6 @@ class _LinkingPageState extends State<LinkingPage> {
           _titleEditingController.text,
           _descEditingController.text,
           _url,
-          null,
-          null,
           _createdAt,
           dateFormatted(),
         );
@@ -254,24 +250,24 @@ class _LinkingPageState extends State<LinkingPage> {
     } else {
       _scaffoldKey.currentState.showSnackBar(
         _buildSnackBarWithButton(
-            'Bitte einen Titel eingeben\nNotiz abbrechen?'),
+          text: 'Bitte einen Titel eingeben\nNotiz abbrechen?',
+          onPressed: () => Navigator.pop(context),
+        ),
       );
     }
   }
 
   Future<void> _updateNote(Note note) async {
     Note newNote = Note.fromMap({
-      ProjectDatabaseProvider.columnNoteId: note.id,
-      ProjectDatabaseProvider.columnNoteProject: note.project,
-      ProjectDatabaseProvider.columnNoteType: note.type,
-      ProjectDatabaseProvider.columnNoteTitle: _titleEditingController.text,
-      ProjectDatabaseProvider.columnNoteDescription:
+      ProjectDatabaseHelper.columnNoteId: note.id,
+      ProjectDatabaseHelper.columnNoteProject: note.project,
+      ProjectDatabaseHelper.columnNoteType: note.type,
+      ProjectDatabaseHelper.columnNoteTitle: _titleEditingController.text,
+      ProjectDatabaseHelper.columnNoteDescription:
           _descEditingController.text,
-      ProjectDatabaseProvider.columnNoteContent: _url,
-      ProjectDatabaseProvider.columnNoteTableColumn: null,
-      ProjectDatabaseProvider.columnNoteTableRow: null,
-      ProjectDatabaseProvider.columnNoteCreatedAt: note.dateCreated,
-      ProjectDatabaseProvider.columnNoteUpdatedAt: dateFormatted(),
+      ProjectDatabaseHelper.columnNoteContent: _url,
+      ProjectDatabaseHelper.columnNoteCreatedAt: note.dateCreated,
+      ProjectDatabaseHelper.columnNoteUpdatedAt: dateFormatted(),
     });
     await _noteDb.updateNote(newNote: newNote);
   }
@@ -290,7 +286,10 @@ class _LinkingPageState extends State<LinkingPage> {
     );
   }
 
-  Widget _buildSnackBarWithButton(String text) {
+  Widget _buildSnackBarWithButton({
+    @required String text,
+    @required GestureTapCallback onPressed,
+  }) {
     return SnackBar(
       backgroundColor: Colors.black.withOpacity(0.5),
       duration: Duration(seconds: 3),
@@ -305,8 +304,24 @@ class _LinkingPageState extends State<LinkingPage> {
             ),
           ),
           RaisedButton(
+            color: Colors.green,
+            child: Text('Nein'),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(8.0),
+              ),
+            ),
+            onPressed: () => _scaffoldKey.currentState.hideCurrentSnackBar(),
+          ),
+          RaisedButton(
+            color: Colors.red,
             child: Text('Ja'),
-            onPressed: () => Navigator.pop(context),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(8.0),
+              ),
+            ),
+            onPressed: onPressed,
           ),
         ],
       ),

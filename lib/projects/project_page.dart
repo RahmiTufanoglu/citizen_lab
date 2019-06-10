@@ -2,7 +2,7 @@ import 'package:citizen_lab/themes/theme.dart';
 import 'package:citizen_lab/themes/theme_changer.dart';
 import 'package:flutter/material.dart';
 import 'package:citizen_lab/projects/project.dart';
-import 'package:citizen_lab/database/project_database_provider.dart';
+import 'package:citizen_lab/database/project_database_helper.dart';
 import 'package:citizen_lab/projects/project_item.dart';
 import 'package:citizen_lab/projects/project_search_page.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
@@ -18,7 +18,7 @@ class ProjectPage extends StatefulWidget {
 
 class _ProjectPageState extends State<ProjectPage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  final _projectDb = ProjectDatabaseProvider();
+  final _projectDb = ProjectDatabaseHelper();
   final List<Project> _projectList = [];
 
   ThemeChanger _themeChanger;

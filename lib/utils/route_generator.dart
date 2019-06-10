@@ -12,7 +12,7 @@ import 'package:citizen_lab/projects/project_page.dart';
 import 'package:citizen_lab/entries/table/table_page.dart';
 import 'package:citizen_lab/entries/text/text_page.dart';
 import 'package:citizen_lab/citizen_science/citizen_science_page.dart';
-import 'package:citizen_lab/custom_widgets/detail_page.dart';
+import 'package:citizen_lab/citizen_science/detail_page.dart';
 import 'package:citizen_lab/home/home_page.dart';
 import 'package:citizen_lab/custom_widgets/info_page.dart';
 import 'package:citizen_lab/onboarding/onboarding.dart';
@@ -91,21 +91,21 @@ class RouteGenerator {
           break;
         case textPage:
           page = TextPage(
-            projectTitle: args['project'],
+            projectTitle: args['projectTitle'],
             note: args['note'],
           );
           route = routeTextPage;
           break;
         case imagePage:
           page = ImagePage(
-            projectTitle: args['projectImagePage'],
+            projectTitle: args['projectTitle'],
             note: args['note'],
           );
           route = routeImagePage;
           break;
         case tablePage:
           page = TablePage(
-            projectTitle: args['project'],
+            projectTitle: args['projectTitle'],
             note: args['note'],
           );
           route = routeTablePage;
@@ -153,7 +153,7 @@ class RouteGenerator {
           break;
         case linkingPage:
           page = LinkingPage(
-            projectTitle: args['projectLinkingTitle'],
+            projectTitle: args['projectTitle'],
             note: args['note'],
             //url: args['url'],
           );

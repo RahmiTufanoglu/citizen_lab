@@ -1,19 +1,15 @@
-import 'dart:io';
 
-import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
+import 'package:citizen_lab/custom_widgets/card_image_with_text.dart';
+import 'package:citizen_lab/custom_widgets/feedback_dialog.dart';
+import 'package:citizen_lab/home/main_drawer.dart';
 import 'package:citizen_lab/themes/theme.dart';
 import 'package:citizen_lab/themes/theme_changer.dart';
+import 'package:citizen_lab/utils/constants.dart';
+import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:citizen_lab/custom_widgets/feedback_dialog.dart';
-import 'package:citizen_lab/custom_widgets/card_image_with_text.dart';
-import 'package:citizen_lab/home/main_drawer.dart';
-import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:local_auth/local_auth.dart';
-
-import 'package:citizen_lab/utils/constants.dart';
 
 class HomePage extends StatefulWidget {
   final Key key;

@@ -1,4 +1,4 @@
-import 'package:citizen_lab/database/project_database_provider.dart';
+import 'package:citizen_lab/database/project_database_helper.dart';
 
 class Project {
   int id;
@@ -23,32 +23,32 @@ class Project {
   );
 
   Project.map(dynamic obj) {
-    this.id = obj[ProjectDatabaseProvider.columnProjectId];
-    this.title = obj[ProjectDatabaseProvider.columnProjectTitle];
-    this.description = obj[ProjectDatabaseProvider.columnProjectDesc];
-    this.dateCreated = obj[ProjectDatabaseProvider.columnProjectCreatedAt];
-    this.dateEdited = obj[ProjectDatabaseProvider.columnProjectUpdatedAt];
+    this.id = obj[ProjectDatabaseHelper.columnProjectId];
+    this.title = obj[ProjectDatabaseHelper.columnProjectTitle];
+    this.description = obj[ProjectDatabaseHelper.columnProjectDesc];
+    this.dateCreated = obj[ProjectDatabaseHelper.columnProjectCreatedAt];
+    this.dateEdited = obj[ProjectDatabaseHelper.columnProjectUpdatedAt];
   }
 
   Map<String, dynamic> toMap() {
     var map = Map<String, dynamic>();
 
     if (id != null) {
-      map[ProjectDatabaseProvider.columnProjectId] = id;
+      map[ProjectDatabaseHelper.columnProjectId] = id;
     }
-    map[ProjectDatabaseProvider.columnProjectTitle] = title;
-    map[ProjectDatabaseProvider.columnProjectDesc] = description;
-    map[ProjectDatabaseProvider.columnProjectCreatedAt] = dateCreated;
-    map[ProjectDatabaseProvider.columnProjectUpdatedAt] = dateEdited;
+    map[ProjectDatabaseHelper.columnProjectTitle] = title;
+    map[ProjectDatabaseHelper.columnProjectDesc] = description;
+    map[ProjectDatabaseHelper.columnProjectCreatedAt] = dateCreated;
+    map[ProjectDatabaseHelper.columnProjectUpdatedAt] = dateEdited;
 
     return map;
   }
 
   Project.fromMap(Map<String, dynamic> map) {
-    this.id = map[ProjectDatabaseProvider.columnProjectId];
-    this.title = map[ProjectDatabaseProvider.columnProjectTitle];
-    this.description = map[ProjectDatabaseProvider.columnProjectDesc];
-    this.dateCreated = map[ProjectDatabaseProvider.columnProjectCreatedAt];
-    this.dateEdited = map[ProjectDatabaseProvider.columnProjectUpdatedAt];
+    this.id = map[ProjectDatabaseHelper.columnProjectId];
+    this.title = map[ProjectDatabaseHelper.columnProjectTitle];
+    this.description = map[ProjectDatabaseHelper.columnProjectDesc];
+    this.dateCreated = map[ProjectDatabaseHelper.columnProjectCreatedAt];
+    this.dateEdited = map[ProjectDatabaseHelper.columnProjectUpdatedAt];
   }
 }

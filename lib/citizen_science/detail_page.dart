@@ -1,19 +1,21 @@
+import 'package:citizen_lab/collapsing_appbar_page.dart';
 import 'package:citizen_lab/themes/theme.dart';
 import 'package:citizen_lab/themes/theme_changer.dart';
 import 'package:flutter/material.dart';
-import 'package:citizen_lab/collapsing_appbar_page.dart';
 import 'package:provider/provider.dart';
 
 class DetailPage extends StatefulWidget {
+  final Key key;
   final String title;
   final String content;
   final String image;
 
   DetailPage({
+    this.key,
     @required this.title,
     @required this.content,
     @required this.image,
-  });
+  }) : super(key: key);
 
   @override
   _DetailPageState createState() => _DetailPageState();

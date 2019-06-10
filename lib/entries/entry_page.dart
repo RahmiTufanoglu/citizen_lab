@@ -1,22 +1,24 @@
 import 'dart:io';
+import 'dart:math';
 
-import 'package:citizen_lab/custom_widgets/simple_timer_dialog.dart';
-import 'package:citizen_lab/themes/theme.dart';
-import 'package:citizen_lab/themes/theme_changer.dart';
-import 'package:flutter/material.dart';
+import 'package:citizen_lab/custom_widgets/SpeedDialFloatingActionButton.dart';
 import 'package:citizen_lab/custom_widgets/alarm_dialog.dart';
-import 'package:citizen_lab/utils/constants.dart';
-import 'package:citizen_lab/entries/note.dart';
-import 'package:citizen_lab/utils/date_formater.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:citizen_lab/projects/project.dart';
-import 'package:citizen_lab/database/project_database_provider.dart';
-import 'package:citizen_lab/utils/route_generator.dart';
-import 'package:provider/provider.dart';
-
 import 'package:citizen_lab/custom_widgets/card_item.dart';
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
+import 'package:citizen_lab/custom_widgets/simple_timer_dialog.dart';
+import 'package:citizen_lab/database/project_database_helper.dart';
+import 'package:citizen_lab/entries/note.dart';
+import 'package:citizen_lab/projects/project.dart';
+import 'package:citizen_lab/themes/theme.dart';
+import 'package:citizen_lab/themes/theme_changer.dart';
+import 'package:citizen_lab/utils/constants.dart';
+import 'package:citizen_lab/utils/date_formater.dart';
+import 'package:citizen_lab/utils/route_generator.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:provider/provider.dart';
 
+import '../entry_fab_data.dart';
 import 'experiment_item.dart';
 
 class EntryPage extends StatefulWidget {
@@ -40,13 +42,13 @@ class EntryPage extends StatefulWidget {
   _EntryPageState createState() => _EntryPageState();
 }
 
-class _EntryPageState extends State<EntryPage> {
+class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _titleProjectController = TextEditingController();
   final _descProjectController = TextEditingController();
   final _textEditingController = TextEditingController();
-  final _projectDb = ProjectDatabaseProvider();
-  final _noteDb = ProjectDatabaseProvider();
+  final _projectDb = ProjectDatabaseHelper();
+  final _noteDb = ProjectDatabaseHelper();
 
   ThemeChanger _themeChanger;
   bool _darkModeEnabled = false;
@@ -143,26 +145,28 @@ class _EntryPageState extends State<EntryPage> {
         ),
         IconButton(
           icon: Icon(Icons.home),
-          onPressed: () {
-            final String cancel = 'Zur Hauptseite zurückkehren?';
-
-            showDialog(
-              context: context,
-              builder: (_) {
-                return NoYesDialog(
-                  text: cancel,
-                  onPressed: () {
-                    Navigator.popUntil(
-                      context,
-                      ModalRoute.withName(RouteGenerator.routeHomePage),
-                    );
-                  },
-                );
-              },
-            );
-          },
+          onPressed: () => _backToHomePage(),
         ),
       ],
+    );
+  }
+
+  Future<void> _backToHomePage() async {
+    final String cancel = 'Notiz abbrechen und zur Hauptseite zurückkehren?';
+
+    await showDialog(
+      context: context,
+      builder: (_) {
+        NoYesDialog(
+          text: cancel,
+          onPressed: () {
+            Navigator.popUntil(
+              context,
+              ModalRoute.withName(RouteGenerator.routeHomePage),
+            );
+          },
+        );
+      },
     );
   }
 
@@ -211,7 +215,7 @@ class _EntryPageState extends State<EntryPage> {
                         ],
                       ),
                     ),
-                    onDismissed: (direction) => _deleteNote(index),
+                    onDismissed: (_) => _deleteNote(index),
                     child: _buildItem(index),
                   );
                 },
@@ -238,7 +242,7 @@ class _EntryPageState extends State<EntryPage> {
     );
   }
 
-  Widget _buildFabs() {
+  Widget _buildFabs2() {
     final double screenWidth = MediaQuery.of(context).size.width;
     final String desc = 'Editieren';
 
@@ -264,8 +268,41 @@ class _EntryPageState extends State<EntryPage> {
             onPressed: () => _openModalBottomSheet(),
           ),
         ),
-        _buildSpeedDialFab(),
+        //_buildSpeedDialFab(),
       ],
+    );
+  }
+
+  Widget _buildFabs() {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final String desc = 'Editieren';
+
+    return Padding(
+      padding: const EdgeInsets.only(left: 32.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: <Widget>[
+          FloatingActionButton(
+            heroTag: null,
+            child: Icon(Icons.description),
+            tooltip: 'Darkmodus',
+            onPressed: () => _showDialogEditProject(),
+          ),
+          FloatingActionButton(
+            heroTag: null,
+            child: Icon(Icons.keyboard_arrow_up),
+            tooltip: desc,
+            onPressed: () => _openModalBottomSheet(),
+          ),
+          SpeedDialFloatingActionButton(
+            iconList: iconList,
+            colorList: colorList,
+            stringList: stringList,
+            function: _openNotePage,
+          ),
+        ],
+      ),
     );
   }
 
@@ -384,17 +421,16 @@ class _EntryPageState extends State<EntryPage> {
 
   _updateProject(Project project) async {
     Project updatedProject = Project.fromMap({
-      ProjectDatabaseProvider.columnProjectId: project.id,
-      ProjectDatabaseProvider.columnProjectTitle: _titleProjectController.text,
-      ProjectDatabaseProvider.columnProjectDesc: _descProjectController.text,
-      ProjectDatabaseProvider.columnProjectCreatedAt: project.dateCreated,
-      ProjectDatabaseProvider.columnProjectUpdatedAt: dateFormatted(),
+      ProjectDatabaseHelper.columnProjectId: project.id,
+      ProjectDatabaseHelper.columnProjectTitle: _titleProjectController.text,
+      ProjectDatabaseHelper.columnProjectDesc: _descProjectController.text,
+      ProjectDatabaseHelper.columnProjectCreatedAt: project.dateCreated,
+      ProjectDatabaseHelper.columnProjectUpdatedAt: dateFormatted(),
     });
-
     await _projectDb.updateProject(newProject: updatedProject);
   }
 
-  _buildSpeedDialFab() {
+  /*_buildSpeedDialFab() {
     return SpeedDial(
       tooltip: 'Eintragsart auswählen',
       overlayColor: Colors.black,
@@ -426,9 +462,9 @@ class _EntryPageState extends State<EntryPage> {
         ),
       ],
     );
-  }
+  }*/
 
-  SpeedDialChild _buildSpeedDialChild(
+  /*SpeedDialChild _buildSpeedDialChild(
     Icon icon,
     Color backgroundColor,
     String type,
@@ -442,7 +478,7 @@ class _EntryPageState extends State<EntryPage> {
       label: '${type}notiz hinzufügen',
       onTap: () => _openNotePage(type),
     );
-  }
+  }*/
 
   _openNotePage(String type, [Note note]) async {
     switch (type) {
@@ -451,7 +487,7 @@ class _EntryPageState extends State<EntryPage> {
           context,
           RouteGenerator.textPage,
           arguments: {
-            'project': widget.projectTitle,
+            'projectTitle': widget.projectTitle,
             'note': note,
           },
         );
@@ -463,7 +499,7 @@ class _EntryPageState extends State<EntryPage> {
           context,
           RouteGenerator.tablePage,
           arguments: {
-            'project': widget.projectTitle,
+            'projectTitle': widget.projectTitle,
             'note': note,
           },
         );
@@ -475,31 +511,19 @@ class _EntryPageState extends State<EntryPage> {
           context,
           RouteGenerator.imagePage,
           arguments: {
-            'projectImagePage': widget.projectTitle,
+            'projectTitle': widget.projectTitle,
             'note': note,
           },
         );
 
         if (result) _loadNoteList();
         break;
-      /*case 'Sensor':
-        final result = await Navigator.pushNamed(
-          context,
-          RouteGenerator.sensorPage,
-          arguments: {
-            'project': widget.projectTitle,
-            'note': note,
-          },
-        );
-
-        if (result) _loadNoteList();
-        break;*/
       case 'Wetter':
         final result = await Navigator.pushNamed(
           context,
           RouteGenerator.audioRecordPage,
           arguments: {
-            'project': widget.projectTitle,
+            'projectTitle': widget.projectTitle,
             'note': note,
           },
         );
@@ -511,9 +535,8 @@ class _EntryPageState extends State<EntryPage> {
           context,
           RouteGenerator.linkingPage,
           arguments: {
-            'projectLinkingTitle': widget.projectTitle,
+            'projectTitle': widget.projectTitle,
             'note': note,
-            //'url': 'http://flutter.dev',
           },
         );
 

@@ -4,23 +4,20 @@ import 'dart:typed_data';
 
 import 'package:citizen_lab/custom_widgets/ColumnRowEditWidget.dart';
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
+import 'package:citizen_lab/custom_widgets/simple_timer_dialog.dart';
 import 'package:citizen_lab/custom_widgets/table_widget.dart';
-import 'package:citizen_lab/database/project_database_provider.dart';
+import 'package:citizen_lab/database/project_database_helper.dart';
+import 'package:citizen_lab/entries/note.dart';
 import 'package:citizen_lab/entries/table/table_info_page_data.dart';
 import 'package:citizen_lab/themes/theme.dart';
 import 'package:citizen_lab/themes/theme_changer.dart';
+import 'package:citizen_lab/utils/date_formater.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
-import 'package:citizen_lab/custom_widgets/simple_timer_dialog.dart';
-import 'package:flutter/material.dart';
 import 'package:csv/csv.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
-
-import 'package:citizen_lab/utils/date_formater.dart';
-import 'package:citizen_lab/entries/note.dart';
 import 'package:provider/provider.dart';
-
-import 'package:citizen_lab/utils/utils.dart';
 
 class TablePage extends StatefulWidget {
   final Key key;
@@ -43,7 +40,7 @@ class _TablePageState extends State<TablePage> {
   final _descriptionEditingController = TextEditingController();
   final _rowTextEditingController = TextEditingController();
   final _columnTextEditingController = TextEditingController();
-  final _noteDb = ProjectDatabaseProvider();
+  final _noteDb = ProjectDatabaseHelper();
   final _listTextEditingController = <TextEditingController>[];
 
   ThemeChanger _themeChanger;
@@ -53,8 +50,8 @@ class _TablePageState extends State<TablePage> {
   int _row;
   String _title;
   String _createdAt;
-  List<String> data;
-  List<List<dynamic>> list = [];
+  List<String> _data;
+  List<List<dynamic>> _list = [];
 
   @override
   void initState() {
@@ -100,7 +97,6 @@ class _TablePageState extends State<TablePage> {
 
   @override
   Widget build(BuildContext context) {
-    _themeChanger = Provider.of<ThemeChanger>(context);
     _checkIfDarkModeEnabled();
 
     return Scaffold(
@@ -109,6 +105,14 @@ class _TablePageState extends State<TablePage> {
       body: _buildBody(),
       floatingActionButton: _buildFabs(),
     );
+  }
+
+  void _checkIfDarkModeEnabled() {
+    _themeChanger = Provider.of<ThemeChanger>(context);
+    final ThemeData theme = Theme.of(context);
+    theme.brightness == appDarkTheme().brightness
+        ? _darkModeEnabled = true
+        : _darkModeEnabled = false;
   }
 
   Widget _buildAppBar() {
@@ -146,13 +150,6 @@ class _TablePageState extends State<TablePage> {
         ),
       ],
     );
-  }
-
-  void _checkIfDarkModeEnabled() {
-    final ThemeData theme = Theme.of(context);
-    theme.brightness == appDarkTheme().brightness
-        ? _darkModeEnabled = true
-        : _darkModeEnabled = false;
   }
 
   void _enableDarkMode() {
@@ -371,8 +368,6 @@ class _TablePageState extends State<TablePage> {
           _titleEditingController.text,
           _descriptionEditingController.text,
           path,
-          null,
-          null,
           _createdAt,
           dateFormatted(),
         );
@@ -395,17 +390,15 @@ class _TablePageState extends State<TablePage> {
 
   void _updateNote(Note note, String path) async {
     Note newNote = Note.fromMap({
-      ProjectDatabaseProvider.columnNoteId: note.id,
-      ProjectDatabaseProvider.columnNoteProject: note.project,
-      ProjectDatabaseProvider.columnNoteType: note.type,
-      ProjectDatabaseProvider.columnNoteTitle: _titleEditingController.text,
-      ProjectDatabaseProvider.columnNoteDescription:
+      ProjectDatabaseHelper.columnNoteId: note.id,
+      ProjectDatabaseHelper.columnNoteProject: note.project,
+      ProjectDatabaseHelper.columnNoteType: note.type,
+      ProjectDatabaseHelper.columnNoteTitle: _titleEditingController.text,
+      ProjectDatabaseHelper.columnNoteDescription:
           _descriptionEditingController.text,
-      ProjectDatabaseProvider.columnNoteContent: path,
-      ProjectDatabaseProvider.columnNoteTableColumn: null,
-      ProjectDatabaseProvider.columnNoteTableRow: null,
-      ProjectDatabaseProvider.columnNoteCreatedAt: note.dateCreated,
-      ProjectDatabaseProvider.columnNoteUpdatedAt: dateFormatted(),
+      ProjectDatabaseHelper.columnNoteContent: path,
+      ProjectDatabaseHelper.columnNoteCreatedAt: note.dateCreated,
+      ProjectDatabaseHelper.columnNoteUpdatedAt: dateFormatted(),
     });
     await _noteDb.updateNote(newNote: newNote);
   }

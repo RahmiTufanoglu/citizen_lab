@@ -1,4 +1,4 @@
-import 'package:citizen_lab/database/project_database_provider.dart';
+import 'package:citizen_lab/database/project_database_helper.dart';
 
 class Note {
   int id;
@@ -7,8 +7,6 @@ class Note {
   String title;
   String description;
   String content;
-  int tableColumn;
-  int tableRow;
   String dateCreated;
   String dateEdited;
 
@@ -18,8 +16,6 @@ class Note {
     this.title,
     this.description,
     this.content,
-    this.tableColumn,
-    this.tableRow,
     this.dateCreated,
     this.dateEdited,
   );
@@ -31,54 +27,46 @@ class Note {
     this.title,
     this.description,
     this.content,
-    this.tableColumn,
-    this.tableRow,
     this.dateCreated,
     this.dateEdited,
   );
 
   Note.map(dynamic obj) {
-    this.id = obj[ProjectDatabaseProvider.columnNoteId];
-    this.project = obj[ProjectDatabaseProvider.columnNoteProject];
-    this.type = obj[ProjectDatabaseProvider.columnNoteType];
-    this.title = obj[ProjectDatabaseProvider.columnNoteTitle];
-    this.description = obj[ProjectDatabaseProvider.columnNoteDescription];
-    this.content = obj[ProjectDatabaseProvider.columnNoteContent];
-    this.tableColumn = obj[ProjectDatabaseProvider.columnNoteTableColumn];
-    this.tableRow = obj[ProjectDatabaseProvider.columnNoteTableRow];
-    this.dateCreated = obj[ProjectDatabaseProvider.columnNoteCreatedAt];
-    this.dateEdited = obj[ProjectDatabaseProvider.columnNoteUpdatedAt];
+    this.id = obj[ProjectDatabaseHelper.columnNoteId];
+    this.project = obj[ProjectDatabaseHelper.columnNoteProject];
+    this.type = obj[ProjectDatabaseHelper.columnNoteType];
+    this.title = obj[ProjectDatabaseHelper.columnNoteTitle];
+    this.description = obj[ProjectDatabaseHelper.columnNoteDescription];
+    this.content = obj[ProjectDatabaseHelper.columnNoteContent];
+    this.dateCreated = obj[ProjectDatabaseHelper.columnNoteCreatedAt];
+    this.dateEdited = obj[ProjectDatabaseHelper.columnNoteUpdatedAt];
   }
 
   Map<String, dynamic> toMap() {
     var map = Map<String, dynamic>();
 
     if (id != null) {
-      map[ProjectDatabaseProvider.columnNoteId] = id;
+      map[ProjectDatabaseHelper.columnNoteId] = id;
     }
-    map[ProjectDatabaseProvider.columnNoteProject] = project;
-    map[ProjectDatabaseProvider.columnNoteType] = type;
-    map[ProjectDatabaseProvider.columnNoteTitle] = title;
-    map[ProjectDatabaseProvider.columnNoteDescription] = description;
-    map[ProjectDatabaseProvider.columnNoteContent] = content;
-    map[ProjectDatabaseProvider.columnNoteTableColumn] = tableColumn;
-    map[ProjectDatabaseProvider.columnNoteTableRow] = tableRow;
-    map[ProjectDatabaseProvider.columnNoteCreatedAt] = dateCreated;
-    map[ProjectDatabaseProvider.columnNoteUpdatedAt] = dateEdited;
+    map[ProjectDatabaseHelper.columnNoteProject] = project;
+    map[ProjectDatabaseHelper.columnNoteType] = type;
+    map[ProjectDatabaseHelper.columnNoteTitle] = title;
+    map[ProjectDatabaseHelper.columnNoteDescription] = description;
+    map[ProjectDatabaseHelper.columnNoteContent] = content;
+    map[ProjectDatabaseHelper.columnNoteCreatedAt] = dateCreated;
+    map[ProjectDatabaseHelper.columnNoteUpdatedAt] = dateEdited;
 
     return map;
   }
 
   Note.fromMap(Map<String, dynamic> map) {
-    this.id = map[ProjectDatabaseProvider.columnNoteId];
-    this.project = map[ProjectDatabaseProvider.columnNoteProject];
-    this.type = map[ProjectDatabaseProvider.columnNoteType];
-    this.title = map[ProjectDatabaseProvider.columnNoteTitle];
-    this.description = map[ProjectDatabaseProvider.columnNoteDescription];
-    this.content = map[ProjectDatabaseProvider.columnNoteContent];
-    this.tableColumn = map[ProjectDatabaseProvider.columnNoteTableColumn];
-    this.tableRow = map[ProjectDatabaseProvider.columnNoteTableRow];
-    this.dateCreated = map[ProjectDatabaseProvider.columnNoteCreatedAt];
-    this.dateEdited = map[ProjectDatabaseProvider.columnNoteUpdatedAt];
+    this.id = map[ProjectDatabaseHelper.columnNoteId];
+    this.project = map[ProjectDatabaseHelper.columnNoteProject];
+    this.type = map[ProjectDatabaseHelper.columnNoteType];
+    this.title = map[ProjectDatabaseHelper.columnNoteTitle];
+    this.description = map[ProjectDatabaseHelper.columnNoteDescription];
+    this.content = map[ProjectDatabaseHelper.columnNoteContent];
+    this.dateCreated = map[ProjectDatabaseHelper.columnNoteCreatedAt];
+    this.dateEdited = map[ProjectDatabaseHelper.columnNoteUpdatedAt];
   }
 }

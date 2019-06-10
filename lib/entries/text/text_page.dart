@@ -1,18 +1,18 @@
 import 'dart:async';
 
+import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
+import 'package:citizen_lab/database/project_database_helper.dart';
+import 'package:citizen_lab/entries/experiment_item.dart';
+import 'package:citizen_lab/entries/note.dart';
 import 'package:citizen_lab/entries/text/text_info_page_data.dart';
 import 'package:citizen_lab/themes/theme.dart';
 import 'package:citizen_lab/themes/theme_changer.dart';
+import 'package:citizen_lab/utils/date_formater.dart';
+import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:citizen_lab/utils/date_formater.dart';
-import 'package:citizen_lab/database/project_database_provider.dart';
-import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:provider/provider.dart';
 import 'package:share/share.dart';
-import 'package:citizen_lab/entries/experiment_item.dart';
-import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
-import 'package:citizen_lab/entries/note.dart';
 
 class TextPage extends StatefulWidget {
   final Key key;
@@ -34,7 +34,7 @@ class _TextPageState extends State<TextPage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _titleEditingController = TextEditingController();
   final _descEditingController = TextEditingController();
-  final _noteDb = ProjectDatabaseProvider();
+  final _noteDb = ProjectDatabaseHelper();
 
   ThemeChanger _themeChanger;
   bool _darkModeEnabled = false;
@@ -83,7 +83,7 @@ class _TextPageState extends State<TextPage> {
 
   @override
   Widget build(BuildContext context) {
-    _setTheme();
+    _checkIfDarkModeEnabled();
 
     return Scaffold(
       key: _scaffoldKey,
@@ -93,21 +93,24 @@ class _TextPageState extends State<TextPage> {
     );
   }
 
-  void _setTheme() {
+  void _checkIfDarkModeEnabled() {
     _themeChanger = Provider.of<ThemeChanger>(context);
-    _checkIfDarkModeEnabled();
+    final ThemeData theme = Theme.of(context);
+    theme.brightness == appDarkTheme().brightness
+        ? _darkModeEnabled = true
+        : _darkModeEnabled = false;
   }
 
   Widget _buildAppBar() {
-    final back = 'Zurück';
-    final noteType = 'Textnotiz';
+    final String back = 'Zurück';
+    final String noteType = 'Textnotiz';
 
     return AppBar(
       elevation: 4.0,
       leading: IconButton(
         tooltip: back,
         icon: Icon(Icons.arrow_back),
-        onPressed: () => _saveNote(),
+        onPressed: _saveNote,
       ),
       title: GestureDetector(
         onPanStart: (_) => _enableDarkMode(),
@@ -126,7 +129,7 @@ class _TextPageState extends State<TextPage> {
         ),
         IconButton(
           icon: Icon(Icons.info_outline),
-          onPressed: () => _setInfoPage(),
+          onPressed: () =>_setInfoPage(),
         ),
         IconButton(
           icon: Icon(Icons.home),
@@ -134,13 +137,6 @@ class _TextPageState extends State<TextPage> {
         ),
       ],
     );
-  }
-
-  void _checkIfDarkModeEnabled() {
-    final ThemeData theme = Theme.of(context);
-    theme.brightness == appDarkTheme().brightness
-        ? _darkModeEnabled = true
-        : _darkModeEnabled = false;
   }
 
   void _enableDarkMode() {
@@ -163,20 +159,22 @@ class _TextPageState extends State<TextPage> {
     }
   }
 
-  void _backToHomePage() {
+  Future<void> _backToHomePage() async {
     final String cancel = 'Notiz abbrechen und zur Hauptseite zurückkehren?';
 
-    showDialog(
+    await showDialog(
       context: context,
-      builder: (_) => NoYesDialog(
-            text: cancel,
-            onPressed: () {
-              Navigator.popUntil(
-                context,
-                ModalRoute.withName(RouteGenerator.routeHomePage),
-              );
-            },
-          ),
+      builder: (_) {
+        NoYesDialog(
+          text: cancel,
+          onPressed: () {
+            Navigator.popUntil(
+              context,
+              ModalRoute.withName(RouteGenerator.routeHomePage),
+            );
+          },
+        );
+      },
     );
   }
 
@@ -311,8 +309,6 @@ class _TextPageState extends State<TextPage> {
           _titleEditingController.text,
           _descEditingController.text,
           '',
-          null,
-          null,
           _createdAt,
           dateFormatted(),
         );
@@ -324,24 +320,24 @@ class _TextPageState extends State<TextPage> {
     } else {
       _scaffoldKey.currentState.showSnackBar(
         _buildSnackBarWithButton(
-            'Bitte einen Titel eingeben\nNotiz abbrechen?'),
+          text: 'Bitte einen Titel eingeben\nNotiz abbrechen?',
+          onPressed: () => Navigator.pop(context),
+        ),
       );
     }
   }
 
   Future<void> _updateNote(Note note) async {
     Note newNote = Note.fromMap({
-      ProjectDatabaseProvider.columnNoteId: note.id,
-      ProjectDatabaseProvider.columnNoteProject: note.project,
-      ProjectDatabaseProvider.columnNoteType: note.type,
-      ProjectDatabaseProvider.columnNoteTitle: _titleEditingController.text,
-      ProjectDatabaseProvider.columnNoteDescription:
+      ProjectDatabaseHelper.columnNoteId: note.id,
+      ProjectDatabaseHelper.columnNoteProject: note.project,
+      ProjectDatabaseHelper.columnNoteType: note.type,
+      ProjectDatabaseHelper.columnNoteTitle: _titleEditingController.text,
+      ProjectDatabaseHelper.columnNoteDescription:
           _descEditingController.text,
-      ProjectDatabaseProvider.columnNoteContent: '',
-      ProjectDatabaseProvider.columnNoteTableColumn: null,
-      ProjectDatabaseProvider.columnNoteTableRow: null,
-      ProjectDatabaseProvider.columnNoteCreatedAt: note.dateCreated,
-      ProjectDatabaseProvider.columnNoteUpdatedAt: dateFormatted(),
+      ProjectDatabaseHelper.columnNoteContent: '',
+      ProjectDatabaseHelper.columnNoteCreatedAt: note.dateCreated,
+      ProjectDatabaseHelper.columnNoteUpdatedAt: dateFormatted(),
     });
     await _noteDb.updateNote(newNote: newNote);
   }
@@ -389,8 +385,8 @@ class _TextPageState extends State<TextPage> {
   }
 
   void _copyContent() {
-    final copyContent = 'Inhalt kopiert';
-    final copyNotPossible = 'Kein Inhalt zum kopieren';
+    final String copyContent = 'Inhalt kopiert';
+    final String copyNotPossible = 'Kein Inhalt zum kopieren';
 
     if (_titleEditingController.text.isNotEmpty &&
         _descEditingController.text.isNotEmpty) {
@@ -407,15 +403,15 @@ class _TextPageState extends State<TextPage> {
   void _openModalBottomSheet() {
     List<ExperimentItem> experimentItems = [
       ExperimentItem('', Icons.keyboard_arrow_down),
-      ExperimentItem('A', Icons.add),
-      ExperimentItem('B', Icons.add),
-      ExperimentItem('C', Icons.add),
-      ExperimentItem('E', Icons.add),
-      ExperimentItem('F', Icons.add),
-      ExperimentItem('G', Icons.add),
-      ExperimentItem('H', Icons.add),
-      ExperimentItem('I', Icons.add),
-      ExperimentItem('J', Icons.add),
+      ExperimentItem('AAA', Icons.add),
+      ExperimentItem('BBB', Icons.add),
+      ExperimentItem('CCC', Icons.add),
+      ExperimentItem('DDD', Icons.add),
+      ExperimentItem('EEE', Icons.add),
+      ExperimentItem('FFF', Icons.add),
+      ExperimentItem('GGG', Icons.add),
+      ExperimentItem('HHH', Icons.add),
+      ExperimentItem('III', Icons.add),
     ];
 
     List<Widget> experimentItemsWidgets = [];
@@ -503,7 +499,10 @@ class _TextPageState extends State<TextPage> {
     );
   }
 
-  Widget _buildSnackBarWithButton(String text) {
+  Widget _buildSnackBarWithButton({
+    @required String text,
+    @required GestureTapCallback onPressed,
+  }) {
     return SnackBar(
       backgroundColor: Colors.black.withOpacity(0.5),
       duration: Duration(seconds: 3),
@@ -518,8 +517,24 @@ class _TextPageState extends State<TextPage> {
             ),
           ),
           RaisedButton(
+            color: Colors.green,
+            child: Text('Nein'),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(8.0),
+              ),
+            ),
+            onPressed: () => _scaffoldKey.currentState.hideCurrentSnackBar(),
+          ),
+          RaisedButton(
+            color: Colors.red,
             child: Text('Ja'),
-            onPressed: () => Navigator.pop(context),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(8.0),
+              ),
+            ),
+            onPressed: onPressed,
           ),
         ],
       ),
