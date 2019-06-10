@@ -1,9 +1,12 @@
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
 class SpeedDialFloatingActionButton extends StatefulWidget {
   final Key key;
+  final IconData firstIcon;
+  final IconData secondIcon;
   final List<Icon> iconList;
   final List<Color> colorList;
   final List<String> stringList;
@@ -11,6 +14,8 @@ class SpeedDialFloatingActionButton extends StatefulWidget {
 
   SpeedDialFloatingActionButton({
     this.key,
+    this.firstIcon = Icons.add,
+    this.secondIcon = Icons.add,
     @required this.iconList,
     @required this.colorList,
     @required this.stringList,
@@ -25,7 +30,8 @@ class SpeedDialFloatingActionButton extends StatefulWidget {
 class _SpeedDialFloatingActionButtonState
     extends State<SpeedDialFloatingActionButton> with TickerProviderStateMixin {
   AnimationController _animationController;
-  static const List<IconData> icons = const [
+
+  static const List<IconData> _iconList = const [
     Icons.link,
     Icons.camera_alt,
     Icons.table_chart,
@@ -43,28 +49,53 @@ class _SpeedDialFloatingActionButtonState
   }
 
   @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
-      children: List.generate(icons.length, (int index) {
+      children: List.generate(_iconList.length, (int index) {
         Widget child = ScaleTransition(
           scale: CurvedAnimation(
             parent: _animationController,
             curve: Interval(
               0.0,
-              1.0 - index / icons.length / 2.0,
+              1.0 - index / _iconList.length,
               curve: Curves.easeInCirc,
             ),
           ),
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: FloatingActionButton(
-              heroTag: null,
-              mini: true,
-              backgroundColor: widget.colorList[index],
-              tooltip: widget.stringList[index],
-              child: widget.iconList[index],
-              onPressed: () => widget.function(widget.stringList[index]),
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                FloatingActionButton(
+                  heroTag: null,
+                  mini: true,
+                  backgroundColor: widget.colorList[index],
+                  tooltip: '${widget.stringList[index]}note erstellen.',
+                  child: widget.iconList[index],
+                  onPressed: () {
+                    _animationController.reverse();
+                    widget.function(widget.stringList[index]);
+                  },
+                ),
+                Container(
+                  width: 56.0,
+                  alignment: Alignment.center,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Text(
+                      '${widget.stringList[index]}',
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                )
+              ],
             ),
           ),
         );
@@ -83,17 +114,17 @@ class _SpeedDialFloatingActionButtonState
                         _animationController.value * 0.25 * pi),
                     alignment: FractionalOffset.center,
                     child: Icon(
-                      _animationController.isDismissed ? Icons.add : Icons.add,
+                      _animationController.isDismissed
+                          ? widget.firstIcon
+                          : widget.secondIcon,
                     ),
                   );
                 },
               ),
               onPressed: () {
-                if (_animationController.isDismissed) {
-                  _animationController.forward();
-                } else {
-                  _animationController.reverse();
-                }
+                _animationController.isDismissed
+                    ? _animationController.forward()
+                    : _animationController.reverse();
               },
             ),
           ),

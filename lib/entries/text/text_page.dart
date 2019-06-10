@@ -129,7 +129,7 @@ class _TextPageState extends State<TextPage> {
         ),
         IconButton(
           icon: Icon(Icons.info_outline),
-          onPressed: () =>_setInfoPage(),
+          onPressed: () => _setInfoPage(),
         ),
         IconButton(
           icon: Icon(Icons.home),
@@ -333,8 +333,7 @@ class _TextPageState extends State<TextPage> {
       ProjectDatabaseHelper.columnNoteProject: note.project,
       ProjectDatabaseHelper.columnNoteType: note.type,
       ProjectDatabaseHelper.columnNoteTitle: _titleEditingController.text,
-      ProjectDatabaseHelper.columnNoteDescription:
-          _descEditingController.text,
+      ProjectDatabaseHelper.columnNoteDescription: _descEditingController.text,
       ProjectDatabaseHelper.columnNoteContent: '',
       ProjectDatabaseHelper.columnNoteCreatedAt: note.dateCreated,
       ProjectDatabaseHelper.columnNoteUpdatedAt: dateFormatted(),
@@ -516,6 +515,7 @@ class _TextPageState extends State<TextPage> {
               fontWeight: FontWeight.bold,
             ),
           ),
+          Spacer(flex: 1),
           RaisedButton(
             color: Colors.green,
             child: Text('Nein'),
@@ -526,6 +526,7 @@ class _TextPageState extends State<TextPage> {
             ),
             onPressed: () => _scaffoldKey.currentState.hideCurrentSnackBar(),
           ),
+          Spacer(flex: 1),
           RaisedButton(
             color: Colors.red,
             child: Text('Ja'),

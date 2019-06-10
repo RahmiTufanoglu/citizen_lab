@@ -344,8 +344,7 @@ class _ImagePageState extends State<ImagePage> {
       ProjectDatabaseHelper.columnNoteProject: note.project,
       ProjectDatabaseHelper.columnNoteType: note.type,
       ProjectDatabaseHelper.columnNoteTitle: _titleEditingController.text,
-      ProjectDatabaseHelper.columnNoteDescription:
-          _descEditingController.text,
+      ProjectDatabaseHelper.columnNoteDescription: _descEditingController.text,
       ProjectDatabaseHelper.columnNoteContent: _image.path,
       ProjectDatabaseHelper.columnNoteCreatedAt: note.dateCreated,
       ProjectDatabaseHelper.columnNoteUpdatedAt: dateFormatted(),
@@ -411,6 +410,7 @@ class _ImagePageState extends State<ImagePage> {
               fontWeight: FontWeight.bold,
             ),
           ),
+          Spacer(flex: 1),
           RaisedButton(
             child: Text('Nein'),
             color: Colors.green,
@@ -421,6 +421,7 @@ class _ImagePageState extends State<ImagePage> {
             ),
             onPressed: () => _scaffoldKey.currentState.hideCurrentSnackBar(),
           ),
+          Spacer(flex: 1),
           RaisedButton(
             child: Text('Ja'),
             color: Colors.red,

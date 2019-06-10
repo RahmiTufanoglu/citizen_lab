@@ -34,7 +34,7 @@ class _LinkingPageState extends State<LinkingPage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _titleEditingController = TextEditingController();
   final _descEditingController = TextEditingController();
-  final _controller = Completer<WebViewController>();
+  final _webViewController = Completer<WebViewController>();
   final _key = UniqueKey();
   final _noteDb = ProjectDatabaseHelper();
 
@@ -93,9 +93,12 @@ class _LinkingPageState extends State<LinkingPage> {
   }
 
   Widget _buildAppBar() {
+    final String back = 'Zurück';
+    final String linking = 'Linking';
+
     return AppBar(
       leading: IconButton(
-        tooltip: 'Zurück',
+        tooltip: back,
         icon: Icon(Icons.arrow_back),
         onPressed: _saveNote,
       ),
@@ -104,8 +107,8 @@ class _LinkingPageState extends State<LinkingPage> {
         child: Container(
           width: double.infinity,
           child: Tooltip(
-            message: 'Linking',
-            child: Text('Linking'),
+            message: linking,
+            child: Text(linking),
           ),
         ),
       ),
@@ -156,7 +159,7 @@ class _LinkingPageState extends State<LinkingPage> {
           javascriptMode: JavascriptMode.unrestricted,
           initialUrl: _url,
           onWebViewCreated: (WebViewController webViewController) {
-            _controller.complete(webViewController);
+            _webViewController.complete(webViewController);
           },
         ),
       ),
@@ -185,8 +188,8 @@ class _LinkingPageState extends State<LinkingPage> {
   }
 
   void _copyContent() {
-    final copyContent = 'Inhalt kopiert';
-    final copyNotPossible = 'Kein Inhalt zum kopieren';
+    final String copyContent = 'Inhalt kopiert';
+    final String copyNotPossible = 'Kein Inhalt zum kopieren';
 
     if (_url.isNotEmpty) {
       _setClipboard(_url, '$copyContent.');
@@ -231,7 +234,7 @@ class _LinkingPageState extends State<LinkingPage> {
   }
 
   Future<void> _saveNote() async {
-    if (_titleEditingController.text.isNotEmpty) {
+    if (_titleEditingController.text.isNotEmpty && _url.isNotEmpty) {
       if (widget.note == null) {
         Note newNote = Note(
           widget.projectTitle,
@@ -263,8 +266,7 @@ class _LinkingPageState extends State<LinkingPage> {
       ProjectDatabaseHelper.columnNoteProject: note.project,
       ProjectDatabaseHelper.columnNoteType: note.type,
       ProjectDatabaseHelper.columnNoteTitle: _titleEditingController.text,
-      ProjectDatabaseHelper.columnNoteDescription:
-          _descEditingController.text,
+      ProjectDatabaseHelper.columnNoteDescription: _descEditingController.text,
       ProjectDatabaseHelper.columnNoteContent: _url,
       ProjectDatabaseHelper.columnNoteCreatedAt: note.dateCreated,
       ProjectDatabaseHelper.columnNoteUpdatedAt: dateFormatted(),
@@ -290,6 +292,9 @@ class _LinkingPageState extends State<LinkingPage> {
     @required String text,
     @required GestureTapCallback onPressed,
   }) {
+    final String yes = 'Ja';
+    final String no = 'Nein';
+
     return SnackBar(
       backgroundColor: Colors.black.withOpacity(0.5),
       duration: Duration(seconds: 3),
@@ -303,9 +308,10 @@ class _LinkingPageState extends State<LinkingPage> {
               fontWeight: FontWeight.bold,
             ),
           ),
+          Spacer(flex: 1),
           RaisedButton(
             color: Colors.green,
-            child: Text('Nein'),
+            child: Text(no),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.all(
                 Radius.circular(8.0),
@@ -313,9 +319,10 @@ class _LinkingPageState extends State<LinkingPage> {
             ),
             onPressed: () => _scaffoldKey.currentState.hideCurrentSnackBar(),
           ),
+          Spacer(flex: 1),
           RaisedButton(
             color: Colors.red,
-            child: Text('Ja'),
+            child: Text(yes),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.all(
                 Radius.circular(8.0),

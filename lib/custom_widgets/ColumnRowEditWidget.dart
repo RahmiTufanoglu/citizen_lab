@@ -50,10 +50,7 @@ class _ColumnRowEditingWidgetState extends State<ColumnRowEditingWidget> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(
-                left: 16.0,
-                right: 16.0,
-              ),
+              padding: const EdgeInsets.only(left: 16.0),
               child: Text(
                 widget.title,
                 style: TextStyle(fontSize: 16.0),

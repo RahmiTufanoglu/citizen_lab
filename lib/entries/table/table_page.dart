@@ -531,6 +531,7 @@ class _TablePageState extends State<TablePage> {
               fontWeight: FontWeight.bold,
             ),
           ),
+          Spacer(flex: 1),
           RaisedButton(
             color: Colors.green,
             child: Text('Nein'),
@@ -541,6 +542,7 @@ class _TablePageState extends State<TablePage> {
             ),
             onPressed: () => _scaffoldKey.currentState.hideCurrentSnackBar(),
           ),
+          Spacer(flex: 1),
           RaisedButton(
             color: Colors.red,
             child: Text('Ja'),

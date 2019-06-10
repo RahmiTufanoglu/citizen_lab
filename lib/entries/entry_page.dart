@@ -274,8 +274,8 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   }
 
   Widget _buildFabs() {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final String desc = 'Editieren';
+    final String darkModus = 'Darkmodus';
+    final String edit = 'Editieren';
 
     return Padding(
       padding: const EdgeInsets.only(left: 32.0),
@@ -286,13 +286,13 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
           FloatingActionButton(
             heroTag: null,
             child: Icon(Icons.description),
-            tooltip: 'Darkmodus',
+            tooltip: darkModus,
             onPressed: () => _showDialogEditProject(),
           ),
           FloatingActionButton(
             heroTag: null,
             child: Icon(Icons.keyboard_arrow_up),
-            tooltip: desc,
+            tooltip: edit,
             onPressed: () => _openModalBottomSheet(),
           ),
           SpeedDialFloatingActionButton(
@@ -306,7 +306,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
     );
   }
 
-  _showDialogEditProject() async {
+  Future<void> _showDialogEditProject() async {
     await showDialog(
       context: context,
       builder: (context) {
