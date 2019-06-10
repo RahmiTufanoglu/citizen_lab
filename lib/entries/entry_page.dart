@@ -507,18 +507,17 @@ class _EntryPageState extends State<EntryPage> {
         if (result) _loadNoteList();
         break;
       case 'Verlinkung':
-        //final result = await Navigator.pushNamed(
-        await Navigator.pushNamed(
+        final result = await Navigator.pushNamed(
           context,
-          RouteGenerator.routeLinkingRecordPage,
+          RouteGenerator.linkingPage,
           arguments: {
-            'project': widget.projectTitle,
+            'projectLinkingTitle': widget.projectTitle,
             'note': note,
-            'url': 'http://flutter.dev',
+            //'url': 'http://flutter.dev',
           },
         );
 
-        //if (result) _loadNoteList();
+        if (result) _loadNoteList();
         break;
       default:
         break;

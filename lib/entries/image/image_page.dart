@@ -170,14 +170,14 @@ class _ImagePageState extends State<ImagePage> {
     showDialog(
       context: context,
       builder: (_) => NoYesDialog(
-        text: cancel,
-        onPressed: () {
-          Navigator.popUntil(
-            context,
-            ModalRoute.withName(RouteGenerator.routeHomePage),
-          );
-        },
-      ),
+            text: cancel,
+            onPressed: () {
+              Navigator.popUntil(
+                context,
+                ModalRoute.withName(RouteGenerator.routeHomePage),
+              );
+            },
+          ),
     );
   }
 
@@ -191,17 +191,17 @@ class _ImagePageState extends State<ImagePage> {
           child: Center(
             child: (_image != null && _image.path.isNotEmpty)
                 ? PhotoView(
-              backgroundDecoration: BoxDecoration(),
-              minScale: PhotoViewComputedScale.contained * 0.5,
-              imageProvider: FileImage(_image),
-            )
+                    backgroundDecoration: BoxDecoration(),
+                    minScale: PhotoViewComputedScale.contained * 0.5,
+                    imageProvider: FileImage(_image),
+                  )
                 : Center(
-              child: Icon(
-                Icons.image,
-                color: Colors.grey,
-                size: 100.0,
-              ),
-            ),
+                    child: Icon(
+                      Icons.image,
+                      color: Colors.grey,
+                      size: 100.0,
+                    ),
+                  ),
           ),
         ),
       ),
@@ -301,25 +301,31 @@ class _ImagePageState extends State<ImagePage> {
   }
 
   Future<void> _saveNote() async {
-    if (widget.note == null) {
-      Note newNote = Note(
-        widget.projectTitle,
-        'Bild',
-        _titleEditingController.text.isEmpty
-            ? 'Bildnotiz'
-            : _titleEditingController.text,
-        _descEditingController.text,
-        (_image != null) ? _image.path : '',
-        null,
-        null,
-        _createdAt,
-        dateFormatted(),
-      );
-      await _noteDb.insertNote(note: newNote);
+    if (_titleEditingController.text.isNotEmpty) {
+      if (widget.note == null) {
+        Note newNote = Note(
+          widget.projectTitle,
+          'Bild',
+          _titleEditingController.text,
+          _descEditingController.text,
+          //(_image != null) ? _image.path : '',
+          _image.path,
+          null,
+          null,
+          _createdAt,
+          dateFormatted(),
+        );
+        await _noteDb.insertNote(note: newNote);
+      } else {
+        _updateNote(widget.note);
+      }
+      Navigator.pop(context, true);
     } else {
-      _updateNote(widget.note);
+      _scaffoldKey.currentState.showSnackBar(
+        _buildSnackBarWithButton(
+            'Bitte einen Titel eingeben\nNotiz abbrechen?'),
+      );
     }
-    Navigator.pop(context, true);
   }
 
   Future<void> _updateNote(Note note) async {
@@ -327,12 +333,9 @@ class _ImagePageState extends State<ImagePage> {
       ProjectDatabaseProvider.columnNoteId: note.id,
       ProjectDatabaseProvider.columnNoteProject: note.project,
       ProjectDatabaseProvider.columnNoteType: note.type,
-      ProjectDatabaseProvider.columnNoteTitle:
-      _titleEditingController.text.isEmpty
-          ? 'Bildnotiz'
-          : _titleEditingController.text,
+      ProjectDatabaseProvider.columnNoteTitle: _titleEditingController.text,
       ProjectDatabaseProvider.columnNoteDescription:
-      _descEditingController.text,
+          _descEditingController.text,
       ProjectDatabaseProvider.columnNoteContent: _image.path,
       ProjectDatabaseProvider.columnNoteTableColumn: null,
       ProjectDatabaseProvider.columnNoteTableRow: null,
@@ -344,40 +347,64 @@ class _ImagePageState extends State<ImagePage> {
 
   Future<void> _showEditDialog() async {
     await showDialog(
-      context: context,
-      builder: (context) => SimpleTimerDialog(
-        createdAt: _createdAt,
-        textEditingController: _titleEditingController,
-        descEditingController: _descEditingController,
-        descExists: true,
-        onPressedClose: () => Navigator.pop(context),
-        onPressedClear: () {
-          if (_titleEditingController.text.isNotEmpty) {
-            _titleEditingController.clear();
-          }
+        context: context,
+        builder: (context) {
+          return SimpleTimerDialog(
+            createdAt: _createdAt,
+            textEditingController: _titleEditingController,
+            descEditingController: _descEditingController,
+            descExists: true,
+            onPressedClose: () => Navigator.pop(context),
+            onPressedClear: () {
+              if (_titleEditingController.text.isNotEmpty) {
+                _titleEditingController.clear();
+              }
 
-          if (_descEditingController.text.isNotEmpty) {
-            _descEditingController.clear();
-          }
-        },
-        onPressedUpdate: () {
-          _createCachedImage();
-          Navigator.pop(context);
-        },
-      ),
-    );
+              if (_descEditingController.text.isNotEmpty) {
+                _descEditingController.clear();
+              }
+            },
+            onPressedUpdate: () {
+              _createCachedImage();
+              Navigator.pop(context);
+            },
+          );
+        });
   }
 
   Widget _buildSnackBar(String text) {
     return SnackBar(
       backgroundColor: Colors.black.withOpacity(0.5),
-      duration: Duration(milliseconds: 500),
+      duration: Duration(seconds: 1),
       content: Text(
         text,
         style: TextStyle(
           color: Colors.white,
           fontWeight: FontWeight.bold,
         ),
+      ),
+    );
+  }
+
+  Widget _buildSnackBarWithButton(String text) {
+    return SnackBar(
+      backgroundColor: Colors.black.withOpacity(0.5),
+      duration: Duration(seconds: 3),
+      content: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Text(
+            text,
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          RaisedButton(
+            child: Text('Ja'),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ],
       ),
     );
   }

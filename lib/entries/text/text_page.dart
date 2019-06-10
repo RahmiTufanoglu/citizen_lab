@@ -30,7 +30,8 @@ class TextPage extends StatefulWidget {
 }
 
 class _TextPageState extends State<TextPage> {
-  final _globalKey = GlobalKey<ScaffoldState>();
+  final _formKey = GlobalKey<FormState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _titleEditingController = TextEditingController();
   final _descEditingController = TextEditingController();
   final _noteDb = ProjectDatabaseProvider();
@@ -82,15 +83,19 @@ class _TextPageState extends State<TextPage> {
 
   @override
   Widget build(BuildContext context) {
-    _themeChanger = Provider.of<ThemeChanger>(context);
-    _checkIfDarkModeEnabled();
+    _setTheme();
 
     return Scaffold(
-      key: _globalKey,
+      key: _scaffoldKey,
       appBar: _buildAppBar(),
       body: _buildBody(),
       floatingActionButton: _buildFabs(),
     );
+  }
+
+  void _setTheme() {
+    _themeChanger = Provider.of<ThemeChanger>(context);
+    _checkIfDarkModeEnabled();
   }
 
   Widget _buildAppBar() {
@@ -145,9 +150,17 @@ class _TextPageState extends State<TextPage> {
   }
 
   void _shareContent() {
-    String fullContent =
+    final String fullContent =
         _titleEditingController.text + '\n' + _descEditingController.text;
-    Share.share(fullContent);
+    final String noTitle = 'Bitte einen Titel und eine Beschreibung eingeben';
+    if (_titleEditingController.text.isNotEmpty &&
+        _descEditingController.text.isNotEmpty) {
+      Share.share(fullContent);
+    } else {
+      _scaffoldKey.currentState.showSnackBar(
+        _buildSnackBar(text: noTitle),
+      );
+    }
   }
 
   void _backToHomePage() {
@@ -186,133 +199,142 @@ class _TextPageState extends State<TextPage> {
     final titleHere = 'Titel hier';
     final content = 'Inhalt';
     final contentHere = 'Inhalt hier';
+    final String plsEnterATitle = 'Bitte einen Titel eingeben';
 
     return SafeArea(
-      child: WillPopScope(
-        onWillPop: () => _saveNote(),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.only(bottom: 88.0),
-          child: Column(
-            children: <Widget>[
-              Card(
-                margin: const EdgeInsets.only(
-                  top: 8.0,
-                  left: 8.0,
-                  right: 8.0,
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      Text(
-                        _timeString,
-                        style: TextStyle(
-                          fontSize: 14.0,
-                          fontWeight: FontWeight.bold,
+      child: Form(
+        key: _formKey,
+        autovalidate: true,
+        child: WillPopScope(
+          onWillPop: () => _saveNote(),
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.only(bottom: 88.0),
+            child: Column(
+              children: <Widget>[
+                Card(
+                  margin: const EdgeInsets.only(
+                    top: 8.0,
+                    left: 8.0,
+                    right: 8.0,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        Text(
+                          _timeString,
+                          style: TextStyle(
+                            fontSize: 14.0,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 8.0),
-                      Text(
-                        '$created: $_createdAt',
-                        style: TextStyle(
-                          fontSize: 14.0,
-                          fontStyle: FontStyle.italic,
+                        SizedBox(height: 8.0),
+                        Text(
+                          '$created: $_createdAt',
+                          style: TextStyle(
+                            fontSize: 14.0,
+                            fontStyle: FontStyle.italic,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(height: 8.0),
-              Card(
-                margin: const EdgeInsets.only(
-                  bottom: 8.0,
-                  left: 8.0,
-                  right: 8.0,
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        '$title:',
-                        style: TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.bold,
+                SizedBox(height: 8.0),
+                Card(
+                  margin: const EdgeInsets.only(
+                    bottom: 8.0,
+                    left: 8.0,
+                    right: 8.0,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          '$title:',
+                          style: TextStyle(
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      TextFormField(
-                        controller: _titleEditingController,
-                        keyboardType: TextInputType.text,
-                        maxLength: 50,
-                        maxLines: 2,
-                        style: TextStyle(fontSize: 16.0),
-                        decoration: InputDecoration(
-                          hintText: '$titleHere.',
+                        TextFormField(
+                          controller: _titleEditingController,
+                          keyboardType: TextInputType.text,
+                          maxLength: 50,
+                          maxLines: 2,
+                          style: TextStyle(fontSize: 16.0),
+                          decoration: InputDecoration(
+                            hintText: '$titleHere.',
+                          ),
+                          validator: (text) =>
+                              text.isEmpty ? plsEnterATitle : null,
                         ),
-                      ),
-                      SizedBox(height: 42.0),
-                      Text(
-                        '$content:',
-                        style: TextStyle(
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.bold,
+                        SizedBox(height: 42.0),
+                        Text(
+                          '$content:',
+                          style: TextStyle(
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      TextFormField(
-                        controller: _descEditingController,
-                        keyboardType: TextInputType.text,
-                        maxLength: 500,
-                        maxLines: 20,
-                        style: TextStyle(fontSize: 16.0),
-                        decoration: InputDecoration(
-                          hintText: '$contentHere.',
+                        TextFormField(
+                          controller: _descEditingController,
+                          keyboardType: TextInputType.text,
+                          maxLength: 500,
+                          maxLines: 20,
+                          style: TextStyle(fontSize: 16.0),
+                          decoration: InputDecoration(
+                            hintText: '$contentHere.',
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  _saveNote() async {
-    if (widget.note == null) {
-      Note newNote = Note(
-        widget.projectTitle,
-        'Text',
-        _titleEditingController.text.isEmpty
-            ? 'Textnotiz'
-            : _titleEditingController.text,
-        _descEditingController.text,
-        '',
-        null,
-        null,
-        _createdAt,
-        dateFormatted(),
-      );
-      await _noteDb.insertNote(note: newNote);
+  Future<void> _saveNote() async {
+    if (_titleEditingController.text.isNotEmpty) {
+      if (widget.note == null) {
+        Note newNote = Note(
+          widget.projectTitle,
+          'Text',
+          _titleEditingController.text,
+          _descEditingController.text,
+          '',
+          null,
+          null,
+          _createdAt,
+          dateFormatted(),
+        );
+        await _noteDb.insertNote(note: newNote);
+      } else {
+        _updateNote(widget.note);
+      }
+      Navigator.pop(context, true);
     } else {
-      _updateNote(widget.note);
+      _scaffoldKey.currentState.showSnackBar(
+        _buildSnackBarWithButton(
+            'Bitte einen Titel eingeben\nNotiz abbrechen?'),
+      );
     }
-    Navigator.pop(context, true);
   }
 
-  void _updateNote(Note note) async {
+  Future<void> _updateNote(Note note) async {
     Note newNote = Note.fromMap({
       ProjectDatabaseProvider.columnNoteId: note.id,
       ProjectDatabaseProvider.columnNoteProject: note.project,
       ProjectDatabaseProvider.columnNoteType: note.type,
-      ProjectDatabaseProvider.columnNoteTitle:
-          _titleEditingController.text.isEmpty
-              ? 'Textnotiz'
-              : _titleEditingController.text,
+      ProjectDatabaseProvider.columnNoteTitle: _titleEditingController.text,
       ProjectDatabaseProvider.columnNoteDescription:
           _descEditingController.text,
       ProjectDatabaseProvider.columnNoteContent: '',
@@ -361,7 +383,7 @@ class _TextPageState extends State<TextPage> {
       _descEditingController.clear();
     }
 
-    _globalKey.currentState.showSnackBar(
+    _scaffoldKey.currentState.showSnackBar(
       _buildSnackBar(text: '$textDeleted.'),
     );
   }
@@ -376,7 +398,7 @@ class _TextPageState extends State<TextPage> {
           _titleEditingController.text + '\n' + _descEditingController.text;
       _setClipboard(fullContent, '$copyContent.');
     } else {
-      _globalKey.currentState.showSnackBar(
+      _scaffoldKey.currentState.showSnackBar(
         _buildSnackBar(text: '$copyNotPossible.'),
       );
     }
@@ -465,7 +487,7 @@ class _TextPageState extends State<TextPage> {
       ClipboardData(text: text),
     );
 
-    _globalKey.currentState.showSnackBar(
+    _scaffoldKey.currentState.showSnackBar(
       _buildSnackBar(text: snackText),
     );
   }
@@ -477,6 +499,29 @@ class _TextPageState extends State<TextPage> {
       content: Text(
         text,
         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+
+  Widget _buildSnackBarWithButton(String text) {
+    return SnackBar(
+      backgroundColor: Colors.black.withOpacity(0.5),
+      duration: Duration(seconds: 3),
+      content: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Text(
+            text,
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          RaisedButton(
+            child: Text('Ja'),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ],
       ),
     );
   }

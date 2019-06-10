@@ -54,9 +54,7 @@ class _SimpleTimerDialogState extends State<SimpleTimerDialog> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return _buildDialog();
-  }
+  Widget build(BuildContext context) => _buildDialog();
 
   Widget _buildDialog() {
     return Form(
@@ -128,9 +126,8 @@ class _SimpleTimerDialogState extends State<SimpleTimerDialog> {
               hintText: 'Titel hier.',
               labelStyle: TextStyle(fontSize: 14.0),
             ),
-            /*validator: (text) {
-              return text.isEmpty ? 'Bitte einen Titel eingeben' : null;
-            },*/
+            validator: (text) =>
+                text.isEmpty ? 'Bitte einen Titel eingeben' : null,
           ),
           SizedBox(height: 56.0),
           _descWidget(),

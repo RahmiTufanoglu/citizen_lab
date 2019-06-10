@@ -110,11 +110,8 @@ class CardItem extends StatelessWidget {
       case 'Bild':
         return Colors.deepOrange;
         break;
-      case 'Sensor':
+      case 'Verlinkung':
         return Colors.purple;
-        break;
-      case 'Wetter':
-        return Colors.blue;
         break;
       default:
         return null;
@@ -133,11 +130,8 @@ class CardItem extends StatelessWidget {
       case 'Bild':
         return Icon(Icons.camera_alt, color: Colors.white);
         break;
-      case 'Sensor':
-        return Icon(Icons.location_on, color: Colors.white);
-        break;
-      case 'Wetter':
-        return Icon(Icons.cloud, color: Colors.white);
+      case 'Verlinkung':
+        return Icon(Icons.link, color: Colors.white);
         break;
       default:
         return null;

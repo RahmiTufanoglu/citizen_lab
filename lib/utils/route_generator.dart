@@ -36,7 +36,7 @@ class RouteGenerator {
   static const String calculatorPage = '/calculator_page';
   static const String stopwatchPage = '/stopwatch_page';
   static const String audioRecordPage = '/audio_record_page';
-  static const String audioLinkingPage = '/linking_page';
+  static const String linkingPage = '/linking_page';
 
   static const String routeHomePage = 'home';
   static const String routeSplashPage = 'splash_page';
@@ -151,11 +151,11 @@ class RouteGenerator {
           page = StopwatchPage();
           route = routeStopwatchPage;
           break;
-        case routeLinkingRecordPage:
+        case linkingPage:
           page = LinkingPage(
-            projectTitle: args['projectImagePage'],
+            projectTitle: args['projectLinkingTitle'],
             note: args['note'],
-            url: args['url'],
+            //url: args['url'],
           );
           route = routeLinkingRecordPage;
           break;

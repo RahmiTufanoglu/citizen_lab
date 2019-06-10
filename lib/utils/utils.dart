@@ -8,4 +8,11 @@ class Utils {
         localPosition.translate(0.0, -AppBar().preferredSize.height - 24.0);
     return localPosition;
   }
+
+  static bool isNumeric(String s) {
+    if (s == null) {
+      return false;
+    }
+    return double.tryParse(s) != null;
+  }
 }

@@ -20,6 +20,8 @@ import 'package:citizen_lab/utils/date_formater.dart';
 import 'package:citizen_lab/entries/note.dart';
 import 'package:provider/provider.dart';
 
+import 'package:citizen_lab/utils/utils.dart';
+
 class TablePage extends StatefulWidget {
   final Key key;
   final Note note;
@@ -36,7 +38,7 @@ class TablePage extends StatefulWidget {
 }
 
 class _TablePageState extends State<TablePage> {
-  final _globalKey = GlobalKey<ScaffoldState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _titleEditingController = TextEditingController();
   final _descriptionEditingController = TextEditingController();
   final _rowTextEditingController = TextEditingController();
@@ -102,7 +104,7 @@ class _TablePageState extends State<TablePage> {
     _checkIfDarkModeEnabled();
 
     return Scaffold(
-      key: _globalKey,
+      key: _scaffoldKey,
       appBar: _buildAppBar(),
       body: _buildBody(),
       floatingActionButton: _buildFabs(),
@@ -162,14 +164,14 @@ class _TablePageState extends State<TablePage> {
   void _shareContent() {
     if (_title.isNotEmpty) {
       _createCsv(_title);
-      _globalKey.currentState.showSnackBar(
+      _scaffoldKey.currentState.showSnackBar(
         _buildSnackBarWithButton(
           text: 'Tabelle erstellt. Teilen?',
           onPressed: () => _shareCsv(),
         ),
       );
     } else {
-      _globalKey.currentState.showSnackBar(
+      _scaffoldKey.currentState.showSnackBar(
         _buildSnackBar(text: 'Bitte einen Titel eingeben.'),
       );
     }
@@ -355,31 +357,40 @@ class _TablePageState extends State<TablePage> {
   }
 
   _saveNote() async {
-    if (widget.note == null) {
-      String path = '';
-      if (_column != null && _row != null) {
-        path = await _createCsv(_title);
+    if (_titleEditingController.text.isNotEmpty &&
+        _column != null &&
+        _row != null) {
+      if (widget.note == null) {
+        String path = '';
+        if (_column != null && _row != null) {
+          path = await _createCsv(_title);
+        }
+        Note newNote = Note(
+          widget.projectTitle,
+          'Tabelle',
+          _titleEditingController.text,
+          _descriptionEditingController.text,
+          path,
+          null,
+          null,
+          _createdAt,
+          dateFormatted(),
+        );
+        await _noteDb.insertNote(note: newNote);
+      } else {
+        _csv.delete();
+        String path = await _createCsv(_title);
+        _updateNote(widget.note, path);
       }
-      Note newNote = Note(
-        widget.projectTitle,
-        'Tabelle',
-        _titleEditingController.text.isEmpty
-            ? 'Tablenotiz'
-            : _titleEditingController.text,
-        _descriptionEditingController.text,
-        path,
-        null,
-        null,
-        _createdAt,
-        dateFormatted(),
-      );
-      await _noteDb.insertNote(note: newNote);
+      Navigator.pop(context, true);
     } else {
-      _csv.delete();
-      String path = await _createCsv(_title);
-      _updateNote(widget.note, path);
+      _scaffoldKey.currentState.showSnackBar(
+        _buildSnackBarWithButton(
+          text: 'Bitte einen Titel eingeben\nNotiz abbrechen?',
+          onPressed: () => Navigator.pop(context),
+        ),
+      );
     }
-    Navigator.pop(context, true);
   }
 
   void _updateNote(Note note, String path) async {
@@ -387,10 +398,7 @@ class _TablePageState extends State<TablePage> {
       ProjectDatabaseProvider.columnNoteId: note.id,
       ProjectDatabaseProvider.columnNoteProject: note.project,
       ProjectDatabaseProvider.columnNoteType: note.type,
-      ProjectDatabaseProvider.columnNoteTitle:
-          _titleEditingController.text.isEmpty
-              ? 'Tablenotiz'
-              : _titleEditingController.text,
+      ProjectDatabaseProvider.columnNoteTitle: _titleEditingController.text,
       ProjectDatabaseProvider.columnNoteDescription:
           _descriptionEditingController.text,
       ProjectDatabaseProvider.columnNoteContent: path,
@@ -416,7 +424,7 @@ class _TablePageState extends State<TablePage> {
         final channel = const MethodChannel('channel:$channelName.share/share');
         channel.invokeMethod('shareTable', '$_title.csv');
       } else {
-        _globalKey.currentState.showSnackBar(
+        _scaffoldKey.currentState.showSnackBar(
           _buildSnackBar(text: 'Tabelle kann nicht geteilt werden.'),
         );
       }
@@ -454,13 +462,14 @@ class _TablePageState extends State<TablePage> {
   }
 
   Future<void> _buildTableCreate() async {
-    final String tableSize = 'Titel und Tabellengröße festlegen.';
+    final String enterTableSize = 'Titel und Tabellengröße festlegen.';
 
     return await showDialog(
       context: context,
       builder: (context) {
         return ColumnRowEditingWidget(
-          title: tableSize,
+          title: enterTableSize,
+          titleEditingController: _titleEditingController,
           columnEditingController: _columnTextEditingController,
           rowEditingController: _rowTextEditingController,
           onPressedClear: _clearAllFields,
@@ -492,11 +501,10 @@ class _TablePageState extends State<TablePage> {
     _column = int.parse(_columnTextEditingController.text);
     _row = int.parse(_rowTextEditingController.text);
 
-    _title = _titleEditingController.text;
-
-    setState(() {});
-
-    Navigator.pop(context);
+    if (_column != null && _row != null) {
+      setState(() {});
+      Navigator.pop(context);
+    }
   }
 
   Widget _buildSnackBar({@required String text}) {
@@ -517,21 +525,37 @@ class _TablePageState extends State<TablePage> {
     @required String text,
     @required GestureTapCallback onPressed,
   }) {
-    final String yes = 'Ja';
-
     return SnackBar(
       backgroundColor: Colors.black.withOpacity(0.5),
-      duration: Duration(seconds: 5),
+      duration: Duration(seconds: 3),
       content: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Text(
             text,
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-          MaterialButton(
+          RaisedButton(
+            color: Colors.green,
+            child: Text('Nein'),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(8.0),
+              ),
+            ),
+            onPressed: () => _scaffoldKey.currentState.hideCurrentSnackBar(),
+          ),
+          RaisedButton(
             color: Colors.red,
-            child: Text(yes),
+            child: Text('Ja'),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(8.0),
+              ),
+            ),
             onPressed: onPressed,
           ),
         ],
