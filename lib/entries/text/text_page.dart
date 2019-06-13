@@ -1,6 +1,7 @@
 import 'dart:async';
 
-import 'package:citizen_lab/citizen_science/entry_page_provider.dart';
+import 'package:citizen_lab/citizen_science/timer_provider.dart';
+import 'package:citizen_lab/citizen_science/title_provider.dart';
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/database/project_database_helper.dart';
 import 'package:citizen_lab/entries/experiment_item.dart';
@@ -43,32 +44,24 @@ class _TextPageState extends State<TextPage> {
   String _title;
   String _createdAt;
   String _timeString;
-
-  EntryPageProvider _entryPageProvider;
-
-  final String _textNote = 'Textnotiz';
-  FocusNode _textFocus = new FocusNode();
+  TitleProvider _titleProvider;
   bool _titleValidate = false;
+
+  TimerProvider _timerProvider;
 
   @override
   void initState() {
-    _timeString = dateFormatted();
-    _timer = Timer.periodic(Duration(seconds: 1), (_) => _getTime());
+    //_timeString = dateFormatted();
+    //_timer = Timer.periodic(Duration(seconds: 1), (_) => _getTime());
 
-    if (widget.note != null) {
+    /*if (widget.note != null) {
       _titleEditingController.text = widget.note.title;
       _title = _titleEditingController.text;
       _descEditingController.text = widget.note.description;
       _createdAt = widget.note.dateCreated;
     } else {
       _createdAt = dateFormatted();
-    }
-
-    /*_titleEditingController.addListener(() {
-      setState(() {
-        _title = _titleEditingController.text;
-      });
-    });*/
+    }*/
 
     super.initState();
   }
@@ -77,15 +70,26 @@ class _TextPageState extends State<TextPage> {
   void dispose() {
     _titleEditingController.dispose();
     _descEditingController.dispose();
-    _timer.cancel();
+    //_timer.cancel();
     super.dispose();
   }
 
-  void _getTime() {
+  /*void _getTime() {
     final String formattedDateTime = dateFormatted();
     setState(() {
       _timeString = formattedDateTime;
     });
+  }*/
+
+  void _onStart() {
+    if (widget.note != null) {
+      _titleEditingController.text = widget.note.title;
+      _title = _titleEditingController.text;
+      _descEditingController.text = widget.note.description;
+      _createdAt = widget.note.dateCreated;
+    } else {
+      _createdAt = dateFormatted();
+    }
   }
 
   @override
@@ -93,8 +97,13 @@ class _TextPageState extends State<TextPage> {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
     _checkIfDarkModeEnabled();
 
-    _entryPageProvider = Provider.of<EntryPageProvider>(context);
-    //_entryPageProvider.setTitle(_textNote);
+    _titleProvider = Provider.of<TitleProvider>(context);
+
+    _timerProvider = Provider.of<TimerProvider>(context);
+    Timer.periodic(Duration(seconds: 1), (_) => _timerProvider.setTimer());
+    //_timerProvider.setTimer();
+
+    _onStart();
 
     return Scaffold(
       key: _scaffoldKey,
@@ -128,10 +137,7 @@ class _TextPageState extends State<TextPage> {
           width: double.infinity,
           child: Tooltip(
             message: noteType,
-            //child: Text((_title != null) ? _title : noteType),
-            child:
-                Text((_title != null) ? _entryPageProvider.getTitle : noteType),
-            //child: Text(_entryPageProvider.getTitle),
+            child: Text((_title != null) ? _titleProvider.getTitle : noteType),
           ),
         ),
       ),
@@ -234,7 +240,8 @@ class _TextPageState extends State<TextPage> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[
                         Text(
-                          _timeString,
+                          //_timeString,
+                          _timerProvider.getTime,
                           style: TextStyle(
                             fontSize: 14.0,
                             fontWeight: FontWeight.bold,
@@ -282,26 +289,13 @@ class _TextPageState extends State<TextPage> {
                             errorText: _titleValidate ? plsEnterATitle : null,
                           ),
                           onChanged: (changed) {
-                            _entryPageProvider.setTitle(changed);
-                            _title = _entryPageProvider.getTitle;
+                            _titleProvider.setTitle(changed);
+                            _title = _titleProvider.getTitle;
                             (_title.isEmpty)
                                 ? _titleValidate = true
                                 : _titleValidate = false;
                           },
                         ),
-                        /*TextFormField(
-                          controller: _titleEditingController,
-                          keyboardType: TextInputType.text,
-                          maxLength: 50,
-                          maxLines: 2,
-                          style: TextStyle(fontSize: 16.0),
-                          decoration: InputDecoration(
-                            hintText: '$titleHere.',
-                          ),
-                          validator: (text) =>
-                              text.isEmpty ? plsEnterATitle : null,
-                          focusNode: _textFocus,
-                        ),*/
                         SizedBox(height: 42.0),
                         Text(
                           '$content:',
@@ -310,7 +304,7 @@ class _TextPageState extends State<TextPage> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        TextFormField(
+                        TextField(
                           controller: _descEditingController,
                           keyboardType: TextInputType.text,
                           maxLength: 500,

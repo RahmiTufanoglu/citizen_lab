@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:citizen_lab/citizen_science/entry_page_provider.dart';
+import 'package:citizen_lab/citizen_science/title_provider.dart';
 import 'package:citizen_lab/custom_widgets/alarm_dialog.dart';
 import 'package:citizen_lab/custom_widgets/card_item.dart';
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
@@ -51,7 +51,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
 
   ThemeChangerProvider _themeChanger;
   bool _darkModeEnabled = false;
-  EntryPageProvider _entryPageProvider;
+  TitleProvider _entryPageProvider;
   List<Note> _noteList = [];
   bool _listLoaded = false;
   String _title;
@@ -89,7 +89,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
     _checkIfDarkModeEnabled();
 
-    _entryPageProvider = Provider.of<EntryPageProvider>(context);
+    _entryPageProvider = Provider.of<TitleProvider>(context);
 
     return Scaffold(
       resizeToAvoidBottomPadding: false,

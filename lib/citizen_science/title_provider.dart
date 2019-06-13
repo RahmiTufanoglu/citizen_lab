@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-class EntryPageProvider with ChangeNotifier {
+class TitleProvider with ChangeNotifier {
   String _title;
 
-  EntryPageProvider();
+  TitleProvider();
 
   void setTitle(String title) {
     _title = title;

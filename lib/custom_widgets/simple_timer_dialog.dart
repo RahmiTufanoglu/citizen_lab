@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:citizen_lab/citizen_science/entry_page_provider.dart';
+import 'package:citizen_lab/citizen_science/title_provider.dart';
 import 'package:citizen_lab/utils/date_formater.dart';
 import 'package:flutter/material.dart';
 
@@ -13,6 +13,8 @@ class SimpleTimerDialog extends StatefulWidget {
   final GestureTapCallback onPressedUpdate;
   final GestureTapCallback onPressedClose;
   final bool descExists;
+  //final TitleProvider titleProvider;
+  //final String title;
 
   SimpleTimerDialog({
     this.key,
@@ -23,6 +25,8 @@ class SimpleTimerDialog extends StatefulWidget {
     @required this.onPressedUpdate,
     @required this.onPressedClose,
     @required this.descExists,
+    //@required this.titleProvider,
+    //@required this.title,
   }) : super(key: key);
 
   @override
@@ -129,6 +133,13 @@ class _SimpleTimerDialogState extends State<SimpleTimerDialog> {
             ),
             validator: (text) =>
                 text.isEmpty ? 'Bitte einen Titel eingeben' : null,
+            /*onChanged: (changed) {
+              widget.titleProvider.setTitle(changed);
+              widget.title = widget.titleProvider.getTitle;
+              (widget.title.isEmpty)
+                  ? _titleValidate = true
+                  : _titleValidate = false;
+            },*/
           ),
           SizedBox(height: 56.0),
           _descWidget(),
@@ -177,7 +188,7 @@ class _SimpleTimerDialogState extends State<SimpleTimerDialog> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          TextFormField(
+          TextField(
             controller: widget.descEditingController,
             keyboardType: TextInputType.text,
             maxLength: 50,

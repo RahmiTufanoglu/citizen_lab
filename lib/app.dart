@@ -6,7 +6,8 @@ import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'citizen_science/entry_page_provider.dart';
+import 'citizen_science/timer_provider.dart';
+import 'citizen_science/title_provider.dart';
 
 class App extends StatefulWidget {
   @override
@@ -25,9 +26,12 @@ class _AppState extends State<App> {
         ChangeNotifierProvider<ThemeChangerProvider>(
           builder: (_) => ThemeChangerProvider(appLightTheme()),
         ),
-        ChangeNotifierProvider<EntryPageProvider>(
-          builder: (_) => EntryPageProvider(),
+        ChangeNotifierProvider<TitleProvider>(
+          builder: (_) => TitleProvider(),
         ),
+        ChangeNotifierProvider<TimerProvider>(
+          builder: (_) => TimerProvider(),
+        )
       ],
       child: MaterialAppWithTheme(),
     );

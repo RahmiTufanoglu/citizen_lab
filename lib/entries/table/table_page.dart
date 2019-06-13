@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:citizen_lab/citizen_science/title_provider.dart';
 import 'package:citizen_lab/custom_widgets/ColumnRowEditWidget.dart';
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/custom_widgets/simple_timer_dialog.dart';
@@ -52,6 +53,7 @@ class _TablePageState extends State<TablePage> {
   String _createdAt;
   List<String> _data;
   List<List<dynamic>> _list = [];
+  TitleProvider _titleProvider;
 
   @override
   void initState() {
@@ -97,7 +99,10 @@ class _TablePageState extends State<TablePage> {
 
   @override
   Widget build(BuildContext context) {
+    _themeChanger = Provider.of<ThemeChangerProvider>(context);
     _checkIfDarkModeEnabled();
+
+    _titleProvider = Provider.of<TitleProvider>(context);
 
     return Scaffold(
       key: _scaffoldKey,
@@ -108,7 +113,6 @@ class _TablePageState extends State<TablePage> {
   }
 
   void _checkIfDarkModeEnabled() {
-    _themeChanger = Provider.of<ThemeChangerProvider>(context);
     final ThemeData theme = Theme.of(context);
     theme.brightness == appDarkTheme().brightness
         ? _darkModeEnabled = true
@@ -131,7 +135,8 @@ class _TablePageState extends State<TablePage> {
           width: double.infinity,
           child: Tooltip(
             message: noteType,
-            child: Text((_title != null) ? _title : noteType),
+            //child: Text((_title != null) ? _title : noteType),
+            child: Text((_title != null) ? _titleProvider.getTitle : noteType),
           ),
         ),
       ),
@@ -431,6 +436,8 @@ class _TablePageState extends State<TablePage> {
       context: context,
       builder: (context) {
         return SimpleTimerDialog(
+          //titleProvider: _titleProvider,
+          //title: _titleEditingController.text,
           createdAt: _createdAt,
           textEditingController: _titleEditingController,
           descEditingController: _descriptionEditingController,
