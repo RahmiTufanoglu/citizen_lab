@@ -1,5 +1,5 @@
 import 'package:citizen_lab/themes/theme.dart';
-import 'package:citizen_lab/themes/theme_changer.dart';
+import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:flutter/material.dart';
 
@@ -20,7 +20,7 @@ class _CitizenSciencePageState extends State<CitizenSciencePage> {
 
   List<CitizenScienceModel> _citizenScienceList;
 
-  ThemeChanger _themeChanger;
+  ThemeChangerProvider _themeChanger;
   bool _darkModeEnabled = false;
 
   @override
@@ -53,7 +53,7 @@ class _CitizenSciencePageState extends State<CitizenSciencePage> {
 
   @override
   Widget build(BuildContext context) {
-    _themeChanger = Provider.of<ThemeChanger>(context);
+    _themeChanger = Provider.of<ThemeChangerProvider>(context);
     _checkIfDarkModeEnabled();
 
     return Scaffold(

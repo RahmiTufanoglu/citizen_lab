@@ -1,11 +1,12 @@
 import 'package:citizen_lab/splash_page.dart';
-import 'package:citizen_lab/themes/theme_changer.dart';
-import 'package:flutter/material.dart';
-import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:citizen_lab/themes/theme.dart';
-
+import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/utils/constants.dart';
+import 'package:citizen_lab/utils/route_generator.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import 'citizen_science/entry_page_provider.dart';
 
 class App extends StatefulWidget {
   @override
@@ -15,8 +16,19 @@ class App extends StatefulWidget {
 class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<ThemeChanger>(
-      builder: (BuildContext context) => ThemeChanger(appLightTheme()),
+    /*return ChangeNotifierProvider<ThemeChangerProvider>(
+      builder: (BuildContext context) => ThemeChangerProvider(appLightTheme()),
+      child: MaterialAppWithTheme(),
+    );*/
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<ThemeChangerProvider>(
+          builder: (_) => ThemeChangerProvider(appLightTheme()),
+        ),
+        ChangeNotifierProvider<EntryPageProvider>(
+          builder: (_) => EntryPageProvider(),
+        ),
+      ],
       child: MaterialAppWithTheme(),
     );
   }
@@ -30,13 +42,13 @@ class MaterialAppWithTheme extends StatefulWidget {
 class _MaterialAppWithThemeState extends State<MaterialAppWithTheme> {
   @override
   Widget build(BuildContext context) {
-    final theme = Provider.of<ThemeChanger>(context);
+    final theme = Provider.of<ThemeChangerProvider>(context);
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: app_title,
       home: SplashPage(),
-      theme: theme.getTheme(),
+      theme: theme.getTheme,
       //darkTheme: appDarkTheme(),
       onGenerateRoute: RouteGenerator.routes(),
     );

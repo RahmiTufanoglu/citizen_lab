@@ -2,7 +2,7 @@ import 'package:citizen_lab/citizen_science/about_page.dart';
 import 'package:citizen_lab/entries/linking_page/linking_page.dart';
 import 'package:citizen_lab/entries/tools/sensor_page.dart';
 import 'package:citizen_lab/entries/tools/calculator_page.dart';
-import 'package:citizen_lab/entries/tools/stopwatch_page.dart';
+import 'package:citizen_lab/entries/tools/stopwatch/stopwatch_page.dart';
 import 'package:citizen_lab/splash_page.dart';
 import 'package:flutter/material.dart';
 import 'package:citizen_lab/projects/create_project_page.dart';

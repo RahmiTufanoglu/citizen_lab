@@ -1,5 +1,5 @@
 import 'package:citizen_lab/themes/theme.dart';
-import 'package:citizen_lab/themes/theme_changer.dart';
+import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:citizen_lab/projects/project.dart';
 import 'package:citizen_lab/database/project_database_helper.dart';
@@ -21,7 +21,7 @@ class _ProjectPageState extends State<ProjectPage> {
   final _projectDb = ProjectDatabaseHelper();
   final List<Project> _projectList = [];
 
-  ThemeChanger _themeChanger;
+  ThemeChangerProvider _themeChanger;
   bool _darkModeEnabled = false;
 
   @override
@@ -32,7 +32,7 @@ class _ProjectPageState extends State<ProjectPage> {
 
   @override
   Widget build(BuildContext context) {
-    _themeChanger = Provider.of<ThemeChanger>(context);
+    _themeChanger = Provider.of<ThemeChangerProvider>(context);
     _checkIfDarkModeEnabled();
 
     return Scaffold(
@@ -249,7 +249,7 @@ class _ProjectPageState extends State<ProjectPage> {
   }
 
   Future<void> _goToEntry(int index) async {
-    await Navigator.pushNamed(
+    final result = await Navigator.pushNamed(
       context,
       RouteGenerator.entry,
       arguments: {
@@ -259,6 +259,8 @@ class _ProjectPageState extends State<ProjectPage> {
         'project': _projectList[index],
       },
     );
+
+    if (result) _loadProjectList();
   }
 
   Widget _buildSnackBar({@required String text}) {

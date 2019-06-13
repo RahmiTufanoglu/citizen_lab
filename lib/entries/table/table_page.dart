@@ -10,7 +10,7 @@ import 'package:citizen_lab/database/project_database_helper.dart';
 import 'package:citizen_lab/entries/note.dart';
 import 'package:citizen_lab/entries/table/table_info_page_data.dart';
 import 'package:citizen_lab/themes/theme.dart';
-import 'package:citizen_lab/themes/theme_changer.dart';
+import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/utils/date_formater.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:csv/csv.dart';
@@ -43,7 +43,7 @@ class _TablePageState extends State<TablePage> {
   final _noteDb = ProjectDatabaseHelper();
   final _listTextEditingController = <TextEditingController>[];
 
-  ThemeChanger _themeChanger;
+  ThemeChangerProvider _themeChanger;
   bool _darkModeEnabled = false;
   File _csv;
   int _column;
@@ -108,7 +108,7 @@ class _TablePageState extends State<TablePage> {
   }
 
   void _checkIfDarkModeEnabled() {
-    _themeChanger = Provider.of<ThemeChanger>(context);
+    _themeChanger = Provider.of<ThemeChangerProvider>(context);
     final ThemeData theme = Theme.of(context);
     theme.brightness == appDarkTheme().brightness
         ? _darkModeEnabled = true

@@ -1,21 +1,20 @@
 import 'dart:io';
-import 'dart:math';
 
-import 'package:citizen_lab/custom_widgets/SpeedDialFloatingActionButton.dart';
+import 'package:citizen_lab/citizen_science/entry_page_provider.dart';
 import 'package:citizen_lab/custom_widgets/alarm_dialog.dart';
 import 'package:citizen_lab/custom_widgets/card_item.dart';
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/custom_widgets/simple_timer_dialog.dart';
+import 'package:citizen_lab/custom_widgets/speed_dial_floating_action_button.dart';
 import 'package:citizen_lab/database/project_database_helper.dart';
 import 'package:citizen_lab/entries/note.dart';
 import 'package:citizen_lab/projects/project.dart';
 import 'package:citizen_lab/themes/theme.dart';
-import 'package:citizen_lab/themes/theme_changer.dart';
+import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/utils/constants.dart';
 import 'package:citizen_lab/utils/date_formater.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:provider/provider.dart';
 
 import '../entry_fab_data.dart';
@@ -50,8 +49,9 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   final _projectDb = ProjectDatabaseHelper();
   final _noteDb = ProjectDatabaseHelper();
 
-  ThemeChanger _themeChanger;
+  ThemeChangerProvider _themeChanger;
   bool _darkModeEnabled = false;
+  EntryPageProvider _entryPageProvider;
   List<Note> _noteList = [];
   bool _listLoaded = false;
   String _title;
@@ -86,8 +86,10 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    _themeChanger = Provider.of<ThemeChanger>(context);
+    _themeChanger = Provider.of<ThemeChangerProvider>(context);
     _checkIfDarkModeEnabled();
+
+    _entryPageProvider = Provider.of<EntryPageProvider>(context);
 
     return Scaffold(
       resizeToAvoidBottomPadding: false,
@@ -96,6 +98,13 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
       body: _buildBody(),
       floatingActionButton: _buildFabs(),
     );
+  }
+
+  void _checkIfDarkModeEnabled() {
+    final ThemeData theme = Theme.of(context);
+    theme.brightness == appDarkTheme().brightness
+        ? _darkModeEnabled = true
+        : _darkModeEnabled = false;
   }
 
   Widget _buildAppBar() {
@@ -112,6 +121,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
           child: Tooltip(
             message: _title,
             child: Text(_title),
+            //child: Text(_entryPageProvider.getTitle()),
           ),
         ),
       ),
@@ -168,13 +178,6 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
         );
       },
     );
-  }
-
-  void _checkIfDarkModeEnabled() {
-    final ThemeData theme = Theme.of(context);
-    theme.brightness == appDarkTheme().brightness
-        ? _darkModeEnabled = true
-        : _darkModeEnabled = false;
   }
 
   void _enableDarkMode() {
@@ -242,37 +245,6 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildFabs2() {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final String desc = 'Editieren';
-
-    return Stack(
-      children: <Widget>[
-        Positioned(
-          bottom: 0.0,
-          left: 32.0,
-          child: FloatingActionButton(
-            heroTag: null,
-            child: Icon(Icons.description),
-            tooltip: 'Darkmodus',
-            onPressed: () => _showDialogEditProject(),
-          ),
-        ),
-        Positioned(
-          bottom: 0.0,
-          left: ((screenWidth + 32.0) / 2) - 28.0,
-          child: FloatingActionButton(
-            heroTag: null,
-            child: Icon(Icons.keyboard_arrow_up),
-            tooltip: desc,
-            onPressed: () => _openModalBottomSheet(),
-          ),
-        ),
-        //_buildSpeedDialFab(),
-      ],
-    );
-  }
-
   Widget _buildFabs() {
     final String darkModus = 'Darkmodus';
     final String edit = 'Editieren';
@@ -327,11 +299,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
           },
           onPressedUpdate: () {
             _updateProject(widget.project);
-
-            setState(() {
-              _title = _titleProjectController.text;
-            });
-
+            _title = _titleProjectController.text;
             Navigator.pop(context);
           },
         );

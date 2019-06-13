@@ -23,6 +23,14 @@ ThemeData appLightTheme() {
       highlightElevation: 16.0,
       backgroundColor: Colors.white.withOpacity(0.8),
       foregroundColor: Colors.black,
+      shape: ContinuousRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topRight: Radius.circular(42.0),
+          topLeft: Radius.circular(42.0),
+          bottomRight: Radius.circular(42.0),
+          bottomLeft: Radius.circular(42.0),
+        ),
+      ),
     ),
     iconTheme: IconThemeData(
       color: mainDarkColor,
@@ -89,6 +97,14 @@ ThemeData appDarkTheme() {
       highlightElevation: 16.0,
       backgroundColor: Colors.white,
       foregroundColor: Colors.black,
+      shape: ContinuousRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topRight: Radius.circular(42.0),
+          topLeft: Radius.circular(42.0),
+          bottomRight: Radius.circular(42.0),
+          bottomLeft: Radius.circular(42.0),
+        ),
+      ),
     ),
     iconTheme: IconThemeData(
       color: Colors.white,

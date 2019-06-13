@@ -1,5 +1,5 @@
 import 'package:citizen_lab/themes/theme.dart';
-import 'package:citizen_lab/themes/theme_changer.dart';
+import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -10,12 +10,12 @@ class AboutPage extends StatefulWidget {
 }
 
 class _AboutPageState extends State<AboutPage> {
-  ThemeChanger _themeChanger;
+  ThemeChangerProvider _themeChanger;
   bool _darkModeEnabled = false;
 
   @override
   Widget build(BuildContext context) {
-    _themeChanger = Provider.of<ThemeChanger>(context);
+    _themeChanger = Provider.of<ThemeChangerProvider>(context);
     _checkIfDarkModeEnabled();
 
     return Scaffold(

@@ -69,33 +69,17 @@ class _SpeedDialFloatingActionButtonState
             ),
           ),
           child: Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                FloatingActionButton(
-                  heroTag: null,
-                  mini: true,
-                  backgroundColor: widget.colorList[index],
-                  tooltip: '${widget.stringList[index]}note erstellen.',
-                  child: widget.iconList[index],
-                  onPressed: () {
-                    _animationController.reverse();
-                    widget.function(widget.stringList[index]);
-                  },
-                ),
-                Container(
-                  width: 56.0,
-                  alignment: Alignment.center,
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Text(
-                      '${widget.stringList[index]}',
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                )
-              ],
+            padding: const EdgeInsets.only(top: 16.0),
+            child: FloatingActionButton(
+              heroTag: null,
+              //mini: true,
+              backgroundColor: widget.colorList[index],
+              tooltip: '${widget.stringList[index]}note erstellen.',
+              child: widget.iconList[index],
+              onPressed: () {
+                _animationController.reverse();
+                widget.function(widget.stringList[index]);
+              },
             ),
           ),
         );
@@ -103,7 +87,7 @@ class _SpeedDialFloatingActionButtonState
       }).toList()
         ..add(
           Padding(
-            padding: const EdgeInsets.only(top: 8.0),
+            padding: const EdgeInsets.only(top: 16.0),
             child: FloatingActionButton(
               heroTag: null,
               child: AnimatedBuilder(

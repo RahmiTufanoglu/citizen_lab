@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:citizen_lab/themes/theme.dart';
-import 'package:citizen_lab/themes/theme_changer.dart';
+import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:citizen_lab/utils/date_formater.dart';
 import 'package:citizen_lab/projects/project.dart';
@@ -24,7 +24,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
   final _descEditingController = TextEditingController();
   final _projectDb = ProjectDatabaseHelper();
 
-  ThemeChanger _themeChanger;
+  ThemeChangerProvider _themeChanger;
   bool _darkModeEnabled = false;
 
   List<Project> _projectList = [];
@@ -71,7 +71,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
 
   @override
   Widget build(BuildContext context) {
-    _themeChanger = Provider.of<ThemeChanger>(context);
+    _themeChanger = Provider.of<ThemeChangerProvider>(context);
     _checkIfDarkModeEnabled();
 
     return Scaffold(

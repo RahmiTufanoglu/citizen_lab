@@ -1,9 +1,8 @@
-
 import 'package:citizen_lab/custom_widgets/card_image_with_text.dart';
 import 'package:citizen_lab/custom_widgets/feedback_dialog.dart';
 import 'package:citizen_lab/home/main_drawer.dart';
 import 'package:citizen_lab/themes/theme.dart';
-import 'package:citizen_lab/themes/theme_changer.dart';
+import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/utils/constants.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:flutter/gestures.dart';
@@ -24,7 +23,7 @@ class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   AnimationController _animationController;
   Animation<double> _animation;
-  ThemeChanger _themeChanger;
+  ThemeChangerProvider _themeChanger;
   bool _valueSwitch = false;
 
   bool _darkModeEnabled = false;
@@ -63,7 +62,7 @@ class _HomePageState extends State<HomePage>
 
   @override
   Widget build(BuildContext context) {
-    _themeChanger = Provider.of<ThemeChanger>(context);
+    _themeChanger = Provider.of<ThemeChangerProvider>(context);
     _checkIfDarkModeEnabled();
 
     return Scaffold(

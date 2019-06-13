@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/entries/tools/timer_painter.dart';
 import 'package:citizen_lab/themes/theme.dart';
-import 'package:citizen_lab/themes/theme_changer.dart';
+import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -30,7 +30,7 @@ class _StopwatchPageState extends State<StopwatchPage>
 
   List<String> _elapsedTimeList = [];
 
-  ThemeChanger _themeChanger;
+  ThemeChangerProvider _themeChanger;
   bool _darkModeEnabled = false;
 
   void _startTimeout() {
@@ -48,7 +48,7 @@ class _StopwatchPageState extends State<StopwatchPage>
 
   @override
   Widget build(BuildContext context) {
-    _themeChanger = Provider.of<ThemeChanger>(context);
+    _themeChanger = Provider.of<ThemeChangerProvider>(context);
     _checkIfDarkModeEnabled();
 
     return Scaffold(
@@ -227,11 +227,11 @@ class _StopwatchPageState extends State<StopwatchPage>
   }
 
   void _setStopwatchText() {
-    _stopWatchText = _stopWatch.elapsed.inMinutes.toString().padLeft(2, "0") +
+    _stopWatchText = _stopWatch.elapsed.inMinutes.toString().padLeft(2, '0') +
         ":" +
-        (_stopWatch.elapsed.inSeconds % 60).toString().padLeft(2, "0") +
+        (_stopWatch.elapsed.inSeconds % 60).toString().padLeft(2, '0') +
         ":" +
-        (_stopWatch.elapsed.inMilliseconds % 1000).toString().padLeft(3, "0");
+        (_stopWatch.elapsed.inMilliseconds % 1000).toString().padLeft(3, '0');
   }
 
   Widget _buildFabs() {

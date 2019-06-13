@@ -1,7 +1,8 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+import 'package:citizen_lab/citizen_science/entry_page_provider.dart';
 import 'package:citizen_lab/utils/date_formater.dart';
+import 'package:flutter/material.dart';
 
 class SimpleTimerDialog extends StatefulWidget {
   final Key key;

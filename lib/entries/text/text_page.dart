@@ -1,12 +1,13 @@
 import 'dart:async';
 
+import 'package:citizen_lab/citizen_science/entry_page_provider.dart';
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/database/project_database_helper.dart';
 import 'package:citizen_lab/entries/experiment_item.dart';
 import 'package:citizen_lab/entries/note.dart';
 import 'package:citizen_lab/entries/text/text_info_page_data.dart';
 import 'package:citizen_lab/themes/theme.dart';
-import 'package:citizen_lab/themes/theme_changer.dart';
+import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/utils/date_formater.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:flutter/material.dart';
@@ -36,12 +37,18 @@ class _TextPageState extends State<TextPage> {
   final _descEditingController = TextEditingController();
   final _noteDb = ProjectDatabaseHelper();
 
-  ThemeChanger _themeChanger;
+  ThemeChangerProvider _themeChanger;
   bool _darkModeEnabled = false;
   Timer _timer;
   String _title;
   String _createdAt;
   String _timeString;
+
+  EntryPageProvider _entryPageProvider;
+
+  final String _textNote = 'Textnotiz';
+  FocusNode _textFocus = new FocusNode();
+  bool _titleValidate = false;
 
   @override
   void initState() {
@@ -57,11 +64,11 @@ class _TextPageState extends State<TextPage> {
       _createdAt = dateFormatted();
     }
 
-    _titleEditingController.addListener(() {
+    /*_titleEditingController.addListener(() {
       setState(() {
         _title = _titleEditingController.text;
       });
-    });
+    });*/
 
     super.initState();
   }
@@ -83,7 +90,11 @@ class _TextPageState extends State<TextPage> {
 
   @override
   Widget build(BuildContext context) {
+    _themeChanger = Provider.of<ThemeChangerProvider>(context);
     _checkIfDarkModeEnabled();
+
+    _entryPageProvider = Provider.of<EntryPageProvider>(context);
+    //_entryPageProvider.setTitle(_textNote);
 
     return Scaffold(
       key: _scaffoldKey,
@@ -94,7 +105,6 @@ class _TextPageState extends State<TextPage> {
   }
 
   void _checkIfDarkModeEnabled() {
-    _themeChanger = Provider.of<ThemeChanger>(context);
     final ThemeData theme = Theme.of(context);
     theme.brightness == appDarkTheme().brightness
         ? _darkModeEnabled = true
@@ -118,7 +128,10 @@ class _TextPageState extends State<TextPage> {
           width: double.infinity,
           child: Tooltip(
             message: noteType,
-            child: Text((_title != null) ? _title : noteType),
+            //child: Text((_title != null) ? _title : noteType),
+            child:
+                Text((_title != null) ? _entryPageProvider.getTitle : noteType),
+            //child: Text(_entryPageProvider.getTitle),
           ),
         ),
       ),
@@ -258,7 +271,25 @@ class _TextPageState extends State<TextPage> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        TextFormField(
+                        TextField(
+                          controller: _titleEditingController,
+                          keyboardType: TextInputType.text,
+                          maxLength: 50,
+                          maxLines: 2,
+                          style: TextStyle(fontSize: 16.0),
+                          decoration: InputDecoration(
+                            hintText: '$titleHere.',
+                            errorText: _titleValidate ? plsEnterATitle : null,
+                          ),
+                          onChanged: (changed) {
+                            _entryPageProvider.setTitle(changed);
+                            _title = _entryPageProvider.getTitle;
+                            (_title.isEmpty)
+                                ? _titleValidate = true
+                                : _titleValidate = false;
+                          },
+                        ),
+                        /*TextFormField(
                           controller: _titleEditingController,
                           keyboardType: TextInputType.text,
                           maxLength: 50,
@@ -269,7 +300,8 @@ class _TextPageState extends State<TextPage> {
                           ),
                           validator: (text) =>
                               text.isEmpty ? plsEnterATitle : null,
-                        ),
+                          focusNode: _textFocus,
+                        ),*/
                         SizedBox(height: 42.0),
                         Text(
                           '$content:',
@@ -372,6 +404,7 @@ class _TextPageState extends State<TextPage> {
 
     if (_titleEditingController.text.isNotEmpty) {
       _titleEditingController.clear();
+      _titleValidate = true;
     }
 
     if (_descEditingController.text.isNotEmpty) {
