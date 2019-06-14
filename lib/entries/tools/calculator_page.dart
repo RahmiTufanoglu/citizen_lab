@@ -1,8 +1,7 @@
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-
-import 'calculator_button.dart';
 
 class CalculatorPage extends StatefulWidget {
   @override
@@ -10,51 +9,17 @@ class CalculatorPage extends StatefulWidget {
 }
 
 class _CalculatorPageState extends State<CalculatorPage> {
-  final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  final _calcEditingController = TextEditingController();
-
   ThemeChangerProvider _themeChanger;
 
-  List<CalculatorButton> _calculatorButtonList = [];
-
-  int count = 0;
-
-  @override
-  void initState() {
-    List<CalculatorButton> list = [
-      CalculatorButton(false, 'C', null, null),
-      CalculatorButton(false, '', null, null),
-      CalculatorButton(false, '%', null, null),
-      CalculatorButton(false, '/', null, null),
-      CalculatorButton(false, '7', null, null),
-      CalculatorButton(false, '8', null, null),
-      CalculatorButton(false, '9', null, null),
-      CalculatorButton(false, 'x', null, null),
-      CalculatorButton(false, '4', null, null),
-      CalculatorButton(false, '5', null, null),
-      CalculatorButton(false, '6', null, null),
-      CalculatorButton(false, '-', null, null),
-      CalculatorButton(false, '1', null, null),
-      CalculatorButton(false, '2', null, null),
-      CalculatorButton(false, '3', null, null),
-      CalculatorButton(true, '+', null, null),
-      CalculatorButton(false, '', null, null),
-      CalculatorButton(false, '0', null, null),
-      CalculatorButton(false, '.', null, null),
-      CalculatorButton(false, '=', null, null),
-    ];
-
-    for (int i = 0; i < list.length; i++) {
-      _calculatorButtonList.add(list[i]);
-    }
-
-    super.initState();
-  }
+  String output = '0';
+  String _output = '0';
+  double num1 = 0.0;
+  double num2 = 0.0;
+  String operand = '';
 
   @override
   void dispose() {
-    _calcEditingController.dispose();
     super.dispose();
   }
 
@@ -64,6 +29,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
     _themeChanger.checkIfDarkModeEnabled(context);
 
     return Scaffold(
+      key: _scaffoldKey,
       appBar: _buildAppBar(),
       body: _buildBody(),
       floatingActionButton: _buildFabs(),
@@ -73,7 +39,6 @@ class _CalculatorPageState extends State<CalculatorPage> {
   Widget _buildAppBar() {
     return AppBar(
       title: GestureDetector(
-        //onPanStart: (_) => _enableDarkMode(),
         onPanStart: (_) => _themeChanger.setTheme(),
         child: Container(
           width: double.infinity,
@@ -89,70 +54,167 @@ class _CalculatorPageState extends State<CalculatorPage> {
   Widget _buildBody() {
     return SafeArea(
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
-          TextFormField(
-            controller: _calcEditingController,
-            keyboardType: TextInputType.number,
-            style: TextStyle(
-              fontSize: 28.0,
+          Container(
+            alignment: Alignment.centerRight,
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              output,
+              style: TextStyle(fontSize: 42.0),
             ),
           ),
-          RaisedButton(
-            child: Text('Berechne'),
-            onPressed: () => _checkOperation(),
+          Divider(),
+          Column(
+            children: [
+              Row(
+                children: [
+                  _buildButton('7'),
+                  _buildButton('8'),
+                  _buildButton('9'),
+                  _buildButton('/')
+                ],
+              ),
+              Row(
+                children: [
+                  _buildButton('4'),
+                  _buildButton('5'),
+                  _buildButton('6'),
+                  _buildButton('X')
+                ],
+              ),
+              Row(
+                children: [
+                  _buildButton('1'),
+                  _buildButton('2'),
+                  _buildButton('3'),
+                  _buildButton('-')
+                ],
+              ),
+              Row(
+                children: [
+                  _buildButton('.'),
+                  _buildButton('0'),
+                  _buildButton('00'),
+                  _buildButton('+')
+                ],
+              ),
+              Row(
+                children: [
+                  _buildButton('CLEAR'),
+                  _buildButton('='),
+                ],
+              )
+            ],
           ),
         ],
       ),
     );
   }
 
-  void _checkOperation() {
-    String s1 = _calcEditingController.text;
-    String s = s1.replaceAll(RegExp(r"\s\b|\b\s"), '');
-
-    /*List<String> list = [];
-
-    for (int i = 0; i < list.length; i++) {
-      String tmp = s.substring(count, s.indexOf(' '));
-      count = tmp.length;
-      list.add(s.substring(count, s.indexOf(' ')));
-    }*/
-
-    List<String> strNumber = [];
-    List<int> doubleNumber = [];
-
-    //print(stringLength);
-
-    /*String tmp;
-    int count = 0;
-    int index;
-    for (int i = 0; i < stringLength; i++) {
-      if (s.contains('+')) {
-        index = s.indexOf('+');
-        //print(index);
-        tmp = s.substring(count, index);
-        number.add(int.parse(tmp));
-        //i = index;
-      }
-    }*/
-
-    for (int i = 0; i < s.length; i++) {
-      if (s[i] != '+') {
-        strNumber.add(s[i]);
+  _buttonPressed(String buttonText) {
+    if (buttonText == 'CLEAR') {
+      _output = '0';
+      num1 = 0.0;
+      num2 = 0.0;
+      operand = '';
+    } else if (buttonText == '+' ||
+        buttonText == '-' ||
+        buttonText == '/' ||
+        buttonText == 'X') {
+      num1 = double.parse(output);
+      operand = buttonText;
+      _output = '0';
+    } else if (buttonText == '.') {
+      if (_output.contains('.')) {
+        return;
       } else {
-        //doubleNumber.add(int.parse(strNumber[i]));
-        break;
+        _output = _output + buttonText;
       }
+    } else if (buttonText == '=') {
+      num2 = double.parse(output);
+
+      if (operand == '+') {
+        _output = (num1 + num2).toString();
+      }
+      if (operand == '-') {
+        _output = (num1 - num2).toString();
+      }
+      if (operand == 'X') {
+        _output = (num1 * num2).toString();
+      }
+      if (operand == '/') {
+        _output = (num1 / num2).toString();
+      }
+
+      num1 = 0.0;
+      num2 = 0.0;
+      operand = '';
+    } else {
+      _output = _output + buttonText;
     }
 
-    print('ERG: ${strNumber[0]}');
+    setState(() {
+      output = double.parse(_output).toStringAsFixed(2);
+    });
+  }
+
+  Widget _buildButton(String buttonText) {
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.all(4.0),
+        child: RaisedButton(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            buttonText,
+            style: TextStyle(fontSize: 24.0),
+          ),
+          onPressed: () => _buttonPressed(buttonText),
+        ),
+      ),
+    );
   }
 
   Widget _buildFabs() {
     return FloatingActionButton(
       child: Icon(Icons.content_copy),
-      onPressed: () {},
+      onPressed: () => _copyContent(),
+    );
+  }
+
+  void _copyContent() {
+    final String copyContent = 'Inhalt kopiert';
+    final String copyNotPossible = 'Kein Inhalt zum kopieren';
+
+    if (output.isNotEmpty) {
+      _setClipboard(output, '$copyContent.');
+    } else {
+      _scaffoldKey.currentState.showSnackBar(
+        _buildSnackBar(text: '$copyNotPossible.'),
+      );
+    }
+  }
+
+  void _setClipboard(String text, String snackText) {
+    Clipboard.setData(
+      ClipboardData(text: text),
+    );
+
+    _scaffoldKey.currentState.showSnackBar(
+      _buildSnackBar(text: snackText),
+    );
+  }
+
+  Widget _buildSnackBar({@required String text}) {
+    return SnackBar(
+      backgroundColor: Colors.black.withOpacity(0.5),
+      duration: Duration(milliseconds: 500),
+      content: Text(
+        text,
+        style: TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
     );
   }
 }

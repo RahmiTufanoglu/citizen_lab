@@ -1,13 +1,11 @@
 import 'dart:async';
 
 import 'package:citizen_lab/citizen_science/timer_provider.dart';
-import 'package:citizen_lab/citizen_science/title_provider.dart';
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/database/project_database_helper.dart';
 import 'package:citizen_lab/entries/experiment_item.dart';
 import 'package:citizen_lab/entries/note.dart';
 import 'package:citizen_lab/entries/text/text_info_page_data.dart';
-import 'package:citizen_lab/themes/theme.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/utils/date_formater.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
@@ -39,15 +37,10 @@ class _TextPageState extends State<TextPage> {
   final _noteDb = ProjectDatabaseHelper();
 
   ThemeChangerProvider _themeChanger;
-  //bool _darkModeEnabled = false;
   Timer _timer;
   String _title;
   String _createdAt;
   String _timeString;
-
-  //TitleProvider _titleProvider;
-  //bool _titleValidate = false;
-
   TimerProvider _timerProvider;
 
   @override
@@ -88,30 +81,13 @@ class _TextPageState extends State<TextPage> {
     });
   }*/
 
-  void _onStart() {
-    if (widget.note != null) {
-      _titleEditingController.text = widget.note.title;
-      _title = _titleEditingController.text;
-      _descEditingController.text = widget.note.description;
-      _createdAt = widget.note.dateCreated;
-    } else {
-      _createdAt = dateFormatted();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
     _themeChanger.checkIfDarkModeEnabled(context);
-    //_checkIfDarkModeEnabled();
-
-    //_titleProvider = Provider.of<TitleProvider>(context);
 
     _timerProvider = Provider.of<TimerProvider>(context);
     Timer.periodic(Duration(seconds: 1), (_) => _timerProvider.setTimer());
-    //_timerProvider.setTimer();
-
-    _onStart();
 
     return Scaffold(
       key: _scaffoldKey,
@@ -120,13 +96,6 @@ class _TextPageState extends State<TextPage> {
       floatingActionButton: _buildFabs(),
     );
   }
-
-  /*void _checkIfDarkModeEnabled() {
-    final ThemeData theme = Theme.of(context);
-    theme.brightness == appDarkTheme().brightness
-        ? _darkModeEnabled = true
-        : _darkModeEnabled = false;
-  }*/
 
   Widget _buildAppBar() {
     final String back = 'Zurück';
@@ -166,12 +135,6 @@ class _TextPageState extends State<TextPage> {
       ],
     );
   }
-
-  /*void _enableDarkMode() {
-    _darkModeEnabled
-        ? _themeChanger.setTheme(appLightTheme())
-        : _themeChanger.setTheme(appDarkTheme());
-  }*/
 
   void _shareContent() {
     final String fullContent =
@@ -409,7 +372,6 @@ class _TextPageState extends State<TextPage> {
 
     if (_titleEditingController.text.isNotEmpty) {
       _titleEditingController.clear();
-      //_titleValidate = true;
     }
 
     if (_descEditingController.text.isNotEmpty) {
