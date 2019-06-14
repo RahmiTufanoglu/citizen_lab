@@ -26,7 +26,7 @@ class _HomePageState extends State<HomePage>
   ThemeChangerProvider _themeChanger;
   bool _valueSwitch = false;
 
-  bool _darkModeEnabled = false;
+  //bool _darkModeEnabled = false;
 
   @override
   void initState() {
@@ -53,16 +53,17 @@ class _HomePageState extends State<HomePage>
 
     if (theme.brightness == appDarkTheme().brightness) {
       _valueSwitch = true;
-      _darkModeEnabled = true;
+      //_darkModeEnabled = true;
     } else {
       _valueSwitch = false;
-      _darkModeEnabled = false;
+      //_darkModeEnabled = false;
     }
   }
 
   @override
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
+    _themeChanger.checkIfDarkModeEnabled(context);
     _checkIfDarkModeEnabled();
 
     return Scaffold(
@@ -77,7 +78,8 @@ class _HomePageState extends State<HomePage>
     return AppBar(
       elevation: 4.0,
       title: GestureDetector(
-        onPanStart: (_) => _enableDarkMode(),
+        //onPanStart: (_) => _enableDarkMode(),
+        onPanStart: (_) => _themeChanger.setTheme(),
         child: Container(
           width: double.infinity,
           child: Tooltip(
@@ -96,11 +98,11 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  void _enableDarkMode() {
+  /*void _enableDarkMode() {
     _darkModeEnabled
         ? _themeChanger.setTheme(appLightTheme())
         : _themeChanger.setTheme(appDarkTheme());
-  }
+  }*/
 
   Widget _buildDrawer() {
     return MainDrawer(
@@ -213,8 +215,10 @@ class _HomePageState extends State<HomePage>
 
   _onChangedSwitch(bool value) {
     value
-        ? _themeChanger.setTheme(appDarkTheme())
-        : _themeChanger.setTheme(appLightTheme());
+        //? _themeChanger.setTheme(appDarkTheme())
+        ? _themeChanger.setTheme()
+        //: _themeChanger.setTheme(appLightTheme());
+        : _themeChanger.setTheme();
     setState(() {
       _valueSwitch = value;
     });

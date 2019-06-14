@@ -39,13 +39,14 @@ class _TextPageState extends State<TextPage> {
   final _noteDb = ProjectDatabaseHelper();
 
   ThemeChangerProvider _themeChanger;
-  bool _darkModeEnabled = false;
+  //bool _darkModeEnabled = false;
   Timer _timer;
   String _title;
   String _createdAt;
   String _timeString;
-  TitleProvider _titleProvider;
-  bool _titleValidate = false;
+
+  //TitleProvider _titleProvider;
+  //bool _titleValidate = false;
 
   TimerProvider _timerProvider;
 
@@ -54,14 +55,20 @@ class _TextPageState extends State<TextPage> {
     //_timeString = dateFormatted();
     //_timer = Timer.periodic(Duration(seconds: 1), (_) => _getTime());
 
-    /*if (widget.note != null) {
+    if (widget.note != null) {
       _titleEditingController.text = widget.note.title;
       _title = _titleEditingController.text;
       _descEditingController.text = widget.note.description;
       _createdAt = widget.note.dateCreated;
     } else {
       _createdAt = dateFormatted();
-    }*/
+    }
+
+    _titleEditingController.addListener(() {
+      setState(() {
+        _title = _titleEditingController.text;
+      });
+    });
 
     super.initState();
   }
@@ -95,9 +102,10 @@ class _TextPageState extends State<TextPage> {
   @override
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
-    _checkIfDarkModeEnabled();
+    _themeChanger.checkIfDarkModeEnabled(context);
+    //_checkIfDarkModeEnabled();
 
-    _titleProvider = Provider.of<TitleProvider>(context);
+    //_titleProvider = Provider.of<TitleProvider>(context);
 
     _timerProvider = Provider.of<TimerProvider>(context);
     Timer.periodic(Duration(seconds: 1), (_) => _timerProvider.setTimer());
@@ -113,12 +121,12 @@ class _TextPageState extends State<TextPage> {
     );
   }
 
-  void _checkIfDarkModeEnabled() {
+  /*void _checkIfDarkModeEnabled() {
     final ThemeData theme = Theme.of(context);
     theme.brightness == appDarkTheme().brightness
         ? _darkModeEnabled = true
         : _darkModeEnabled = false;
-  }
+  }*/
 
   Widget _buildAppBar() {
     final String back = 'Zurück';
@@ -132,12 +140,13 @@ class _TextPageState extends State<TextPage> {
         onPressed: _saveNote,
       ),
       title: GestureDetector(
-        onPanStart: (_) => _enableDarkMode(),
+        onPanStart: (_) => _themeChanger.setTheme(),
         child: Container(
           width: double.infinity,
           child: Tooltip(
             message: noteType,
-            child: Text((_title != null) ? _titleProvider.getTitle : noteType),
+            //child: Text((_title != null) ? _titleProvider.getTitle : noteType),
+            child: Text((_title != null) ? _title : noteType),
           ),
         ),
       ),
@@ -158,11 +167,11 @@ class _TextPageState extends State<TextPage> {
     );
   }
 
-  void _enableDarkMode() {
+  /*void _enableDarkMode() {
     _darkModeEnabled
         ? _themeChanger.setTheme(appLightTheme())
         : _themeChanger.setTheme(appDarkTheme());
-  }
+  }*/
 
   void _shareContent() {
     final String fullContent =
@@ -184,7 +193,7 @@ class _TextPageState extends State<TextPage> {
     await showDialog(
       context: context,
       builder: (_) {
-        NoYesDialog(
+        return NoYesDialog(
           text: cancel,
           onPressed: () {
             Navigator.popUntil(
@@ -278,7 +287,7 @@ class _TextPageState extends State<TextPage> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        TextField(
+                        TextFormField(
                           controller: _titleEditingController,
                           keyboardType: TextInputType.text,
                           maxLength: 50,
@@ -286,15 +295,17 @@ class _TextPageState extends State<TextPage> {
                           style: TextStyle(fontSize: 16.0),
                           decoration: InputDecoration(
                             hintText: '$titleHere.',
-                            errorText: _titleValidate ? plsEnterATitle : null,
+                            //errorText: _titleValidate ? plsEnterATitle : null,
                           ),
-                          onChanged: (changed) {
+                          /*onChanged: (changed) {
                             _titleProvider.setTitle(changed);
                             _title = _titleProvider.getTitle;
                             (_title.isEmpty)
                                 ? _titleValidate = true
                                 : _titleValidate = false;
-                          },
+                          },*/
+                          validator: (text) =>
+                              text.isEmpty ? plsEnterATitle : null,
                         ),
                         SizedBox(height: 42.0),
                         Text(
@@ -304,7 +315,7 @@ class _TextPageState extends State<TextPage> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        TextField(
+                        TextFormField(
                           controller: _descEditingController,
                           keyboardType: TextInputType.text,
                           maxLength: 500,
@@ -398,7 +409,7 @@ class _TextPageState extends State<TextPage> {
 
     if (_titleEditingController.text.isNotEmpty) {
       _titleEditingController.clear();
-      _titleValidate = true;
+      //_titleValidate = true;
     }
 
     if (_descEditingController.text.isNotEmpty) {

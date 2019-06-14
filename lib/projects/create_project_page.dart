@@ -25,7 +25,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
   final _projectDb = ProjectDatabaseHelper();
 
   ThemeChangerProvider _themeChanger;
-  bool _darkModeEnabled = false;
+  //bool _darkModeEnabled = false;
 
   List<Project> _projectList = [];
   Color _buttonColor = Colors.white;
@@ -72,7 +72,8 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
   @override
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
-    _checkIfDarkModeEnabled();
+    _themeChanger.checkIfDarkModeEnabled(context);
+    //_checkIfDarkModeEnabled();
 
     return Scaffold(
       key: _snackBarKey,
@@ -82,12 +83,12 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
     );
   }
 
-  void _checkIfDarkModeEnabled() {
+  /*void _checkIfDarkModeEnabled() {
     final ThemeData theme = Theme.of(context);
     theme.brightness == appDarkTheme().brightness
         ? _darkModeEnabled = true
         : _darkModeEnabled = false;
-  }
+  }*/
 
   Widget _buildAppBar() {
     return AppBar(
@@ -97,7 +98,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
         onPressed: () => Navigator.pop(context),
       ),
       title: GestureDetector(
-        onPanStart: (_) => _enableDarkMode(),
+        onPanStart: (_) => _themeChanger.setTheme(),
         child: Container(
           width: double.infinity,
           child: Tooltip(
@@ -116,11 +117,11 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
     );
   }
 
-  void _enableDarkMode() {
+  /*void _enableDarkMode() {
     _darkModeEnabled
         ? _themeChanger.setTheme(appLightTheme())
         : _themeChanger.setTheme(appDarkTheme());
-  }
+  }*/
 
   void _setInfoPage() {
     Navigator.pushNamed(

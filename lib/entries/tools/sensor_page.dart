@@ -30,7 +30,7 @@ class _SensorPageState extends State<SensorPage>
   Timer _timer;
 
   ThemeChangerProvider _themeChanger;
-  bool _darkModeEnabled = false;
+  //bool _darkModeEnabled = false;
 
   @override
   void initState() {
@@ -65,7 +65,8 @@ class _SensorPageState extends State<SensorPage>
   @override
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
-    _checkIfDarkModeEnabled();
+    _themeChanger.checkIfDarkModeEnabled(context);
+    //_checkIfDarkModeEnabled();
 
     return Scaffold(
       key: _scaffoldKey,
@@ -82,7 +83,7 @@ class _SensorPageState extends State<SensorPage>
     return AppBar(
       elevation: 4.0,
       title: GestureDetector(
-        onPanStart: (_) => _enableDarkMode(),
+        onPanStart: (_) => _themeChanger.setTheme(),
         child: Container(
           width: double.infinity,
           child: Tooltip(
@@ -109,7 +110,7 @@ class _SensorPageState extends State<SensorPage>
     );
   }
 
-  void _checkIfDarkModeEnabled() {
+  /*void _checkIfDarkModeEnabled() {
     final ThemeData theme = Theme.of(context);
     theme.brightness == appDarkTheme().brightness
         ? _darkModeEnabled = true
@@ -120,7 +121,7 @@ class _SensorPageState extends State<SensorPage>
     _darkModeEnabled
         ? _themeChanger.setTheme(appLightTheme())
         : _themeChanger.setTheme(appDarkTheme());
-  }
+  }*/
 
   void _shareContent() {
     final String sharingNotPossible = 'Teilvorgang nicht möglich.';

@@ -188,7 +188,7 @@ class _SimpleTimerDialogState extends State<SimpleTimerDialog> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          TextField(
+          TextFormField(
             controller: widget.descEditingController,
             keyboardType: TextInputType.text,
             maxLength: 50,

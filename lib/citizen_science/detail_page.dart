@@ -23,17 +23,18 @@ class DetailPage extends StatefulWidget {
 
 class _DetailPageState extends State<DetailPage> {
   ThemeChangerProvider _themeChanger;
-  bool _darkModeEnabled = false;
+  //bool _darkModeEnabled = false;
 
   @override
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
-    _checkIfDarkModeEnabled();
+    _themeChanger.checkIfDarkModeEnabled(context);
+    //_checkIfDarkModeEnabled();
 
     return Scaffold(
       body: CollapsingAppBarPage(
         text: GestureDetector(
-          onPanStart: (_) => _enableDarkMode(),
+          onPanStart: (_) => _themeChanger.setTheme(),
           child: Container(
             width: double.infinity,
             child: Tooltip(
@@ -54,7 +55,7 @@ class _DetailPageState extends State<DetailPage> {
     );
   }
 
-  void _checkIfDarkModeEnabled() {
+  /*void _checkIfDarkModeEnabled() {
     final ThemeData theme = Theme.of(context);
     theme.brightness == appDarkTheme().brightness
         ? _darkModeEnabled = true
@@ -65,5 +66,5 @@ class _DetailPageState extends State<DetailPage> {
     _darkModeEnabled
         ? _themeChanger.setTheme(appLightTheme())
         : _themeChanger.setTheme(appDarkTheme());
-  }
+  }*/
 }

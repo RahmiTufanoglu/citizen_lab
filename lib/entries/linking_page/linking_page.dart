@@ -74,7 +74,9 @@ class _LinkingPageState extends State<LinkingPage> {
 
   @override
   Widget build(BuildContext context) {
-    _checkIfDarkModeEnabled();
+    _themeChanger = Provider.of<ThemeChangerProvider>(context);
+    _themeChanger.checkIfDarkModeEnabled(context);
+    //_checkIfDarkModeEnabled();
 
     return Scaffold(
       key: _scaffoldKey,
@@ -84,13 +86,13 @@ class _LinkingPageState extends State<LinkingPage> {
     );
   }
 
-  void _checkIfDarkModeEnabled() {
+  /*void _checkIfDarkModeEnabled() {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
     final ThemeData theme = Theme.of(context);
     theme.brightness == appDarkTheme().brightness
         ? _darkModeEnabled = true
         : _darkModeEnabled = false;
-  }
+  }*/
 
   Widget _buildAppBar() {
     final String back = 'Zurück';
@@ -103,7 +105,7 @@ class _LinkingPageState extends State<LinkingPage> {
         onPressed: _saveNote,
       ),
       title: GestureDetector(
-        onPanStart: (_) => _enableDarkMode(),
+        onPanStart: (_) => _themeChanger.setTheme(),
         child: Container(
           width: double.infinity,
           child: Tooltip(
@@ -125,11 +127,11 @@ class _LinkingPageState extends State<LinkingPage> {
     );
   }
 
-  void _enableDarkMode() {
+  /*void _enableDarkMode() {
     _darkModeEnabled
         ? _themeChanger.setTheme(appLightTheme())
         : _themeChanger.setTheme(appDarkTheme());
-  }
+  }*/
 
   Future<void> _backToHomePage() async {
     final String cancel = 'Notiz abbrechen und zur Hauptseite zurückkehren?';

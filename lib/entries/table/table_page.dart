@@ -45,7 +45,7 @@ class _TablePageState extends State<TablePage> {
   final _listTextEditingController = <TextEditingController>[];
 
   ThemeChangerProvider _themeChanger;
-  bool _darkModeEnabled = false;
+  //bool _darkModeEnabled = false;
   File _csv;
   int _column;
   int _row;
@@ -100,9 +100,10 @@ class _TablePageState extends State<TablePage> {
   @override
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
-    _checkIfDarkModeEnabled();
+    _themeChanger.checkIfDarkModeEnabled(context);
+    //_checkIfDarkModeEnabled();
 
-    _titleProvider = Provider.of<TitleProvider>(context);
+    //_titleProvider = Provider.of<TitleProvider>(context);
 
     return Scaffold(
       key: _scaffoldKey,
@@ -112,12 +113,12 @@ class _TablePageState extends State<TablePage> {
     );
   }
 
-  void _checkIfDarkModeEnabled() {
+  /*void _checkIfDarkModeEnabled() {
     final ThemeData theme = Theme.of(context);
     theme.brightness == appDarkTheme().brightness
         ? _darkModeEnabled = true
         : _darkModeEnabled = false;
-  }
+  }*/
 
   Widget _buildAppBar() {
     final String back = 'Zurück';
@@ -130,7 +131,7 @@ class _TablePageState extends State<TablePage> {
         onPressed: () => _saveNote(),
       ),
       title: GestureDetector(
-        onPanStart: (_) => _enableDarkMode(),
+        onPanStart: (_) => _themeChanger.setTheme(),
         child: Container(
           width: double.infinity,
           child: Tooltip(
@@ -157,11 +158,11 @@ class _TablePageState extends State<TablePage> {
     );
   }
 
-  void _enableDarkMode() {
+  /*void _enableDarkMode() {
     _darkModeEnabled
         ? _themeChanger.setTheme(appLightTheme())
         : _themeChanger.setTheme(appDarkTheme());
-  }
+  }*/
 
   void _shareContent() {
     if (_title.isNotEmpty) {

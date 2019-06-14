@@ -11,12 +11,13 @@ class AboutPage extends StatefulWidget {
 
 class _AboutPageState extends State<AboutPage> {
   ThemeChangerProvider _themeChanger;
-  bool _darkModeEnabled = false;
+  //bool _darkModeEnabled = false;
 
   @override
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
-    _checkIfDarkModeEnabled();
+    //_checkIfDarkModeEnabled();
+    _themeChanger.checkIfDarkModeEnabled(context);
 
     return Scaffold(
       appBar: _buildAppBar(context),
@@ -36,7 +37,7 @@ class _AboutPageState extends State<AboutPage> {
         ),
       ),
       title: GestureDetector(
-        onPanStart: (_) => _enableDarkMode(),
+        onPanStart: (_) => _themeChanger.setTheme(),
         child: Container(
           width: double.infinity,
           child: Tooltip(
@@ -48,7 +49,7 @@ class _AboutPageState extends State<AboutPage> {
     );
   }
 
-  void _checkIfDarkModeEnabled() {
+  /*void _checkIfDarkModeEnabled() {
     final ThemeData theme = Theme.of(context);
     theme.brightness == appDarkTheme().brightness
         ? _darkModeEnabled = true
@@ -59,7 +60,7 @@ class _AboutPageState extends State<AboutPage> {
     _darkModeEnabled
         ? _themeChanger.setTheme(appLightTheme())
         : _themeChanger.setTheme(appDarkTheme());
-  }
+  }*/
 
   Widget _buildBody() {
     return SafeArea(

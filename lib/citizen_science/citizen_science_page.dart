@@ -1,12 +1,10 @@
-import 'package:citizen_lab/themes/theme.dart';
+import 'package:citizen_lab/citizen_science/citizen_science_data.dart';
+import 'package:citizen_lab/citizen_science/citizen_science_model.dart';
+import 'package:citizen_lab/citizen_science/citizen_science_search_page.dart';
+import 'package:citizen_lab/custom_widgets/card_image_with_text.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:flutter/material.dart';
-
-import 'package:citizen_lab/citizen_science/citizen_science_data.dart';
-import 'package:citizen_lab/custom_widgets/card_image_with_text.dart';
-import 'package:citizen_lab/citizen_science/citizen_science_model.dart';
-import 'package:citizen_lab/citizen_science/citizen_science_search_page.dart';
 import 'package:provider/provider.dart';
 
 class CitizenSciencePage extends StatefulWidget {
@@ -21,7 +19,6 @@ class _CitizenSciencePageState extends State<CitizenSciencePage> {
   List<CitizenScienceModel> _citizenScienceList;
 
   ThemeChangerProvider _themeChanger;
-  bool _darkModeEnabled = false;
 
   @override
   void initState() {
@@ -54,7 +51,7 @@ class _CitizenSciencePageState extends State<CitizenSciencePage> {
   @override
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
-    _checkIfDarkModeEnabled();
+    _themeChanger.checkIfDarkModeEnabled(context);
 
     return Scaffold(
       appBar: _buildAppbar(),
@@ -65,7 +62,7 @@ class _CitizenSciencePageState extends State<CitizenSciencePage> {
   Widget _buildAppbar() {
     return AppBar(
       title: GestureDetector(
-        onPanStart: (_) => _enableDarkMode(),
+        onPanStart: (_) => _themeChanger.setTheme(),
         child: Container(
           width: double.infinity,
           child: Tooltip(
@@ -96,19 +93,6 @@ class _CitizenSciencePageState extends State<CitizenSciencePage> {
         ),
       ],
     );
-  }
-
-  void _checkIfDarkModeEnabled() {
-    final ThemeData theme = Theme.of(context);
-    theme.brightness == appDarkTheme().brightness
-        ? _darkModeEnabled = true
-        : _darkModeEnabled = false;
-  }
-
-  void _enableDarkMode() {
-    _darkModeEnabled
-        ? _themeChanger.setTheme(appLightTheme())
-        : _themeChanger.setTheme(appDarkTheme());
   }
 
   Widget _buildBody() {

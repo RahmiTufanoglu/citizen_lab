@@ -44,7 +44,7 @@ class _ImagePageState extends State<ImagePage> {
   final _noteDb = ProjectDatabaseHelper();
 
   ThemeChangerProvider _themeChanger;
-  bool _darkModeEnabled = false;
+  //bool _darkModeEnabled = false;
   File _image;
   String _title;
   String _createdAt;
@@ -79,7 +79,9 @@ class _ImagePageState extends State<ImagePage> {
 
   @override
   Widget build(BuildContext context) {
-    _checkIfDarkModeEnabled();
+    _themeChanger = Provider.of<ThemeChangerProvider>(context);
+    _themeChanger.checkIfDarkModeEnabled(context);
+    //_checkIfDarkModeEnabled();
 
     return Scaffold(
       key: _scaffoldKey,
@@ -89,13 +91,13 @@ class _ImagePageState extends State<ImagePage> {
     );
   }
 
-  void _checkIfDarkModeEnabled() {
+  /*void _checkIfDarkModeEnabled() {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
     final ThemeData theme = Theme.of(context);
     theme.brightness == appDarkTheme().brightness
         ? _darkModeEnabled = true
         : _darkModeEnabled = false;
-  }
+  }*/
 
   Widget _buildAppBar() {
     final String back = 'Zurück';
@@ -108,10 +110,13 @@ class _ImagePageState extends State<ImagePage> {
         onPressed: () => _saveNote(),
       ),
       title: GestureDetector(
-        onPanStart: (_) => _enableDarkMode(),
-        child: Tooltip(
-          message: noteType,
-          child: Text(_title != null ? _title : noteType),
+        onPanStart: (_) => _themeChanger.setTheme(),
+        child: Container(
+          width: double.infinity,
+          child: Tooltip(
+            message: noteType,
+            child: Text(_title != null ? _title : noteType),
+          ),
         ),
       ),
       actions: <Widget>[
@@ -131,11 +136,11 @@ class _ImagePageState extends State<ImagePage> {
     );
   }
 
-  void _enableDarkMode() {
+  /*void _enableDarkMode() {
     _darkModeEnabled
         ? _themeChanger.setTheme(appLightTheme())
         : _themeChanger.setTheme(appDarkTheme());
-  }
+  }*/
 
   void _shareContent() {
     if (_image != null) {

@@ -1,4 +1,6 @@
+import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class InfoPage extends StatefulWidget {
   final Key key;
@@ -20,8 +22,13 @@ class InfoPage extends StatefulWidget {
 }
 
 class _InfoPageState extends State<InfoPage> {
+  ThemeChangerProvider _themeChanger;
+
   @override
   Widget build(BuildContext context) {
+    _themeChanger = Provider.of<ThemeChangerProvider>(context);
+    _themeChanger.checkIfDarkModeEnabled(context);
+
     return DefaultTabController(
       length: widget.tabLength,
       child: Scaffold(
@@ -40,7 +47,16 @@ class _InfoPageState extends State<InfoPage> {
         icon: Icon(Icons.arrow_back),
         onPressed: () => Navigator.pop(context),
       ),
-      title: Text(widget.title),
+      title: GestureDetector(
+        onPanStart: (_) => _themeChanger.setTheme(),
+        child: Container(
+          width: double.infinity,
+          child: Tooltip(
+            message: '',
+            child: Text(widget.title),
+          ),
+        ),
+      ),
       actions: <Widget>[],
       bottom: TabBar(tabs: widget.tabs),
     );

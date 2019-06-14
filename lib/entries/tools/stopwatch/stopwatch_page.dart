@@ -31,7 +31,7 @@ class _StopwatchPageState extends State<StopwatchPage>
   List<String> _elapsedTimeList = [];
 
   ThemeChangerProvider _themeChanger;
-  bool _darkModeEnabled = false;
+  //bool _darkModeEnabled = false;
 
   void _startTimeout() {
     Timer(_timeout, _handleTimeout);
@@ -49,7 +49,8 @@ class _StopwatchPageState extends State<StopwatchPage>
   @override
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
-    _checkIfDarkModeEnabled();
+    _themeChanger.checkIfDarkModeEnabled(context);
+    //_checkIfDarkModeEnabled();
 
     return Scaffold(
       key: _scaffoldKey,
@@ -59,13 +60,23 @@ class _StopwatchPageState extends State<StopwatchPage>
     );
   }
 
+  /*void _checkIfDarkModeEnabled() {
+    final ThemeData theme = Theme.of(context);
+    theme.brightness == appDarkTheme().brightness
+        ? _darkModeEnabled = true
+        : _darkModeEnabled = false;
+  }*/
+
   Widget _buildAppBar() {
     return AppBar(
       title: GestureDetector(
-        onDoubleTap: () => _enableDarkMode(),
-        child: Tooltip(
-          message: '',
-          child: Text('Stopwatch'),
+        onPanStart: (_) => _themeChanger.setTheme(),
+        child: Container(
+          width: double.infinity,
+          child: Tooltip(
+            message: '',
+            child: Text('Stopwatch'),
+          ),
         ),
       ),
       actions: <Widget>[
@@ -81,18 +92,11 @@ class _StopwatchPageState extends State<StopwatchPage>
     );
   }
 
-  void _checkIfDarkModeEnabled() {
-    final ThemeData theme = Theme.of(context);
-    theme.brightness == appDarkTheme().brightness
-        ? _darkModeEnabled = true
-        : _darkModeEnabled = false;
-  }
-
-  void _enableDarkMode() {
+  /*void _enableDarkMode() {
     _darkModeEnabled
         ? _themeChanger.setTheme(appLightTheme())
         : _themeChanger.setTheme(appDarkTheme());
-  }
+  }*/
 
   void _shareContent() {
     final String sharingNotPossible = 'Teilvorgang nicht möglich.';

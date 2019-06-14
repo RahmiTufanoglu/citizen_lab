@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:citizen_lab/citizen_science/title_provider.dart';
 import 'package:citizen_lab/custom_widgets/alarm_dialog.dart';
 import 'package:citizen_lab/custom_widgets/card_item.dart';
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
@@ -9,7 +8,6 @@ import 'package:citizen_lab/custom_widgets/speed_dial_floating_action_button.dar
 import 'package:citizen_lab/database/project_database_helper.dart';
 import 'package:citizen_lab/entries/note.dart';
 import 'package:citizen_lab/projects/project.dart';
-import 'package:citizen_lab/themes/theme.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/utils/constants.dart';
 import 'package:citizen_lab/utils/date_formater.dart';
@@ -50,8 +48,6 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   final _noteDb = ProjectDatabaseHelper();
 
   ThemeChangerProvider _themeChanger;
-  bool _darkModeEnabled = false;
-  TitleProvider _entryPageProvider;
   List<Note> _noteList = [];
   bool _listLoaded = false;
   String _title;
@@ -87,9 +83,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
-    _checkIfDarkModeEnabled();
-
-    _entryPageProvider = Provider.of<TitleProvider>(context);
+    _themeChanger.checkIfDarkModeEnabled(context);
 
     return Scaffold(
       resizeToAvoidBottomPadding: false,
@@ -100,13 +94,6 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
     );
   }
 
-  void _checkIfDarkModeEnabled() {
-    final ThemeData theme = Theme.of(context);
-    theme.brightness == appDarkTheme().brightness
-        ? _darkModeEnabled = true
-        : _darkModeEnabled = false;
-  }
-
   Widget _buildAppBar() {
     return AppBar(
       leading: IconButton(
@@ -115,13 +102,12 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
         onPressed: () => _onBackPressed(),
       ),
       title: GestureDetector(
-        onPanStart: (_) => _enableDarkMode(),
+        onPanStart: (_) => _themeChanger.setTheme(),
         child: Container(
           width: double.infinity,
           child: Tooltip(
             message: _title,
             child: Text(_title),
-            //child: Text(_entryPageProvider.getTitle()),
           ),
         ),
       ),
@@ -167,7 +153,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
     await showDialog(
       context: context,
       builder: (_) {
-        NoYesDialog(
+        return NoYesDialog(
           text: cancel,
           onPressed: () {
             Navigator.popUntil(
@@ -178,12 +164,6 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
         );
       },
     );
-  }
-
-  void _enableDarkMode() {
-    _darkModeEnabled
-        ? _themeChanger.setTheme(appLightTheme())
-        : _themeChanger.setTheme(appDarkTheme());
   }
 
   Widget _buildBody() {
@@ -460,7 +440,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
           },
         );
 
-        if (result) _loadNoteList();
+        if (result != null && result) _loadNoteList();
         break;
       case 'Tabelle':
         final result = await Navigator.pushNamed(
@@ -472,7 +452,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
           },
         );
 
-        if (result) _loadNoteList();
+        if (result != null && result) _loadNoteList();
         break;
       case 'Bild':
         final result = await Navigator.pushNamed(
@@ -484,7 +464,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
           },
         );
 
-        if (result) _loadNoteList();
+        if (result != null && result) _loadNoteList();
         break;
       case 'Wetter':
         final result = await Navigator.pushNamed(
@@ -496,7 +476,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
           },
         );
 
-        if (result) _loadNoteList();
+        if (result != null && result) _loadNoteList();
         break;
       case 'Verlinkung':
         final result = await Navigator.pushNamed(
@@ -508,7 +488,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
           },
         );
 
-        if (result) _loadNoteList();
+        if (result != null && result) _loadNoteList();
         break;
       default:
         break;
