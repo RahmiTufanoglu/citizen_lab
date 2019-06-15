@@ -1,3 +1,6 @@
+import 'dart:math';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 class Utils {
@@ -14,5 +17,12 @@ class Utils {
       return false;
     }
     return double.tryParse(s) != null;
+  }
+
+  static int getRandomNumber() {
+    Random random = Random();
+    // Integer between 0 and 100 (0 can be 100 not)
+    int num = random.nextInt(1000);
+    return num;
   }
 }

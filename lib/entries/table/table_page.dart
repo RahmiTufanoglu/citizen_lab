@@ -10,7 +10,6 @@ import 'package:citizen_lab/custom_widgets/table_widget.dart';
 import 'package:citizen_lab/database/project_database_helper.dart';
 import 'package:citizen_lab/entries/note.dart';
 import 'package:citizen_lab/entries/table/table_info_page_data.dart';
-import 'package:citizen_lab/themes/theme.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/utils/date_formater.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
@@ -23,12 +22,12 @@ import 'package:provider/provider.dart';
 class TablePage extends StatefulWidget {
   final Key key;
   final Note note;
-  final String projectTitle;
+  final int projectRandom;
 
   TablePage({
     this.key,
     @required this.note,
-    @required this.projectTitle,
+    @required this.projectRandom,
   }) : super(key: key);
 
   @override
@@ -45,7 +44,6 @@ class _TablePageState extends State<TablePage> {
   final _listTextEditingController = <TextEditingController>[];
 
   ThemeChangerProvider _themeChanger;
-  //bool _darkModeEnabled = false;
   File _csv;
   int _column;
   int _row;
@@ -78,7 +76,9 @@ class _TablePageState extends State<TablePage> {
 
     _titleEditingController.addListener(() {
       setState(() {
-        _title = _titleEditingController.text;
+        if (_titleEditingController.text.isNotEmpty) {
+          _title = _titleEditingController.text;
+        }
       });
     });
 
@@ -101,9 +101,6 @@ class _TablePageState extends State<TablePage> {
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
     _themeChanger.checkIfDarkModeEnabled(context);
-    //_checkIfDarkModeEnabled();
-
-    //_titleProvider = Provider.of<TitleProvider>(context);
 
     return Scaffold(
       key: _scaffoldKey,
@@ -112,13 +109,6 @@ class _TablePageState extends State<TablePage> {
       floatingActionButton: _buildFabs(),
     );
   }
-
-  /*void _checkIfDarkModeEnabled() {
-    final ThemeData theme = Theme.of(context);
-    theme.brightness == appDarkTheme().brightness
-        ? _darkModeEnabled = true
-        : _darkModeEnabled = false;
-  }*/
 
   Widget _buildAppBar() {
     final String back = 'Zurück';
@@ -157,12 +147,6 @@ class _TablePageState extends State<TablePage> {
       ],
     );
   }
-
-  /*void _enableDarkMode() {
-    _darkModeEnabled
-        ? _themeChanger.setTheme(appLightTheme())
-        : _themeChanger.setTheme(appDarkTheme());
-  }*/
 
   void _shareContent() {
     if (_title.isNotEmpty) {
@@ -369,7 +353,8 @@ class _TablePageState extends State<TablePage> {
           path = await _createCsv(_title);
         }
         Note newNote = Note(
-          widget.projectTitle,
+          //widget.projectTitle,
+          widget.projectRandom,
           'Tabelle',
           _titleEditingController.text,
           _descriptionEditingController.text,
@@ -397,7 +382,8 @@ class _TablePageState extends State<TablePage> {
   void _updateNote(Note note, String path) async {
     Note newNote = Note.fromMap({
       ProjectDatabaseHelper.columnNoteId: note.id,
-      ProjectDatabaseHelper.columnNoteProject: note.project,
+      //ProjectDatabaseHelper.columnProjectId: note.projectId,
+      ProjectDatabaseHelper.columnProjectRandom: note.projectRandom,
       ProjectDatabaseHelper.columnNoteType: note.type,
       ProjectDatabaseHelper.columnNoteTitle: _titleEditingController.text,
       ProjectDatabaseHelper.columnNoteDescription:

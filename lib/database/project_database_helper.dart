@@ -19,6 +19,8 @@ class ProjectDatabaseHelper {
 
   static final String projectTable = 'projects';
   static final String columnProjectId = 'id';
+
+  static final String columnProjectRandom = 'random';
   static final String columnProjectNoteId = 'note_id';
   static final String columnProjectTitle = 'title';
   static final String columnProjectDesc = 'description';
@@ -40,6 +42,7 @@ class ProjectDatabaseHelper {
   static final String createProjectTable = 'CREATE TABLE $projectTable('
       '$columnProjectId INTEGER PRIMARY KEY AUTOINCREMENT,'
       '$columnProjectNoteId INTEGER REFERENCES $noteTable($columnNoteId),'
+      '$columnProjectRandom INTEGER NOT NULL, '
       '$columnProjectTitle TEXT NOT NULL, '
       '$columnProjectDesc TEXT NOT NULL, '
       '$columnProjectCreatedAt TEXT NOT NULL, '
@@ -47,7 +50,9 @@ class ProjectDatabaseHelper {
 
   static final String createNoteTable = 'CREATE TABLE $noteTable('
       '$columnNoteId INTEGER PRIMARY KEY AUTOINCREMENT,'
-      '$columnNoteProject TEXT NOT NULL, '
+      //'$columnNoteProject TEXT NOT NULL, '
+      '$columnProjectRandom INTEGER NOT NULL, '
+      //'$columnProjectId TEXT NOT NULL, '
       '$columnNoteType TEXT NOT NULL, '
       '$columnNoteTitle TEXT NOT NULL, '
       '$columnNoteDescription TEXT, '
@@ -126,6 +131,7 @@ class ProjectDatabaseHelper {
       where: '$columnProjectId = ?',
       whereArgs: [newProject.id],
     );
+    print('UPDATE');
     return result;
   }
 
@@ -136,13 +142,16 @@ class ProjectDatabaseHelper {
     );
   }
 
-  Future<List> getNotesOfProject({@required String id}) async {
+  //Future<List> getNotesOfProject({@required String id}) async {
+  Future<List> getNotesOfProject({@required int random}) async {
     final Database db = await this.db;
     final List<Map<String, dynamic>> maps = await db.query(
       noteTable,
-      where: '$columnNoteProject = ?',
-      whereArgs: [id],
-      orderBy: '$columnNoteCreatedAt DESC',
+      //where: '$columnNoteProject = ?',
+      where: '$columnProjectRandom= ?',
+      //whereArgs: [id],
+      whereArgs: [random],
+      //orderBy: '$columnNoteCreatedAt DESC',
     );
     return maps.toList();
   }

@@ -1,13 +1,13 @@
 import 'dart:ui';
 
-import 'package:citizen_lab/themes/theme.dart';
-import 'package:citizen_lab/themes/theme_changer_provider.dart';
-import 'package:flutter/material.dart';
-import 'package:citizen_lab/utils/date_formater.dart';
-import 'package:citizen_lab/projects/project.dart';
 import 'package:citizen_lab/database/project_database_helper.dart';
-import 'package:citizen_lab/utils/route_generator.dart';
+import 'package:citizen_lab/projects/project.dart';
+import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/utils/constants.dart';
+import 'package:citizen_lab/utils/date_formater.dart';
+import 'package:citizen_lab/utils/route_generator.dart';
+import 'package:citizen_lab/utils/utils.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'create_project_info_page_data.dart';
@@ -25,7 +25,6 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
   final _projectDb = ProjectDatabaseHelper();
 
   ThemeChangerProvider _themeChanger;
-  //bool _darkModeEnabled = false;
 
   List<Project> _projectList = [];
   Color _buttonColor = Colors.white;
@@ -55,7 +54,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
     super.initState();
   }
 
-  _loadProjectList() async {
+  Future<void> _loadProjectList() async {
     List projects = await _projectDb.getAllProjects();
     projects.forEach((project) {
       _projectList.add(Project.map(project));
@@ -64,16 +63,15 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
 
   @override
   void dispose() {
-    super.dispose();
     _titleEditingController.dispose();
     _descEditingController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
     _themeChanger.checkIfDarkModeEnabled(context);
-    //_checkIfDarkModeEnabled();
 
     return Scaffold(
       key: _snackBarKey,
@@ -82,13 +80,6 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
       floatingActionButton: _buildFab(),
     );
   }
-
-  /*void _checkIfDarkModeEnabled() {
-    final ThemeData theme = Theme.of(context);
-    theme.brightness == appDarkTheme().brightness
-        ? _darkModeEnabled = true
-        : _darkModeEnabled = false;
-  }*/
 
   Widget _buildAppBar() {
     return AppBar(
@@ -116,12 +107,6 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
       ],
     );
   }
-
-  /*void _enableDarkMode() {
-    _darkModeEnabled
-        ? _themeChanger.setTheme(appLightTheme())
-        : _themeChanger.setTheme(appDarkTheme());
-  }*/
 
   void _setInfoPage() {
     Navigator.pushNamed(
@@ -208,7 +193,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
     );
   }
 
-  void _createProject(BuildContext context) async {
+  Future<void> _createProject(BuildContext context) async {
     bool _projectExists = false;
     for (int i = 0; i < _projectList.length; i++) {
       if (_projectList[i].title == _titleEditingController.text) {
@@ -222,6 +207,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
 
     Project project = Project(
       _titleEditingController.text,
+      Utils.getRandomNumber(),
       _descEditingController.text,
       dateFormatted(),
       '',
@@ -229,17 +215,21 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
 
     if (_formKey.currentState.validate() && !_projectExists) {
       await _projectDb.insertProject(project: project);
-      Navigator.pushNamed(
-        context,
-        RouteGenerator.entry,
-        arguments: {
-          'project': project,
-          'projectTitle': _titleEditingController.text,
-          'isFromCreateProjectPage': true,
-          'isFromProjectPage': false,
-        },
-      );
+      _navigateToEntry(project);
     }
+  }
+
+  Future<void> _navigateToEntry(Project project) async {
+    await Navigator.pushNamed(
+      context,
+      RouteGenerator.entry,
+      arguments: {
+        'project': project,
+        'projectTitle': project.title,
+        'isFromCreateProjectPage': true,
+        'isFromProjectPage': false,
+      },
+    );
   }
 
   Widget _buildSnackBar(String text) {

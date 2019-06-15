@@ -1,21 +1,21 @@
 import 'package:citizen_lab/citizen_science/about_page.dart';
-import 'package:citizen_lab/entries/linking_page/linking_page.dart';
-import 'package:citizen_lab/entries/tools/sensor_page.dart';
-import 'package:citizen_lab/entries/tools/calculator_page.dart';
-import 'package:citizen_lab/entries/tools/stopwatch/stopwatch_page.dart';
-import 'package:citizen_lab/splash_page.dart';
-import 'package:flutter/material.dart';
-import 'package:citizen_lab/projects/create_project_page.dart';
-import 'package:citizen_lab/entries/entry_page.dart';
-import 'package:citizen_lab/entries/image/image_page.dart';
-import 'package:citizen_lab/projects/project_page.dart';
-import 'package:citizen_lab/entries/table/table_page.dart';
-import 'package:citizen_lab/entries/text/text_page.dart';
 import 'package:citizen_lab/citizen_science/citizen_science_page.dart';
 import 'package:citizen_lab/citizen_science/detail_page.dart';
-import 'package:citizen_lab/home/home_page.dart';
 import 'package:citizen_lab/custom_widgets/info_page.dart';
+import 'package:citizen_lab/entries/entry_page.dart';
+import 'package:citizen_lab/entries/image/image_page.dart';
+import 'package:citizen_lab/entries/linking_page/linking_page.dart';
+import 'package:citizen_lab/entries/table/table_page.dart';
+import 'package:citizen_lab/entries/text/text_page.dart';
+import 'package:citizen_lab/entries/tools/calculator_page.dart';
+import 'package:citizen_lab/entries/tools/sensor_page.dart';
+import 'package:citizen_lab/entries/tools/stopwatch/stopwatch_page.dart';
+import 'package:citizen_lab/home/home_page.dart';
 import 'package:citizen_lab/onboarding/onboarding.dart';
+import 'package:citizen_lab/projects/create_project_page.dart';
+import 'package:citizen_lab/projects/project_page.dart';
+import 'package:citizen_lab/splash_page.dart';
+import 'package:flutter/material.dart';
 
 class RouteGenerator {
   static const String home = '/home_page';
@@ -91,21 +91,27 @@ class RouteGenerator {
           break;
         case textPage:
           page = TextPage(
-            projectTitle: args['projectTitle'],
+            projectRandom: args['projectRandom'],
+            //projectId: args['projectId'],
+            //projectTitle: args['projectTitle'],
             note: args['note'],
           );
           route = routeTextPage;
           break;
         case imagePage:
           page = ImagePage(
-            projectTitle: args['projectTitle'],
+            projectRandom: args['projectRandom'],
+            //projectId: args['projectId'],
+            //projectTitle: args['projectTitle'],
             note: args['note'],
           );
           route = routeImagePage;
           break;
         case tablePage:
           page = TablePage(
-            projectTitle: args['projectTitle'],
+            projectRandom: args['projectRandom'],
+            //projectId: args['projectId'],
+            //projectTitle: args['projectTitle'],
             note: args['note'],
           );
           route = routeTablePage;
@@ -153,7 +159,9 @@ class RouteGenerator {
           break;
         case linkingPage:
           page = LinkingPage(
-            projectTitle: args['projectTitle'],
+            projectRandom: args['projectRandom'],
+            //projectId: args['projectId'],
+            //projectTitle: args['projectTitle'],
             note: args['note'],
             //url: args['url'],
           );

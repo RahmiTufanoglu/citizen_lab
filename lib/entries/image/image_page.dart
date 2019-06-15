@@ -8,7 +8,6 @@ import 'package:citizen_lab/custom_widgets/set_title_widget.dart';
 import 'package:citizen_lab/custom_widgets/simple_timer_dialog.dart';
 import 'package:citizen_lab/database/project_database_helper.dart';
 import 'package:citizen_lab/entries/note.dart';
-import 'package:citizen_lab/themes/theme.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/utils/date_formater.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
@@ -24,12 +23,12 @@ import 'image_info_page_data.dart';
 class ImagePage extends StatefulWidget {
   final Key key;
   final Note note;
-  final String projectTitle;
+  final int projectRandom;
 
   ImagePage({
     this.key,
     this.note,
-    this.projectTitle,
+    this.projectRandom,
   }) : super(key: key);
 
   @override
@@ -44,7 +43,6 @@ class _ImagePageState extends State<ImagePage> {
   final _noteDb = ProjectDatabaseHelper();
 
   ThemeChangerProvider _themeChanger;
-  //bool _darkModeEnabled = false;
   File _image;
   String _title;
   String _createdAt;
@@ -63,7 +61,9 @@ class _ImagePageState extends State<ImagePage> {
 
     _titleEditingController.addListener(() {
       setState(() {
-        _title = _titleEditingController.text;
+        if (_titleEditingController.text.isNotEmpty) {
+          _title = _titleEditingController.text;
+        }
       });
     });
 
@@ -81,7 +81,6 @@ class _ImagePageState extends State<ImagePage> {
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
     _themeChanger.checkIfDarkModeEnabled(context);
-    //_checkIfDarkModeEnabled();
 
     return Scaffold(
       key: _scaffoldKey,
@@ -90,14 +89,6 @@ class _ImagePageState extends State<ImagePage> {
       floatingActionButton: _buildFabs(),
     );
   }
-
-  /*void _checkIfDarkModeEnabled() {
-    _themeChanger = Provider.of<ThemeChangerProvider>(context);
-    final ThemeData theme = Theme.of(context);
-    theme.brightness == appDarkTheme().brightness
-        ? _darkModeEnabled = true
-        : _darkModeEnabled = false;
-  }*/
 
   Widget _buildAppBar() {
     final String back = 'Zurück';
@@ -135,12 +126,6 @@ class _ImagePageState extends State<ImagePage> {
       ],
     );
   }
-
-  /*void _enableDarkMode() {
-    _darkModeEnabled
-        ? _themeChanger.setTheme(appLightTheme())
-        : _themeChanger.setTheme(appDarkTheme());
-  }*/
 
   void _shareContent() {
     if (_image != null) {
@@ -319,7 +304,8 @@ class _ImagePageState extends State<ImagePage> {
     if (_titleEditingController.text.isNotEmpty && (_image != null)) {
       if (widget.note == null) {
         Note newNote = Note(
-          widget.projectTitle,
+          //widget.projectTitle,
+          widget.projectRandom,
           'Bild',
           _titleEditingController.text,
           _descEditingController.text,
@@ -346,7 +332,8 @@ class _ImagePageState extends State<ImagePage> {
   Future<void> _updateNote(Note note) async {
     Note newNote = Note.fromMap({
       ProjectDatabaseHelper.columnNoteId: note.id,
-      ProjectDatabaseHelper.columnNoteProject: note.project,
+      ProjectDatabaseHelper.columnProjectRandom: note.projectRandom,
+      //ProjectDatabaseHelper.columnNoteProject: note.project,
       ProjectDatabaseHelper.columnNoteType: note.type,
       ProjectDatabaseHelper.columnNoteTitle: _titleEditingController.text,
       ProjectDatabaseHelper.columnNoteDescription: _descEditingController.text,

@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/custom_widgets/simple_timer_dialog.dart';
 import 'package:citizen_lab/database/project_database_helper.dart';
-import 'package:citizen_lab/themes/theme.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/utils/date_formater.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
@@ -18,12 +17,12 @@ import '../note.dart';
 class LinkingPage extends StatefulWidget {
   final key;
   final Note note;
-  final String projectTitle;
+  final int projectRandom;
 
   LinkingPage({
     this.key,
     @required this.note,
-    @required this.projectTitle,
+    @required this.projectRandom,
   }) : super(key: key);
 
   @override
@@ -39,7 +38,6 @@ class _LinkingPageState extends State<LinkingPage> {
   final _noteDb = ProjectDatabaseHelper();
 
   ThemeChangerProvider _themeChanger;
-  bool _darkModeEnabled = false;
   String _url = 'https://www.google.de';
   String _title;
   String _createdAt;
@@ -58,7 +56,9 @@ class _LinkingPageState extends State<LinkingPage> {
 
     _titleEditingController.addListener(() {
       setState(() {
-        _title = _titleEditingController.text;
+        if (_titleEditingController.text.isNotEmpty) {
+          _title = _titleEditingController.text;
+        }
       });
     });
 
@@ -76,7 +76,6 @@ class _LinkingPageState extends State<LinkingPage> {
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
     _themeChanger.checkIfDarkModeEnabled(context);
-    //_checkIfDarkModeEnabled();
 
     return Scaffold(
       key: _scaffoldKey,
@@ -85,14 +84,6 @@ class _LinkingPageState extends State<LinkingPage> {
       floatingActionButton: _buildFabs(),
     );
   }
-
-  /*void _checkIfDarkModeEnabled() {
-    _themeChanger = Provider.of<ThemeChangerProvider>(context);
-    final ThemeData theme = Theme.of(context);
-    theme.brightness == appDarkTheme().brightness
-        ? _darkModeEnabled = true
-        : _darkModeEnabled = false;
-  }*/
 
   Widget _buildAppBar() {
     final String back = 'Zurück';
@@ -126,12 +117,6 @@ class _LinkingPageState extends State<LinkingPage> {
       ],
     );
   }
-
-  /*void _enableDarkMode() {
-    _darkModeEnabled
-        ? _themeChanger.setTheme(appLightTheme())
-        : _themeChanger.setTheme(appDarkTheme());
-  }*/
 
   Future<void> _backToHomePage() async {
     final String cancel = 'Notiz abbrechen und zur Hauptseite zurückkehren?';
@@ -239,7 +224,8 @@ class _LinkingPageState extends State<LinkingPage> {
     if (_titleEditingController.text.isNotEmpty && _url.isNotEmpty) {
       if (widget.note == null) {
         Note newNote = Note(
-          widget.projectTitle,
+          //widget.projectTitle,
+          widget.projectRandom,
           'Verlinkung',
           _titleEditingController.text,
           _descEditingController.text,
@@ -265,7 +251,8 @@ class _LinkingPageState extends State<LinkingPage> {
   Future<void> _updateNote(Note note) async {
     Note newNote = Note.fromMap({
       ProjectDatabaseHelper.columnNoteId: note.id,
-      ProjectDatabaseHelper.columnNoteProject: note.project,
+      //ProjectDatabaseHelper.columnProjectId: note.projectId,
+      ProjectDatabaseHelper.columnProjectRandom: note.projectRandom,
       ProjectDatabaseHelper.columnNoteType: note.type,
       ProjectDatabaseHelper.columnNoteTitle: _titleEditingController.text,
       ProjectDatabaseHelper.columnNoteDescription: _descEditingController.text,

@@ -17,12 +17,12 @@ import 'package:share/share.dart';
 class TextPage extends StatefulWidget {
   final Key key;
   final Note note;
-  final String projectTitle;
+  final int projectRandom;
 
   TextPage({
     this.key,
     @required this.note,
-    @required this.projectTitle,
+    @required this.projectRandom,
   }) : super(key: key);
 
   @override
@@ -59,7 +59,9 @@ class _TextPageState extends State<TextPage> {
 
     _titleEditingController.addListener(() {
       setState(() {
-        _title = _titleEditingController.text;
+        if (_titleEditingController.text.isNotEmpty) {
+          _title = _titleEditingController.text;
+        }
       });
     });
 
@@ -114,7 +116,6 @@ class _TextPageState extends State<TextPage> {
           width: double.infinity,
           child: Tooltip(
             message: noteType,
-            //child: Text((_title != null) ? _titleProvider.getTitle : noteType),
             child: Text((_title != null) ? _title : noteType),
           ),
         ),
@@ -303,8 +304,11 @@ class _TextPageState extends State<TextPage> {
   Future<void> _saveNote() async {
     if (_titleEditingController.text.isNotEmpty) {
       if (widget.note == null) {
+        //Note newNote = Note(
         Note newNote = Note(
-          widget.projectTitle,
+          //widget.projectTitle,
+          widget.projectRandom,
+          //widget.projectId,
           'Text',
           _titleEditingController.text,
           _descEditingController.text,
@@ -330,7 +334,8 @@ class _TextPageState extends State<TextPage> {
   Future<void> _updateNote(Note note) async {
     Note newNote = Note.fromMap({
       ProjectDatabaseHelper.columnNoteId: note.id,
-      ProjectDatabaseHelper.columnNoteProject: note.project,
+      ProjectDatabaseHelper.columnProjectRandom: note.projectRandom,
+      //ProjectDatabaseHelper.columnNoteProject: note.project,
       ProjectDatabaseHelper.columnNoteType: note.type,
       ProjectDatabaseHelper.columnNoteTitle: _titleEditingController.text,
       ProjectDatabaseHelper.columnNoteDescription: _descEditingController.text,

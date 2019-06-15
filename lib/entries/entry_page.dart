@@ -367,9 +367,10 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
     );
   }
 
-  _updateProject(Project project) async {
+  Future<void> _updateProject(Project project) async {
     Project updatedProject = Project.fromMap({
       ProjectDatabaseHelper.columnProjectId: project.id,
+      ProjectDatabaseHelper.columnProjectRandom: project.random,
       ProjectDatabaseHelper.columnProjectTitle: _titleProjectController.text,
       ProjectDatabaseHelper.columnProjectDesc: _descProjectController.text,
       ProjectDatabaseHelper.columnProjectCreatedAt: project.dateCreated,
@@ -435,7 +436,8 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
           context,
           RouteGenerator.textPage,
           arguments: {
-            'projectTitle': widget.projectTitle,
+            'projectRandom': widget.project.random,
+            'projectId': widget.project.id,
             'note': note,
           },
         );
@@ -447,7 +449,8 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
           context,
           RouteGenerator.tablePage,
           arguments: {
-            'projectTitle': widget.projectTitle,
+            'projectRandom': widget.project.random,
+            'projectId': widget.project.id,
             'note': note,
           },
         );
@@ -459,7 +462,8 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
           context,
           RouteGenerator.imagePage,
           arguments: {
-            'projectTitle': widget.projectTitle,
+            'projectRandom': widget.project.random,
+            'projectId': widget.project.id,
             'note': note,
           },
         );
@@ -471,7 +475,6 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
           context,
           RouteGenerator.audioRecordPage,
           arguments: {
-            'projectTitle': widget.projectTitle,
             'note': note,
           },
         );
@@ -483,7 +486,8 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
           context,
           RouteGenerator.linkingPage,
           arguments: {
-            'projectTitle': widget.projectTitle,
+            'projectRandom': widget.project.random,
+            'projectId': widget.project.id,
             'note': note,
           },
         );
@@ -505,7 +509,9 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
     //List notes = await _noteDb.getAllNotes();
 
     //List notes = await _noteDb.getAllNotes();
-    List notes = await _noteDb.getNotesOfProject(id: widget.projectTitle);
+    //List notes = await _noteDb.getNotesOfProject(id: widget.projectTitle);
+    List notes = await _noteDb.getNotesOfProject(random: widget.project.random);
+    //List notes = await _noteDb.getNotesOfProject(id: widget.project.id);
 
     //List notes = await _noteDb.getNote(id: widget.projectTitle);
     //List notes = await _noteDb.getNotesOfProject(id: widget.project.id);
@@ -691,6 +697,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
       Navigator.popUntil(
         context,
         ModalRoute.withName(RouteGenerator.routeHomePage),
+        //ModalRoute.withName(RouteGenerator.routeProjectPage),
       );
     } else {
       Navigator.pop(context, true);

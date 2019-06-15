@@ -2,7 +2,7 @@ import 'package:citizen_lab/database/project_database_helper.dart';
 
 class Note {
   int id;
-  String project;
+  int projectRandom;
   String type;
   String title;
   String description;
@@ -11,7 +11,7 @@ class Note {
   String dateEdited;
 
   Note(
-    this.project,
+    this.projectRandom,
     this.type,
     this.title,
     this.description,
@@ -22,7 +22,7 @@ class Note {
 
   Note.withId(
     this.id,
-    this.project,
+    int this.projectRandom,
     this.type,
     this.title,
     this.description,
@@ -33,7 +33,7 @@ class Note {
 
   Note.map(dynamic obj) {
     this.id = obj[ProjectDatabaseHelper.columnNoteId];
-    this.project = obj[ProjectDatabaseHelper.columnNoteProject];
+    this.projectRandom = obj[ProjectDatabaseHelper.columnProjectRandom];
     this.type = obj[ProjectDatabaseHelper.columnNoteType];
     this.title = obj[ProjectDatabaseHelper.columnNoteTitle];
     this.description = obj[ProjectDatabaseHelper.columnNoteDescription];
@@ -48,7 +48,7 @@ class Note {
     if (id != null) {
       map[ProjectDatabaseHelper.columnNoteId] = id;
     }
-    map[ProjectDatabaseHelper.columnNoteProject] = project;
+    map[ProjectDatabaseHelper.columnProjectRandom] = projectRandom;
     map[ProjectDatabaseHelper.columnNoteType] = type;
     map[ProjectDatabaseHelper.columnNoteTitle] = title;
     map[ProjectDatabaseHelper.columnNoteDescription] = description;
@@ -61,7 +61,7 @@ class Note {
 
   Note.fromMap(Map<String, dynamic> map) {
     this.id = map[ProjectDatabaseHelper.columnNoteId];
-    this.project = map[ProjectDatabaseHelper.columnNoteProject];
+    this.projectRandom = map[ProjectDatabaseHelper.columnProjectRandom];
     this.type = map[ProjectDatabaseHelper.columnNoteType];
     this.title = map[ProjectDatabaseHelper.columnNoteTitle];
     this.description = map[ProjectDatabaseHelper.columnNoteDescription];

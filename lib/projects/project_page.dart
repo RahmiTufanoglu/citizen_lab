@@ -1,14 +1,12 @@
-import 'package:citizen_lab/themes/theme.dart';
-import 'package:citizen_lab/themes/theme_changer_provider.dart';
-import 'package:flutter/material.dart';
-import 'package:citizen_lab/projects/project.dart';
+import 'package:citizen_lab/custom_widgets/alarm_dialog.dart';
 import 'package:citizen_lab/database/project_database_helper.dart';
+import 'package:citizen_lab/projects/project.dart';
 import 'package:citizen_lab/projects/project_item.dart';
 import 'package:citizen_lab/projects/project_search_page.dart';
-import 'package:citizen_lab/utils/route_generator.dart';
-
-import 'package:citizen_lab/custom_widgets/alarm_dialog.dart';
+import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/utils/constants.dart';
+import 'package:citizen_lab/utils/route_generator.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ProjectPage extends StatefulWidget {
@@ -22,6 +20,7 @@ class _ProjectPageState extends State<ProjectPage> {
   final List<Project> _projectList = [];
 
   ThemeChangerProvider _themeChanger;
+
   //bool _darkModeEnabled = false;
 
   @override
@@ -234,7 +233,7 @@ class _ProjectPageState extends State<ProjectPage> {
                     width: double.infinity,
                     child: ProjectItem(
                       project: _projectList[index],
-                      onTap: () => _goToEntry(index),
+                      onTap: () => _navigateToEntry(index),
                     ),
                   ),
                 );
@@ -249,19 +248,19 @@ class _ProjectPageState extends State<ProjectPage> {
     );
   }
 
-  Future<void> _goToEntry(int index) async {
+  Future<void> _navigateToEntry(int index) async {
     final result = await Navigator.pushNamed(
       context,
       RouteGenerator.entry,
       arguments: {
+        'project': _projectList[index],
         'projectTitle': _projectList[index].title,
         'isFromCreateProjectPage': false,
         'isFromProjectPage': true,
-        'project': _projectList[index],
       },
     );
 
-    if (result) _loadProjectList();
+    if (result != null) _loadProjectList();
   }
 
   Widget _buildSnackBar({@required String text}) {
@@ -275,7 +274,7 @@ class _ProjectPageState extends State<ProjectPage> {
     );
   }
 
-  _loadProjectList() async {
+  Future<void> _loadProjectList() async {
     for (int i = 0; i < _projectList.length; i++) {
       _projectList.removeWhere((element) {
         _projectList[i].id = _projectList[i].id;
@@ -291,7 +290,7 @@ class _ProjectPageState extends State<ProjectPage> {
     });
   }
 
-  _deleteProject(int index) async {
+  Future<void> _deleteProject(int index) async {
     await _projectDb.deleteProject(id: _projectList[index].id);
 
     if (_projectList.contains(_projectList[index])) {

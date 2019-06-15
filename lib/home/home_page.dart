@@ -134,19 +134,23 @@ class _HomePageState extends State<HomePage>
               context: context,
               icon: Icons.border_color,
               title: 'Projekt erstellen',
-              onTap: () => Navigator.pushNamed(
-                    context,
-                    RouteGenerator.createProject,
-                  ),
+              onTap: () {
+                Navigator.pushNamed(
+                  context,
+                  RouteGenerator.createProject,
+                );
+              },
             ),
             _buildDrawerItem(
               context: context,
               icon: Icons.assignment,
               title: 'Projekt öffnen',
-              onTap: () => Navigator.pushNamed(
-                    context,
-                    RouteGenerator.projectPage,
-                  ),
+              onTap: () {
+                Navigator.pushNamed(
+                  context,
+                  RouteGenerator.projectPage,
+                );
+              },
             ),
             _buildDrawerItem(
               context: context,
