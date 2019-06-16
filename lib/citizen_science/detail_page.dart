@@ -2,8 +2,10 @@ import 'dart:ui';
 
 import 'package:citizen_lab/collapsing_appbar_page.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
+import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DetailPage extends StatefulWidget {
   final Key key;
@@ -14,6 +16,7 @@ class DetailPage extends StatefulWidget {
   final String built;
   final String extended;
   final String contactPerson;
+  final String url;
 
   DetailPage({
     this.key,
@@ -24,6 +27,7 @@ class DetailPage extends StatefulWidget {
     @required this.built,
     @required this.extended,
     @required this.contactPerson,
+    @required this.url,
   }) : super(key: key);
 
   @override
@@ -39,41 +43,44 @@ class _DetailPageState extends State<DetailPage> {
     _themeChanger.checkIfDarkModeEnabled(context);
 
     return Scaffold(
-      body: CollapsingAppBarPage(
-        text: GestureDetector(
-          onPanStart: (_) => _themeChanger.setTheme(),
-          child: Container(
-            width: double.infinity,
-            child: Tooltip(
-              message: '',
-              child: Container(
-                child: ClipRect(
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(
-                      sigmaX: 10.0,
-                      sigmaY: 10.0,
-                    ),
-                    child: Text(widget.title),
-                  ),
+      body: _buildBody(),
+      floatingActionButton: _buildFab(),
+    );
+  }
+
+  Widget _buildBody() {
+    return CollapsingAppBarPage(
+      text: GestureDetector(
+        onPanStart: (_) => _themeChanger.setTheme(),
+        child: Container(
+          width: double.infinity,
+          child: Tooltip(
+            message: widget.title,
+            child: ClipRect(
+              child: BackdropFilter(
+                child: Text(widget.title),
+                filter: ImageFilter.blur(
+                  sigmaX: 0.0,
+                  sigmaY: 0.0,
                 ),
               ),
             ),
           ),
         ),
-        image: widget.image,
-        body: ListView(
-          children: <Widget>[
-            _titleAndContent('Standort', widget.location),
-            _dividerWithPadding(),
-            _titleAndContent('Forschungsgegenstand', widget.researchSubject),
-            _dividerWithPadding(),
-            _titleAndContent('Aufgebaut/Eröffnet', widget.built),
-            _dividerWithPadding(),
-            _titleAndContent('Erweitert', widget.extended),
-            _dividerWithPadding(),
-            _titleAndContent('Ansprechpartner', widget.contactPerson),
-          ],
-        ),
+      ),
+      image: widget.image,
+      body: ListView(
+        children: <Widget>[
+          _titleAndContent('Standort', widget.location),
+          _dividerWithPadding(),
+          _titleAndContent('Forschungsgegenstand', widget.researchSubject),
+          _dividerWithPadding(),
+          _titleAndContent('Aufgebaut/Eröffnet', widget.built),
+          _dividerWithPadding(),
+          _titleAndContent('Erweitert', widget.extended),
+          _dividerWithPadding(),
+          _titleAndContent('Ansprechpartner', widget.contactPerson),
+        ],
       ),
     );
   }
@@ -82,6 +89,7 @@ class _DetailPageState extends State<DetailPage> {
     return Padding(
       padding: const EdgeInsets.only(
         left: 24.0,
+        right: 24.0,
         top: 24.0,
         bottom: 24.0,
       ),
@@ -90,7 +98,10 @@ class _DetailPageState extends State<DetailPage> {
         children: <Widget>[
           Text(
             '$title:',
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 16.0,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           SizedBox(height: 8.0),
           Text(content),
@@ -105,10 +116,33 @@ class _DetailPageState extends State<DetailPage> {
         left: 24.0,
         right: 24.0,
       ),
-      child: Divider(
-        height: 0.0,
-        color: Colors.black,
-      ),
+      child: Divider(color: Colors.black),
     );
+  }
+
+  Widget _buildFab() {
+    return FloatingActionButton(
+      child: Icon(Icons.web),
+      //onPressed: () => _launchUrl(),
+      onPressed: () => _launchWeb(),
+    );
+  }
+
+  Future<void> _launchWeb() async {
+    return await Navigator.pushNamed(
+      context,
+      RouteGenerator.citizenScienceWebPage,
+      arguments: {
+        'url': widget.url,
+      },
+    );
+  }
+
+  Future<void> _launchUrl() async {
+    if (await canLaunch(widget.url)) {
+      await launch(widget.url);
+    } else {
+      throw 'Could not launch ${widget.url}';
+    }
   }
 }

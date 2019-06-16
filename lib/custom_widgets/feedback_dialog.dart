@@ -95,9 +95,11 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
                       ],
                     ),
                   ),
-                  onPressed: () => _formKey.currentState.validate()
-                      ? Share.share(_feedbackMessage.text)
-                      : null,
+                  onPressed: () {
+                    return _formKey.currentState.validate()
+                        ? Share.share(_feedbackMessage.text)
+                        : null;
+                  },
                 ),
               ),
               SizedBox(width: 16.0),
@@ -116,13 +118,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
                       ],
                     ),
                   ),
-                  onPressed: () async {
-                    if (await canLaunch(widget.url)) {
-                      await launch(widget.url);
-                    } else {
-                      throw 'Could not launch ${widget.url}';
-                    }
-                  },
+                  onPressed: () => _launchUrl(),
                 ),
               ),
             ],
@@ -130,5 +126,13 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
         ],
       ),
     );
+  }
+
+  Future<void> _launchUrl() async {
+    if (await canLaunch(widget.url)) {
+      await launch(widget.url);
+    } else {
+      throw 'Could not launch ${widget.url}';
+    }
   }
 }

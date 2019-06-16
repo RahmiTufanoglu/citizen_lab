@@ -8,6 +8,7 @@ class CitizenScienceModel {
   String built;
   String extended;
   String contactPerson;
+  String url;
 
   CitizenScienceModel({
     @required this.title,
@@ -17,6 +18,7 @@ class CitizenScienceModel {
     @required this.built,
     @required this.extended,
     @required this.contactPerson,
+    @required this.url,
   });
 
   String get getTitle => title;
@@ -32,4 +34,6 @@ class CitizenScienceModel {
   String get getExtended => extended;
 
   String get getContactPerson => contactPerson;
+
+  String get getUrl => url;
 }

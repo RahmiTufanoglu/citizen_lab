@@ -1,5 +1,6 @@
 import 'package:citizen_lab/citizen_science/about_page.dart';
 import 'package:citizen_lab/citizen_science/citizen_science_page.dart';
+import 'package:citizen_lab/citizen_science/citizen_science_web.dart';
 import 'package:citizen_lab/citizen_science/detail_page.dart';
 import 'package:citizen_lab/custom_widgets/info_page.dart';
 import 'package:citizen_lab/entries/entry_page.dart';
@@ -37,6 +38,7 @@ class RouteGenerator {
   static const String stopwatchPage = '/stopwatch_page';
   static const String audioRecordPage = '/audio_record_page';
   static const String linkingPage = '/linking_page';
+  static const String citizenScienceWebPage = '/citizen_science_web_page';
 
   static const String routeHomePage = 'home';
   static const String routeSplashPage = 'splash_page';
@@ -57,6 +59,7 @@ class RouteGenerator {
   static const String routeStopwatchPage = 'stopwatch_page';
   static const String routeAudioRecordPage = 'audio_record_page';
   static const String routeLinkingRecordPage = 'linking_page';
+  static const String routeCitizenScienceWebPage = 'citizen_science_web_page';
 
   static RouteFactory routes() {
     return (settings) {
@@ -142,6 +145,7 @@ class RouteGenerator {
             built: args['built'],
             extended: args['extended'],
             contactPerson: args['contact_person'],
+            url: args['url'],
           );
           route = routeDetailPage;
           break;
@@ -150,7 +154,10 @@ class RouteGenerator {
           route = routeOnboardingPage;
           break;
         case aboutPage:
-          page = AboutPage();
+          page = AboutPage(
+            title: args['title'],
+            content: args['content'],
+          );
           route = routeAboutPage;
           break;
         case calculatorPage:
@@ -170,6 +177,12 @@ class RouteGenerator {
             //url: args['url'],
           );
           route = routeLinkingRecordPage;
+          break;
+        case citizenScienceWebPage:
+          page = CitizenScienceWebPage(
+            url: args['url'],
+          );
+          route = routeCitizenScienceWebPage;
           break;
         default:
           return null;

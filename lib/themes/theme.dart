@@ -95,7 +95,7 @@ ThemeData appDarkTheme() {
     floatingActionButtonTheme: FloatingActionButtonThemeData(
       elevation: 4.0,
       highlightElevation: 16.0,
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.white.withOpacity(0.8),
       foregroundColor: Colors.black,
       shape: ContinuousRectangleBorder(
         borderRadius: BorderRadius.only(

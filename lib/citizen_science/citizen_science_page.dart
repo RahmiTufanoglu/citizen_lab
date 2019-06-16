@@ -84,13 +84,24 @@ class _CitizenSciencePageState extends State<CitizenSciencePage> {
         ),
         IconButton(
           icon: Icon(Icons.info_outline),
-          onPressed: () => null,
+          onPressed: () => _setInfoPage(),
         ),
         IconButton(
           icon: Icon(Icons.home),
           onPressed: () => null,
         ),
       ],
+    );
+  }
+
+  void _setInfoPage() {
+    Navigator.pushNamed(
+      context,
+      RouteGenerator.aboutPage,
+      arguments: {
+        'title': 'Info',
+        'content': 'dfsafsdfsdfweqw111',
+      },
     );
   }
 
@@ -150,7 +161,13 @@ class _CitizenSciencePageState extends State<CitizenSciencePage> {
               asset: citizenScienceModelList[index].image,
               fontColor: Colors.white,
               fontSize: 20.0,
-              onTapTitle: () {},
+              onTapTitle: () {
+                _showContent(
+                  citizenScienceModelList[index].title,
+                  citizenScienceModelList[index].built,
+                  citizenScienceModelList[index].contactPerson,
+                );
+              },
               onTapImage: () {
                 return Navigator.pushNamed(
                   context,
@@ -165,6 +182,7 @@ class _CitizenSciencePageState extends State<CitizenSciencePage> {
                     'extended': citizenScienceModelList[index].extended,
                     'contact_person':
                         citizenScienceModelList[index].contactPerson,
+                    'url': citizenScienceModelList[index].url,
                   },
                 );
               },
@@ -172,6 +190,36 @@ class _CitizenSciencePageState extends State<CitizenSciencePage> {
           );
         },
       ),
+    );
+  }
+
+  Future<void> _showContent(
+      String title, String built, String contactPerson) async {
+    await showDialog(
+      context: context,
+      builder: (_) {
+        return SimpleDialog(
+          contentPadding: const EdgeInsets.all(16.0),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(
+              Radius.circular(16.0),
+            ),
+          ),
+          children: <Widget>[
+            Text(
+              title,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 16.0),
+            Text('Erstellt am: $built'),
+            SizedBox(height: 16.0),
+            Text(
+              contactPerson,
+              style: TextStyle(fontStyle: FontStyle.italic),
+            ),
+          ],
+        );
+      },
     );
   }
 }

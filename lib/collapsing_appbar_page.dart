@@ -18,31 +18,35 @@ class CollapsingAppBarPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double pageHeight = MediaQuery.of(context).size.height;
+    const double toolbarHeight = kToolbarHeight + 24.0;
 
     return NestedScrollView(
-      headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+      headerSliverBuilder: (
+        BuildContext context,
+        bool innerBoxIsScrolled,
+      ) {
         return <Widget>[
           SliverAppBar(
+            title: text,
             expandedHeight: pageHeight / 3,
-            //backgroundColor: appBarColor.withOpacity(0.8),
             floating: true,
             pinned: true,
             snap: true,
             forceElevated: true,
             elevation: appBarElevation,
-            //backgroundColor: backgroundColor.withOpacity(0.8),
             leading: IconButton(
               icon: Icon(Icons.arrow_back),
               onPressed: () => Navigator.pop(context),
             ),
-            flexibleSpace: FlexibleSpaceBar(
-              title: text,
-              collapseMode: CollapseMode.parallax,
-              //background: Container(color: backgroundColor),
-              background: Image.asset(
-                //"https://images.pexels.com/photos/396547/pexels-photo-396547.jpeg?auto=compress&cs=tinysrgb&h=350",
-                image,
-                fit: BoxFit.cover,
+            flexibleSpace: Padding(
+              padding: const EdgeInsets.only(top: toolbarHeight),
+              child: FlexibleSpaceBar(
+                //title: text,
+                collapseMode: CollapseMode.pin,
+                background: Image.asset(
+                  image,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
           ),

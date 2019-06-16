@@ -54,7 +54,10 @@ class TopTextCard extends StatelessWidget {
                     ),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
+                    padding: const EdgeInsets.only(
+                      left: 8.0,
+                      right: 8.0,
+                    ),
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: Text(

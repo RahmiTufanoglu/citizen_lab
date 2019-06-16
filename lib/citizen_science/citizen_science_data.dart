@@ -11,6 +11,8 @@ List<CitizenScienceModel> citizenScienceModelList = [
     extended: 'August 2018',
     contactPerson:
         'Dirk Peters, Sabrina Großkopp\n(sabrina.grosskopp@umsicht.fraunhofer.de)',
+    url:
+        'https://staedtische-agrikultur.de/index.php/aquaponik-workshop-am-9-august-18-bericht/',
   ),
   CitizenScienceModel(
     title: 'Autarkes Hochbeet',
@@ -23,6 +25,7 @@ List<CitizenScienceModel> citizenScienceModelList = [
     extended: '-',
     contactPerson:
         'Projektteam SAIN Oberhausen\n(kontakt@staedtische-agrikultur.de)',
+    url: 'https://staedtische-agrikultur.de/index.php/piloten_oberhausen/',
   ),
   CitizenScienceModel(
     title: 'Baumscheiben',
@@ -34,6 +37,19 @@ List<CitizenScienceModel> citizenScienceModelList = [
     extended: '-',
     contactPerson:
         'Projektteam SAIN Oberhausen\n(kontakt@staedtische-agrikultur.de)',
+    url:
+        'https://staedtische-agrikultur.de/index.php/tag-der-staedtebaufoerderung-in-oberhausen-bericht/',
+  ),
+  CitizenScienceModel(
+    title: 'Beerengarten in Sterkrade',
+    image: 'assets/images/beerengarten_in_sterkrade.jpg',
+    location: 'Höhenweg 66, Flurstück 165\n46147 Oberhausen',
+    researchSubject: '-',
+    built: 'April 2019',
+    extended: '-',
+    contactPerson: 'Björn Wiesner\n(bwiesner1985@gmail.com)',
+    url:
+        'https://staedtische-agrikultur.de/index.php/aufbau-des-beerensgartens-zum-selberpfluecken-in-oberhausen/',
   ),
   CitizenScienceModel(
     title: 'Beerengarten in Königshardt',
@@ -45,15 +61,8 @@ List<CitizenScienceModel> citizenScienceModelList = [
     built: 'März 2019',
     extended: '-',
     contactPerson: 'Dirk Wischmann\n(info@gartenwert.de)',
-  ),
-  CitizenScienceModel(
-    title: 'Beerengarten in Sterkrade',
-    image: 'assets/images/beerengarten_in_sterkrade.jpg',
-    location: 'Höhenweg 66, Flurstück 165\n46147 Oberhausen',
-    researchSubject: '-',
-    built: 'April 2019',
-    extended: '-',
-    contactPerson: 'Björn Wiesner\n(bwiesner1985@gmail.com)',
+    url:
+        'https://staedtische-agrikultur.de/index.php/aufbau-des-beerengartens/',
   ),
   CitizenScienceModel(
     title: 'Speisepilzgarten',
@@ -63,5 +72,7 @@ List<CitizenScienceModel> citizenScienceModelList = [
     built: 'Oktober 2018',
     extended: '-',
     contactPerson: 'Julia Krayer\n(julia.krayer@umsicht.fraunhofer.de)',
+    url:
+        'https://staedtische-agrikultur.de/index.php/einweihung-des-speisepilzgartens-am-haus-ripshorst-in-oberhausen/',
   ),
 ];

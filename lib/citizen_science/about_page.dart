@@ -1,22 +1,28 @@
-import 'package:citizen_lab/themes/theme.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
-import 'package:citizen_lab/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class AboutPage extends StatefulWidget {
+  final Key key;
+  final String title;
+  final String content;
+
+  AboutPage({
+    this.key,
+    @required this.title,
+    @required this.content,
+  }) : super(key: key);
+
   @override
   _AboutPageState createState() => _AboutPageState();
 }
 
 class _AboutPageState extends State<AboutPage> {
   ThemeChangerProvider _themeChanger;
-  //bool _darkModeEnabled = false;
 
   @override
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
-    //_checkIfDarkModeEnabled();
     _themeChanger.checkIfDarkModeEnabled(context);
 
     return Scaffold(
@@ -42,31 +48,18 @@ class _AboutPageState extends State<AboutPage> {
           width: double.infinity,
           child: Tooltip(
             message: '',
-            child: Text('Über'),
+            child: Text(widget.title),
           ),
         ),
       ),
     );
   }
 
-  /*void _checkIfDarkModeEnabled() {
-    final ThemeData theme = Theme.of(context);
-    theme.brightness == appDarkTheme().brightness
-        ? _darkModeEnabled = true
-        : _darkModeEnabled = false;
-  }
-
-  void _enableDarkMode() {
-    _darkModeEnabled
-        ? _themeChanger.setTheme(appLightTheme())
-        : _themeChanger.setTheme(appDarkTheme());
-  }*/
-
   Widget _buildBody() {
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Text(lorem),
+        child: Text(widget.content),
       ),
     );
   }

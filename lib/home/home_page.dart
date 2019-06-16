@@ -175,19 +175,27 @@ class _HomePageState extends State<HomePage>
               context: context,
               icon: Icons.feedback,
               title: feedback,
-              onTap: () => showDialog(
-                    context: context,
-                    builder: (_) => FeedbackDialog(url: fraunhofer_umsicht_url),
-                  ),
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (_) => FeedbackDialog(url: fraunhofer_umsicht_url),
+                );
+              },
             ),
             _buildDrawerItem(
               context: context,
               icon: Icons.info,
               title: 'Über',
-              onTap: () => Navigator.pushNamed(
-                    context,
-                    RouteGenerator.aboutPage,
-                  ),
+              onTap: () {
+                Navigator.pushNamed(
+                  context,
+                  RouteGenerator.aboutPage,
+                  arguments: {
+                    'title': 'Über',
+                    'content': lorem,
+                  },
+                );
+              },
             ),
           ],
         ),
