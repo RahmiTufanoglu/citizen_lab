@@ -34,7 +34,7 @@ class CardScrollWidget extends StatelessWidget {
 
             List<Widget> cardList = List();
 
-            for (int i = 0; i < citizenScienceImages.length; i++) {
+            for (int i = 0; i < citizenScienceModelList.length; i++) {
               double delta = i - currentPage;
               bool isOnRight = delta > 0;
 
@@ -60,7 +60,10 @@ class CardScrollWidget extends StatelessWidget {
                     aspectRatio: _cardAspectRatio,
                     child: ClipRRect(
                       borderRadius: new BorderRadius.circular(16.0),
-                      child: Image.asset(citizenScienceImages[i], fit: BoxFit.cover),
+                      child: Image.asset(
+                        citizenScienceModelList[i].image,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                 ),

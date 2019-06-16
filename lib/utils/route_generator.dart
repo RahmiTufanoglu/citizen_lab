@@ -136,8 +136,12 @@ class RouteGenerator {
         case detailPage:
           page = DetailPage(
             title: args['title'],
-            content: args['content'],
             image: args['image'],
+            location: args['location'],
+            researchSubject: args['research_subject'],
+            built: args['built'],
+            extended: args['extended'],
+            contactPerson: args['contact_person'],
           );
           route = routeDetailPage;
           break;

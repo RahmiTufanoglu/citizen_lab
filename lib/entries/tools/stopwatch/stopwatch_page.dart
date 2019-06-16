@@ -1,8 +1,6 @@
 import 'dart:async';
 
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
-import 'package:citizen_lab/entries/tools/timer_painter.dart';
-import 'package:citizen_lab/themes/theme.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:flutter/material.dart';
@@ -24,18 +22,13 @@ class _StopwatchPageState extends State<StopwatchPage>
   final _timeout = const Duration(milliseconds: 30);
   final _scrollController = ScrollController();
 
+  ThemeChangerProvider _themeChanger;
   String _stopWatchText = '00:00:000';
   String _elapsedTime = '00:00:000';
   Icon _icon = Icon(Icons.play_arrow);
-
   List<String> _elapsedTimeList = [];
 
-  ThemeChangerProvider _themeChanger;
-  //bool _darkModeEnabled = false;
-
-  void _startTimeout() {
-    Timer(_timeout, _handleTimeout);
-  }
+  void _startTimeout() => Timer(_timeout, _handleTimeout);
 
   void _handleTimeout() {
     if (_stopWatch.isRunning) {
@@ -50,7 +43,6 @@ class _StopwatchPageState extends State<StopwatchPage>
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
     _themeChanger.checkIfDarkModeEnabled(context);
-    //_checkIfDarkModeEnabled();
 
     return Scaffold(
       key: _scaffoldKey,
@@ -59,13 +51,6 @@ class _StopwatchPageState extends State<StopwatchPage>
       floatingActionButton: _buildFabs(),
     );
   }
-
-  /*void _checkIfDarkModeEnabled() {
-    final ThemeData theme = Theme.of(context);
-    theme.brightness == appDarkTheme().brightness
-        ? _darkModeEnabled = true
-        : _darkModeEnabled = false;
-  }*/
 
   Widget _buildAppBar() {
     return AppBar(
@@ -91,12 +76,6 @@ class _StopwatchPageState extends State<StopwatchPage>
       ],
     );
   }
-
-  /*void _enableDarkMode() {
-    _darkModeEnabled
-        ? _themeChanger.setTheme(appLightTheme())
-        : _themeChanger.setTheme(appDarkTheme());
-  }*/
 
   void _shareContent() {
     final String sharingNotPossible = 'Teilvorgang nicht möglich.';
@@ -132,6 +111,7 @@ class _StopwatchPageState extends State<StopwatchPage>
 
   Widget _buildBody() {
     final double screenHeight = MediaQuery.of(context).size.height;
+    final double containerHeight = (screenHeight / 3) - kToolbarHeight - 24.0;
 
     return SafeArea(
       child: Center(
@@ -162,7 +142,7 @@ class _StopwatchPageState extends State<StopwatchPage>
             SizedBox(height: 56.0),
             Container(
               padding: const EdgeInsets.all(8.0),
-              height: (screenHeight / 3) - kToolbarHeight - 24.0,
+              height: containerHeight,
               decoration: BoxDecoration(
                 color: Colors.black.withOpacity(0.1),
               ),
@@ -194,7 +174,6 @@ class _StopwatchPageState extends State<StopwatchPage>
   void _startStopButtonPressed() {
     setState(() {
       if (_stopWatch.isRunning) {
-        //_elapsedTime = _stopWatchText;
         _setElapsedTime();
         _icon = Icon(Icons.play_arrow);
         _stopWatch.stop();
@@ -208,7 +187,6 @@ class _StopwatchPageState extends State<StopwatchPage>
 
   void _resetButtonPressed() {
     if (_stopWatch.isRunning) {
-      //_elapsedTime = _stopWatchText;
       _setElapsedTime();
       _startStopButtonPressed();
     }
@@ -245,39 +223,6 @@ class _StopwatchPageState extends State<StopwatchPage>
     );
   }
 
-  Future<void> _showSetTimerDialog() async {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return SimpleDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(
-              Radius.circular(16.0),
-            ),
-          ),
-          contentPadding: const EdgeInsets.all(16.0),
-          titlePadding: const EdgeInsets.all(0.0),
-          children: <Widget>[
-            TextFormField(
-              controller: _timerTextEditingController,
-              autofocus: true,
-              style: TextStyle(fontSize: 16.0),
-            ),
-            SizedBox(height: 16.0),
-            RaisedButton(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(16.0),
-                ),
-              ),
-              onPressed: () => null,
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   void _copyContent() {
     final copyContent = 'Inhalt kopiert';
     final copyNotPossible = 'Kein Inhalt zum kopieren';
@@ -311,166 +256,6 @@ class _StopwatchPageState extends State<StopwatchPage>
         text,
         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
       ),
-    );
-  }
-}
-
-//
-//
-//
-//
-//
-//
-//
-//
-//
-class _StopwatchPageState2 extends State<StopwatchPage>
-    with TickerProviderStateMixin {
-  AnimationController _animationController;
-  IconData _startIcon = Icons.play_arrow;
-  final _durationTextEditingController = TextEditingController();
-
-  int _duration = 60;
-
-  String get _timerString {
-    Duration duration =
-        _animationController.duration * _animationController.value;
-    return '${duration.inMinutes}:${(duration.inSeconds % 60).toString().padLeft(2, '0')}';
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _animationController = AnimationController(
-      vsync: this,
-      duration: Duration(seconds: _duration),
-    );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _buildAppBar(),
-      body: _buildBody(),
-      floatingActionButton: _buildFabs(),
-    );
-  }
-
-  Widget _buildAppBar() {
-    return AppBar(
-      title: Text('Stopwatch'),
-    );
-  }
-
-  Widget _buildBody() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Center(
-        child: AspectRatio(
-          aspectRatio: 1.0,
-          child: Stack(
-            children: <Widget>[
-              Positioned.fill(
-                child: AnimatedBuilder(
-                  animation: _animationController,
-                  builder: (BuildContext context, Widget child) {
-                    return CustomPaint(
-                      painter: TimerPainter(
-                        animation: _animationController,
-                        backgroundColor: Colors.red,
-                        color: Colors.green,
-                      ),
-                    );
-                  },
-                ),
-              ),
-              Center(
-                child: AnimatedBuilder(
-                  animation: _animationController,
-                  builder: (BuildContext context, Widget child) {
-                    return Text(
-                      _timerString,
-                      style: TextStyle(fontSize: 56.0),
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFabs() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.only(left: 32.0),
-          child: FloatingActionButton(
-            child: Icon(Icons.timer),
-            onPressed: () async {
-              await showDialog(
-                context: context,
-                builder: (context) {
-                  return SimpleDialog(
-                    children: <Widget>[
-                      TextFormField(
-                        controller: _durationTextEditingController,
-                      ),
-                      RaisedButton(
-                        onPressed: () {
-                          setState(() {
-                            _duration =
-                                int.parse(_durationTextEditingController.text);
-                            _animationController.reverse();
-                          });
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
-          ),
-        ),
-        FloatingActionButton(
-          child: AnimatedBuilder(
-            animation: _animationController,
-            builder: (BuildContext context, Widget child) {
-              return Icon(_startIcon);
-            },
-          ),
-          onPressed: () {
-            if (_animationController.isAnimating) {
-              _animationController.stop();
-              setState(() {
-                _startIcon = Icons.pause;
-              });
-            } else {
-              setState(() {
-                _startIcon = Icons.play_arrow;
-              });
-              _animationController.reverse(
-                from: _animationController.value == 0.0
-                    ? 1.0
-                    : _animationController.value,
-              );
-            }
-          },
-        ),
-        FloatingActionButton(
-          child: Icon(Icons.content_copy),
-          onPressed: () {},
-        ),
-      ],
     );
   }
 }

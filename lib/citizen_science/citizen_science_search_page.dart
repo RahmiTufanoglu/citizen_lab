@@ -1,10 +1,9 @@
-import 'package:citizen_lab/themes/theme.dart';
-import 'package:flutter/material.dart';
-import 'package:citizen_lab/projects/project_item.dart';
-import 'package:citizen_lab/utils/route_generator.dart';
-
 import 'package:citizen_lab/custom_widgets/card_image_with_text.dart';
-import 'package:citizen_lab/citizen_science/citizen_science_model.dart';
+import 'package:citizen_lab/themes/theme.dart';
+import 'package:citizen_lab/utils/route_generator.dart';
+import 'package:flutter/material.dart';
+
+import 'cizizen_science_model.dart';
 
 class CitizenScienceSearchPage extends SearchDelegate<String> {
   List<CitizenScienceModel> citizenScienceList = [];

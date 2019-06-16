@@ -1,7 +1,6 @@
 import 'package:citizen_lab/citizen_science/citizen_science_data.dart';
-import 'package:citizen_lab/citizen_science/citizen_science_model.dart';
 import 'package:citizen_lab/citizen_science/citizen_science_search_page.dart';
-import 'package:citizen_lab/custom_widgets/card_image_with_text.dart';
+import 'package:citizen_lab/custom_widgets/top_text_card.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +15,7 @@ class _CitizenSciencePageState extends State<CitizenSciencePage> {
   //PageController _pageController;
   //double _currentPage = citizenScienceImages.length - 1.0;
 
-  List<CitizenScienceModel> _citizenScienceList;
+  //List<CitizenScienceModel> _citizenScienceList;
 
   ThemeChangerProvider _themeChanger;
 
@@ -30,22 +29,22 @@ class _CitizenSciencePageState extends State<CitizenSciencePage> {
       });
     });*/
 
-    _citizenScienceList = [];
+    //_citizenScienceList = [];
     _createCitizenScienceList();
 
     super.initState();
   }
 
   void _createCitizenScienceList() {
-    for (int i = 0; i < 4; i++) {
+    // TODO:
+    /*for (int i = 0; i < 3; i++) {
       _citizenScienceList.add(
         CitizenScienceModel(
           citizenScienceTitles[i],
-          citizenScienceContent[i],
           citizenScienceImages[i],
+          citizenScienceContent[i],
         ),
-      );
-    }
+      );*/
   }
 
   @override
@@ -78,7 +77,7 @@ class _CitizenSciencePageState extends State<CitizenSciencePage> {
             showSearch(
               context: context,
               delegate: CitizenScienceSearchPage(
-                citizenScienceList: _citizenScienceList,
+                citizenScienceList: citizenScienceModelList,
               ),
             );
           },
@@ -141,24 +140,34 @@ class _CitizenSciencePageState extends State<CitizenSciencePage> {
           childAspectRatio: screenWidth / (screenHeight / 1.5),
           //childAspectRatio: screenWidth / (next(iMin, iMax)).toDouble(),
         ),
-        itemCount: _citizenScienceList.length,
+        itemCount: citizenScienceModelList.length,
         padding: EdgeInsets.all(4.0),
         itemBuilder: (context, index) {
           return Padding(
             padding: const EdgeInsets.all(4.0),
-            child: CardImageWithText(
-              title: _citizenScienceList[index].title,
-              asset: _citizenScienceList[index].image,
+            child: TopTextCard(
+              title: citizenScienceModelList[index].title,
+              asset: citizenScienceModelList[index].image,
               fontColor: Colors.white,
-              onTap: () => Navigator.pushNamed(
-                    context,
-                    RouteGenerator.detailPage,
-                    arguments: {
-                      'title': _citizenScienceList[index].title,
-                      'content': _citizenScienceList[index].content,
-                      'image': _citizenScienceList[index].image,
-                    },
-                  ),
+              fontSize: 20.0,
+              onTapTitle: () {},
+              onTapImage: () {
+                return Navigator.pushNamed(
+                  context,
+                  RouteGenerator.detailPage,
+                  arguments: {
+                    'title': citizenScienceModelList[index].title,
+                    'image': citizenScienceModelList[index].image,
+                    'location': citizenScienceModelList[index].location,
+                    'research_subject':
+                        citizenScienceModelList[index].researchSubject,
+                    'built': citizenScienceModelList[index].built,
+                    'extended': citizenScienceModelList[index].extended,
+                    'contact_person':
+                        citizenScienceModelList[index].contactPerson,
+                  },
+                );
+              },
             ),
           );
         },
@@ -166,21 +175,3 @@ class _CitizenSciencePageState extends State<CitizenSciencePage> {
     );
   }
 }
-
-/*Widget _buildBody2() {
-    return Stack(
-      children: <Widget>[
-        CardScrollWidget(currentPage: _currentPage),
-        Positioned.fill(
-          child: PageView.builder(
-            itemCount: csImages.length,
-            controller: _pageController,
-            reverse: true,
-            itemBuilder: (context, index) {
-              return Container();
-            },
-          ),
-        ),
-      ],
-    );
-  }*/
