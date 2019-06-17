@@ -69,7 +69,7 @@ class _ProjectPageState extends State<ProjectPage> {
               context: context,
               delegate: ProjectSearchPage(
                 projectList: _projectList,
-                reloadProjectList: () => _loadProjectList(),
+                //reloadProjectList: () => _loadProjectList(),
               ),
             );
           },

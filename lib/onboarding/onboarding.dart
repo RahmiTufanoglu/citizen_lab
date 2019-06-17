@@ -2,7 +2,6 @@ import 'package:citizen_lab/onboarding/page_indicator.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:flutter/material.dart';
 
-import 'package:citizen_lab/utils/constants.dart';
 import 'onboarding_data.dart';
 
 class OnboardingPage extends StatefulWidget {
@@ -10,7 +9,8 @@ class OnboardingPage extends StatefulWidget {
   _OnboardingPageState createState() => _OnboardingPageState();
 }
 
-class _OnboardingPageState extends State<OnboardingPage> with TickerProviderStateMixin {
+class _OnboardingPageState extends State<OnboardingPage>
+    with TickerProviderStateMixin {
   PageController _controller;
   int _currentPage = 0;
   bool _lastPage = false;
@@ -42,8 +42,6 @@ class _OnboardingPageState extends State<OnboardingPage> with TickerProviderStat
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
-    //double screenWidth = MediaQuery.of(context).size.width;
-
     double appBarHeight = AppBar().preferredSize.height;
 
     return MaterialApp(
@@ -75,13 +73,14 @@ class _OnboardingPageState extends State<OnboardingPage> with TickerProviderStat
                       child: SingleChildScrollView(
                         padding: const EdgeInsets.only(
                           top: 16.0,
-                          bottom: 64.0,
+                          bottom: 80.0,
                           left: 16.0,
                           right: 16.0,
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: <Widget>[
+                            SizedBox(height: 42.0),
                             Image.asset(
                               page.image,
                               height: (screenHeight / 2) - appBarHeight,
@@ -99,7 +98,7 @@ class _OnboardingPageState extends State<OnboardingPage> with TickerProviderStat
                             ),
                             SizedBox(height: 8.0),
                             Text(
-                              lorem,
+                              page.content,
                               style: TextStyle(fontSize: 16.0),
                             ),
                           ],

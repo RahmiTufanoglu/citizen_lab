@@ -16,6 +16,7 @@
         android:name="io.flutter.app.FlutterApplication"
         android:icon="@mipmap/ic_launcher"
         android:label="citizen_lab"
+        android:allowBackup="false"
         android:resizeableActivity="false">
         <provider
             android:name="androidx.core.content.FileProvider"

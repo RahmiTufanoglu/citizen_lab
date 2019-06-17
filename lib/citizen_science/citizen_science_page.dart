@@ -59,14 +59,16 @@ class _CitizenSciencePageState extends State<CitizenSciencePage> {
   }
 
   Widget _buildAppbar() {
+    final String citizenScience = 'Citizen Science';
+
     return AppBar(
       title: GestureDetector(
         onPanStart: (_) => _themeChanger.setTheme(),
         child: Container(
           width: double.infinity,
           child: Tooltip(
-            message: '',
-            child: Text('Citizen Science'),
+            message: citizenScience,
+            child: Text(citizenScience),
           ),
         ),
       ),

@@ -11,17 +11,17 @@ class CitizenScienceSearchPage extends SearchDelegate<String> {
 
   CitizenScienceSearchPage({@required this.citizenScienceList});
 
+  @override
+  ThemeData appBarTheme(BuildContext context) {
+    _checkIfDarkModeEnabled(context);
+    return _darkModeEnabled ? appDarkTheme() : appLightTheme();
+  }
+
   void _checkIfDarkModeEnabled(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     theme.brightness == appDarkTheme().brightness
         ? _darkModeEnabled = true
         : _darkModeEnabled = false;
-  }
-
-  @override
-  ThemeData appBarTheme(BuildContext context) {
-    _checkIfDarkModeEnabled(context);
-    return _darkModeEnabled ? appDarkTheme() : appLightTheme();
   }
 
   @override

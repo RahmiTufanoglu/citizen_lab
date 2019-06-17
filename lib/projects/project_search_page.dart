@@ -1,37 +1,31 @@
-import 'package:citizen_lab/themes/theme.dart';
-import 'package:citizen_lab/themes/theme_changer_provider.dart';
-import 'package:flutter/material.dart';
 import 'package:citizen_lab/projects/project.dart';
 import 'package:citizen_lab/projects/project_item.dart';
+import 'package:citizen_lab/themes/theme.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter/material.dart';
 
 class ProjectSearchPage extends SearchDelegate<String> {
   List<Project> projectList = [];
-  final Function reloadProjectList;
+
+  //final Function reloadProjectList;
   bool _darkModeEnabled = false;
 
   ProjectSearchPage({
     @required this.projectList,
-    @required this.reloadProjectList,
+    //@required this.reloadProjectList,
   });
+
+  @override
+  ThemeData appBarTheme(BuildContext context) {
+    _checkIfDarkModeEnabled(context);
+    return _darkModeEnabled ? appDarkTheme() : appLightTheme();
+  }
 
   void _checkIfDarkModeEnabled(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     theme.brightness == appDarkTheme().brightness
         ? _darkModeEnabled = true
         : _darkModeEnabled = false;
-  }
-
-  @override
-  ThemeData appBarTheme(BuildContext context) {
-    _checkIfDarkModeEnabled(context);
-
-    /*ThemeData theme = Theme.of(context);
-    theme = appLightTheme();
-    return theme;*/
-
-    return _darkModeEnabled ? appDarkTheme() : appLightTheme();
   }
 
   @override
@@ -84,9 +78,7 @@ class ProjectSearchPage extends SearchDelegate<String> {
                 },
               );
 
-              if (result) {
-                reloadProjectList();
-              }
+              //if (result) reloadProjectList();
             },
           );
         },
@@ -94,7 +86,10 @@ class ProjectSearchPage extends SearchDelegate<String> {
     );
   }
 
-  List<Project> _getProjectTitles(List<Project> notes, String query) {
+  List<Project> _getProjectTitles(
+    List<Project> notes,
+    String query,
+  ) {
     List<Project> notesCopy = [];
 
     for (int i = 0; i < notes.length; i++) {

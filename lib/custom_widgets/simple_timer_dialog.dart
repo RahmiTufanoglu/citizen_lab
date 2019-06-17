@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:citizen_lab/citizen_science/title_provider.dart';
 import 'package:citizen_lab/utils/date_formater.dart';
 import 'package:flutter/material.dart';
 
@@ -13,6 +12,7 @@ class SimpleTimerDialog extends StatefulWidget {
   final GestureTapCallback onPressedUpdate;
   final GestureTapCallback onPressedClose;
   final bool descExists;
+
   //final TitleProvider titleProvider;
   //final String title;
 
@@ -62,6 +62,8 @@ class _SimpleTimerDialogState extends State<SimpleTimerDialog> {
   Widget build(BuildContext context) => _buildDialog();
 
   Widget _buildDialog() {
+    final double screenWidth = MediaQuery.of(context).size.width;
+
     return Form(
       key: _formKey,
       autovalidate: true,
@@ -80,7 +82,6 @@ class _SimpleTimerDialogState extends State<SimpleTimerDialog> {
             Padding(
               padding: const EdgeInsets.only(
                 left: 16.0,
-                right: 16.0,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -94,11 +95,15 @@ class _SimpleTimerDialogState extends State<SimpleTimerDialog> {
                     ),
                   ),
                   SizedBox(height: 8.0),
-                  Text(
-                    'Erstellt am: ${widget.createdAt}',
-                    style: TextStyle(
-                      fontSize: 14.0,
-                      fontStyle: FontStyle.italic,
+                  Container(
+                    width: screenWidth / 2,
+                    child: Text(
+                      'Erstellt am: ${widget.createdAt}',
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 14.0,
+                        fontStyle: FontStyle.italic,
+                      ),
                     ),
                   ),
                   SizedBox(height: 16.0),

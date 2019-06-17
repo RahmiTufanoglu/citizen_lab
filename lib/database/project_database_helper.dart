@@ -15,7 +15,7 @@ class ProjectDatabaseHelper {
   Database _db;
 
   static const int DB_VERSION = 1;
-  static final String dbName = 'citizen_lab_projects.db';
+  static final String dbName = 'citizen_lab_projects2.db';
 
   static final String projectTable = 'projects';
   static final String columnProjectId = 'id';

@@ -17,8 +17,9 @@ class CollapsingAppBarPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double pageHeight = MediaQuery.of(context).size.height;
-    const double toolbarHeight = kToolbarHeight + 24.0;
+    final double pageHeight = MediaQuery.of(context).size.height;
+    const double toolbarHeight = kToolbarHeight;
+    double statusBarHeight = MediaQuery.of(context).padding.top;
 
     return NestedScrollView(
       headerSliverBuilder: (
@@ -39,7 +40,7 @@ class CollapsingAppBarPage extends StatelessWidget {
               onPressed: () => Navigator.pop(context),
             ),
             flexibleSpace: Padding(
-              padding: const EdgeInsets.only(top: toolbarHeight),
+              padding: EdgeInsets.only(top: toolbarHeight + statusBarHeight),
               child: FlexibleSpaceBar(
                 //title: text,
                 collapseMode: CollapseMode.pin,
