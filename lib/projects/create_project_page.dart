@@ -219,8 +219,8 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
     }
   }
 
-  Future<void> _navigateToEntry(Project project) async {
-    await Navigator.pushNamed(
+  void _navigateToEntry(Project project) {
+    Navigator.pushNamed(
       context,
       RouteGenerator.entry,
       arguments: {
@@ -228,6 +228,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
         'projectTitle': project.title,
         'isFromCreateProjectPage': true,
         'isFromProjectPage': false,
+        'isFromProjectSearchPage': false,
       },
     );
   }

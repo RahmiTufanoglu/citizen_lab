@@ -70,7 +70,6 @@ class _TablePageState extends State<TablePage> {
         _rowTextEditingController.text = _row.toString();
       }
     } else {
-      _titleEditingController.text = '';
       _createdAt = dateFormatted();
     }
 
@@ -126,8 +125,7 @@ class _TablePageState extends State<TablePage> {
           width: double.infinity,
           child: Tooltip(
             message: noteType,
-            //child: Text((_title != null) ? _title : noteType),
-            child: Text((_title != null) ? _titleProvider.getTitle : noteType),
+            child: Text((_title != null) ? _title : noteType),
           ),
         ),
       ),
@@ -280,14 +278,14 @@ class _TablePageState extends State<TablePage> {
             child: Icon(Icons.description),
             onPressed: () => _showDialogEditImage(),
           ),
-          FloatingActionButton(
+          /*FloatingActionButton(
             heroTag: null,
             tooltip: 'Beschreibung editieren.',
             elevation: 4.0,
             highlightElevation: 16.0,
             child: Icon(Icons.folder),
             onPressed: () => null,
-          ),
+          ),*/
           FloatingActionButton(
             heroTag: null,
             tooltip: 'Tabelle leeren.',

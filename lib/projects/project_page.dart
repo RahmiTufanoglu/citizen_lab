@@ -69,7 +69,8 @@ class _ProjectPageState extends State<ProjectPage> {
               context: context,
               delegate: ProjectSearchPage(
                 projectList: _projectList,
-                //reloadProjectList: () => _loadProjectList(),
+                isFromProjectSearchPage: false,
+                reloadProjectList: () => _loadProjectList(),
               ),
             );
           },
@@ -257,10 +258,11 @@ class _ProjectPageState extends State<ProjectPage> {
         'projectTitle': _projectList[index].title,
         'isFromCreateProjectPage': false,
         'isFromProjectPage': true,
+        'isFromProjectSearchPage': false,
       },
     );
 
-    if (result != null) _loadProjectList();
+    if (result) _loadProjectList();
   }
 
   Widget _buildSnackBar({@required String text}) {

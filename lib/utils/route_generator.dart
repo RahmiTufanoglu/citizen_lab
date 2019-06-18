@@ -44,7 +44,7 @@ class RouteGenerator {
   static const String routeSplashPage = 'splash_page';
   static const String routeCreateProject = 'create_project';
   static const String routeAboutPage = 'about';
-  static const String routeEntry = 'entry';
+  static const String routeEntryPage = 'entry';
   static const String routeProjectPage = 'project_page';
   static const String routeTextPage = 'text_page';
   static const String routeImagePage = 'image_page';
@@ -85,12 +85,13 @@ class RouteGenerator {
             projectTitle: args['projectTitle'],
             isFromCreateProjectPage: args['isFromCreateProjectPage'],
             isFromProjectPage: args['isFromProjectPage'],
+            isFromProjectSearchPage: args['isFromProjectSearchPage'],
           );
-          route = routeEntry;
+          route = routeEntryPage;
           break;
         case projectPage:
           page = ProjectPage();
-          route = projectPage;
+          route = routeProjectPage;
           break;
         case textPage:
           page = TextPage(

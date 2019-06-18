@@ -74,8 +74,9 @@ class CitizenScienceSearchPage extends SearchDelegate<String> {
             fontColor: Colors.white,
             fontSize: 20.0,
             onTapTitle: () {},
-            onTapImage: () async {
-              await Navigator.pushNamed(
+            onTapImage: () {
+              close(context, null);
+              Navigator.pushNamed(
                 context,
                 RouteGenerator.detailPage,
                 arguments: {

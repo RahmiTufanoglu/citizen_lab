@@ -6,13 +6,15 @@ import 'package:flutter/material.dart';
 
 class ProjectSearchPage extends SearchDelegate<String> {
   List<Project> projectList = [];
+  bool isFromProjectSearchPage;
 
-  //final Function reloadProjectList;
+  final Function reloadProjectList;
   bool _darkModeEnabled = false;
 
   ProjectSearchPage({
     @required this.projectList,
-    //@required this.reloadProjectList,
+    @required this.reloadProjectList,
+    @required this.isFromProjectSearchPage,
   });
 
   @override
@@ -67,18 +69,22 @@ class ProjectSearchPage extends SearchDelegate<String> {
           return ProjectItem(
             project: suggestionList[index],
             onTap: () async {
+              close(context, null);
               final result = await Navigator.pushNamed(
                 context,
                 RouteGenerator.entry,
                 arguments: {
+                  'project': suggestionList[index],
                   'projectTitle': suggestionList[index].title,
                   'isFromCreateProjectPage': false,
                   'isFromProjectPage': true,
-                  'project': suggestionList[index],
+                  'isFromProjectSearchPage': true,
                 },
               );
 
-              //if (result) reloadProjectList();
+              //if (result == 'ok') close(context, result);
+              //print('RES' + result);
+              if (result) reloadProjectList();
             },
           );
         },

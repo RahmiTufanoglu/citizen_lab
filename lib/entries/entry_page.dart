@@ -22,6 +22,7 @@ class EntryPage extends StatefulWidget {
   final Key key;
   final bool isFromCreateProjectPage;
   final bool isFromProjectPage;
+  final bool isFromProjectSearchPage;
   final String projectTitle;
   final Project project;
   final Note note;
@@ -30,6 +31,7 @@ class EntryPage extends StatefulWidget {
     this.key,
     @required this.isFromCreateProjectPage,
     @required this.isFromProjectPage,
+    @required this.isFromProjectSearchPage,
     @required this.projectTitle,
     @required this.project,
     this.note,
@@ -697,11 +699,13 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
       Navigator.popUntil(
         context,
         ModalRoute.withName(RouteGenerator.routeHomePage),
-        //ModalRoute.withName(RouteGenerator.routeProjectPage),
       );
+      /*} else if (widget.isFromProjectSearchPage) {
+      Navigator.pop(context, 'fromEntry');*/
     } else {
       Navigator.pop(context, true);
     }
+
     return false;
   }
 }
