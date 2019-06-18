@@ -13,18 +13,18 @@ class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
     super.initState();
-    Timer(Duration(seconds: 1), () {
-      _checkFirstSeen();
-    });
+    Future.delayed(const Duration(seconds: 1), () => _checkFirstSeen());
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      child: Center(
-        child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
+    return SafeArea(
+      child: Container(
+        color: Colors.white,
+        child: Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
+          ),
         ),
       ),
     );

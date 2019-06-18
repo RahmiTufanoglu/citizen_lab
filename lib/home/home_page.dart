@@ -75,25 +75,27 @@ class _HomePageState extends State<HomePage>
   }
 
   Widget _buildAppBar() {
+    final String citizenLab = 'Citizen Lab';
+
     return AppBar(
       elevation: 4.0,
       title: GestureDetector(
-        //onPanStart: (_) => _enableDarkMode(),
         onPanStart: (_) => _themeChanger.setTheme(),
         child: Container(
           width: double.infinity,
           child: Tooltip(
-            message: '',
-            child: Text('Citizen Lab'),
+            message: citizenLab,
+            child: Text(citizenLab),
           ),
         ),
       ),
       actions: <Widget>[
-        IconButton(
-          icon: Icon(Icons.style),
-          onPressed: () => null,
+        Image(
+          height: 42.0,
+          width: 42.0,
+          image: AssetImage('assets/ic_launcher.png'),
         ),
-        SizedBox(width: 8.0),
+        SizedBox(width: 16.0),
       ],
     );
   }
@@ -105,13 +107,17 @@ class _HomePageState extends State<HomePage>
   }*/
 
   Widget _buildDrawer() {
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final double statusBarHeight = MediaQuery.of(context).padding.top;
+    final double drawerHeaderHeight =
+        (screenHeight / 3) - kToolbarHeight - statusBarHeight;
+
+    final String citizenLab = 'Citizen Lab';
+
     return MainDrawer(
       children: <Widget>[
         Container(
-          height: 150.0,
-          decoration: BoxDecoration(
-            shape: BoxShape.rectangle,
-          ),
+          height: drawerHeaderHeight,
           child: Card(
             shape: Border(),
             margin: const EdgeInsets.all(0.0),
@@ -120,7 +126,7 @@ class _HomePageState extends State<HomePage>
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  app_title,
+                  citizenLab,
                   style: TextStyle(fontSize: 24.0),
                 ),
               ),
@@ -225,7 +231,7 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  _onChangedSwitch(bool value) {
+  void _onChangedSwitch(bool value) {
     value
         //? _themeChanger.setTheme(appDarkTheme())
         ? _themeChanger.setTheme()
@@ -279,7 +285,7 @@ class _HomePageState extends State<HomePage>
                     children: <Widget>[
                       Expanded(
                         child: CardImageWithText(
-                          asset: 'assets/images/notes_2.jpg',
+                          asset: 'assets/images/background.jpg',
                           title: 'Projekt erstellen',
                           fontColor: Colors.white,
                           onTap: () {
@@ -293,7 +299,7 @@ class _HomePageState extends State<HomePage>
                       SizedBox(height: 8.0),
                       Expanded(
                         child: CardImageWithText(
-                          asset: 'assets/images/notes_1.jpg',
+                          asset: 'assets/images/background_3.jpg',
                           title: 'Projekt öffnen',
                           fontColor: Colors.white,
                           onTap: () {

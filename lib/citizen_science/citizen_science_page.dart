@@ -1,5 +1,6 @@
 import 'package:citizen_lab/citizen_science/citizen_science_data.dart';
 import 'package:citizen_lab/citizen_science/citizen_science_search_page.dart';
+import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/custom_widgets/top_text_card.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
@@ -90,7 +91,7 @@ class _CitizenSciencePageState extends State<CitizenSciencePage> {
         ),
         IconButton(
           icon: Icon(Icons.home),
-          onPressed: () => null,
+          onPressed: () => _backToHomePage(),
         ),
       ],
     );
@@ -103,6 +104,25 @@ class _CitizenSciencePageState extends State<CitizenSciencePage> {
       arguments: {
         'title': 'Info',
         'content': 'dfsafsdfsdfweqw111',
+      },
+    );
+  }
+
+  Future<void> _backToHomePage() async {
+    final String cancel = 'Notiz abbrechen und zur Hauptseite zurückkehren?';
+
+    await showDialog(
+      context: context,
+      builder: (_) {
+        return NoYesDialog(
+          text: cancel,
+          onPressed: () {
+            Navigator.popUntil(
+              context,
+              ModalRoute.withName(RouteGenerator.routeHomePage),
+            );
+          },
+        );
       },
     );
   }

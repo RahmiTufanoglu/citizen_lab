@@ -133,12 +133,7 @@ class _OnboardingPageState extends State<OnboardingPage>
                         backgroundColor: Colors.white,
                         foregroundColor: Colors.black,
                         child: Icon(Icons.arrow_forward),
-                        onPressed: () {
-                          Navigator.pushNamed(
-                            context,
-                            RouteGenerator.home,
-                          );
-                        },
+                        onPressed: () => _setNavigation(),
                       )
                     : Container(),
               ),
@@ -146,6 +141,13 @@ class _OnboardingPageState extends State<OnboardingPage>
           ],
         ),
       ),
+    );
+  }
+
+  void _setNavigation() {
+    Navigator.pushNamed(
+      context,
+      RouteGenerator.home,
     );
   }
 }

@@ -22,7 +22,15 @@ class _CitizenScienceWebPageState extends State<CitizenScienceWebPage> {
   final _webViewController = Completer<WebViewController>();
   final _key = UniqueKey();
 
+  bool _isLoadingPage;
+
   ThemeChangerProvider _themeChanger;
+
+  @override
+  void initState() {
+    _isLoadingPage = true;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,14 +68,43 @@ class _CitizenScienceWebPageState extends State<CitizenScienceWebPage> {
 
   Widget _buildBody() {
     return SafeArea(
-      child: WebView(
-        key: _key,
-        javascriptMode: JavascriptMode.unrestricted,
-        initialUrl: widget.url,
-        onWebViewCreated: (WebViewController webViewController) {
-          _webViewController.complete(webViewController);
-        },
+      child: Stack(
+        children: <Widget>[
+          WebView(
+            key: _key,
+            javascriptMode: JavascriptMode.unrestricted,
+            initialUrl: widget.url,
+            onWebViewCreated: (WebViewController webViewController) {
+              _webViewController.complete(webViewController);
+            },
+            onPageFinished: (_) {
+              setState(() {
+                _isLoadingPage = false;
+              });
+            },
+          ),
+          //_loadIndicator(),
+          _isLoadingPage
+              ? Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
+                  ),
+                )
+              : Center(),
+        ],
       ),
     );
+  }
+
+  Widget _loadIndicator() {
+    if (_isLoadingPage) {
+      return Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
+        ),
+      );
+    } else {
+      return Center();
+    }
   }
 }

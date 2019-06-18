@@ -67,6 +67,11 @@ flutter:
    - assets/images/beerengarten_in_koenigshardt.jpg
    - assets/images/beerengarten_in_sterkrade.jpg
    - assets/images/speisepilzgarten.jpg
+   - assets/ic_launcher.png
+   - assets/images/background.jpg
+   - assets/images/background_2.jpg
+   - assets/images/background_3.jpg
+   - assets/images/background_4.jpg
    - assets/images/notes_1.jpg
    - assets/images/notes_2.jpg
    - assets/images/notes_3.jpg
