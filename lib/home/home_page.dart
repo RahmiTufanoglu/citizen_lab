@@ -91,8 +91,8 @@ class _HomePageState extends State<HomePage>
       ),
       actions: <Widget>[
         Image(
-          height: 42.0,
-          width: 42.0,
+          height: 36.0,
+          width: 36.0,
           image: AssetImage('assets/ic_launcher.png'),
         ),
         SizedBox(width: 16.0),
@@ -285,7 +285,7 @@ class _HomePageState extends State<HomePage>
                     children: <Widget>[
                       Expanded(
                         child: CardImageWithText(
-                          asset: 'assets/images/background.jpg',
+                          asset: 'assets/images/home_1.jpg',
                           title: 'Projekt erstellen',
                           fontColor: Colors.white,
                           onTap: () {
@@ -299,7 +299,7 @@ class _HomePageState extends State<HomePage>
                       SizedBox(height: 8.0),
                       Expanded(
                         child: CardImageWithText(
-                          asset: 'assets/images/background_3.jpg',
+                          asset: 'assets/images/home_2.jpg',
                           title: 'Projekt öffnen',
                           fontColor: Colors.white,
                           onTap: () {
