@@ -5,7 +5,6 @@ import 'dart:ui';
 
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/custom_widgets/set_title_widget.dart';
-import 'package:citizen_lab/custom_widgets/simple_timer_dialog.dart';
 import 'package:citizen_lab/database/project_database_helper.dart';
 import 'package:citizen_lab/entries/note.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
@@ -18,6 +17,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
 
+import '../experiment_item.dart';
 import 'image_info_page_data.dart';
 
 class ImagePage extends StatefulWidget {
@@ -36,19 +36,26 @@ class ImagePage extends StatefulWidget {
 }
 
 class _ImagePageState extends State<ImagePage> {
+  static int _initialPage = 1;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
   final _titleEditingController = TextEditingController();
   final _descEditingController = TextEditingController();
+  final _pageController = PageController(initialPage: _initialPage);
   final _noteDb = ProjectDatabaseHelper();
 
   ThemeChangerProvider _themeChanger;
   File _image;
   String _title;
   String _createdAt;
+  Timer _timer;
+  String _timeString;
 
   @override
   void initState() {
+    _timeString = dateFormatted();
+    _timer = Timer.periodic(Duration(seconds: 1), (_) => _getTime());
+
     if (widget.note != null) {
       _titleEditingController.text = widget.note.title;
       _title = _titleEditingController.text;
@@ -74,7 +81,16 @@ class _ImagePageState extends State<ImagePage> {
   void dispose() {
     _titleEditingController.dispose();
     _descEditingController.dispose();
+    _pageController.dispose();
+    _timer.cancel();
     super.dispose();
+  }
+
+  void _getTime() {
+    final String formattedDateTime = dateFormatted();
+    setState(() {
+      _timeString = formattedDateTime;
+    });
   }
 
   @override
@@ -86,7 +102,60 @@ class _ImagePageState extends State<ImagePage> {
       key: _scaffoldKey,
       appBar: _buildAppBar(),
       body: _buildBody(),
-      floatingActionButton: _buildFabs(),
+      floatingActionButton: _setFabs(),
+    );
+  }
+
+  Widget _setFabs() {
+    if (_initialPage == 1) {
+      return _buildFabImage();
+    } else {
+      return _buildFabsContent();
+    }
+  }
+
+  Widget _buildFabImage() {
+    final String editTitleAndDesc = 'Titel und Beschreibung editieren';
+    final String getImage = 'Foto aus dem Ordner importieren';
+    final String createImage = 'Foto erstellen';
+
+    return FloatingActionButton(
+      tooltip: '$createImage.',
+      child: Icon(Icons.camera_alt),
+      onPressed: () => _createImage(),
+    );
+  }
+
+  Widget _buildFabsContent() {
+    final String editTitleAndDesc = 'Titel und Beschreibung editieren';
+    final String getImage = 'Foto aus dem Ordner importieren';
+    final String createImage = 'Foto erstellen';
+
+    return Padding(
+      padding: const EdgeInsets.only(left: 32.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          FloatingActionButton(
+            heroTag: null,
+            tooltip: '$createImage.',
+            child: Icon(Icons.keyboard_arrow_up),
+            onPressed: () => _openModalBottomSheet(),
+          ),
+          FloatingActionButton(
+            heroTag: null,
+            tooltip: '$createImage.',
+            child: Icon(Icons.remove),
+            onPressed: () => _refreshTextFormFields(),
+          ),
+          FloatingActionButton(
+            heroTag: null,
+            tooltip: '$createImage.',
+            child: Icon(Icons.content_copy),
+            onPressed: () => _copyContent(),
+          ),
+        ],
+      ),
     );
   }
 
@@ -137,7 +206,7 @@ class _ImagePageState extends State<ImagePage> {
         print('Share error: $error');
         final String sharingNotPossible = 'Teilvorgang nicht möglich';
         _scaffoldKey.currentState
-            .showSnackBar(_buildSnackBar('$sharingNotPossible.'));
+            .showSnackBar(_buildSnackBar(text: '$sharingNotPossible.'));
       }
     } else {
       _scaffoldKey.currentState.showSnackBar(
@@ -182,59 +251,156 @@ class _ImagePageState extends State<ImagePage> {
   }
 
   Widget _buildBody() {
+    final double screenWidth = MediaQuery.of(context).size.width;
+
     return SafeArea(
       child: Form(
         key: _formKey,
         autovalidate: true,
         child: WillPopScope(
           onWillPop: () => _saveNote(),
-          child: Center(
-            child: (_image != null && _image.path.isNotEmpty)
-                ? PhotoView(
-                    backgroundDecoration: BoxDecoration(),
-                    minScale: PhotoViewComputedScale.contained * 0.5,
-                    imageProvider: FileImage(_image),
-                  )
-                : Center(
-                    child: Icon(
-                      Icons.image,
-                      color: Colors.grey,
-                      size: 100.0,
+          child: Stack(
+            children: <Widget>[
+              (_initialPage == 1)
+                  ? Positioned(
+                      top: 0.0,
+                      right: 0.0,
+                      child: Container(
+                        width: screenWidth / 2,
+                        height: 2.0,
+                        color: Colors.grey,
+                      ),
+                    )
+                  : Positioned(
+                      top: 0.0,
+                      left: 0.0,
+                      child: Container(
+                        width: screenWidth / 2,
+                        height: 2.0,
+                        color: Colors.grey,
+                      ),
                     ),
+              PageView(
+                controller: _pageController,
+                onPageChanged: (int page) {
+                  setState(() {
+                    _initialPage = page;
+                  });
+                },
+                children: <Widget>[
+                  _buildForm(),
+                  Center(
+                    child: (_image != null && _image.path.isNotEmpty)
+                        ? PhotoView(
+                            backgroundDecoration: BoxDecoration(),
+                            minScale: PhotoViewComputedScale.contained * 0.5,
+                            imageProvider: FileImage(_image),
+                          )
+                        : Center(
+                            child: Icon(
+                              Icons.image,
+                              color: Colors.grey,
+                              size: 100.0,
+                            ),
+                          ),
                   ),
+                ],
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildFabs() {
-    final String editTitleAndDesc = 'Titel und Beschreibung editieren';
-    final String getImage = 'Foto aus dem Ordner importieren';
-    final String createImage = 'Foto erstellen';
+  Widget _buildForm() {
+    final created = 'Erstellt am';
+    final title = 'Titel';
+    final titleHere = 'Titel hier';
+    final content = 'Inhalt';
+    final contentHere = 'Inhalt hier';
+    final String plsEnterATitle = 'Bitte einen Titel eingeben';
 
-    return Padding(
-      padding: const EdgeInsets.only(left: 32.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return SingleChildScrollView(
+      padding: EdgeInsets.only(top: 8.0, bottom: 88.0),
+      child: Column(
         children: <Widget>[
-          FloatingActionButton(
-            heroTag: null,
-            tooltip: '$editTitleAndDesc.',
-            child: Icon(Icons.description),
-            onPressed: () => _showEditDialog(),
+          Container(
+            margin: EdgeInsets.all(8.0),
+            decoration: ShapeDecoration(
+              shape: OutlineInputBorder(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(8.0),
+                ),
+                borderSide: BorderSide(color: Colors.grey),
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Text(
+                    _timeString,
+                    style: TextStyle(
+                      fontSize: 14.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 8.0),
+                  Text(
+                    '$created: $_createdAt',
+                    style: TextStyle(
+                      fontSize: 14.0,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
-          /*FloatingActionButton(
-            heroTag: null,
-            tooltip: '$getImage.',
-            child: Icon(Icons.folder),
-            onPressed: () async => await _getImage(false),
-          ),*/
-          FloatingActionButton(
-            heroTag: null,
-            tooltip: '$createImage.',
-            child: Icon(Icons.camera_alt),
-            onPressed: () => _createImage(),
+          SizedBox(height: 8.0),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                TextField(
+                  controller: _titleEditingController,
+                  keyboardType: TextInputType.text,
+                  maxLines: 2,
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  decoration: InputDecoration(
+                    hintText: '$titleHere.',
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.transparent),
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.transparent),
+                    ),
+                    //errorText: _titleValidate ? plsEnterATitle : null,
+                  ),
+                  onChanged: (String changed) => _title = changed,
+                  //validator: (text) => text.isEmpty ? plsEnterATitle : null,
+                ),
+                SizedBox(height: 42.0),
+                TextField(
+                  controller: _descEditingController,
+                  keyboardType: TextInputType.text,
+                  maxLines: 20,
+                  style: TextStyle(fontSize: 16.0),
+                  decoration: InputDecoration(
+                    hintText: '$contentHere.',
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.transparent),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -344,38 +510,173 @@ class _ImagePageState extends State<ImagePage> {
     await _noteDb.updateNote(newNote: newNote);
   }
 
-  Future<void> _showEditDialog() async {
+  /*Future<void> _showEditDialog() async {
     await showDialog(
-        context: context,
-        builder: (context) {
-          return SimpleTimerDialog(
-            createdAt: _createdAt,
-            textEditingController: _titleEditingController,
-            descEditingController: _descEditingController,
-            descExists: true,
-            onPressedClose: () => Navigator.pop(context),
-            onPressedClear: () {
-              if (_titleEditingController.text.isNotEmpty) {
-                _titleEditingController.clear();
-              }
+      context: context,
+      builder: (context) {
+        return SimpleTimerDialog(
+          createdAt: _createdAt,
+          textEditingController: _titleEditingController,
+          descEditingController: _descEditingController,
+          descExists: true,
+          onPressedClose: () => Navigator.pop(context),
+          onPressedClear: () {
+            if (_titleEditingController.text.isNotEmpty) {
+              _titleEditingController.clear();
+            }
 
-              if (_descEditingController.text.isNotEmpty) {
-                _descEditingController.clear();
-              }
-            },
-            onPressedUpdate: () {
-              _createCachedImage();
-              //_title = _titleEditingController.text;
-              Navigator.pop(context);
-            },
-          );
-        });
+            if (_descEditingController.text.isNotEmpty) {
+              _descEditingController.clear();
+            }
+          },
+          onPressedUpdate: () {
+            _createCachedImage();
+            //_title = _titleEditingController.text;
+            Navigator.pop(context);
+          },
+        );
+      },
+    );
+  }*/
+
+  void _refreshTextFormFields() {
+    final String textDeleted = 'Text gelöscht';
+
+    if (_titleEditingController.text.isNotEmpty) {
+      _titleEditingController.clear();
+    }
+
+    if (_descEditingController.text.isNotEmpty) {
+      _descEditingController.clear();
+    }
+
+    _scaffoldKey.currentState.showSnackBar(
+      _buildSnackBar(text: '$textDeleted.'),
+    );
   }
 
-  Widget _buildSnackBar(String text) {
+  void _copyContent() {
+    final String copyContent = 'Inhalt kopiert';
+    final String copyNotPossible = 'Kein Inhalt zum kopieren';
+
+    if (_titleEditingController.text.isNotEmpty &&
+        _descEditingController.text.isNotEmpty) {
+      String fullContent =
+          _titleEditingController.text + '\n' + _descEditingController.text;
+      _setClipboard(fullContent, '$copyContent.');
+    } else {
+      _scaffoldKey.currentState.showSnackBar(
+        _buildSnackBar(text: '$copyNotPossible.'),
+      );
+    }
+  }
+
+  void _openModalBottomSheet() {
+    List<ExperimentItem> experimentItems = [
+      ExperimentItem('', Icons.keyboard_arrow_down),
+      ExperimentItem('AAA', Icons.add),
+      ExperimentItem('BBB', Icons.add),
+      ExperimentItem('CCC', Icons.add),
+      ExperimentItem('DDD', Icons.add),
+      ExperimentItem('EEE', Icons.add),
+      ExperimentItem('FFF', Icons.add),
+      ExperimentItem('GGG', Icons.add),
+      ExperimentItem('HHH', Icons.add),
+      ExperimentItem('III', Icons.add),
+    ];
+
+    List<Widget> experimentItemsWidgets = [];
+    for (int i = 0; i < experimentItems.length; i++) {
+      if (i == 0) {
+        experimentItemsWidgets.add(_createTile(experimentItems[i], true));
+      } else {
+        experimentItemsWidgets.add(_createTile(experimentItems[i], false));
+      }
+    }
+
+    _buildMainBottomSheet(experimentItemsWidgets);
+  }
+
+  void _buildMainBottomSheet(List<Widget> experimentItemsWidgets) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return ListView(
+          shrinkWrap: true,
+          children: experimentItemsWidgets,
+        );
+      },
+    );
+  }
+
+  Widget _createTile(ExperimentItem experimentItem, bool centerIcon) {
+    return Material(
+      child: InkWell(
+        child: Container(
+          height: 50.0,
+          child: Stack(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Center(
+                  child: (!centerIcon)
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Text(
+                              experimentItem.name,
+                              style: TextStyle(fontSize: 16.0),
+                            ),
+                            Icon(experimentItem.icon, size: 20.0),
+                          ],
+                        )
+                      : Center(
+                          child: Icon(experimentItem.icon, size: 28.0),
+                        ),
+                ),
+              ),
+              Divider(height: 1.0, color: Colors.black),
+            ],
+          ),
+        ),
+        onTap: () {
+          if (experimentItem.name.isNotEmpty) {
+            _descEditingController.text += experimentItem.name;
+          }
+          Navigator.pop(context);
+        },
+      ),
+    );
+  }
+
+  void _setClipboard(String text, String snackText) {
+    Clipboard.setData(
+      ClipboardData(text: text),
+    );
+
+    _scaffoldKey.currentState.showSnackBar(
+      _buildSnackBar(text: snackText),
+    );
+  }
+
+  /*Widget _buildSnackBar(String text) {
     return SnackBar(
       backgroundColor: Colors.black.withOpacity(0.5),
       duration: Duration(seconds: 1),
+      content: Text(
+        text,
+        style: TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }*/
+
+  Widget _buildSnackBar({@required String text}) {
+    return SnackBar(
+      backgroundColor: Colors.black.withOpacity(0.5),
+      duration: Duration(milliseconds: 500),
       content: Text(
         text,
         style: TextStyle(

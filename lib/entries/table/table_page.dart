@@ -19,6 +19,8 @@ import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
+import '../experiment_item.dart';
+
 class TablePage extends StatefulWidget {
   final Key key;
   final Note note;
@@ -35,11 +37,13 @@ class TablePage extends StatefulWidget {
 }
 
 class _TablePageState extends State<TablePage> {
+  static int _initialPage = 1;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _titleEditingController = TextEditingController();
   final _descriptionEditingController = TextEditingController();
   final _rowTextEditingController = TextEditingController();
   final _columnTextEditingController = TextEditingController();
+  final _pageController = PageController(initialPage: _initialPage);
   final _noteDb = ProjectDatabaseHelper();
   final _listTextEditingController = <TextEditingController>[];
 
@@ -53,8 +57,14 @@ class _TablePageState extends State<TablePage> {
   List<List<dynamic>> _list = [];
   TitleProvider _titleProvider;
 
+  //Timer _timer;
+  //String _timeString;
+
   @override
   void initState() {
+    //_timeString = dateFormatted();
+    //_timer = Timer.periodic(Duration(seconds: 1), (_) => _getTime());
+
     if (widget.note != null) {
       _titleEditingController.text = widget.note.title;
       _title = _titleEditingController.text;
@@ -90,11 +100,19 @@ class _TablePageState extends State<TablePage> {
     _descriptionEditingController.dispose();
     _rowTextEditingController.dispose();
     _columnTextEditingController.dispose();
+    _pageController.dispose();
     for (int i = 0; i < _listTextEditingController.length; i++) {
       _listTextEditingController[i].dispose();
     }
     super.dispose();
   }
+
+  /*void _getTime() {
+    final String formattedDateTime = dateFormatted();
+    setState(() {
+      _timeString = formattedDateTime;
+    });
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -202,20 +220,126 @@ class _TablePageState extends State<TablePage> {
         onWillPop: () => _saveNote(),
         child: Padding(
           padding: const EdgeInsets.only(bottom: 88.0),
-          child: (_column != null || _row != null)
-              ? TableWidget(
-                  listTextEditingController: _listTextEditingController,
-                  column: _column,
-                  row: _row,
-                )
-              : Center(
-                  child: Icon(
-                    Icons.table_chart,
-                    color: Colors.grey,
-                    size: 100.0,
+          child: PageView(
+            controller: _pageController,
+            onPageChanged: (int page) {
+              setState(() {
+                _initialPage = page;
+              });
+            },
+            children: <Widget>[
+              _buildForm(),
+              (_column != null || _row != null)
+                  ? TableWidget(
+                      listTextEditingController: _listTextEditingController,
+                      column: _column,
+                      row: _row,
+                    )
+                  : Center(
+                      child: Icon(
+                        Icons.table_chart,
+                        color: Colors.grey,
+                        size: 100.0,
+                      ),
+                    ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildForm() {
+    final created = 'Erstellt am';
+    final title = 'Titel';
+    final titleHere = 'Titel hier';
+    final content = 'Inhalt';
+    final contentHere = 'Inhalt hier';
+    final String plsEnterATitle = 'Bitte einen Titel eingeben';
+
+    return SingleChildScrollView(
+      padding: EdgeInsets.only(top: 8.0, bottom: 88.0),
+      child: Column(
+        children: <Widget>[
+          Container(
+            margin: EdgeInsets.all(8.0),
+            decoration: ShapeDecoration(
+              shape: OutlineInputBorder(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(8.0),
+                ),
+                borderSide: BorderSide(color: Colors.grey),
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Text(
+                    //_timeString,
+                    '',
+                    style: TextStyle(
+                      fontSize: 14.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 8.0),
+                  Text(
+                    '$created: $_createdAt',
+                    style: TextStyle(
+                      fontSize: 14.0,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(height: 8.0),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                TextField(
+                  controller: _titleEditingController,
+                  keyboardType: TextInputType.text,
+                  maxLines: 2,
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  decoration: InputDecoration(
+                    hintText: '$titleHere.',
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.transparent),
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.transparent),
+                    ),
+                    //errorText: _titleValidate ? plsEnterATitle : null,
+                  ),
+                  onChanged: (String changed) => _title = changed,
+                  //validator: (text) => text.isEmpty ? plsEnterATitle : null,
+                ),
+                SizedBox(height: 42.0),
+                TextField(
+                  controller: _descriptionEditingController,
+                  keyboardType: TextInputType.text,
+                  maxLines: 20,
+                  style: TextStyle(fontSize: 16.0),
+                  decoration: InputDecoration(
+                    hintText: '$contentHere.',
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.transparent),
+                    ),
                   ),
                 ),
-        ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -265,26 +389,26 @@ class _TablePageState extends State<TablePage> {
   }
 
   Widget _buildFabs() {
+    if (_initialPage == 1) {
+      return _buildFabsTable();
+    } else {
+      return _buildFabsContent();
+    }
+  }
+
+  Widget _buildFabsTable() {
     return Padding(
       padding: const EdgeInsets.only(left: 32.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          FloatingActionButton(
+          /*FloatingActionButton(
             heroTag: null,
             tooltip: 'Beschreibung editieren.',
             elevation: 4.0,
             highlightElevation: 16.0,
             child: Icon(Icons.description),
             onPressed: () => _showDialogEditImage(),
-          ),
-          /*FloatingActionButton(
-            heroTag: null,
-            tooltip: 'Beschreibung editieren.',
-            elevation: 4.0,
-            highlightElevation: 16.0,
-            child: Icon(Icons.folder),
-            onPressed: () => null,
           ),*/
           FloatingActionButton(
             heroTag: null,
@@ -304,6 +428,160 @@ class _TablePageState extends State<TablePage> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildFabsContent() {
+    final String editTitleAndDesc = 'Titel und Beschreibung editieren';
+    final String getImage = 'Foto aus dem Ordner importieren';
+    final String createImage = 'Foto erstellen';
+
+    return Padding(
+      padding: const EdgeInsets.only(left: 32.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          FloatingActionButton(
+            heroTag: null,
+            tooltip: '$createImage.',
+            child: Icon(Icons.keyboard_arrow_up),
+            onPressed: () => _openModalBottomSheet(),
+          ),
+          FloatingActionButton(
+            heroTag: null,
+            tooltip: '$createImage.',
+            child: Icon(Icons.remove),
+            onPressed: () => _refreshTextFormFields(),
+          ),
+          FloatingActionButton(
+            heroTag: null,
+            tooltip: '$createImage.',
+            child: Icon(Icons.content_copy),
+            onPressed: () => _copyContent(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _copyContent() {
+    final String copyContent = 'Inhalt kopiert';
+    final String copyNotPossible = 'Kein Inhalt zum kopieren';
+
+    if (_titleEditingController.text.isNotEmpty &&
+        _descriptionEditingController.text.isNotEmpty) {
+      String fullContent = _titleEditingController.text +
+          '\n' +
+          _descriptionEditingController.text;
+      _setClipboard(fullContent, '$copyContent.');
+    } else {
+      _scaffoldKey.currentState.showSnackBar(
+        _buildSnackBar(text: '$copyNotPossible.'),
+      );
+    }
+  }
+
+  void _openModalBottomSheet() {
+    List<ExperimentItem> experimentItems = [
+      ExperimentItem('', Icons.keyboard_arrow_down),
+      ExperimentItem('AAA', Icons.add),
+      ExperimentItem('BBB', Icons.add),
+      ExperimentItem('CCC', Icons.add),
+      ExperimentItem('DDD', Icons.add),
+      ExperimentItem('EEE', Icons.add),
+      ExperimentItem('FFF', Icons.add),
+      ExperimentItem('GGG', Icons.add),
+      ExperimentItem('HHH', Icons.add),
+      ExperimentItem('III', Icons.add),
+    ];
+
+    List<Widget> experimentItemsWidgets = [];
+    for (int i = 0; i < experimentItems.length; i++) {
+      if (i == 0) {
+        experimentItemsWidgets.add(_createTile(experimentItems[i], true));
+      } else {
+        experimentItemsWidgets.add(_createTile(experimentItems[i], false));
+      }
+    }
+
+    _buildMainBottomSheet(experimentItemsWidgets);
+  }
+
+  void _buildMainBottomSheet(List<Widget> experimentItemsWidgets) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return ListView(
+          shrinkWrap: true,
+          children: experimentItemsWidgets,
+        );
+      },
+    );
+  }
+
+  Widget _createTile(ExperimentItem experimentItem, bool centerIcon) {
+    return Material(
+      child: InkWell(
+        child: Container(
+          height: 50.0,
+          child: Stack(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Center(
+                  child: (!centerIcon)
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Text(
+                              experimentItem.name,
+                              style: TextStyle(fontSize: 16.0),
+                            ),
+                            Icon(experimentItem.icon, size: 20.0),
+                          ],
+                        )
+                      : Center(
+                          child: Icon(experimentItem.icon, size: 28.0),
+                        ),
+                ),
+              ),
+              Divider(height: 1.0, color: Colors.black),
+            ],
+          ),
+        ),
+        onTap: () {
+          if (experimentItem.name.isNotEmpty) {
+            _descriptionEditingController.text += experimentItem.name;
+          }
+          Navigator.pop(context);
+        },
+      ),
+    );
+  }
+
+  void _setClipboard(String text, String snackText) {
+    Clipboard.setData(
+      ClipboardData(text: text),
+    );
+
+    _scaffoldKey.currentState.showSnackBar(
+      _buildSnackBar(text: snackText),
+    );
+  }
+
+  void _refreshTextFormFields() {
+    final String textDeleted = 'Text gelöscht';
+
+    if (_titleEditingController.text.isNotEmpty) {
+      _titleEditingController.clear();
+    }
+
+    if (_descriptionEditingController.text.isNotEmpty) {
+      _descriptionEditingController.clear();
+    }
+
+    _scaffoldKey.currentState.showSnackBar(
+      _buildSnackBar(text: '$textDeleted.'),
     );
   }
 
