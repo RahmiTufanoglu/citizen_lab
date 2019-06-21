@@ -69,7 +69,9 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
 
     _titleProjectController.addListener(() {
       setState(() {
-        _title = _titleProjectController.text;
+        if (_titleProjectController.text.isNotEmpty) {
+          _title = _titleProjectController.text;
+        }
       });
     });
 
@@ -241,7 +243,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
             heroTag: null,
             child: Icon(Icons.description),
             tooltip: darkModus,
-            onPressed: () => _showDialogEditProject(),
+            onPressed: () => _showEditDialog(),
           ),
           FloatingActionButton(
             heroTag: null,
@@ -260,7 +262,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
     );
   }
 
-  Future<void> _showDialogEditProject() async {
+  Future<void> _showEditDialog() async {
     await showDialog(
       context: context,
       builder: (context) {
@@ -281,7 +283,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
           },
           onPressedUpdate: () {
             _updateProject(widget.project);
-            _title = _titleProjectController.text;
+            //_title = _titleProjectController.text;
             Navigator.pop(context);
           },
         );

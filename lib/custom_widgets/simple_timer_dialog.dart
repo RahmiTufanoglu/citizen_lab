@@ -138,6 +138,7 @@ class _SimpleTimerDialogState extends State<SimpleTimerDialog> {
             ),
             validator: (text) =>
                 text.isEmpty ? 'Bitte einen Titel eingeben' : null,
+            //onChanged: (String changed) => widget.textEditingController.text = changed,
             /*onChanged: (changed) {
               widget.titleProvider.setTitle(changed);
               widget.title = widget.titleProvider.getTitle;
@@ -193,7 +194,7 @@ class _SimpleTimerDialogState extends State<SimpleTimerDialog> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          TextFormField(
+          TextField(
             controller: widget.descEditingController,
             keyboardType: TextInputType.text,
             maxLength: 50,

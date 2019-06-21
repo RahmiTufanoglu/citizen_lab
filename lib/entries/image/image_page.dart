@@ -365,6 +365,7 @@ class _ImagePageState extends State<ImagePage> {
             },
             onPressedUpdate: () {
               _createCachedImage();
+              //_title = _titleEditingController.text;
               Navigator.pop(context);
             },
           );

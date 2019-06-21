@@ -111,10 +111,13 @@ class _HomePageState extends State<HomePage>
     final double statusBarHeight = MediaQuery.of(context).padding.top;
     final double drawerHeaderHeight =
         (screenHeight / 3) - kToolbarHeight - statusBarHeight;
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double drawerWidth = screenWidth / 1.5;
 
     final String citizenLab = 'Citizen Lab';
 
     return MainDrawer(
+      drawerWidth: drawerWidth,
       children: <Widget>[
         Container(
           height: drawerHeaderHeight,

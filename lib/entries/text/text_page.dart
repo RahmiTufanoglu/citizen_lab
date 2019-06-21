@@ -57,13 +57,13 @@ class _TextPageState extends State<TextPage> {
       _createdAt = dateFormatted();
     }
 
-    _titleEditingController.addListener(() {
+    /*_titleEditingController.addListener(() {
       setState(() {
         if (_titleEditingController.text.isNotEmpty) {
           _title = _titleEditingController.text;
         }
       });
-    });
+    });*/
 
     super.initState();
   }
@@ -201,11 +201,15 @@ class _TextPageState extends State<TextPage> {
             padding: const EdgeInsets.only(bottom: 88.0),
             child: Column(
               children: <Widget>[
-                Card(
-                  margin: const EdgeInsets.only(
-                    top: 8.0,
-                    left: 8.0,
-                    right: 8.0,
+                Container(
+                  margin: EdgeInsets.all(8.0),
+                  decoration: ShapeDecoration(
+                    shape: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(8.0),
+                      ),
+                      borderSide: BorderSide(color: Colors.grey),
+                    ),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
@@ -233,64 +237,46 @@ class _TextPageState extends State<TextPage> {
                   ),
                 ),
                 SizedBox(height: 8.0),
-                Card(
-                  margin: const EdgeInsets.only(
-                    bottom: 8.0,
-                    left: 8.0,
-                    right: 8.0,
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          '$title:',
-                          style: TextStyle(
-                            fontSize: 18.0,
-                            fontWeight: FontWeight.bold,
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      TextField(
+                        controller: _titleEditingController,
+                        keyboardType: TextInputType.text,
+                        maxLines: 2,
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        decoration: InputDecoration(
+                          hintText: '$titleHere.',
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.transparent),
+                          ),
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.transparent),
+                          ),
+                          //errorText: _titleValidate ? plsEnterATitle : null,
+                        ),
+                        onChanged: (String changed) => _title = changed,
+                        //validator: (text) => text.isEmpty ? plsEnterATitle : null,
+                      ),
+                      SizedBox(height: 42.0),
+                      TextField(
+                        controller: _descEditingController,
+                        keyboardType: TextInputType.text,
+                        maxLines: 20,
+                        style: TextStyle(fontSize: 16.0),
+                        decoration: InputDecoration(
+                          hintText: '$contentHere.',
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.transparent),
                           ),
                         ),
-                        TextFormField(
-                          controller: _titleEditingController,
-                          keyboardType: TextInputType.text,
-                          maxLength: 50,
-                          maxLines: 2,
-                          style: TextStyle(fontSize: 16.0),
-                          decoration: InputDecoration(
-                            hintText: '$titleHere.',
-                            //errorText: _titleValidate ? plsEnterATitle : null,
-                          ),
-                          /*onChanged: (changed) {
-                            _titleProvider.setTitle(changed);
-                            _title = _titleProvider.getTitle;
-                            (_title.isEmpty)
-                                ? _titleValidate = true
-                                : _titleValidate = false;
-                          },*/
-                          validator: (text) =>
-                              text.isEmpty ? plsEnterATitle : null,
-                        ),
-                        SizedBox(height: 42.0),
-                        Text(
-                          '$content:',
-                          style: TextStyle(
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        TextFormField(
-                          controller: _descEditingController,
-                          keyboardType: TextInputType.text,
-                          maxLength: 500,
-                          maxLines: 20,
-                          style: TextStyle(fontSize: 16.0),
-                          decoration: InputDecoration(
-                            hintText: '$contentHere.',
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ],
