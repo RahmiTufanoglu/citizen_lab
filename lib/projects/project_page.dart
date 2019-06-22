@@ -290,6 +290,9 @@ class _ProjectPageState extends State<ProjectPage> {
         _projectList.add(Project.map(project));
       });
     });
+
+    // TODO
+    _choiceSortOption(sort_by_release_date_desc);
   }
 
   Future<void> _deleteProject(int index) async {

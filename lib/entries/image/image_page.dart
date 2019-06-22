@@ -5,6 +5,8 @@ import 'dart:ui';
 
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/custom_widgets/set_title_widget.dart';
+import 'package:citizen_lab/custom_widgets/simple_timer_dialog.dart';
+import 'package:citizen_lab/custom_widgets/title_desc_widget.dart';
 import 'package:citizen_lab/database/project_database_helper.dart';
 import 'package:citizen_lab/entries/note.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
@@ -48,13 +50,14 @@ class _ImagePageState extends State<ImagePage> {
   File _image;
   String _title;
   String _createdAt;
-  Timer _timer;
-  String _timeString;
+
+  //Timer _timer;
+  //String _timeString;
 
   @override
   void initState() {
-    _timeString = dateFormatted();
-    _timer = Timer.periodic(Duration(seconds: 1), (_) => _getTime());
+    //_timeString = dateFormatted();
+    //_timer = Timer.periodic(Duration(seconds: 1), (_) => _getTime());
 
     if (widget.note != null) {
       _titleEditingController.text = widget.note.title;
@@ -82,16 +85,16 @@ class _ImagePageState extends State<ImagePage> {
     _titleEditingController.dispose();
     _descEditingController.dispose();
     _pageController.dispose();
-    _timer.cancel();
+    //_timer.cancel();
     super.dispose();
   }
 
-  void _getTime() {
+  /*void _getTime() {
     final String formattedDateTime = dateFormatted();
     setState(() {
       _timeString = formattedDateTime;
     });
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -102,7 +105,39 @@ class _ImagePageState extends State<ImagePage> {
       key: _scaffoldKey,
       appBar: _buildAppBar(),
       body: _buildBody(),
-      floatingActionButton: _setFabs(),
+      //floatingActionButton: _setFabs(),
+      floatingActionButton: _buildFabs(),
+    );
+  }
+
+  Widget _buildFabs() {
+    final String editTitleAndDesc = 'Titel und Beschreibung editieren';
+    final String createImage = 'Foto erstellen';
+
+    return Padding(
+      padding: const EdgeInsets.only(left: 32.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          FloatingActionButton(
+            heroTag: null,
+            tooltip: '$editTitleAndDesc.',
+            child: Icon(Icons.description),
+            onPressed: () => _showEditDialog(),
+          ),
+          /*FloatingActionButton(
+            heroTag: null,
+            child: Icon(Icons.remove),
+            onPressed: () => _refreshTextFormFields(),
+          ),*/
+          FloatingActionButton(
+            heroTag: null,
+            tooltip: '$createImage.',
+            child: Icon(Icons.camera_alt),
+            onPressed: () => _createImage(),
+          ),
+        ],
+      ),
     );
   }
 
@@ -259,6 +294,35 @@ class _ImagePageState extends State<ImagePage> {
         autovalidate: true,
         child: WillPopScope(
           onWillPop: () => _saveNote(),
+          child: Center(
+            child: (_image != null && _image.path.isNotEmpty)
+                ? PhotoView(
+                    backgroundDecoration: BoxDecoration(),
+                    minScale: PhotoViewComputedScale.contained * 0.5,
+                    imageProvider: FileImage(_image),
+                  )
+                : Center(
+                    child: Icon(
+                      Icons.image,
+                      color: Colors.grey,
+                      size: 100.0,
+                    ),
+                  ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBody2() {
+    final double screenWidth = MediaQuery.of(context).size.width;
+
+    return SafeArea(
+      child: Form(
+        key: _formKey,
+        autovalidate: true,
+        child: WillPopScope(
+          onWillPop: () => _saveNote(),
           child: Stack(
             children: <Widget>[
               (_initialPage == 1)
@@ -288,7 +352,13 @@ class _ImagePageState extends State<ImagePage> {
                   });
                 },
                 children: <Widget>[
-                  _buildForm(),
+                  //_buildForm(),
+                  TitleDescWidget(
+                    title: _title,
+                    createdAt: _createdAt,
+                    titleEditingController: _titleEditingController,
+                    descEditingController: _descEditingController,
+                  ),
                   Center(
                     child: (_image != null && _image.path.isNotEmpty)
                         ? PhotoView(
@@ -341,7 +411,8 @@ class _ImagePageState extends State<ImagePage> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   Text(
-                    _timeString,
+                    //_timeString,
+                    '',
                     style: TextStyle(
                       fontSize: 14.0,
                       fontWeight: FontWeight.bold,
@@ -510,7 +581,7 @@ class _ImagePageState extends State<ImagePage> {
     await _noteDb.updateNote(newNote: newNote);
   }
 
-  /*Future<void> _showEditDialog() async {
+  Future<void> _showEditDialog() async {
     await showDialog(
       context: context,
       builder: (context) {
@@ -537,7 +608,7 @@ class _ImagePageState extends State<ImagePage> {
         );
       },
     );
-  }*/
+  }
 
   void _refreshTextFormFields() {
     final String textDeleted = 'Text gelöscht';

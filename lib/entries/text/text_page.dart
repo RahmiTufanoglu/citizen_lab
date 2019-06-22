@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:citizen_lab/citizen_science/timer_provider.dart';
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
+import 'package:citizen_lab/custom_widgets/title_desc_widget.dart';
 import 'package:citizen_lab/database/project_database_helper.dart';
 import 'package:citizen_lab/entries/experiment_item.dart';
 import 'package:citizen_lab/entries/note.dart';
@@ -30,7 +30,7 @@ class TextPage extends StatefulWidget {
 }
 
 class _TextPageState extends State<TextPage> {
-  final _formKey = GlobalKey<FormState>();
+  //final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _titleEditingController = TextEditingController();
   final _descEditingController = TextEditingController();
@@ -41,12 +41,13 @@ class _TextPageState extends State<TextPage> {
   String _title;
   String _createdAt;
   String _timeString;
-  TimerProvider _timerProvider;
+
+  //TimerProvider _timerProvider;
 
   @override
   void initState() {
-    //_timeString = dateFormatted();
-    //_timer = Timer.periodic(Duration(seconds: 1), (_) => _getTime());
+    _timeString = dateFormatted();
+    _timer = Timer.periodic(Duration(seconds: 1), (_) => _getTime());
 
     if (widget.note != null) {
       _titleEditingController.text = widget.note.title;
@@ -72,29 +73,36 @@ class _TextPageState extends State<TextPage> {
   void dispose() {
     _titleEditingController.dispose();
     _descEditingController.dispose();
-    //_timer.cancel();
+    _timer.cancel();
     super.dispose();
   }
 
-  /*void _getTime() {
+  void _getTime() {
     final String formattedDateTime = dateFormatted();
     setState(() {
       _timeString = formattedDateTime;
     });
-  }*/
+  }
 
   @override
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
     _themeChanger.checkIfDarkModeEnabled(context);
 
-    _timerProvider = Provider.of<TimerProvider>(context);
-    Timer.periodic(Duration(seconds: 1), (_) => _timerProvider.setTimer());
+    //_timerProvider = Provider.of<TimerProvider>(context);
+    //Timer.periodic(Duration(seconds: 1), (_) => _timerProvider.setTimer());
 
     return Scaffold(
       key: _scaffoldKey,
       appBar: _buildAppBar(),
-      body: _buildBody(),
+      //body: _buildBody(),
+      body: TitleDescWidget(
+        //key: _formKey,
+        title: _title,
+        createdAt: _createdAt,
+        titleEditingController: _titleEditingController,
+        descEditingController: _descEditingController,
+      ),
       floatingActionButton: _buildFabs(),
     );
   }
@@ -183,7 +191,7 @@ class _TextPageState extends State<TextPage> {
     );
   }
 
-  Widget _buildBody() {
+  /*Widget _buildBody() {
     final created = 'Erstellt am';
     final title = 'Titel';
     final titleHere = 'Titel hier';
@@ -217,8 +225,8 @@ class _TextPageState extends State<TextPage> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[
                         Text(
-                          //_timeString,
-                          _timerProvider.getTime,
+                          _timeString,
+                          //_timerProvider.getTime,
                           style: TextStyle(
                             fontSize: 14.0,
                             fontWeight: FontWeight.bold,
@@ -285,7 +293,7 @@ class _TextPageState extends State<TextPage> {
         ),
       ),
     );
-  }
+  }*/
 
   Future<void> _saveNote() async {
     if (_titleEditingController.text.isNotEmpty) {

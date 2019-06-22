@@ -202,6 +202,16 @@ class ProjectDatabaseHelper {
     return await db.delete(noteTable);
   }
 
+  Future<int> deleteAllNotesFromProject({@required int random}) async {
+    final Database db = await this.db;
+    return await db.delete(
+      noteTable,
+      where: '$columnProjectRandom= ?',
+      //where: '$columnNoteId = ?',
+      whereArgs: [random],
+    );
+  }
+
   Future<int> updateNote({@required Note newNote}) async {
     final Database db = await this.db;
     final int result = await db.update(

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/custom_widgets/simple_timer_dialog.dart';
+import 'package:citizen_lab/custom_widgets/title_desc_widget.dart';
 import 'package:citizen_lab/database/project_database_helper.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/utils/date_formater.dart';
@@ -30,9 +31,11 @@ class LinkingPage extends StatefulWidget {
 }
 
 class _LinkingPageState extends State<LinkingPage> {
+  static int _initialPage = 1;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _titleEditingController = TextEditingController();
   final _descEditingController = TextEditingController();
+  final _pageController = PageController(initialPage: _initialPage);
   final _webViewController = Completer<WebViewController>();
   final _key = UniqueKey();
   final _noteDb = ProjectDatabaseHelper();
@@ -69,6 +72,7 @@ class _LinkingPageState extends State<LinkingPage> {
   void dispose() {
     _titleEditingController.dispose();
     _descEditingController.dispose();
+    _pageController.dispose();
     super.dispose();
   }
 
@@ -138,6 +142,8 @@ class _LinkingPageState extends State<LinkingPage> {
   }
 
   Widget _buildBody() {
+    final double screenWidth = MediaQuery.of(context).size.width;
+
     return SafeArea(
       child: WillPopScope(
         onWillPop: () => _saveNote(),
@@ -148,6 +154,63 @@ class _LinkingPageState extends State<LinkingPage> {
           onWebViewCreated: (WebViewController webViewController) {
             _webViewController.complete(webViewController);
           },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBody2() {
+    final double screenWidth = MediaQuery.of(context).size.width;
+
+    return SafeArea(
+      child: WillPopScope(
+        onWillPop: () => _saveNote(),
+        child: Stack(
+          children: <Widget>[
+            (_initialPage == 1)
+                ? Positioned(
+                    top: 0.0,
+                    right: 0.0,
+                    child: Container(
+                      width: screenWidth / 2,
+                      height: 2.0,
+                      color: Colors.grey,
+                    ),
+                  )
+                : Positioned(
+                    top: 0.0,
+                    left: 0.0,
+                    child: Container(
+                      width: screenWidth / 2,
+                      height: 2.0,
+                      color: Colors.grey,
+                    ),
+                  ),
+            PageView(
+              controller: _pageController,
+              onPageChanged: (int page) {
+                setState(() {
+                  _initialPage = page;
+                });
+              },
+              children: <Widget>[
+                TitleDescWidget(
+                  title: _title,
+                  createdAt: _createdAt,
+                  titleEditingController: _titleEditingController,
+                  descEditingController: _descEditingController,
+                ),
+                WebView(
+                  key: _key,
+                  javascriptMode: JavascriptMode.unrestricted,
+                  initialUrl: _url,
+                  onWebViewCreated: (WebViewController webViewController) {
+                    _webViewController.complete(webViewController);
+                  },
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
@@ -164,13 +227,36 @@ class _LinkingPageState extends State<LinkingPage> {
             child: Icon(Icons.description),
             onPressed: () => _showEditDialog(),
           ),
-          FloatingActionButton(
+          /*FloatingActionButton(
             heroTag: null,
             child: Icon(Icons.content_copy),
             onPressed: () => _copyContent(),
-          ),
+          ),*/
+          _test(),
         ],
       ),
+    );
+  }
+
+  Widget _test() {
+    return FutureBuilder<WebViewController>(
+      future: _webViewController.future,
+      builder: (
+        BuildContext context,
+        AsyncSnapshot<WebViewController> snapshot,
+      ) {
+        if (snapshot.hasData) {
+          return FloatingActionButton(
+            heroTag: null,
+            child: Icon(Icons.content_copy),
+            onPressed: () async {
+              //var url = await _webViewController.data.currentUrl;
+              _url = await snapshot.data.currentUrl();
+              _copyContent();
+            },
+          );
+        }
+      },
     );
   }
 

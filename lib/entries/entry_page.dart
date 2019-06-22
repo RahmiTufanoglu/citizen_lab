@@ -48,6 +48,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   final _textEditingController = TextEditingController();
   final _projectDb = ProjectDatabaseHelper();
   final _noteDb = ProjectDatabaseHelper();
+  //final _databaseBloc = DatabaseBloc();
 
   ThemeChangerProvider _themeChanger;
   List<Note> _noteList = [];
@@ -81,6 +82,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   @override
   void dispose() {
     _textEditingController.dispose();
+    //_databaseBloc.dispose();
     super.dispose();
   }
 
@@ -169,6 +171,65 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
       },
     );
   }
+
+  /*Widget _buildBody2() {
+    return SafeArea(
+      child: WillPopScope(
+        onWillPop: _onBackPressed,
+        child: _noteList.isNotEmpty
+            ? StreamBuilder<List<Note>>(
+                stream: _databaseBloc.notes,
+                builder: (
+                  BuildContext context,
+                  AsyncSnapshot<List<Note>> snapshot,
+                ) {
+                  if (snapshot.hasData) {
+                    return ListView.builder(
+                      //itemCount: _noteList.length,
+                      itemCount: snapshot.data.length,
+                      padding: const EdgeInsets.only(
+                        top: 8.0,
+                        bottom: 88.0,
+                        left: 8.0,
+                        right: 8.0,
+                      ),
+                      itemBuilder: (context, index) {
+                        final _note = _noteList[index];
+                        final key = Key('${_note.hashCode}');
+                        return Dismissible(
+                          key: key,
+                          direction: DismissDirection.startToEnd,
+                          background: Container(
+                            alignment: Alignment.centerLeft,
+                            decoration: BoxDecoration(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(8.0)),
+                            ),
+                            child: Row(
+                              children: <Widget>[
+                                Icon(Icons.arrow_forward, size: 28.0),
+                                SizedBox(width: 8.0),
+                                Icon(Icons.delete, size: 28.0),
+                              ],
+                            ),
+                          ),
+                          onDismissed: (_) => _deleteNote(index),
+                          child: _buildItem(index),
+                        );
+                      },
+                    );
+                  }
+                },
+              )
+            : Center(
+                child: Text(
+                  empty_list,
+                  style: TextStyle(fontSize: 24.0),
+                ),
+              ),
+      ),
+    );
+  }*/
 
   Widget _buildBody() {
     return SafeArea(
@@ -550,14 +611,21 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   }
 
   Future<bool> _deleteAllNotes(BuildContext contextSnackBar) async {
+    final String doYouWantToDeleteAllNotes =
+        'Wollen sie alle Einträge löschen?';
+
     return await showDialog(
       context: context,
       builder: (context) => AlarmDialog(
-            text: do_you_want_to_delete_all,
+            text: doYouWantToDeleteAllNotes,
             icon: Icons.warning,
             onTap: () {
               if (_noteList.isNotEmpty) {
-                _noteDb.deleteAllNotes();
+                //_noteDb.deleteAllNotes();
+
+                _noteDb.deleteAllNotesFromProject(
+                    random: widget.project.random);
+
                 _scaffoldKey.currentState.showSnackBar(
                   _buildSnackBar(text: list_deleted),
                 );

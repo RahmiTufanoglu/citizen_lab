@@ -7,6 +7,7 @@ import 'package:citizen_lab/custom_widgets/ColumnRowEditWidget.dart';
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/custom_widgets/simple_timer_dialog.dart';
 import 'package:citizen_lab/custom_widgets/table_widget.dart';
+import 'package:citizen_lab/custom_widgets/title_desc_widget.dart';
 import 'package:citizen_lab/database/project_database_helper.dart';
 import 'package:citizen_lab/entries/note.dart';
 import 'package:citizen_lab/entries/table/table_info_page_data.dart';
@@ -220,6 +221,32 @@ class _TablePageState extends State<TablePage> {
         onWillPop: () => _saveNote(),
         child: Padding(
           padding: const EdgeInsets.only(bottom: 88.0),
+          child: (_column != null || _row != null)
+              ? TableWidget(
+                  listTextEditingController: _listTextEditingController,
+                  column: _column,
+                  row: _row,
+                )
+              : Center(
+                  child: Icon(
+                    Icons.table_chart,
+                    color: Colors.grey,
+                    size: 100.0,
+                  ),
+                ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBody2() {
+    generateTable();
+
+    return SafeArea(
+      child: WillPopScope(
+        onWillPop: () => _saveNote(),
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 88.0),
           child: PageView(
             controller: _pageController,
             onPageChanged: (int page) {
@@ -228,7 +255,13 @@ class _TablePageState extends State<TablePage> {
               });
             },
             children: <Widget>[
-              _buildForm(),
+              //_buildForm(),
+              TitleDescWidget(
+                title: _title,
+                createdAt: _createdAt,
+                titleEditingController: _titleEditingController,
+                descEditingController: _descriptionEditingController,
+              ),
               (_column != null || _row != null)
                   ? TableWidget(
                       listTextEditingController: _listTextEditingController,
@@ -389,6 +422,41 @@ class _TablePageState extends State<TablePage> {
   }
 
   Widget _buildFabs() {
+    return Padding(
+      padding: const EdgeInsets.only(left: 32.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          FloatingActionButton(
+            heroTag: null,
+            tooltip: 'Beschreibung editieren.',
+            elevation: 4.0,
+            highlightElevation: 16.0,
+            child: Icon(Icons.description),
+            onPressed: () => _showDialogEditImage(),
+          ),
+          FloatingActionButton(
+            heroTag: null,
+            tooltip: 'Tabelle leeren.',
+            elevation: 4.0,
+            highlightElevation: 16.0,
+            child: Icon(Icons.remove),
+            onPressed: () => _clearTableContent(),
+          ),
+          FloatingActionButton(
+            heroTag: null,
+            tooltip: 'Tabelle erstellen.',
+            elevation: 4.0,
+            highlightElevation: 16.0,
+            child: Icon(Icons.add),
+            onPressed: () => _buildTableCreate(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFabs2() {
     if (_initialPage == 1) {
       return _buildFabsTable();
     } else {
