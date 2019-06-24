@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:citizen_lab/bloc/title_bloc.dart';
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/custom_widgets/title_desc_widget.dart';
 import 'package:citizen_lab/database/project_database_helper.dart';
@@ -30,19 +31,20 @@ class TextPage extends StatefulWidget {
 }
 
 class _TextPageState extends State<TextPage> {
-  //final _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _titleEditingController = TextEditingController();
   final _descEditingController = TextEditingController();
   final _noteDb = ProjectDatabaseHelper();
 
+  final _titleBloc = TitleBloc();
+
   ThemeChangerProvider _themeChanger;
   Timer _timer;
   String _title;
+  String _savedTitle;
   String _createdAt;
   String _timeString;
-
-  //TimerProvider _timerProvider;
 
   @override
   void initState() {
@@ -51,20 +53,23 @@ class _TextPageState extends State<TextPage> {
 
     if (widget.note != null) {
       _titleEditingController.text = widget.note.title;
-      _title = _titleEditingController.text;
+      //_title = _titleEditingController.text;
+      _savedTitle = _titleEditingController.text;
+      _title = _savedTitle;
       _descEditingController.text = widget.note.description;
       _createdAt = widget.note.dateCreated;
     } else {
       _createdAt = dateFormatted();
     }
 
-    /*_titleEditingController.addListener(() {
+    _titleEditingController.addListener(() {
       setState(() {
-        if (_titleEditingController.text.isNotEmpty) {
-          _title = _titleEditingController.text;
+        _title = _titleEditingController.text;
+        if (_titleEditingController.text.isEmpty) {
+          _title = _savedTitle;
         }
       });
-    });*/
+    });
 
     super.initState();
   }
@@ -73,6 +78,7 @@ class _TextPageState extends State<TextPage> {
   void dispose() {
     _titleEditingController.dispose();
     _descEditingController.dispose();
+    _titleBloc.dispose();
     _timer.cancel();
     super.dispose();
   }
@@ -89,19 +95,16 @@ class _TextPageState extends State<TextPage> {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
     _themeChanger.checkIfDarkModeEnabled(context);
 
-    //_timerProvider = Provider.of<TimerProvider>(context);
-    //Timer.periodic(Duration(seconds: 1), (_) => _timerProvider.setTimer());
-
     return Scaffold(
       key: _scaffoldKey,
       appBar: _buildAppBar(),
       //body: _buildBody(),
       body: TitleDescWidget(
-        //key: _formKey,
         title: _title,
         createdAt: _createdAt,
         titleEditingController: _titleEditingController,
         descEditingController: _descEditingController,
+        titleBloc: _titleBloc,
       ),
       floatingActionButton: _buildFabs(),
     );
@@ -116,7 +119,7 @@ class _TextPageState extends State<TextPage> {
       leading: IconButton(
         tooltip: back,
         icon: Icon(Icons.arrow_back),
-        onPressed: _saveNote,
+        onPressed: () => _saveNote(),
       ),
       title: GestureDetector(
         onPanStart: (_) => _themeChanger.setTheme(),
@@ -126,6 +129,19 @@ class _TextPageState extends State<TextPage> {
             message: noteType,
             child: Text((_title != null) ? _title : noteType),
           ),
+          /*child: Tooltip(
+            message: noteType,
+            child: StreamBuilder(
+              stream: _titleBloc.title,
+              builder: (
+                BuildContext context,
+                AsyncSnapshot snapshot,
+              ) {
+                print(snapshot.data);
+                return Text((_title != null) ? snapshot.data : noteType);
+              },
+            ),
+          ),*/
         ),
       ),
       actions: <Widget>[
@@ -191,7 +207,7 @@ class _TextPageState extends State<TextPage> {
     );
   }
 
-  /*Widget _buildBody() {
+  Widget _buildBody() {
     final created = 'Erstellt am';
     final title = 'Titel';
     final titleHere = 'Titel hier';
@@ -200,100 +216,106 @@ class _TextPageState extends State<TextPage> {
     final String plsEnterATitle = 'Bitte einen Titel eingeben';
 
     return SafeArea(
-      child: Form(
-        key: _formKey,
-        autovalidate: true,
-        child: WillPopScope(
-          onWillPop: () => _saveNote(),
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.only(bottom: 88.0),
-            child: Column(
-              children: <Widget>[
-                Container(
-                  margin: EdgeInsets.all(8.0),
-                  decoration: ShapeDecoration(
-                    shape: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(8.0),
-                      ),
-                      borderSide: BorderSide(color: Colors.grey),
+      child: WillPopScope(
+        onWillPop: () => _saveNote(),
+        child: SingleChildScrollView(
+          padding: EdgeInsets.only(bottom: 88.0),
+          child: Column(
+            children: <Widget>[
+              Container(
+                margin: EdgeInsets.all(8.0),
+                decoration: ShapeDecoration(
+                  shape: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(8.0),
                     ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: <Widget>[
-                        Text(
-                          _timeString,
-                          //_timerProvider.getTime,
-                          style: TextStyle(
-                            fontSize: 14.0,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: 8.0),
-                        Text(
-                          '$created: $_createdAt',
-                          style: TextStyle(
-                            fontSize: 14.0,
-                            fontStyle: FontStyle.italic,
-                          ),
-                        ),
-                      ],
-                    ),
+                    borderSide: BorderSide(color: Colors.grey),
                   ),
                 ),
-                SizedBox(height: 8.0),
-                Padding(
+                child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
-                      TextField(
-                        controller: _titleEditingController,
-                        keyboardType: TextInputType.text,
-                        maxLines: 2,
+                      Text(
+                        _timeString,
+                        //_timerProvider.getTime,
                         style: TextStyle(
-                          fontSize: 16.0,
+                          fontSize: 14.0,
                           fontWeight: FontWeight.bold,
                         ),
-                        decoration: InputDecoration(
-                          hintText: '$titleHere.',
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.transparent),
-                          ),
-                          focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.transparent),
-                          ),
-                          //errorText: _titleValidate ? plsEnterATitle : null,
-                        ),
-                        onChanged: (String changed) => _title = changed,
-                        //validator: (text) => text.isEmpty ? plsEnterATitle : null,
                       ),
-                      SizedBox(height: 42.0),
-                      TextField(
-                        controller: _descEditingController,
-                        keyboardType: TextInputType.text,
-                        maxLines: 20,
-                        style: TextStyle(fontSize: 16.0),
-                        decoration: InputDecoration(
-                          hintText: '$contentHere.',
-                          focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.transparent),
-                          ),
+                      SizedBox(height: 8.0),
+                      Text(
+                        '$created: $_createdAt',
+                        style: TextStyle(
+                          fontSize: 14.0,
+                          fontStyle: FontStyle.italic,
                         ),
                       ),
                     ],
                   ),
                 ),
-              ],
-            ),
+              ),
+              SizedBox(height: 8.0),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    StreamBuilder(
+                      stream: _titleBloc.title,
+                      builder: (
+                        BuildContext context,
+                        AsyncSnapshot snapshot,
+                      ) {
+                        return TextField(
+                          controller: _titleEditingController,
+                          keyboardType: TextInputType.text,
+                          maxLines: 2,
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          onChanged: _titleBloc.changeTitle,
+                          decoration: InputDecoration(
+                            hintText: '$titleHere.',
+                            errorText: snapshot.error,
+                            enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Colors.transparent),
+                            ),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Colors.transparent),
+                            ),
+                            //errorText: _titleValidate ? plsEnterATitle : null,
+                          ),
+                          //onChanged: (String changed) => _title = changed,
+                          //validator: (text) => text.isEmpty ? plsEnterATitle : null,
+                        );
+                      },
+                    ),
+                    SizedBox(height: 42.0),
+                    TextField(
+                      controller: _descEditingController,
+                      keyboardType: TextInputType.text,
+                      maxLines: 20,
+                      style: TextStyle(fontSize: 16.0),
+                      decoration: InputDecoration(
+                        hintText: '$contentHere.',
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.transparent),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),
     );
-  }*/
+  }
 
   Future<void> _saveNote() async {
     if (_titleEditingController.text.isNotEmpty) {

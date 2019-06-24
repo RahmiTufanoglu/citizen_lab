@@ -291,7 +291,7 @@ class _ProjectPageState extends State<ProjectPage> {
       });
     });
 
-    // TODO
+    // TODO: check this
     _choiceSortOption(sort_by_release_date_desc);
   }
 
