@@ -1,4 +1,4 @@
-import 'package:citizen_lab/database/project_database_helper.dart';
+import 'package:citizen_lab/database/database_provider.dart';
 
 class Project {
   int id;
@@ -26,35 +26,35 @@ class Project {
   );
 
   Project.map(dynamic obj) {
-    this.id = obj[ProjectDatabaseHelper.columnProjectId];
-    this.random = obj[ProjectDatabaseHelper.columnProjectRandom];
-    this.title = obj[ProjectDatabaseHelper.columnProjectTitle];
-    this.description = obj[ProjectDatabaseHelper.columnProjectDesc];
-    this.dateCreated = obj[ProjectDatabaseHelper.columnProjectCreatedAt];
-    this.dateEdited = obj[ProjectDatabaseHelper.columnProjectUpdatedAt];
+    this.id = obj[DatabaseProvider.columnProjectId];
+    this.random = obj[DatabaseProvider.columnProjectRandom];
+    this.title = obj[DatabaseProvider.columnProjectTitle];
+    this.description = obj[DatabaseProvider.columnProjectDesc];
+    this.dateCreated = obj[DatabaseProvider.columnProjectCreatedAt];
+    this.dateEdited = obj[DatabaseProvider.columnProjectUpdatedAt];
   }
 
   Map<String, dynamic> toMap() {
     var map = Map<String, dynamic>();
 
     if (id != null) {
-      map[ProjectDatabaseHelper.columnProjectId] = id;
+      map[DatabaseProvider.columnProjectId] = id;
     }
-    map[ProjectDatabaseHelper.columnProjectTitle] = title;
-    map[ProjectDatabaseHelper.columnProjectRandom] = random;
-    map[ProjectDatabaseHelper.columnProjectDesc] = description;
-    map[ProjectDatabaseHelper.columnProjectCreatedAt] = dateCreated;
-    map[ProjectDatabaseHelper.columnProjectUpdatedAt] = dateEdited;
+    map[DatabaseProvider.columnProjectTitle] = title;
+    map[DatabaseProvider.columnProjectRandom] = random;
+    map[DatabaseProvider.columnProjectDesc] = description;
+    map[DatabaseProvider.columnProjectCreatedAt] = dateCreated;
+    map[DatabaseProvider.columnProjectUpdatedAt] = dateEdited;
 
     return map;
   }
 
   Project.fromMap(Map<String, dynamic> map) {
-    this.id = map[ProjectDatabaseHelper.columnProjectId];
-    this.title = map[ProjectDatabaseHelper.columnProjectTitle];
-    this.random = map[ProjectDatabaseHelper.columnProjectRandom];
-    this.description = map[ProjectDatabaseHelper.columnProjectDesc];
-    this.dateCreated = map[ProjectDatabaseHelper.columnProjectCreatedAt];
-    this.dateEdited = map[ProjectDatabaseHelper.columnProjectUpdatedAt];
+    this.id = map[DatabaseProvider.columnProjectId];
+    this.title = map[DatabaseProvider.columnProjectTitle];
+    this.random = map[DatabaseProvider.columnProjectRandom];
+    this.description = map[DatabaseProvider.columnProjectDesc];
+    this.dateCreated = map[DatabaseProvider.columnProjectCreatedAt];
+    this.dateEdited = map[DatabaseProvider.columnProjectUpdatedAt];
   }
 }

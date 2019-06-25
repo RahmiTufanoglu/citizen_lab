@@ -1,11 +1,12 @@
 import 'dart:io';
 
+import 'package:citizen_lab/bloc/NotesBloc.dart';
 import 'package:citizen_lab/custom_widgets/alarm_dialog.dart';
 import 'package:citizen_lab/custom_widgets/card_item.dart';
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/custom_widgets/simple_timer_dialog.dart';
 import 'package:citizen_lab/custom_widgets/speed_dial_floating_action_button.dart';
-import 'package:citizen_lab/database/project_database_helper.dart';
+import 'package:citizen_lab/database/database_provider.dart';
 import 'package:citizen_lab/entries/note.dart';
 import 'package:citizen_lab/projects/project.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
@@ -46,9 +47,10 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   final _titleProjectController = TextEditingController();
   final _descProjectController = TextEditingController();
   final _textEditingController = TextEditingController();
-  final _projectDb = ProjectDatabaseHelper();
-  final _noteDb = ProjectDatabaseHelper();
-  //final _databaseBloc = DatabaseBloc();
+  final _projectDb = DatabaseProvider();
+  final _noteDb = DatabaseProvider();
+
+  var _notesBloc;
 
   ThemeChangerProvider _themeChanger;
   List<Note> _noteList = [];
@@ -58,9 +60,11 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
 
   @override
   void initState() {
+    _notesBloc = NotesBloc(random: widget.project.random);
+
     if (!_listLoaded) {
-      _loadNoteList();
-      _listLoaded = true;
+      //_loadNoteList();
+      //_listLoaded = true;
     }
 
     _titleProjectController.text = widget.project.title;
@@ -83,6 +87,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   void dispose() {
     _textEditingController.dispose();
     //_databaseBloc.dispose();
+    _notesBloc.dispose();
     super.dispose();
   }
 
@@ -95,9 +100,22 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
       resizeToAvoidBottomPadding: false,
       key: _scaffoldKey,
       appBar: _buildAppBar(),
-      body: _buildBody(),
+      body: StreamBuilder(
+        stream: _notesBloc.notes,
+        builder: (context, snapshot) {
+          return _buildBody(snapshot);
+        },
+      ),
       floatingActionButton: _buildFabs(),
     );
+
+    /*return Scaffold(
+      resizeToAvoidBottomPadding: false,
+      key: _scaffoldKey,
+      appBar: _buildAppBar(),
+      body: _buildBody(),
+      floatingActionButton: _buildFabs(),
+    );*/
   }
 
   Widget _buildAppBar() {
@@ -117,7 +135,6 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
           ),
         ),
       ),
-      elevation: 4.0,
       actions: <Widget>[
         PopupMenuButton(
           icon: Icon(Icons.sort),
@@ -231,61 +248,76 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
     );
   }*/
 
-  Widget _buildBody() {
-    return SafeArea(
-      child: WillPopScope(
-        onWillPop: _onBackPressed,
-        child: _noteList.isNotEmpty
-            ? ListView.builder(
-                itemCount: _noteList.length,
-                padding: const EdgeInsets.only(
-                  top: 8.0,
-                  bottom: 88.0,
-                  left: 8.0,
-                  right: 8.0,
-                ),
-                itemBuilder: (context, index) {
-                  final _note = _noteList[index];
-                  final key = Key('${_note.hashCode}');
-                  return Dismissible(
-                    key: key,
-                    direction: DismissDirection.startToEnd,
-                    background: Container(
-                      alignment: Alignment.centerLeft,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+  Widget _buildBody(AsyncSnapshot snapshot) {
+    return Container(
+      color: Colors.white,
+      child: SafeArea(
+        child: WillPopScope(
+          onWillPop: _onBackPressed,
+          //child: _noteList.isNotEmpty
+          child: (snapshot.hasData)
+              ? ListView.builder(
+                  //itemCount: _noteList.length,
+                  itemCount: snapshot.data.length,
+                  padding: const EdgeInsets.only(
+                    top: 8.0,
+                    bottom: 88.0,
+                    left: 8.0,
+                    right: 8.0,
+                  ),
+                  itemBuilder: (context, index) {
+                    //final note = _noteList[index];
+                    final note = snapshot.data[index];
+                    final key = Key('${note.hashCode}');
+                    return Dismissible(
+                      key: key,
+                      direction: DismissDirection.startToEnd,
+                      background: Container(
+                        alignment: Alignment.centerLeft,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                        ),
+                        child: Row(
+                          children: <Widget>[
+                            Icon(Icons.arrow_forward, size: 28.0),
+                            SizedBox(width: 8.0),
+                            Icon(Icons.delete, size: 28.0),
+                          ],
+                        ),
                       ),
-                      child: Row(
-                        children: <Widget>[
-                          Icon(Icons.arrow_forward, size: 28.0),
-                          SizedBox(width: 8.0),
-                          Icon(Icons.delete, size: 28.0),
-                        ],
-                      ),
-                    ),
-                    onDismissed: (_) => _deleteNote(index),
-                    child: _buildItem(index),
-                  );
-                },
-              )
-            : Center(
-                child: Text(
-                  empty_list,
-                  style: TextStyle(fontSize: 24.0),
+                      //onDismissed: (_) => _deleteNote(index),
+                      onDismissed: (_) {
+                        //_notesBloc.delete(note.id);
+                        _notesBloc.delete(note);
+                        _deleteNote(snapshot, index);
+                      },
+                      //onDismissed: (_) => _notesBloc.delete(note.id),
+                      //child: _buildItem(index),
+                      child: _buildItem(snapshot, index),
+                    );
+                  },
+                )
+              : Center(
+                  child: Text(
+                    empty_list,
+                    style: TextStyle(fontSize: 24.0),
+                  ),
                 ),
-              ),
+        ),
       ),
     );
   }
 
-  Widget _buildItem(int index) {
-    final _note = _noteList[index];
+  Widget _buildItem(AsyncSnapshot snapshot, int index) {
+    //final _note = _noteList[index];
+    final note = snapshot.data[index];
     return Container(
       height: 80.0,
       child: CardItem(
-        note: _note,
-        onTap: () => _openNotePage(_note.type, _note),
-        onLongPress: () => _showContent(index),
+        note: note,
+        onTap: () => _openNotePage(note.type, note),
+        //onLongPress: () => _showContent(index),
+        onLongPress: () => _showContent(snapshot, index),
       ),
     );
   }
@@ -434,65 +466,15 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
 
   Future<void> _updateProject(Project project) async {
     Project updatedProject = Project.fromMap({
-      ProjectDatabaseHelper.columnProjectId: project.id,
-      ProjectDatabaseHelper.columnProjectRandom: project.random,
-      ProjectDatabaseHelper.columnProjectTitle: _titleProjectController.text,
-      ProjectDatabaseHelper.columnProjectDesc: _descProjectController.text,
-      ProjectDatabaseHelper.columnProjectCreatedAt: project.dateCreated,
-      ProjectDatabaseHelper.columnProjectUpdatedAt: dateFormatted(),
+      DatabaseProvider.columnProjectId: project.id,
+      DatabaseProvider.columnProjectRandom: project.random,
+      DatabaseProvider.columnProjectTitle: _titleProjectController.text,
+      DatabaseProvider.columnProjectDesc: _descProjectController.text,
+      DatabaseProvider.columnProjectCreatedAt: project.dateCreated,
+      DatabaseProvider.columnProjectUpdatedAt: dateFormatted(),
     });
     await _projectDb.updateProject(newProject: updatedProject);
   }
-
-  /*_buildSpeedDialFab() {
-    return SpeedDial(
-      tooltip: 'Eintragsart auswählen',
-      overlayColor: Colors.black,
-      overlayOpacity: 0.5,
-      elevation: 4.0,
-      foregroundColor: Colors.black,
-      animatedIcon: AnimatedIcons.menu_arrow,
-      curve: Curves.elasticOut,
-      children: [
-        _buildSpeedDialChild(
-          Icon(Icons.create),
-          Colors.green,
-          'Text',
-        ),
-        _buildSpeedDialChild(
-          Icon(Icons.table_chart),
-          Colors.indigoAccent,
-          'Tabelle',
-        ),
-        _buildSpeedDialChild(
-          Icon(Icons.camera_alt),
-          Colors.deepOrange,
-          'Bild',
-        ),
-        _buildSpeedDialChild(
-          Icon(Icons.link),
-          Colors.purple,
-          'Verlinkung',
-        ),
-      ],
-    );
-  }*/
-
-  /*SpeedDialChild _buildSpeedDialChild(
-    Icon icon,
-    Color backgroundColor,
-    String type,
-  ) {
-    return SpeedDialChild(
-      child: icon,
-      backgroundColor: backgroundColor,
-      foregroundColor: Colors.white,
-      labelStyle: TextStyle(color: Colors.black),
-      elevation: 4.0,
-      label: '${type}notiz hinzufügen',
-      onTap: () => _openNotePage(type),
-    );
-  }*/
 
   _openNotePage(String type, [Note note]) async {
     switch (type) {
@@ -505,9 +487,21 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
             'projectId': widget.project.id,
             'note': note,
           },
-        );
+        ) as Note;
 
-        if (result != null && result) _loadNoteList();
+        bool exits = false;
+        //if (result != null && result) _loadNoteList();
+        for (int i = 0; i < _noteList.length; i++) {
+          if (_noteList[i].id == result.id) {
+            exits = true;
+          }
+        }
+
+        if (!exits) {
+          _notesBloc.add(result);
+        } else {
+          _notesBloc.update(result);
+        }
         break;
       case 'Tabelle':
         final result = await Navigator.pushNamed(
@@ -518,9 +512,20 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
             'projectId': widget.project.id,
             'note': note,
           },
-        );
+        ) as Note;
 
-        if (result != null && result) _loadNoteList();
+        bool exits = false;
+        for (int i = 0; i < _noteList.length; i++) {
+          if (_noteList[i].id == result.id) {
+            exits = true;
+          }
+        }
+
+        if (!exits) {
+          _notesBloc.add(result);
+        } else {
+          _notesBloc.update(result);
+        }
         break;
       case 'Bild':
         final result = await Navigator.pushNamed(
@@ -531,9 +536,20 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
             'projectId': widget.project.id,
             'note': note,
           },
-        );
+        ) as Note;
 
-        if (result != null && result) _loadNoteList();
+        bool exits = false;
+        for (int i = 0; i < _noteList.length; i++) {
+          if (_noteList[i].id == result.id) {
+            exits = true;
+          }
+        }
+
+        if (!exits) {
+          _notesBloc.add(result);
+        } else {
+          _notesBloc.update(result);
+        }
         break;
       case 'Wetter':
         final result = await Navigator.pushNamed(
@@ -542,9 +558,20 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
           arguments: {
             'note': note,
           },
-        );
+        ) as Note;
 
-        if (result != null && result) _loadNoteList();
+        bool exits = false;
+        for (int i = 0; i < _noteList.length; i++) {
+          if (_noteList[i].id == result.id) {
+            exits = true;
+          }
+        }
+
+        if (!exits) {
+          _notesBloc.add(result);
+        } else {
+          _notesBloc.update(result);
+        }
         break;
       case 'Verlinkung':
         final result = await Navigator.pushNamed(
@@ -555,9 +582,20 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
             'projectId': widget.project.id,
             'note': note,
           },
-        );
+        ) as Note;
 
-        if (result != null && result) _loadNoteList();
+        bool exits = false;
+        for (int i = 0; i < _noteList.length; i++) {
+          if (_noteList[i].id == result.id) {
+            exits = true;
+          }
+        }
+
+        if (!exits) {
+          _notesBloc.add(result);
+        } else {
+          _notesBloc.update(result);
+        }
         break;
       default:
         break;
@@ -565,12 +603,11 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   }
 
   void _loadNoteList() async {
-    for (int i = 0; i < _noteList.length; i++) {
+    /*for (int i = 0; i < _noteList.length; i++) {
       _noteList.removeWhere((element) {
         _noteList[i].id = _noteList[i].id;
       });
-    }
-
+    }*/
     //List notes = await _noteDb.getAllNotes();
 
     //List notes = await _noteDb.getAllNotes();
@@ -583,31 +620,36 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
     //List notes = await _noteDb.getNotesOfProject(id: 0);
     //List notes = await _noteDb.getAllNotes(title: widget.projectTitle);
 
-    notes.forEach((note) {
+    /*notes.forEach((note) {
       setState(() {
         _noteList.insert(0, Note.map(note));
       });
+    });*/
 
-      _choiceSortOption(sort_by_release_date_desc);
-    });
+    _choiceSortOption(sort_by_release_date_desc);
   }
 
-  void _deleteNote(int index) async {
-    await _noteDb.deleteNote(id: _noteList[index].id);
+  void _deleteNote(AsyncSnapshot snapshot, int index) async {
+    //await _noteDb.deleteNote(id: _noteList[index].id);
+    //await _noteDb.deleteNote(id: _noteList[index].id);
 
-    if (_noteList[index].type == 'Tabelle') {
-      File file = File(_noteList[index].content);
+    //if (_noteList[index].type == 'Tabelle') {
+    if (snapshot.data[index].type == 'Tabelle') {
+      //File file = File(_noteList[index].content);
+      File file = File(snapshot.data[index].content);
       file.delete();
     }
 
-    if (_noteList[index].type == 'Bild') {
-      File file = File(_noteList[index].content);
+    //if (_noteList[index].type == 'Bild') {
+    if (snapshot.data[index].type == 'Bild') {
+      //File file = File(_noteList[index].content);
+      File file = File(snapshot.data[index].content);
       file.delete();
     }
 
-    setState(() {
+    /*setState(() {
       _noteList.removeAt(index);
-    });
+    });*/
   }
 
   Future<bool> _deleteAllNotes(BuildContext contextSnackBar) async {
@@ -656,7 +698,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
     );
   }
 
-  void _showContent(int index) {
+  void _showContent(AsyncSnapshot snapshot, int index) {
     final String createdAt = 'Erstellt am';
 
     showDialog(
@@ -679,7 +721,8 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
                   SizedBox(height: 16.0),
                   Text(
                     '$createdAt: '
-                    '${_noteList[index].dateCreated}',
+                    //'${_noteList[index].dateCreated}',
+                    '${snapshot.data[index].dateCreated}',
                     style: TextStyle(
                       fontSize: 14.0,
                       fontWeight: FontWeight.bold,
@@ -704,7 +747,8 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
             ),
             SizedBox(height: 8.0),
             Text(
-              _noteList[index].title,
+              //_noteList[index].title,
+              snapshot.data[index].title,
               style: TextStyle(fontSize: 16.0),
             ),
             SizedBox(height: 32.0),
@@ -717,7 +761,8 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
             ),
             SizedBox(height: 8.0),
             Text(
-              _noteList[index].description,
+              //_noteList[index].description,
+              snapshot.data[index].description,
               style: TextStyle(fontSize: 16.0),
             ),
             SizedBox(height: 8.0),

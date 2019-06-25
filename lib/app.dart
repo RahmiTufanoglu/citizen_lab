@@ -1,13 +1,13 @@
 import 'package:citizen_lab/splash_page.dart';
 import 'package:citizen_lab/themes/theme.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
+import 'package:citizen_lab/title_change_provider.dart';
 import 'package:citizen_lab/utils/constants.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'citizen_science/timer_provider.dart';
-import 'citizen_science/title_provider.dart';
 
 class App extends StatefulWidget {
   @override
@@ -26,8 +26,8 @@ class _AppState extends State<App> {
         ChangeNotifierProvider<ThemeChangerProvider>(
           builder: (_) => ThemeChangerProvider(appLightTheme()),
         ),
-        ChangeNotifierProvider<TitleProvider>(
-          builder: (_) => TitleProvider(),
+        ChangeNotifierProvider<TitleChangerProvider>(
+          builder: (_) => TitleChangerProvider(),
         ),
         ChangeNotifierProvider<TimerProvider>(
           builder: (_) => TimerProvider(),

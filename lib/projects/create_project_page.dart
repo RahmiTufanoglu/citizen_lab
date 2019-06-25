@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:citizen_lab/database/project_database_helper.dart';
+import 'package:citizen_lab/database/database_provider.dart';
 import 'package:citizen_lab/projects/project.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/utils/constants.dart';
@@ -22,7 +22,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
   final _formKey = GlobalKey<FormState>();
   final _titleEditingController = TextEditingController();
   final _descEditingController = TextEditingController();
-  final _projectDb = ProjectDatabaseHelper();
+  final _projectDb = DatabaseProvider();
 
   ThemeChangerProvider _themeChanger;
 
@@ -98,7 +98,6 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
           ),
         ),
       ),
-      elevation: 4.0,
       actions: <Widget>[
         IconButton(
           icon: Icon(Icons.info_outline),
@@ -122,55 +121,60 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
   }
 
   Widget _buildBody(BuildContext context) {
-    return SafeArea(
-      child: Form(
-        key: _formKey,
-        autovalidate: true,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    '$title:',
-                    style: TextStyle(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.bold,
+    return Container(
+      color: Colors.white,
+      child: SafeArea(
+        child: Form(
+          key: _formKey,
+          autovalidate: true,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      '$title:',
+                      style: TextStyle(
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  TextFormField(
-                    controller: _titleEditingController,
-                    keyboardType: TextInputType.text,
-                    maxLength: 50,
-                    maxLines: 2,
-                    decoration: InputDecoration(
-                      hintText: '$title_here.',
-                      labelStyle: TextStyle(fontSize: 18.0),
+                    TextFormField(
+                      controller: _titleEditingController,
+                      keyboardType: TextInputType.text,
+                      maxLength: 50,
+                      maxLines: 2,
+                      decoration: InputDecoration(
+                        hintText: '$title_here.',
+                        labelStyle: TextStyle(fontSize: 18.0),
+                      ),
+                      validator: (text) {
+                        return text.isEmpty
+                            ? 'Bitte einen Titel eingeben'
+                            : null;
+                      },
                     ),
-                    validator: (text) {
-                      return text.isEmpty ? 'Bitte einen Titel eingeben' : null;
-                    },
-                  ),
-                  SizedBox(height: 42.0),
-                  Text(
-                    '$desc:',
-                    style: TextStyle(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.bold,
+                    SizedBox(height: 42.0),
+                    Text(
+                      '$desc:',
+                      style: TextStyle(
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  TextFormField(
-                    controller: _descEditingController,
-                    keyboardType: TextInputType.text,
-                    maxLength: 500,
-                    maxLines: 10,
-                    decoration: InputDecoration(hintText: '$desc_here.'),
-                    validator: (text) => text.isEmpty ? enter_a_desc : null,
-                  ),
-                ],
+                    TextFormField(
+                      controller: _descEditingController,
+                      keyboardType: TextInputType.text,
+                      maxLength: 500,
+                      maxLines: 10,
+                      decoration: InputDecoration(hintText: '$desc_here.'),
+                      validator: (text) => text.isEmpty ? enter_a_desc : null,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

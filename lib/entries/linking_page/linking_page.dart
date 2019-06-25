@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/custom_widgets/simple_timer_dialog.dart';
 import 'package:citizen_lab/custom_widgets/title_desc_widget.dart';
-import 'package:citizen_lab/database/project_database_helper.dart';
+import 'package:citizen_lab/database/database_provider.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/utils/date_formater.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
@@ -38,7 +38,7 @@ class _LinkingPageState extends State<LinkingPage> {
   final _pageController = PageController(initialPage: _initialPage);
   final _webViewController = Completer<WebViewController>();
   final _key = UniqueKey();
-  final _noteDb = ProjectDatabaseHelper();
+  final _noteDb = DatabaseProvider();
 
   ThemeChangerProvider _themeChanger;
   String _url = 'https://www.google.de';
@@ -144,16 +144,19 @@ class _LinkingPageState extends State<LinkingPage> {
   Widget _buildBody() {
     final double screenWidth = MediaQuery.of(context).size.width;
 
-    return SafeArea(
-      child: WillPopScope(
-        onWillPop: () => _saveNote(),
-        child: WebView(
-          key: _key,
-          javascriptMode: JavascriptMode.unrestricted,
-          initialUrl: _url,
-          onWebViewCreated: (WebViewController webViewController) {
-            _webViewController.complete(webViewController);
-          },
+    return Container(
+      color: Colors.white,
+      child: SafeArea(
+        child: WillPopScope(
+          onWillPop: () => _saveNote(),
+          child: WebView(
+            key: _key,
+            javascriptMode: JavascriptMode.unrestricted,
+            initialUrl: _url,
+            onWebViewCreated: (WebViewController webViewController) {
+              _webViewController.complete(webViewController);
+            },
+          ),
         ),
       ),
     );
@@ -309,7 +312,7 @@ class _LinkingPageState extends State<LinkingPage> {
   Future<void> _saveNote() async {
     if (_titleEditingController.text.isNotEmpty && _url.isNotEmpty) {
       if (widget.note == null) {
-        Note newNote = Note(
+        Note note = Note(
           //widget.projectTitle,
           widget.projectRandom,
           'Verlinkung',
@@ -319,11 +322,12 @@ class _LinkingPageState extends State<LinkingPage> {
           _createdAt,
           dateFormatted(),
         );
-        await _noteDb.insertNote(note: newNote);
+        //await _noteDb.insertNote(note: newNote);
+        Navigator.pop(context, note);
       } else {
         _updateNote(widget.note);
       }
-      Navigator.pop(context, true);
+      //Navigator.pop(context, true);
     } else {
       _scaffoldKey.currentState.showSnackBar(
         _buildSnackBarWithButton(
@@ -336,17 +340,18 @@ class _LinkingPageState extends State<LinkingPage> {
 
   Future<void> _updateNote(Note note) async {
     Note newNote = Note.fromMap({
-      ProjectDatabaseHelper.columnNoteId: note.id,
+      DatabaseProvider.columnNoteId: note.id,
       //ProjectDatabaseHelper.columnProjectId: note.projectId,
-      ProjectDatabaseHelper.columnProjectRandom: note.projectRandom,
-      ProjectDatabaseHelper.columnNoteType: note.type,
-      ProjectDatabaseHelper.columnNoteTitle: _titleEditingController.text,
-      ProjectDatabaseHelper.columnNoteDescription: _descEditingController.text,
-      ProjectDatabaseHelper.columnNoteContent: _url,
-      ProjectDatabaseHelper.columnNoteCreatedAt: note.dateCreated,
-      ProjectDatabaseHelper.columnNoteUpdatedAt: dateFormatted(),
+      DatabaseProvider.columnProjectRandom: note.projectRandom,
+      DatabaseProvider.columnNoteType: note.type,
+      DatabaseProvider.columnNoteTitle: _titleEditingController.text,
+      DatabaseProvider.columnNoteDescription: _descEditingController.text,
+      DatabaseProvider.columnNoteContent: _url,
+      DatabaseProvider.columnNoteCreatedAt: note.dateCreated,
+      DatabaseProvider.columnNoteUpdatedAt: dateFormatted(),
     });
-    await _noteDb.updateNote(newNote: newNote);
+    //await _noteDb.updateNote(newNote: newNote);
+    Navigator.pop(context, newNote);
   }
 
   Widget _buildSnackBar({@required String text}) {

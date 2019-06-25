@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:citizen_lab/bloc/title_bloc.dart';
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/custom_widgets/title_desc_widget.dart';
-import 'package:citizen_lab/database/project_database_helper.dart';
+import 'package:citizen_lab/database/database_provider.dart';
 import 'package:citizen_lab/entries/experiment_item.dart';
 import 'package:citizen_lab/entries/note.dart';
 import 'package:citizen_lab/entries/text/text_info_page_data.dart';
@@ -14,6 +14,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:share/share.dart';
+
+import '../../title_change_provider.dart';
 
 class TextPage extends StatefulWidget {
   final Key key;
@@ -35,11 +37,12 @@ class _TextPageState extends State<TextPage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _titleEditingController = TextEditingController();
   final _descEditingController = TextEditingController();
-  final _noteDb = ProjectDatabaseHelper();
+  final _noteDb = DatabaseProvider();
 
   final _titleBloc = TitleBloc();
 
   ThemeChangerProvider _themeChanger;
+  TitleChangerProvider _titleChanger;
   Timer _timer;
   String _title;
   String _savedTitle;
@@ -100,11 +103,12 @@ class _TextPageState extends State<TextPage> {
       appBar: _buildAppBar(),
       //body: _buildBody(),
       body: TitleDescWidget(
+        titleBloc: _titleBloc,
+        titleChanger: _titleChanger,
         title: _title,
         createdAt: _createdAt,
         titleEditingController: _titleEditingController,
         descEditingController: _descEditingController,
-        titleBloc: _titleBloc,
       ),
       floatingActionButton: _buildFabs(),
     );
@@ -115,7 +119,6 @@ class _TextPageState extends State<TextPage> {
     final String noteType = 'Textnotiz';
 
     return AppBar(
-      elevation: 4.0,
       leading: IconButton(
         tooltip: back,
         icon: Icon(Icons.arrow_back),
@@ -215,116 +218,112 @@ class _TextPageState extends State<TextPage> {
     final contentHere = 'Inhalt hier';
     final String plsEnterATitle = 'Bitte einen Titel eingeben';
 
-    return SafeArea(
-      child: WillPopScope(
-        onWillPop: () => _saveNote(),
-        child: SingleChildScrollView(
-          padding: EdgeInsets.only(bottom: 88.0),
-          child: Column(
-            children: <Widget>[
-              Container(
-                margin: EdgeInsets.all(8.0),
-                decoration: ShapeDecoration(
-                  shape: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(8.0),
+    return Container(
+      color: Colors.white,
+      child: SafeArea(
+        child: WillPopScope(
+          onWillPop: () => _saveNote(),
+          child: SingleChildScrollView(
+            padding: EdgeInsets.only(top: 8.0, bottom: 88.0),
+            child: Column(
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.all(8.0),
+                  decoration: ShapeDecoration(
+                    shape: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                      borderSide: BorderSide(color: Colors.grey),
                     ),
-                    borderSide: BorderSide(color: Colors.grey),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        Text(
+                          _timeString,
+                          //_timerProvider.getTime,
+                          style: TextStyle(
+                            fontSize: 14.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 8.0),
+                        Text(
+                          '$created: $_createdAt',
+                          style: TextStyle(
+                            fontSize: 14.0,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                child: Padding(
+                SizedBox(height: 8.0),
+                Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(
-                        _timeString,
-                        //_timerProvider.getTime,
+                      TextField(
+                        controller: _titleEditingController,
+                        keyboardType: TextInputType.text,
+                        maxLines: 2,
                         style: TextStyle(
-                          fontSize: 14.0,
+                          fontSize: 16.0,
                           fontWeight: FontWeight.bold,
                         ),
+                        onChanged: (value) {
+                          _title = value;
+                        },
+                        decoration: InputDecoration(
+                          hintText: '$titleHere.',
+                          errorText: _getErrorText(),
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.transparent),
+                          ),
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.transparent),
+                          ),
+                          //errorText: _titleValidate ? plsEnterATitle : null,
+                        ),
+                        //onChanged: (String changed) => _title = changed,
+                        //validator: (text) => text.isEmpty ? plsEnterATitle : null,
                       ),
-                      SizedBox(height: 8.0),
-                      Text(
-                        '$created: $_createdAt',
-                        style: TextStyle(
-                          fontSize: 14.0,
-                          fontStyle: FontStyle.italic,
+                      SizedBox(height: 42.0),
+                      TextField(
+                        controller: _descEditingController,
+                        keyboardType: TextInputType.text,
+                        maxLines: 20,
+                        style: TextStyle(fontSize: 16.0),
+                        decoration: InputDecoration(
+                          hintText: '$contentHere.',
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.transparent),
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ),
-              ),
-              SizedBox(height: 8.0),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    StreamBuilder(
-                      stream: _titleBloc.title,
-                      builder: (
-                        BuildContext context,
-                        AsyncSnapshot snapshot,
-                      ) {
-                        return TextField(
-                          controller: _titleEditingController,
-                          keyboardType: TextInputType.text,
-                          maxLines: 2,
-                          style: TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          onChanged: _titleBloc.changeTitle,
-                          decoration: InputDecoration(
-                            hintText: '$titleHere.',
-                            errorText: snapshot.error,
-                            enabledBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.transparent),
-                            ),
-                            focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.transparent),
-                            ),
-                            //errorText: _titleValidate ? plsEnterATitle : null,
-                          ),
-                          //onChanged: (String changed) => _title = changed,
-                          //validator: (text) => text.isEmpty ? plsEnterATitle : null,
-                        );
-                      },
-                    ),
-                    SizedBox(height: 42.0),
-                    TextField(
-                      controller: _descEditingController,
-                      keyboardType: TextInputType.text,
-                      maxLines: 20,
-                      style: TextStyle(fontSize: 16.0),
-                      decoration: InputDecoration(
-                        hintText: '$contentHere.',
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.transparent),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
+  String _getErrorText() {
+    return _titleChanger.getErrorMessage();
+  }
+
   Future<void> _saveNote() async {
     if (_titleEditingController.text.isNotEmpty) {
       if (widget.note == null) {
-        //Note newNote = Note(
-        Note newNote = Note(
-          //widget.projectTitle,
+        Note note = Note(
           widget.projectRandom,
-          //widget.projectId,
           'Text',
           _titleEditingController.text,
           _descEditingController.text,
@@ -332,11 +331,13 @@ class _TextPageState extends State<TextPage> {
           _createdAt,
           dateFormatted(),
         );
-        await _noteDb.insertNote(note: newNote);
+        //await _noteDb.insertNote(note: newNote);
+        Navigator.pop(context, note);
+        //_noteBloc.add(newNote);
       } else {
         _updateNote(widget.note);
       }
-      Navigator.pop(context, true);
+      //Navigator.pop(context, true);
     } else {
       _scaffoldKey.currentState.showSnackBar(
         _buildSnackBarWithButton(
@@ -349,17 +350,18 @@ class _TextPageState extends State<TextPage> {
 
   Future<void> _updateNote(Note note) async {
     Note newNote = Note.fromMap({
-      ProjectDatabaseHelper.columnNoteId: note.id,
-      ProjectDatabaseHelper.columnProjectRandom: note.projectRandom,
+      DatabaseProvider.columnNoteId: note.id,
+      DatabaseProvider.columnProjectRandom: note.projectRandom,
       //ProjectDatabaseHelper.columnNoteProject: note.project,
-      ProjectDatabaseHelper.columnNoteType: note.type,
-      ProjectDatabaseHelper.columnNoteTitle: _titleEditingController.text,
-      ProjectDatabaseHelper.columnNoteDescription: _descEditingController.text,
-      ProjectDatabaseHelper.columnNoteContent: '',
-      ProjectDatabaseHelper.columnNoteCreatedAt: note.dateCreated,
-      ProjectDatabaseHelper.columnNoteUpdatedAt: dateFormatted(),
+      DatabaseProvider.columnNoteType: note.type,
+      DatabaseProvider.columnNoteTitle: _titleEditingController.text,
+      DatabaseProvider.columnNoteDescription: _descEditingController.text,
+      DatabaseProvider.columnNoteContent: '',
+      DatabaseProvider.columnNoteCreatedAt: note.dateCreated,
+      DatabaseProvider.columnNoteUpdatedAt: dateFormatted(),
     });
-    await _noteDb.updateNote(newNote: newNote);
+    //await _noteDb.updateNote(newNote: newNote);
+    Navigator.pop(context, newNote);
   }
 
   Widget _buildFabs() {

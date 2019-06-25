@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:citizen_lab/database/project_database_helper.dart';
+import 'package:citizen_lab/database/database_provider.dart';
 import 'package:citizen_lab/entries/note.dart';
 
 class DatabaseBloc {
@@ -14,7 +14,7 @@ class DatabaseBloc {
 
   // Daten aus der Datenbank asynchron holen
   getNotes() async {
-    _noteController.sink.add(await ProjectDatabaseHelper().getAllNotes());
+    _noteController.sink.add(await DatabaseProvider().getAllNotes());
   }
 
   DatabaseBloc() {
@@ -22,12 +22,12 @@ class DatabaseBloc {
   }
 
   delete(int id) {
-    ProjectDatabaseHelper().deleteNote(id: id);
+    DatabaseProvider().deleteNote(id: id);
     getNotes();
   }
 
   add(Note note) {
-    ProjectDatabaseHelper().insertNote(note: note);
+    DatabaseProvider().insertNote(note: note);
     getNotes();
   }
 }

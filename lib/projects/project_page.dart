@@ -1,5 +1,5 @@
 import 'package:citizen_lab/custom_widgets/alarm_dialog.dart';
-import 'package:citizen_lab/database/project_database_helper.dart';
+import 'package:citizen_lab/database/database_provider.dart';
 import 'package:citizen_lab/projects/project.dart';
 import 'package:citizen_lab/projects/project_item.dart';
 import 'package:citizen_lab/projects/project_search_page.dart';
@@ -16,7 +16,7 @@ class ProjectPage extends StatefulWidget {
 
 class _ProjectPageState extends State<ProjectPage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  final _projectDb = ProjectDatabaseHelper();
+  final _projectDb = DatabaseProvider();
   final List<Project> _projectList = [];
 
   ThemeChangerProvider _themeChanger;
@@ -60,7 +60,6 @@ class _ProjectPageState extends State<ProjectPage> {
           ),
         ),
       ),
-      elevation: 4.0,
       actions: <Widget>[
         IconButton(
           icon: Icon(Icons.search),
@@ -196,56 +195,59 @@ class _ProjectPageState extends State<ProjectPage> {
   }
 
   Widget _buildBody() {
-    return SafeArea(
-      child: _projectList.isNotEmpty
-          ? ListView.builder(
-              padding: const EdgeInsets.all(8.0),
-              reverse: false,
-              itemCount: _projectList.length,
-              itemBuilder: (context, index) {
-                final _project = _projectList[index];
-                final key = Key('${_project.hashCode}');
-                return Dismissible(
-                  key: key,
-                  direction: DismissDirection.startToEnd,
-                  background: Container(
-                    alignment: Alignment.centerLeft,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(8.0),
+    return Container(
+      color: Colors.white,
+      child: SafeArea(
+        child: _projectList.isNotEmpty
+            ? ListView.builder(
+                padding: const EdgeInsets.all(8.0),
+                reverse: false,
+                itemCount: _projectList.length,
+                itemBuilder: (context, index) {
+                  final _project = _projectList[index];
+                  final key = Key('${_project.hashCode}');
+                  return Dismissible(
+                    key: key,
+                    direction: DismissDirection.startToEnd,
+                    background: Container(
+                      alignment: Alignment.centerLeft,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(8.0),
+                        ),
+                      ),
+                      child: Row(
+                        children: <Widget>[
+                          Icon(
+                            Icons.arrow_forward,
+                            size: 28.0,
+                          ),
+                          SizedBox(width: 8.0),
+                          Icon(
+                            Icons.delete,
+                            size: 28.0,
+                          ),
+                        ],
                       ),
                     ),
-                    child: Row(
-                      children: <Widget>[
-                        Icon(
-                          Icons.arrow_forward,
-                          size: 28.0,
-                        ),
-                        SizedBox(width: 8.0),
-                        Icon(
-                          Icons.delete,
-                          size: 28.0,
-                        ),
-                      ],
+                    onDismissed: (direction) => _deleteProject(index),
+                    child: Container(
+                      width: double.infinity,
+                      child: ProjectItem(
+                        project: _projectList[index],
+                        onTap: () => _navigateToEntry(index),
+                      ),
                     ),
-                  ),
-                  onDismissed: (direction) => _deleteProject(index),
-                  child: Container(
-                    width: double.infinity,
-                    child: ProjectItem(
-                      project: _projectList[index],
-                      onTap: () => _navigateToEntry(index),
-                    ),
-                  ),
-                );
-              },
-            )
-          : Center(
-              child: Text(
-                empty_list,
-                style: TextStyle(fontSize: 24.0),
+                  );
+                },
+              )
+            : Center(
+                child: Text(
+                  empty_list,
+                  style: TextStyle(fontSize: 24.0),
+                ),
               ),
-            ),
+      ),
     );
   }
 

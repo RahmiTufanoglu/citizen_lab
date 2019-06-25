@@ -1,4 +1,4 @@
-import 'package:citizen_lab/database/project_database_helper.dart';
+import 'package:citizen_lab/database/database_provider.dart';
 
 class Note {
   int id;
@@ -22,7 +22,7 @@ class Note {
 
   Note.withId(
     this.id,
-    int this.projectRandom,
+    this.projectRandom,
     this.type,
     this.title,
     this.description,
@@ -32,41 +32,52 @@ class Note {
   );
 
   Note.map(dynamic obj) {
-    this.id = obj[ProjectDatabaseHelper.columnNoteId];
-    this.projectRandom = obj[ProjectDatabaseHelper.columnProjectRandom];
-    this.type = obj[ProjectDatabaseHelper.columnNoteType];
-    this.title = obj[ProjectDatabaseHelper.columnNoteTitle];
-    this.description = obj[ProjectDatabaseHelper.columnNoteDescription];
-    this.content = obj[ProjectDatabaseHelper.columnNoteContent];
-    this.dateCreated = obj[ProjectDatabaseHelper.columnNoteCreatedAt];
-    this.dateEdited = obj[ProjectDatabaseHelper.columnNoteUpdatedAt];
+    this.id = obj[DatabaseProvider.columnNoteId];
+    this.projectRandom = obj[DatabaseProvider.columnProjectRandom];
+    this.type = obj[DatabaseProvider.columnNoteType];
+    this.title = obj[DatabaseProvider.columnNoteTitle];
+    this.description = obj[DatabaseProvider.columnNoteDescription];
+    this.content = obj[DatabaseProvider.columnNoteContent];
+    this.dateCreated = obj[DatabaseProvider.columnNoteCreatedAt];
+    this.dateEdited = obj[DatabaseProvider.columnNoteUpdatedAt];
   }
 
   Map<String, dynamic> toMap() {
     var map = Map<String, dynamic>();
 
     if (id != null) {
-      map[ProjectDatabaseHelper.columnNoteId] = id;
+      map[DatabaseProvider.columnNoteId] = id;
     }
-    map[ProjectDatabaseHelper.columnProjectRandom] = projectRandom;
-    map[ProjectDatabaseHelper.columnNoteType] = type;
-    map[ProjectDatabaseHelper.columnNoteTitle] = title;
-    map[ProjectDatabaseHelper.columnNoteDescription] = description;
-    map[ProjectDatabaseHelper.columnNoteContent] = content;
-    map[ProjectDatabaseHelper.columnNoteCreatedAt] = dateCreated;
-    map[ProjectDatabaseHelper.columnNoteUpdatedAt] = dateEdited;
+    map[DatabaseProvider.columnProjectRandom] = projectRandom;
+    map[DatabaseProvider.columnNoteType] = type;
+    map[DatabaseProvider.columnNoteTitle] = title;
+    map[DatabaseProvider.columnNoteDescription] = description;
+    map[DatabaseProvider.columnNoteContent] = content;
+    map[DatabaseProvider.columnNoteCreatedAt] = dateCreated;
+    map[DatabaseProvider.columnNoteUpdatedAt] = dateEdited;
 
     return map;
   }
 
   Note.fromMap(Map<String, dynamic> map) {
-    this.id = map[ProjectDatabaseHelper.columnNoteId];
-    this.projectRandom = map[ProjectDatabaseHelper.columnProjectRandom];
-    this.type = map[ProjectDatabaseHelper.columnNoteType];
-    this.title = map[ProjectDatabaseHelper.columnNoteTitle];
-    this.description = map[ProjectDatabaseHelper.columnNoteDescription];
-    this.content = map[ProjectDatabaseHelper.columnNoteContent];
-    this.dateCreated = map[ProjectDatabaseHelper.columnNoteCreatedAt];
-    this.dateEdited = map[ProjectDatabaseHelper.columnNoteUpdatedAt];
+    this.id = map[DatabaseProvider.columnNoteId];
+    this.projectRandom = map[DatabaseProvider.columnProjectRandom];
+    this.type = map[DatabaseProvider.columnNoteType];
+    this.title = map[DatabaseProvider.columnNoteTitle];
+    this.description = map[DatabaseProvider.columnNoteDescription];
+    this.content = map[DatabaseProvider.columnNoteContent];
+    this.dateCreated = map[DatabaseProvider.columnNoteCreatedAt];
+    this.dateEdited = map[DatabaseProvider.columnNoteUpdatedAt];
   }
+
+  /*factory Note.fromMap(Map<String, dynamic> map) => Note.withId(
+      id: map[DatabaseProvider.columnNoteId],
+      projectRandom: map[DatabaseProvider.columnProjectRandom],
+  type: map[DatabaseProvider.columnNoteType],
+  title: map[DatabaseProvider.columnNoteTitle],
+  description: map[DatabaseProvider.columnNoteDescription],
+  content: map[DatabaseProvider.columnNoteContent],
+  dateCreated: map[DatabaseProvider.columnNoteCreatedAt],
+  dateEdited: map[DatabaseProvider.columnNoteUpdatedAt],
+  );*/
 }

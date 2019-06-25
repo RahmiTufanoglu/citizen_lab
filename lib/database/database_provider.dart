@@ -4,13 +4,12 @@ import 'package:meta/meta.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
-class ProjectDatabaseHelper {
-  static final ProjectDatabaseHelper _instance =
-      ProjectDatabaseHelper.internal();
+class DatabaseProvider {
+  static final DatabaseProvider _instance = DatabaseProvider.internal();
 
-  factory ProjectDatabaseHelper() => _instance;
+  factory DatabaseProvider() => _instance;
 
-  ProjectDatabaseHelper.internal();
+  DatabaseProvider.internal();
 
   Database _db;
 
@@ -143,17 +142,29 @@ class ProjectDatabaseHelper {
   }
 
   //Future<List> getNotesOfProject({@required String id}) async {
-  Future<List> getNotesOfProject({@required int random}) async {
-    final Database db = await this.db;
-    final List<Map<String, dynamic>> maps = await db.query(
+  Future<List<Note>> getNotesOfProject({@required int random}) async {
+    final db = await this.db;
+    //final List<Map<String, dynamic>> maps = await db.query(
+    var res = await db.query(
       noteTable,
       //where: '$columnNoteProject = ?',
-      where: '$columnProjectRandom= ?',
+      where: '$columnProjectRandom = ?',
       //whereArgs: [id],
       whereArgs: [random],
       //orderBy: '$columnNoteCreatedAt DESC',
     );
-    return maps.toList();
+    //return maps.toList();
+    List<Note> list =
+        res.isNotEmpty ? res.map((c) => Note.fromMap(c)).toList() : [];
+    return list;
+  }
+
+  Future<List<Note>> getAllNotes() async {
+    final db = await this.db;
+    var res = await db.query(noteTable);
+    List<Note> list =
+        res.isNotEmpty ? res.map((c) => Note.fromMap(c)).toList() : [];
+    return list;
   }
 
   Future<int> insertNote({@required Note note}) async {
@@ -178,14 +189,14 @@ class ProjectDatabaseHelper {
     return maps.isNotEmpty ? Note.fromMap(maps.first) : null;
   }
 
-  Future<List> getAllNotes() async {
+  /*Future<List> getAllNotes() async {
     final Database db = await this.db;
     final List<Map<String, dynamic>> result = await db.query(
       noteTable,
       orderBy: '$columnNoteCreatedAt DESC',
     );
     return result.toList();
-  }
+  }*/
 
   Future<int> deleteNote({@required int id}) async {
     final Database db = await this.db;

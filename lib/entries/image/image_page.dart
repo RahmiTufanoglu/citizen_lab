@@ -7,7 +7,7 @@ import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/custom_widgets/set_title_widget.dart';
 import 'package:citizen_lab/custom_widgets/simple_timer_dialog.dart';
 import 'package:citizen_lab/custom_widgets/title_desc_widget.dart';
-import 'package:citizen_lab/database/project_database_helper.dart';
+import 'package:citizen_lab/database/database_provider.dart';
 import 'package:citizen_lab/entries/note.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/utils/date_formater.dart';
@@ -44,7 +44,7 @@ class _ImagePageState extends State<ImagePage> {
   final _titleEditingController = TextEditingController();
   final _descEditingController = TextEditingController();
   final _pageController = PageController(initialPage: _initialPage);
-  final _noteDb = ProjectDatabaseHelper();
+  final _noteDb = DatabaseProvider();
 
   ThemeChangerProvider _themeChanger;
   File _image;
@@ -288,26 +288,29 @@ class _ImagePageState extends State<ImagePage> {
   Widget _buildBody() {
     final double screenWidth = MediaQuery.of(context).size.width;
 
-    return SafeArea(
-      child: Form(
-        key: _formKey,
-        autovalidate: true,
-        child: WillPopScope(
-          onWillPop: () => _saveNote(),
-          child: Center(
-            child: (_image != null && _image.path.isNotEmpty)
-                ? PhotoView(
-                    backgroundDecoration: BoxDecoration(),
-                    minScale: PhotoViewComputedScale.contained * 0.5,
-                    imageProvider: FileImage(_image),
-                  )
-                : Center(
-                    child: Icon(
-                      Icons.image,
-                      color: Colors.grey,
-                      size: 100.0,
+    return Container(
+      color: Colors.white,
+      child: SafeArea(
+        child: Form(
+          key: _formKey,
+          autovalidate: true,
+          child: WillPopScope(
+            onWillPop: () => _saveNote(),
+            child: Center(
+              child: (_image != null && _image.path.isNotEmpty)
+                  ? PhotoView(
+                      backgroundDecoration: BoxDecoration(),
+                      minScale: PhotoViewComputedScale.contained * 0.5,
+                      imageProvider: FileImage(_image),
+                    )
+                  : Center(
+                      child: Icon(
+                        Icons.image,
+                        color: Colors.grey,
+                        size: 100.0,
+                      ),
                     ),
-                  ),
+            ),
           ),
         ),
       ),
@@ -537,10 +540,12 @@ class _ImagePageState extends State<ImagePage> {
     file.writeAsBytesSync(uint8List);
   }
 
+  String operation;
+
   Future<void> _saveNote() async {
     if (_titleEditingController.text.isNotEmpty && (_image != null)) {
       if (widget.note == null) {
-        Note newNote = Note(
+        Note note = Note(
           //widget.projectTitle,
           widget.projectRandom,
           'Bild',
@@ -551,11 +556,15 @@ class _ImagePageState extends State<ImagePage> {
           _createdAt,
           dateFormatted(),
         );
-        await _noteDb.insertNote(note: newNote);
+        //operation = 'save';
+        //await _noteDb.insertNote(note: newNote);
+        Navigator.pop(context, note);
       } else {
         _updateNote(widget.note);
+        //operation = 'update';
       }
-      Navigator.pop(context, true);
+      //Navigator.pop(context, true);
+      //Navigator.pop(context, operation);
     } else {
       _scaffoldKey.currentState.showSnackBar(
         _buildSnackBarWithButton(
@@ -568,17 +577,18 @@ class _ImagePageState extends State<ImagePage> {
 
   Future<void> _updateNote(Note note) async {
     Note newNote = Note.fromMap({
-      ProjectDatabaseHelper.columnNoteId: note.id,
-      ProjectDatabaseHelper.columnProjectRandom: note.projectRandom,
+      DatabaseProvider.columnNoteId: note.id,
+      DatabaseProvider.columnProjectRandom: note.projectRandom,
       //ProjectDatabaseHelper.columnNoteProject: note.project,
-      ProjectDatabaseHelper.columnNoteType: note.type,
-      ProjectDatabaseHelper.columnNoteTitle: _titleEditingController.text,
-      ProjectDatabaseHelper.columnNoteDescription: _descEditingController.text,
-      ProjectDatabaseHelper.columnNoteContent: _image.path,
-      ProjectDatabaseHelper.columnNoteCreatedAt: note.dateCreated,
-      ProjectDatabaseHelper.columnNoteUpdatedAt: dateFormatted(),
+      DatabaseProvider.columnNoteType: note.type,
+      DatabaseProvider.columnNoteTitle: _titleEditingController.text,
+      DatabaseProvider.columnNoteDescription: _descEditingController.text,
+      DatabaseProvider.columnNoteContent: _image.path,
+      DatabaseProvider.columnNoteCreatedAt: note.dateCreated,
+      DatabaseProvider.columnNoteUpdatedAt: dateFormatted(),
     });
-    await _noteDb.updateNote(newNote: newNote);
+    //await _noteDb.updateNote(newNote: newNote);
+    Navigator.pop(context, newNote);
   }
 
   Future<void> _showEditDialog() async {

@@ -8,7 +8,7 @@ import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/custom_widgets/simple_timer_dialog.dart';
 import 'package:citizen_lab/custom_widgets/table_widget.dart';
 import 'package:citizen_lab/custom_widgets/title_desc_widget.dart';
-import 'package:citizen_lab/database/project_database_helper.dart';
+import 'package:citizen_lab/database/database_provider.dart';
 import 'package:citizen_lab/entries/note.dart';
 import 'package:citizen_lab/entries/table/table_info_page_data.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
@@ -45,7 +45,7 @@ class _TablePageState extends State<TablePage> {
   final _rowTextEditingController = TextEditingController();
   final _columnTextEditingController = TextEditingController();
   final _pageController = PageController(initialPage: _initialPage);
-  final _noteDb = ProjectDatabaseHelper();
+  final _noteDb = DatabaseProvider();
   final _listTextEditingController = <TextEditingController>[];
 
   ThemeChangerProvider _themeChanger;
@@ -216,24 +216,27 @@ class _TablePageState extends State<TablePage> {
   Widget _buildBody() {
     generateTable();
 
-    return SafeArea(
-      child: WillPopScope(
-        onWillPop: () => _saveNote(),
-        child: Padding(
-          padding: const EdgeInsets.only(bottom: 88.0),
-          child: (_column != null || _row != null)
-              ? TableWidget(
-                  listTextEditingController: _listTextEditingController,
-                  column: _column,
-                  row: _row,
-                )
-              : Center(
-                  child: Icon(
-                    Icons.table_chart,
-                    color: Colors.grey,
-                    size: 100.0,
+    return Container(
+      color: Colors.white,
+      child: SafeArea(
+        child: WillPopScope(
+          onWillPop: () => _saveNote(),
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 88.0),
+            child: (_column != null || _row != null)
+                ? TableWidget(
+                    listTextEditingController: _listTextEditingController,
+                    column: _column,
+                    row: _row,
+                  )
+                : Center(
+                    child: Icon(
+                      Icons.table_chart,
+                      color: Colors.grey,
+                      size: 100.0,
+                    ),
                   ),
-                ),
+          ),
         ),
       ),
     );
@@ -696,7 +699,7 @@ class _TablePageState extends State<TablePage> {
         if (_column != null && _row != null) {
           path = await _createCsv(_title);
         }
-        Note newNote = Note(
+        Note note = Note(
           //widget.projectTitle,
           widget.projectRandom,
           'Tabelle',
@@ -706,13 +709,14 @@ class _TablePageState extends State<TablePage> {
           _createdAt,
           dateFormatted(),
         );
-        await _noteDb.insertNote(note: newNote);
+        //await _noteDb.insertNote(note: newNote);
+        Navigator.pop(context, note);
       } else {
         _csv.delete();
         String path = await _createCsv(_title);
         _updateNote(widget.note, path);
       }
-      Navigator.pop(context, true);
+      //Navigator.pop(context, true);
     } else {
       _scaffoldKey.currentState.showSnackBar(
         _buildSnackBarWithButton(
@@ -725,18 +729,19 @@ class _TablePageState extends State<TablePage> {
 
   void _updateNote(Note note, String path) async {
     Note newNote = Note.fromMap({
-      ProjectDatabaseHelper.columnNoteId: note.id,
+      DatabaseProvider.columnNoteId: note.id,
       //ProjectDatabaseHelper.columnProjectId: note.projectId,
-      ProjectDatabaseHelper.columnProjectRandom: note.projectRandom,
-      ProjectDatabaseHelper.columnNoteType: note.type,
-      ProjectDatabaseHelper.columnNoteTitle: _titleEditingController.text,
-      ProjectDatabaseHelper.columnNoteDescription:
+      DatabaseProvider.columnProjectRandom: note.projectRandom,
+      DatabaseProvider.columnNoteType: note.type,
+      DatabaseProvider.columnNoteTitle: _titleEditingController.text,
+      DatabaseProvider.columnNoteDescription:
           _descriptionEditingController.text,
-      ProjectDatabaseHelper.columnNoteContent: path,
-      ProjectDatabaseHelper.columnNoteCreatedAt: note.dateCreated,
-      ProjectDatabaseHelper.columnNoteUpdatedAt: dateFormatted(),
+      DatabaseProvider.columnNoteContent: path,
+      DatabaseProvider.columnNoteCreatedAt: note.dateCreated,
+      DatabaseProvider.columnNoteUpdatedAt: dateFormatted(),
     });
-    await _noteDb.updateNote(newNote: newNote);
+    //await _noteDb.updateNote(newNote: newNote);
+    Navigator.pop(context, newNote);
   }
 
   Future<void> _shareCsv() async {

@@ -3,21 +3,25 @@ import 'dart:async';
 import 'package:citizen_lab/utils/date_formater.dart';
 import 'package:flutter/material.dart';
 
+import '../title_change_provider.dart';
+
 class TitleDescWidget extends StatefulWidget {
   final Key key;
+  final titleBloc;
+  final TitleChangerProvider titleChanger;
   final String title;
   final String createdAt;
   final titleEditingController;
   final descEditingController;
-  final titleBloc;
 
   TitleDescWidget({
     this.key,
+    @required this.titleBloc,
+    @required this.titleChanger,
     @required this.title,
     @required this.createdAt,
     @required this.titleEditingController,
     @required this.descEditingController,
-    @required this.titleBloc,
   }) : super(key: key);
 
   @override
@@ -63,115 +67,81 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
     final String plsEnterATitle = 'Bitte einen Titel eingeben';
     String pageTitle = widget.title;
 
-    return ListView(
-      padding: EdgeInsets.only(bottom: 88.0),
-      children: <Widget>[
-        Container(
-          margin: EdgeInsets.all(8.0),
-          decoration: ShapeDecoration(
-            shape: OutlineInputBorder(
-              borderRadius: BorderRadius.all(
-                Radius.circular(8.0),
+    return Container(
+      color: Colors.white,
+      child: SafeArea(
+        child: ListView(
+          padding: EdgeInsets.only(top: 8.0, bottom: 88.0),
+          children: <Widget>[
+            Container(
+              margin: EdgeInsets.all(8.0),
+              decoration: ShapeDecoration(
+                color: Colors.white,
+                shape: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                  borderSide: BorderSide(color: Colors.grey, width: 2.0),
+                ),
               ),
-              borderSide: BorderSide(color: Colors.grey),
-            ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Text(
-                  _timeString,
-                  style: TextStyle(
-                    fontSize: 14.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 8.0),
-                Text(
-                  '$created: ${widget.createdAt}',
-                  style: TextStyle(
-                    fontSize: 14.0,
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        Card(
-          margin: EdgeInsets.all(8.0),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                StreamBuilder(
-                  stream: widget.titleBloc.title,
-                  builder: (BuildContext context, AsyncSnapshot snapshot) {
-                    return TextField(
-                      controller: widget.titleEditingController,
-                      keyboardType: TextInputType.text,
-                      maxLines: 2,
-                      maxLength: 50,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    Text(
+                      _timeString,
                       style: TextStyle(
-                        fontSize: 16.0,
+                        fontSize: 14.0,
                         fontWeight: FontWeight.bold,
                       ),
-                      //onChanged: widget.titleBloc.changeTitle,
-                      onChanged: widget.titleBloc.changeTitle,
-                      decoration: InputDecoration(
-                        hintText: '$titleHere.',
-                        errorText: snapshot.error,
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.transparent),
-                        ),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.transparent),
-                        ),
+                    ),
+                    SizedBox(height: 8.0),
+                    Text(
+                      '$created: ${widget.createdAt}',
+                      style: TextStyle(
+                        fontSize: 14.0,
+                        fontStyle: FontStyle.italic,
                       ),
-                      //onChanged: (String changed) => pageTitle = changed,
-                      //validator: (text) => text.isEmpty ? plsEnterATitle : null,
-                    );
-                    /*return _buildTextField(
-                      controller: widget.descEditingController,
-                      maxLines: 2,
-                      maxLength: 50,
-                      hintText: titleHere,
-                      onChanged: widget.titleBloc.changeTitle,
-                    );*/
-                  },
-                ),
-                Divider(color: Colors.black),
-                _buildTextField(
-                  controller: widget.descEditingController,
-                  maxLines: 20,
-                  maxLength: 500,
-                  hintText: contentHere,
-                  onChanged: null,
-                ),
-                /*TextField(
-                  controller: widget.descEditingController,
-                  keyboardType: TextInputType.text,
-                  maxLines: 20,
-                  maxLength: 500,
-                  style: TextStyle(fontSize: 16.0),
-                  decoration: InputDecoration(
-                    hintText: '$contentHere.',
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.transparent),
                     ),
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.transparent),
-                    ),
-                  ),
-                ),*/
-              ],
+                  ],
+                ),
+              ),
             ),
-          ),
+            Card(
+              margin: EdgeInsets.all(8.0),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    StreamBuilder(
+                      stream: widget.titleBloc.title,
+                      builder: (BuildContext context, AsyncSnapshot snapshot) {
+                        return _buildTextField(
+                          controller: widget.titleEditingController,
+                          maxLines: 2,
+                          maxLength: 50,
+                          hintText: titleHere,
+                          onChanged: widget.titleBloc.changeTitle,
+                          snapshot: snapshot,
+                        );
+                      },
+                    ),
+                    Divider(color: Colors.black),
+                    _buildTextField(
+                      controller: widget.descEditingController,
+                      maxLines: 20,
+                      maxLength: 500,
+                      hintText: contentHere,
+                      onChanged: null,
+                      snapshot: null,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 
@@ -180,7 +150,8 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
     @required int maxLines,
     @required int maxLength,
     @required String hintText,
-    @required ValueChanged onChanged,
+    @required ValueChanged<String> onChanged,
+    @required AsyncSnapshot snapshot,
   }) {
     return TextField(
       controller: controller,
@@ -188,16 +159,21 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
       maxLines: maxLines,
       maxLength: maxLength,
       style: TextStyle(fontSize: 16.0),
-      onChanged: (_) => onChanged,
+      onChanged: onChanged,
       decoration: InputDecoration(
         hintText: '$hintText.',
-        enabledBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.transparent),
-        ),
-        focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.transparent),
-        ),
+        errorText: (snapshot != null) ? snapshot.error : '',
+        focusedErrorBorder: _buildUnderlineInputBorder(),
+        errorBorder: _buildUnderlineInputBorder(),
+        enabledBorder: _buildUnderlineInputBorder(),
+        focusedBorder: _buildUnderlineInputBorder(),
       ),
+    );
+  }
+
+  UnderlineInputBorder _buildUnderlineInputBorder() {
+    return UnderlineInputBorder(
+      borderSide: BorderSide(color: Colors.transparent),
     );
   }
 }

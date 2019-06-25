@@ -37,7 +37,8 @@ ThemeData appLightTheme() {
     ),
     appBarTheme: AppBarTheme(
       color: Colors.white,
-      elevation: 4.0,
+      //elevation: 8.0,
+      elevation: 0.0,
       iconTheme: IconThemeData(
         color: mainDarkColor,
       ),
@@ -111,7 +112,7 @@ ThemeData appDarkTheme() {
     ),
     appBarTheme: AppBarTheme(
       color: mainDarkColor,
-      elevation: 4.0,
+      elevation: 8.0,
       iconTheme: IconThemeData(
         color: Colors.white,
       ),
