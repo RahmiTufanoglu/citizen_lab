@@ -288,29 +288,26 @@ class _ImagePageState extends State<ImagePage> {
   Widget _buildBody() {
     final double screenWidth = MediaQuery.of(context).size.width;
 
-    return Container(
-      color: Colors.white,
-      child: SafeArea(
-        child: Form(
-          key: _formKey,
-          autovalidate: true,
-          child: WillPopScope(
-            onWillPop: () => _saveNote(),
-            child: Center(
-              child: (_image != null && _image.path.isNotEmpty)
-                  ? PhotoView(
-                      backgroundDecoration: BoxDecoration(),
-                      minScale: PhotoViewComputedScale.contained * 0.5,
-                      imageProvider: FileImage(_image),
-                    )
-                  : Center(
-                      child: Icon(
-                        Icons.image,
-                        color: Colors.grey,
-                        size: 100.0,
-                      ),
+    return SafeArea(
+      child: Form(
+        key: _formKey,
+        autovalidate: true,
+        child: WillPopScope(
+          onWillPop: () => _saveNote(),
+          child: Center(
+            child: (_image != null && _image.path.isNotEmpty)
+                ? PhotoView(
+                    backgroundDecoration: BoxDecoration(),
+                    minScale: PhotoViewComputedScale.contained * 0.5,
+                    imageProvider: FileImage(_image),
+                  )
+                : Center(
+                    child: Icon(
+                      Icons.image,
+                      color: Colors.grey,
+                      size: 100.0,
                     ),
-            ),
+                  ),
           ),
         ),
       ),

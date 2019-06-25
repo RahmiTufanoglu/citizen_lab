@@ -144,19 +144,16 @@ class _LinkingPageState extends State<LinkingPage> {
   Widget _buildBody() {
     final double screenWidth = MediaQuery.of(context).size.width;
 
-    return Container(
-      color: Colors.white,
-      child: SafeArea(
-        child: WillPopScope(
-          onWillPop: () => _saveNote(),
-          child: WebView(
-            key: _key,
-            javascriptMode: JavascriptMode.unrestricted,
-            initialUrl: _url,
-            onWebViewCreated: (WebViewController webViewController) {
-              _webViewController.complete(webViewController);
-            },
-          ),
+    return SafeArea(
+      child: WillPopScope(
+        onWillPop: () => _saveNote(),
+        child: WebView(
+          key: _key,
+          javascriptMode: JavascriptMode.unrestricted,
+          initialUrl: _url,
+          onWebViewCreated: (WebViewController webViewController) {
+            _webViewController.complete(webViewController);
+          },
         ),
       ),
     );

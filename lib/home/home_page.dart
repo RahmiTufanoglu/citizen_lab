@@ -90,8 +90,8 @@ class _HomePageState extends State<HomePage>
       ),
       actions: <Widget>[
         Image(
-          height: 36.0,
-          width: 36.0,
+          height: 42.0,
+          width: 42.0,
           image: AssetImage('assets/ic_launcher.png'),
         ),
         SizedBox(width: 16.0),
@@ -275,35 +275,66 @@ class _HomePageState extends State<HomePage>
   Widget _buildBody() {
     double height = MediaQuery.of(context).size.height - kToolbarHeight;
 
-    return Container(
-      color: Colors.white,
-      child: SafeArea(
-        child: WillPopScope(
-          onWillPop: () => SystemNavigator.pop(),
-          child: FadeTransition(
-            opacity: _animation,
-            child: Container(
-              child: Stack(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      children: <Widget>[
-                        Expanded(
+    return SafeArea(
+      child: WillPopScope(
+        onWillPop: () => SystemNavigator.pop(),
+        child: FadeTransition(
+          opacity: _animation,
+          child: Container(
+            child: Stack(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: <Widget>[
+                      Expanded(
+                        child: CardImageWithText(
+                          asset: 'assets/images/home_1.jpg',
+                          title: 'Projekt erstellen',
+                          fontColor: Colors.white,
+                          onTap: () {
+                            Navigator.pushNamed(
+                              context,
+                              RouteGenerator.createProject,
+                            );
+                          },
+                        ),
+                      ),
+                      SizedBox(height: 8.0),
+                      Expanded(
+                        child: CardImageWithText(
+                          asset: 'assets/images/home_2.jpg',
+                          title: 'Projekt öffnen',
+                          fontColor: Colors.white,
+                          onTap: () {
+                            return Navigator.pushNamed(
+                              context,
+                              RouteGenerator.projectPage,
+                            );
+                          },
+                        ),
+                      ),
+                      /*Container(
+                        height: height,
+                        child: ClipPath(
+                          clipper: TopClipper(),
                           child: CardImageWithText(
                             asset: 'assets/images/home_1.jpg',
-                            title: 'Projekt erstellen',
+                            title: 'Projekt öffnen',
                             fontColor: Colors.white,
                             onTap: () {
-                              Navigator.pushNamed(
+                              return Navigator.pushNamed(
                                 context,
-                                RouteGenerator.createProject,
+                                RouteGenerator.projectPage,
                               );
                             },
                           ),
                         ),
-                        SizedBox(height: 8.0),
-                        Expanded(
+                      ),
+                      Container(
+                        height: height,
+                        child: ClipPath(
+                          clipper: BottomClipper(),
                           child: CardImageWithText(
                             asset: 'assets/images/home_2.jpg',
                             title: 'Projekt öffnen',
@@ -316,45 +347,11 @@ class _HomePageState extends State<HomePage>
                             },
                           ),
                         ),
-                        /*Container(
-                          height: height,
-                          child: ClipPath(
-                            clipper: TopClipper(),
-                            child: CardImageWithText(
-                              asset: 'assets/images/home_1.jpg',
-                              title: 'Projekt öffnen',
-                              fontColor: Colors.white,
-                              onTap: () {
-                                return Navigator.pushNamed(
-                                  context,
-                                  RouteGenerator.projectPage,
-                                );
-                              },
-                            ),
-                          ),
-                        ),
-                        Container(
-                          height: height,
-                          child: ClipPath(
-                            clipper: BottomClipper(),
-                            child: CardImageWithText(
-                              asset: 'assets/images/home_2.jpg',
-                              title: 'Projekt öffnen',
-                              fontColor: Colors.white,
-                              onTap: () {
-                                return Navigator.pushNamed(
-                                  context,
-                                  RouteGenerator.projectPage,
-                                );
-                              },
-                            ),
-                          ),
-                        ),*/
-                      ],
-                    ),
+                      ),*/
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),

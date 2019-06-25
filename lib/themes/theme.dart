@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
-final Color mainDarkColor = Color(0xFF242424);
+final Color mainDarkColor = Color(0xFF404040);
+final Color mainLightColor = Color(0xFFF7F7F7);
 
 ThemeData appLightTheme() {
   final ThemeData theme = ThemeData.light();
   return theme.copyWith(
     brightness: Brightness.light,
+    scaffoldBackgroundColor: mainLightColor,
     accentColor: Colors.deepPurpleAccent,
     primaryColor: Colors.white,
     buttonColor: Colors.black,
@@ -37,9 +39,12 @@ ThemeData appLightTheme() {
     ),
     appBarTheme: AppBarTheme(
       color: Colors.white,
-      //elevation: 8.0,
-      elevation: 0.0,
+      elevation: 8.0,
+      //elevation: 0.0,
       iconTheme: IconThemeData(
+        color: mainDarkColor,
+      ),
+      actionsIconTheme: IconThemeData(
         color: mainDarkColor,
       ),
     ),
@@ -81,6 +86,7 @@ ThemeData appDarkTheme() {
   final ThemeData theme = ThemeData.dark();
   return theme.copyWith(
     brightness: Brightness.dark,
+    scaffoldBackgroundColor: mainDarkColor,
     accentColor: Colors.deepOrangeAccent,
     primaryColor: mainDarkColor,
     buttonColor: Colors.white,
@@ -113,7 +119,11 @@ ThemeData appDarkTheme() {
     appBarTheme: AppBarTheme(
       color: mainDarkColor,
       elevation: 8.0,
+      //elevation: 0.0,
       iconTheme: IconThemeData(
+        color: Colors.white,
+      ),
+      actionsIconTheme: IconThemeData(
         color: Colors.white,
       ),
     ),

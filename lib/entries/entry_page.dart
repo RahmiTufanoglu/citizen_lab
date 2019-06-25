@@ -50,22 +50,15 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   final _projectDb = DatabaseProvider();
   final _noteDb = DatabaseProvider();
 
-  var _notesBloc;
-
+  NotesBloc _notesBloc;
   ThemeChangerProvider _themeChanger;
   List<Note> _noteList = [];
-  bool _listLoaded = false;
   String _title;
   String _createdAt;
 
   @override
   void initState() {
     _notesBloc = NotesBloc(random: widget.project.random);
-
-    if (!_listLoaded) {
-      //_loadNoteList();
-      //_listLoaded = true;
-    }
 
     _titleProjectController.text = widget.project.title;
     _descProjectController.text = widget.project.description;
@@ -86,7 +79,6 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   @override
   void dispose() {
     _textEditingController.dispose();
-    //_databaseBloc.dispose();
     _notesBloc.dispose();
     super.dispose();
   }
@@ -108,14 +100,6 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
       ),
       floatingActionButton: _buildFabs(),
     );
-
-    /*return Scaffold(
-      resizeToAvoidBottomPadding: false,
-      key: _scaffoldKey,
-      appBar: _buildAppBar(),
-      body: _buildBody(),
-      floatingActionButton: _buildFabs(),
-    );*/
   }
 
   Widget _buildAppBar() {
@@ -189,53 +173,51 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
     );
   }
 
-  /*Widget _buildBody2() {
+  Widget _buildBody(AsyncSnapshot snapshot) {
     return SafeArea(
       child: WillPopScope(
         onWillPop: _onBackPressed,
-        child: _noteList.isNotEmpty
-            ? StreamBuilder<List<Note>>(
-                stream: _databaseBloc.notes,
-                builder: (
-                  BuildContext context,
-                  AsyncSnapshot<List<Note>> snapshot,
-                ) {
-                  if (snapshot.hasData) {
-                    return ListView.builder(
-                      //itemCount: _noteList.length,
-                      itemCount: snapshot.data.length,
-                      padding: const EdgeInsets.only(
-                        top: 8.0,
-                        bottom: 88.0,
-                        left: 8.0,
-                        right: 8.0,
+        //child: _noteList.isNotEmpty
+        child: (snapshot.hasData)
+            ? ListView.builder(
+                //itemCount: _noteList.length,
+                itemCount: snapshot.data.length,
+                padding: const EdgeInsets.only(
+                  top: 8.0,
+                  bottom: 88.0,
+                  left: 8.0,
+                  right: 8.0,
+                ),
+                itemBuilder: (context, index) {
+                  //final note = _noteList[index];
+                  final note = snapshot.data[index];
+                  final key = Key('${note.hashCode}');
+                  return Dismissible(
+                    key: key,
+                    direction: DismissDirection.startToEnd,
+                    background: Container(
+                      alignment: Alignment.centerLeft,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
                       ),
-                      itemBuilder: (context, index) {
-                        final _note = _noteList[index];
-                        final key = Key('${_note.hashCode}');
-                        return Dismissible(
-                          key: key,
-                          direction: DismissDirection.startToEnd,
-                          background: Container(
-                            alignment: Alignment.centerLeft,
-                            decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(8.0)),
-                            ),
-                            child: Row(
-                              children: <Widget>[
-                                Icon(Icons.arrow_forward, size: 28.0),
-                                SizedBox(width: 8.0),
-                                Icon(Icons.delete, size: 28.0),
-                              ],
-                            ),
-                          ),
-                          onDismissed: (_) => _deleteNote(index),
-                          child: _buildItem(index),
-                        );
-                      },
-                    );
-                  }
+                      child: Row(
+                        children: <Widget>[
+                          Icon(Icons.arrow_forward, size: 28.0),
+                          SizedBox(width: 8.0),
+                          Icon(Icons.delete, size: 28.0),
+                        ],
+                      ),
+                    ),
+                    //onDismissed: (_) => _deleteNote(index),
+                    onDismissed: (_) {
+                      //_notesBloc.delete(note.id);
+                      _notesBloc.delete(note);
+                      _deleteNote(snapshot, index);
+                    },
+                    //onDismissed: (_) => _notesBloc.delete(note.id),
+                    //child: _buildItem(index),
+                    child: _buildItem(snapshot, index),
+                  );
                 },
               )
             : Center(
@@ -244,66 +226,6 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
                   style: TextStyle(fontSize: 24.0),
                 ),
               ),
-      ),
-    );
-  }*/
-
-  Widget _buildBody(AsyncSnapshot snapshot) {
-    return Container(
-      color: Colors.white,
-      child: SafeArea(
-        child: WillPopScope(
-          onWillPop: _onBackPressed,
-          //child: _noteList.isNotEmpty
-          child: (snapshot.hasData)
-              ? ListView.builder(
-                  //itemCount: _noteList.length,
-                  itemCount: snapshot.data.length,
-                  padding: const EdgeInsets.only(
-                    top: 8.0,
-                    bottom: 88.0,
-                    left: 8.0,
-                    right: 8.0,
-                  ),
-                  itemBuilder: (context, index) {
-                    //final note = _noteList[index];
-                    final note = snapshot.data[index];
-                    final key = Key('${note.hashCode}');
-                    return Dismissible(
-                      key: key,
-                      direction: DismissDirection.startToEnd,
-                      background: Container(
-                        alignment: Alignment.centerLeft,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                        ),
-                        child: Row(
-                          children: <Widget>[
-                            Icon(Icons.arrow_forward, size: 28.0),
-                            SizedBox(width: 8.0),
-                            Icon(Icons.delete, size: 28.0),
-                          ],
-                        ),
-                      ),
-                      //onDismissed: (_) => _deleteNote(index),
-                      onDismissed: (_) {
-                        //_notesBloc.delete(note.id);
-                        _notesBloc.delete(note);
-                        _deleteNote(snapshot, index);
-                      },
-                      //onDismissed: (_) => _notesBloc.delete(note.id),
-                      //child: _buildItem(index),
-                      child: _buildItem(snapshot, index),
-                    );
-                  },
-                )
-              : Center(
-                  child: Text(
-                    empty_list,
-                    style: TextStyle(fontSize: 24.0),
-                  ),
-                ),
-        ),
       ),
     );
   }

@@ -29,7 +29,10 @@ class _TableWidgetState extends State<TableWidget> {
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: widget.column,
         crossAxisSpacing: 0.0,
-        childAspectRatio: screenHeight / screenWidth,
+        childAspectRatio:
+            (MediaQuery.of(context).orientation == Orientation.portrait)
+                ? screenHeight / screenWidth
+                : screenWidth / screenHeight,
       ),
       itemCount: (size == null) ? widget.column * widget.row : size,
       itemBuilder: (BuildContext context, int index) {
@@ -42,7 +45,7 @@ class _TableWidgetState extends State<TableWidget> {
             controller: widget.listTextEditingController[index],
             decoration: InputDecoration(
               hintText: index.toString(),
-              contentPadding: const EdgeInsets.all(8.0),
+              contentPadding: EdgeInsets.all(8.0),
               focusedBorder: UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.transparent),
               ),
