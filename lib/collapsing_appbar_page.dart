@@ -21,10 +21,7 @@ class CollapsingAppBarPage extends StatelessWidget {
     final double statusBarHeight = MediaQuery.of(context).padding.top;
 
     return NestedScrollView(
-      headerSliverBuilder: (
-        BuildContext context,
-        bool innerBoxIsScrolled,
-      ) {
+      headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
         return <Widget>[
           SliverAppBar(
             title: text,
@@ -33,7 +30,7 @@ class CollapsingAppBarPage extends StatelessWidget {
             pinned: true,
             snap: true,
             forceElevated: true,
-            elevation: appBarElevation,
+            //elevation: appBarElevation,
             leading: IconButton(
               icon: Icon(Icons.arrow_back),
               onPressed: () => Navigator.pop(context),

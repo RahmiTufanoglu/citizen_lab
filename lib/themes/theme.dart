@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 final Color mainDarkColor = Color(0xFF404040);
-final Color mainLightColor = Color(0xFFF7F7F7);
+final Color mainLightColor = Color(0xFFE3E3E3);
 
 ThemeData appLightTheme() {
   final ThemeData theme = ThemeData.light();
@@ -21,7 +21,7 @@ ThemeData appLightTheme() {
       color: Colors.black,
     ),
     floatingActionButtonTheme: FloatingActionButtonThemeData(
-      elevation: 4.0,
+      elevation: 6.0,
       highlightElevation: 16.0,
       backgroundColor: Colors.white,
       foregroundColor: Colors.black,
@@ -39,8 +39,7 @@ ThemeData appLightTheme() {
     ),
     appBarTheme: AppBarTheme(
       color: Colors.white,
-      elevation: 8.0,
-      //elevation: 0.0,
+      elevation: 6.0,
       iconTheme: IconThemeData(
         color: mainDarkColor,
       ),
@@ -50,7 +49,7 @@ ThemeData appLightTheme() {
     ),
     cardTheme: CardTheme(
       color: Colors.white,
-      elevation: 8.0,
+      elevation: 6.0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.all(
           Radius.circular(8.0),
@@ -100,7 +99,7 @@ ThemeData appDarkTheme() {
       color: Colors.white,
     ),
     floatingActionButtonTheme: FloatingActionButtonThemeData(
-      elevation: 4.0,
+      elevation: 6.0,
       highlightElevation: 16.0,
       backgroundColor: Colors.white,
       foregroundColor: Colors.black,
@@ -118,8 +117,7 @@ ThemeData appDarkTheme() {
     ),
     appBarTheme: AppBarTheme(
       color: mainDarkColor,
-      elevation: 8.0,
-      //elevation: 0.0,
+      elevation: 6.0,
       iconTheme: IconThemeData(
         color: Colors.white,
       ),
@@ -129,7 +127,7 @@ ThemeData appDarkTheme() {
     ),
     cardTheme: CardTheme(
       color: mainDarkColor,
-      elevation: 8.0,
+      elevation: 6.0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.all(
           Radius.circular(8.0),

@@ -76,6 +76,7 @@ flutter:
    - assets/images/home_1.jpg
    - assets/images/home_2.jpg
    - assets/ic_launcher.png
+   - assets/app_logo.png
    - assets/images/background.jpg
    - assets/images/background_2.jpg
    - assets/images/background_3.jpg

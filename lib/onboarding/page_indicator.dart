@@ -26,6 +26,9 @@ class PageIndicator extends StatelessWidget {
   }
 
   Widget _indicator(bool isActive) {
+    final Color lightGreen = Color(0xFFBFE0D0);
+    final Color softBlue = Color(0xFF009FE3);
+
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -35,7 +38,7 @@ class PageIndicator extends StatelessWidget {
             borderRadius: BorderRadius.all(
               Radius.circular(16.0),
             ),
-            color: isActive ? Colors.green : Colors.grey,
+            color: isActive ? softBlue : lightGreen,
           ),
         ),
       ),

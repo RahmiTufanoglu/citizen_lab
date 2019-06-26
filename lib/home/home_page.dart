@@ -90,9 +90,9 @@ class _HomePageState extends State<HomePage>
       ),
       actions: <Widget>[
         Image(
-          height: 42.0,
-          width: 42.0,
-          image: AssetImage('assets/ic_launcher.png'),
+          height: 36.0,
+          width: 36.0,
+          image: AssetImage('assets/app_logo.png'),
         ),
         SizedBox(width: 16.0),
       ],

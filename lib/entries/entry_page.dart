@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:citizen_lab/bloc/NotesBloc.dart';
+import 'package:citizen_lab/bloc/notes_bloc.dart';
 import 'package:citizen_lab/custom_widgets/alarm_dialog.dart';
 import 'package:citizen_lab/custom_widgets/card_item.dart';
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';

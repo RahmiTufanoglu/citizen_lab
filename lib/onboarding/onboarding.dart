@@ -41,105 +41,132 @@ class _OnboardingPageState extends State<OnboardingPage>
 
   @override
   Widget build(BuildContext context) {
-    double screenHeight = MediaQuery.of(context).size.height;
-    double appBarHeight = AppBar().preferredSize.height;
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double appBarHeight = AppBar().preferredSize.height;
+    final double statusBarHeight = MediaQuery.of(context).padding.top;
+    final Color mainLightColor = Color(0xFFE9E9E9);
 
-    return MaterialApp(
-      home: Scaffold(
-        body: Stack(
-          fit: StackFit.expand,
-          children: <Widget>[
-            PageView.builder(
-              itemCount: pageList.length,
-              controller: _controller,
-              onPageChanged: (index) {
-                setState(() {
-                  _currentPage = index;
-                  if (_currentPage == pageList.length - 1) {
-                    _lastPage = true;
-                    _animationController.forward();
-                  } else {
-                    _lastPage = false;
-                    _animationController.reset();
-                  }
-                });
-              },
-              itemBuilder: (context, index) {
-                return AnimatedBuilder(
-                  animation: _controller,
-                  builder: (context, child) {
-                    final PageModel page = pageList[index];
-                    return Center(
-                      child: SingleChildScrollView(
-                        padding: const EdgeInsets.only(
+    return Scaffold(
+      body: Stack(
+        children: <Widget>[
+          PageView.builder(
+            itemCount: pageList.length,
+            controller: _controller,
+            onPageChanged: (index) {
+              setState(() {
+                _currentPage = index;
+                if (_currentPage == pageList.length - 1) {
+                  _lastPage = true;
+                  _animationController.forward();
+                } else {
+                  _lastPage = false;
+                  _animationController.reset();
+                }
+              });
+            },
+            itemBuilder: (context, index) {
+              return AnimatedBuilder(
+                animation: _controller,
+                builder: (context, child) {
+                  final PageModel page = pageList[index];
+                  return Stack(
+                    children: <Widget>[
+                      /*Positioned(
                           top: 16.0,
-                          bottom: 80.0,
-                          left: 16.0,
-                          right: 16.0,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: <Widget>[
-                            SizedBox(height: 42.0),
-                            Image.asset(
+                          right: 0.0,
+                          child: IconButton(
+                            icon: Icon(Icons.close),
+                            onPressed: () => _setNavigation(),
+                          ),
+                        ),*/
+                      Column(
+                        children: <Widget>[
+                          SizedBox(height: 16.0),
+                          Expanded(
+                            flex: 3,
+                            child: Image.asset(
                               page.image,
-                              height: (screenHeight / 2) - appBarHeight,
-                              fit: BoxFit.fill,
+                              scale: 2,
                             ),
-                            SizedBox(height: 42.0),
-                            Center(
-                              child: Text(
-                                page.title,
-                                style: TextStyle(
-                                  fontSize: 24.0,
-                                  fontWeight: FontWeight.bold,
+                          ),
+                          Expanded(
+                            flex: 4,
+                            child: Container(
+                              color: mainLightColor,
+                              child: ListView(
+                                padding: const EdgeInsets.only(
+                                  top: 36.0,
+                                  bottom: 80.0,
+                                  left: 36.0,
+                                  right: 36.0,
                                 ),
+                                children: <Widget>[
+                                  Text(
+                                    page.title,
+                                    style: TextStyle(
+                                      fontSize: 24.0,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                  SizedBox(height: 36.0),
+                                  Text(
+                                    page.content,
+                                    style: TextStyle(fontSize: 16.0),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                ],
                               ),
                             ),
-                            SizedBox(height: 8.0),
-                            Text(
-                              page.content,
-                              style: TextStyle(fontSize: 16.0),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    );
-                  },
-                );
-              },
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 32.0),
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                  width: 200.0,
-                  color: Colors.transparent,
-                  child: PageIndicator(
-                    currentIndex: _currentPage,
-                    pageCount: pageList.length,
-                  ),
+                    ],
+                  );
+                },
+              );
+            },
+          ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8.0),
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                width: 200.0,
+                color: Colors.transparent,
+                child: PageIndicator(
+                  currentIndex: _currentPage,
+                  pageCount: pageList.length,
                 ),
               ),
             ),
-            Positioned(
-              right: 16.0,
-              bottom: 16.0,
-              child: ScaleTransition(
-                scale: _scaleAnimation,
-                child: _lastPage
-                    ? FloatingActionButton(
-                        backgroundColor: Colors.white,
-                        foregroundColor: Colors.black,
-                        child: Icon(Icons.arrow_forward),
-                        onPressed: () => _setNavigation(),
-                      )
-                    : Container(),
-              ),
+          ),
+          Positioned(
+            top: statusBarHeight,
+            right: 0.0,
+            child: IconButton(
+              icon: Icon(Icons.close),
+              iconSize: 28.0,
+              onPressed: () => _setNavigation(),
             ),
-          ],
-        ),
+          ),
+          Positioned(
+            right: 16.0,
+            bottom: 16.0,
+            child: ScaleTransition(
+              scale: _scaleAnimation,
+              child: _lastPage
+                  ? FloatingActionButton(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.black,
+                      child: Icon(Icons.arrow_forward),
+                      onPressed: () => _setNavigation(),
+                    )
+                  : Container(),
+            ),
+          ),
+        ],
       ),
     );
   }

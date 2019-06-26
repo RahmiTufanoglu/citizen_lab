@@ -56,15 +56,7 @@ class _DetailPageState extends State<DetailPage> {
           width: double.infinity,
           child: Tooltip(
             message: widget.title,
-            child: ClipRect(
-              child: BackdropFilter(
-                child: Text(widget.title),
-                filter: ImageFilter.blur(
-                  sigmaX: 0.0,
-                  sigmaY: 0.0,
-                ),
-              ),
-            ),
+            child: Text(widget.title),
           ),
         ),
       ),
@@ -72,13 +64,13 @@ class _DetailPageState extends State<DetailPage> {
       body: ListView(
         children: <Widget>[
           _titleAndContent('Standort', widget.location),
-          _dividerWithPadding(),
+          //_dividerWithPadding(),
           _titleAndContent('Forschungsgegenstand', widget.researchSubject),
-          _dividerWithPadding(),
+          //_dividerWithPadding(),
           _titleAndContent('Aufgebaut/Eröffnet', widget.built),
-          _dividerWithPadding(),
+          //_dividerWithPadding(),
           _titleAndContent('Erweitert', widget.extended),
-          _dividerWithPadding(),
+          //_dividerWithPadding(),
           _titleAndContent('Ansprechpartner', widget.contactPerson),
         ],
       ),
@@ -86,26 +78,24 @@ class _DetailPageState extends State<DetailPage> {
   }
 
   Widget _titleAndContent(String title, String content) {
-    return Padding(
-      padding: const EdgeInsets.only(
-        left: 24.0,
-        right: 24.0,
-        top: 24.0,
-        bottom: 24.0,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            '$title:',
-            style: TextStyle(
-              fontSize: 16.0,
-              fontWeight: FontWeight.bold,
+    return Card(
+      margin: EdgeInsets.all(8.0),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              '$title:',
+              style: TextStyle(
+                fontSize: 16.0,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          SizedBox(height: 8.0),
-          Text(content),
-        ],
+            SizedBox(height: 8.0),
+            Text(content),
+          ],
+        ),
       ),
     );
   }

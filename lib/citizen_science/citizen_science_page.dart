@@ -224,7 +224,7 @@ class _CitizenSciencePageState extends State<CitizenSciencePage> {
           contentPadding: const EdgeInsets.all(16.0),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(
-              Radius.circular(16.0),
+              Radius.circular(8.0),
             ),
           ),
           children: <Widget>[
