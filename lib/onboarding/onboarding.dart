@@ -11,7 +11,7 @@ class OnboardingPage extends StatefulWidget {
 
 class _OnboardingPageState extends State<OnboardingPage>
     with TickerProviderStateMixin {
-  PageController _controller;
+  PageController _pageController;
   int _currentPage = 0;
   bool _lastPage = false;
   AnimationController _animationController;
@@ -19,23 +19,21 @@ class _OnboardingPageState extends State<OnboardingPage>
 
   @override
   void initState() {
-    _controller = PageController(initialPage: _currentPage);
+    _pageController = PageController(initialPage: _currentPage);
 
     _animationController = AnimationController(
       duration: Duration(milliseconds: 200),
       vsync: this,
     );
 
-    _scaleAnimation = Tween(begin: 0.0, end: 1.0).animate(
-      _animationController,
-    );
+    _scaleAnimation = Tween(begin: 0.0, end: 1.0).animate(_animationController);
 
     super.initState();
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _pageController.dispose();
     super.dispose();
   }
 
@@ -45,14 +43,14 @@ class _OnboardingPageState extends State<OnboardingPage>
     final double screenWidth = MediaQuery.of(context).size.width;
     final double appBarHeight = AppBar().preferredSize.height;
     final double statusBarHeight = MediaQuery.of(context).padding.top;
-    final Color mainLightColor = Color(0xFFE9E9E9);
+    final Color mainLightColor = Color(0xFFEDEDED);
 
     return Scaffold(
       body: Stack(
         children: <Widget>[
           PageView.builder(
             itemCount: pageList.length,
-            controller: _controller,
+            controller: _pageController,
             onPageChanged: (index) {
               setState(() {
                 _currentPage = index;
@@ -67,19 +65,11 @@ class _OnboardingPageState extends State<OnboardingPage>
             },
             itemBuilder: (context, index) {
               return AnimatedBuilder(
-                animation: _controller,
+                animation: _pageController,
                 builder: (context, child) {
                   final PageModel page = pageList[index];
                   return Stack(
                     children: <Widget>[
-                      /*Positioned(
-                          top: 16.0,
-                          right: 0.0,
-                          child: IconButton(
-                            icon: Icon(Icons.close),
-                            onPressed: () => _setNavigation(),
-                          ),
-                        ),*/
                       Column(
                         children: <Widget>[
                           SizedBox(height: 16.0),

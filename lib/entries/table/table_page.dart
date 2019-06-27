@@ -692,7 +692,7 @@ class _TablePageState extends State<TablePage> {
     return _csv.path;
   }
 
-  _saveNote() async {
+  Future<void> _saveNote() async {
     if (_titleEditingController.text.isNotEmpty &&
         _column != null &&
         _row != null) {

@@ -34,13 +34,17 @@ class NotesBloc implements BaseBloc {
   }
 
   add(Note note) {
-    DatabaseProvider().insertNote(note: note);
-    getNotes(random: note.projectRandom);
+    if (note != null) {
+      DatabaseProvider().insertNote(note: note);
+      getNotes(random: note.projectRandom);
+    }
   }
 
   update(Note note) {
-    DatabaseProvider().updateNote(newNote: note);
-    getNotes(random: note.projectRandom);
+    if (note != null) {
+      DatabaseProvider().updateNote(newNote: note);
+      getNotes(random: note.projectRandom);
+    }
   }
 
   delete(Note note) {

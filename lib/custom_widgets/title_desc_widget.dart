@@ -13,6 +13,8 @@ class TitleDescWidget extends StatefulWidget {
   final String createdAt;
   final titleEditingController;
   final descEditingController;
+  //final GestureTapCallback onWillPop;
+  final Function onWillPop;
 
   TitleDescWidget({
     this.key,
@@ -22,6 +24,7 @@ class TitleDescWidget extends StatefulWidget {
     @required this.createdAt,
     @required this.titleEditingController,
     @required this.descEditingController,
+    @required this.onWillPop,
   }) : super(key: key);
 
   @override
@@ -68,76 +71,79 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
     String pageTitle = widget.title;
 
     return SafeArea(
-      child: ListView(
-        padding: EdgeInsets.only(top: 8.0, bottom: 88.0),
-        children: <Widget>[
-          Container(
-            margin: EdgeInsets.all(8.0),
-            decoration: ShapeDecoration(
-              color: Colors.white,
-              shape: OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                borderSide: BorderSide(color: Colors.grey, width: 2.0),
+      child: WillPopScope(
+        onWillPop: () => widget.onWillPop(),
+        child: ListView(
+          padding: EdgeInsets.only(top: 8.0, bottom: 88.0),
+          children: <Widget>[
+            Container(
+              margin: EdgeInsets.all(8.0),
+              decoration: ShapeDecoration(
+                color: Colors.white,
+                shape: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                  borderSide: BorderSide(color: Colors.grey, width: 2.0),
+                ),
               ),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Text(
-                    _timeString,
-                    style: TextStyle(
-                      fontSize: 14.0,
-                      fontWeight: FontWeight.bold,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    Text(
+                      _timeString,
+                      style: TextStyle(
+                        fontSize: 14.0,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 8.0),
-                  Text(
-                    '$created: ${widget.createdAt}',
-                    style: TextStyle(
-                      fontSize: 14.0,
-                      fontStyle: FontStyle.italic,
+                    SizedBox(height: 8.0),
+                    Text(
+                      '$created: ${widget.createdAt}',
+                      style: TextStyle(
+                        fontSize: 14.0,
+                        fontStyle: FontStyle.italic,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-          Card(
-            margin: EdgeInsets.all(8.0),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  StreamBuilder(
-                    stream: widget.titleBloc.title,
-                    builder: (BuildContext context, AsyncSnapshot snapshot) {
-                      return _buildTextField(
-                        controller: widget.titleEditingController,
-                        maxLines: 2,
-                        maxLength: 50,
-                        hintText: titleHere,
-                        onChanged: widget.titleBloc.changeTitle,
-                        snapshot: snapshot,
-                      );
-                    },
-                  ),
-                  Divider(color: Colors.black),
-                  _buildTextField(
-                    controller: widget.descEditingController,
-                    maxLines: 20,
-                    maxLength: 500,
-                    hintText: contentHere,
-                    onChanged: null,
-                    snapshot: null,
-                  ),
-                ],
+            Card(
+              margin: EdgeInsets.all(8.0),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    StreamBuilder(
+                      stream: widget.titleBloc.title,
+                      builder: (BuildContext context, AsyncSnapshot snapshot) {
+                        return _buildTextField(
+                          controller: widget.titleEditingController,
+                          maxLines: 2,
+                          maxLength: 50,
+                          hintText: titleHere,
+                          onChanged: widget.titleBloc.changeTitle,
+                          snapshot: snapshot,
+                        );
+                      },
+                    ),
+                    Divider(color: Colors.black),
+                    _buildTextField(
+                      controller: widget.descEditingController,
+                      maxLines: 20,
+                      maxLength: 500,
+                      hintText: contentHere,
+                      onChanged: null,
+                      snapshot: null,
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

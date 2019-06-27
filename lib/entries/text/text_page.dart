@@ -109,6 +109,7 @@ class _TextPageState extends State<TextPage> {
         createdAt: _createdAt,
         titleEditingController: _titleEditingController,
         descEditingController: _descEditingController,
+        onWillPop: _saveNote,
       ),
       floatingActionButton: _buildFabs(),
     );
@@ -218,97 +219,94 @@ class _TextPageState extends State<TextPage> {
     final contentHere = 'Inhalt hier';
     final String plsEnterATitle = 'Bitte einen Titel eingeben';
 
-    return Container(
-      color: Colors.white,
-      child: SafeArea(
-        child: WillPopScope(
-          onWillPop: () => _saveNote(),
-          child: SingleChildScrollView(
-            padding: EdgeInsets.only(top: 8.0, bottom: 88.0),
-            child: Column(
-              children: <Widget>[
-                Container(
-                  margin: EdgeInsets.all(8.0),
-                  decoration: ShapeDecoration(
-                    shape: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                      borderSide: BorderSide(color: Colors.grey),
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: <Widget>[
-                        Text(
-                          _timeString,
-                          //_timerProvider.getTime,
-                          style: TextStyle(
-                            fontSize: 14.0,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: 8.0),
-                        Text(
-                          '$created: $_createdAt',
-                          style: TextStyle(
-                            fontSize: 14.0,
-                            fontStyle: FontStyle.italic,
-                          ),
-                        ),
-                      ],
-                    ),
+    return SafeArea(
+      child: WillPopScope(
+        onWillPop: () => _saveNote(),
+        child: SingleChildScrollView(
+          padding: EdgeInsets.only(top: 8.0, bottom: 88.0),
+          child: Column(
+            children: <Widget>[
+              Container(
+                margin: EdgeInsets.all(8.0),
+                decoration: ShapeDecoration(
+                  shape: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                    borderSide: BorderSide(color: Colors.grey),
                   ),
                 ),
-                SizedBox(height: 8.0),
-                Padding(
+                child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
-                      TextField(
-                        controller: _titleEditingController,
-                        keyboardType: TextInputType.text,
-                        maxLines: 2,
+                      Text(
+                        _timeString,
+                        //_timerProvider.getTime,
                         style: TextStyle(
-                          fontSize: 16.0,
+                          fontSize: 14.0,
                           fontWeight: FontWeight.bold,
                         ),
-                        onChanged: (value) {
-                          _title = value;
-                        },
-                        decoration: InputDecoration(
-                          hintText: '$titleHere.',
-                          errorText: _getErrorText(),
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.transparent),
-                          ),
-                          focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.transparent),
-                          ),
-                          //errorText: _titleValidate ? plsEnterATitle : null,
-                        ),
-                        //onChanged: (String changed) => _title = changed,
-                        //validator: (text) => text.isEmpty ? plsEnterATitle : null,
                       ),
-                      SizedBox(height: 42.0),
-                      TextField(
-                        controller: _descEditingController,
-                        keyboardType: TextInputType.text,
-                        maxLines: 20,
-                        style: TextStyle(fontSize: 16.0),
-                        decoration: InputDecoration(
-                          hintText: '$contentHere.',
-                          focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.transparent),
-                          ),
+                      SizedBox(height: 8.0),
+                      Text(
+                        '$created: $_createdAt',
+                        style: TextStyle(
+                          fontSize: 14.0,
+                          fontStyle: FontStyle.italic,
                         ),
                       ),
                     ],
                   ),
                 ),
-              ],
-            ),
+              ),
+              SizedBox(height: 8.0),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    TextField(
+                      controller: _titleEditingController,
+                      keyboardType: TextInputType.text,
+                      maxLines: 2,
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      onChanged: (value) {
+                        _title = value;
+                      },
+                      decoration: InputDecoration(
+                        hintText: '$titleHere.',
+                        errorText: _getErrorText(),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.transparent),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.transparent),
+                        ),
+                        //errorText: _titleValidate ? plsEnterATitle : null,
+                      ),
+                      //onChanged: (String changed) => _title = changed,
+                      //validator: (text) => text.isEmpty ? plsEnterATitle : null,
+                    ),
+                    SizedBox(height: 42.0),
+                    TextField(
+                      controller: _descEditingController,
+                      keyboardType: TextInputType.text,
+                      maxLines: 20,
+                      style: TextStyle(fontSize: 16.0),
+                      decoration: InputDecoration(
+                        hintText: '$contentHere.',
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.transparent),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -337,11 +335,11 @@ class _TextPageState extends State<TextPage> {
       } else {
         _updateNote(widget.note);
       }
-      //Navigator.pop(context, true);
     } else {
+      print('ASDASD');
       _scaffoldKey.currentState.showSnackBar(
         _buildSnackBarWithButton(
-          text: 'Bitte einen Titel eingeben\nNotiz abbrechen?',
+          text: 'Bitte einen Titel eingeben.\nNotiz abbrechen?',
           onPressed: () => Navigator.pop(context),
         ),
       );
@@ -425,15 +423,15 @@ class _TextPageState extends State<TextPage> {
   void _openModalBottomSheet() {
     List<ExperimentItem> experimentItems = [
       ExperimentItem('', Icons.keyboard_arrow_down),
-      ExperimentItem('AAA', Icons.add),
-      ExperimentItem('BBB', Icons.add),
-      ExperimentItem('CCC', Icons.add),
-      ExperimentItem('DDD', Icons.add),
-      ExperimentItem('EEE', Icons.add),
-      ExperimentItem('FFF', Icons.add),
-      ExperimentItem('GGG', Icons.add),
-      ExperimentItem('HHH', Icons.add),
-      ExperimentItem('III', Icons.add),
+      ExperimentItem('In diesem Verusch wird ', Icons.add),
+      ExperimentItem('Ziel des Versuchs ist ', Icons.add),
+      ExperimentItem('Der Versuchsstand wurde nach ', Icons.add),
+      ExperimentItem('Der Versuch wurde gemäß Versuchanleitung ', Icons.add),
+      ExperimentItem('In diesem Auswertungsteil wird ', Icons.add),
+      ExperimentItem('', Icons.add),
+      ExperimentItem('', Icons.add),
+      ExperimentItem('', Icons.add),
+      ExperimentItem('', Icons.add),
     ];
 
     List<Widget> experimentItemsWidgets = [];
