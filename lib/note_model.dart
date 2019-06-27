@@ -11,6 +11,7 @@ class NoteModel with ChangeNotifier implements NoteBase {
   String content;
   String dateCreated;
   String dateEdited;
+  int edited;
 
   @override
   void saveNote(Note note) {
@@ -22,6 +23,7 @@ class NoteModel with ChangeNotifier implements NoteBase {
     this.content = note.content;
     this.dateCreated = note.dateCreated;
     this.dateEdited = note.dateEdited;
+    this.edited = note.edited;
   }
 
   @override
@@ -34,6 +36,7 @@ class NoteModel with ChangeNotifier implements NoteBase {
     this.content = note.content;
     this.dateCreated = note.dateCreated;
     this.dateEdited = note.dateEdited;
+    this.edited = note.edited;
   }
 
   @override
@@ -46,6 +49,7 @@ class NoteModel with ChangeNotifier implements NoteBase {
     this.content = note.content;
     this.dateCreated = note.dateCreated;
     this.dateEdited = note.dateEdited;
+    this.edited = note.edited;
   }
 }
 

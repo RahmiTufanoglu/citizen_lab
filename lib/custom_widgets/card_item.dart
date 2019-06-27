@@ -1,6 +1,6 @@
+import 'package:citizen_lab/entries/note.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:citizen_lab/entries/note.dart';
 
 class CardItem extends StatelessWidget {
   final Note note;
@@ -66,7 +66,7 @@ class CardItem extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 14,
+                            fontSize: 14.0,
                             fontWeight: FontWeight.bold,
                           ),
                         ),

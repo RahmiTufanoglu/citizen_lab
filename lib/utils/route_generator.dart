@@ -155,7 +155,7 @@ class RouteGenerator {
           route = routeOnboardingPage;
           break;
         case aboutPage:
-          page = AboutPage(
+          page = SimpleInfoPage(
             title: args['title'],
             content: args['content'],
           );

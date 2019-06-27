@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:citizen_lab/projects/project.dart';
+import 'package:flutter/material.dart';
 
 class ProjectItem extends StatelessWidget {
   final Project project;
@@ -42,7 +42,7 @@ class ProjectItem extends StatelessWidget {
               Text(
                 'Erstellt am: ${project.dateCreated}',
                 style: TextStyle(
-                  fontSize: 12.0,
+                  fontSize: 14.0,
                   fontStyle: FontStyle.italic,
                 ),
               ),

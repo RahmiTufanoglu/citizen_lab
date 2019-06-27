@@ -141,7 +141,7 @@ class _HomePageState extends State<HomePage>
             _buildDrawerItem(
               context: context,
               icon: Icons.border_color,
-              title: 'Projekt erstellen',
+              title: 'Experiment erstellen',
               onTap: () {
                 Navigator.pushNamed(
                   context,
@@ -152,7 +152,7 @@ class _HomePageState extends State<HomePage>
             _buildDrawerItem(
               context: context,
               icon: Icons.assignment,
-              title: 'Projekt öffnen',
+              title: 'Experiment öffnen',
               onTap: () {
                 Navigator.pushNamed(
                   context,
@@ -274,6 +274,8 @@ class _HomePageState extends State<HomePage>
 
   Widget _buildBody() {
     double height = MediaQuery.of(context).size.height - kToolbarHeight;
+    final Color lightGreen = Color(0xFFBFE0D0);
+    final Color softBlue = Color(0xFF009FE3);
 
     return SafeArea(
       child: WillPopScope(
@@ -289,8 +291,10 @@ class _HomePageState extends State<HomePage>
                     children: <Widget>[
                       Expanded(
                         child: CardImageWithText(
-                          asset: 'assets/images/home_1.jpg',
-                          title: 'Projekt erstellen',
+                          asset: 'assets/images/background6.jpg',
+                          title: 'Experiment erstellen',
+                          gradientColor1: lightGreen,
+                          gradientColor2: softBlue,
                           fontColor: Colors.white,
                           onTap: () {
                             Navigator.pushNamed(
@@ -303,8 +307,10 @@ class _HomePageState extends State<HomePage>
                       SizedBox(height: 8.0),
                       Expanded(
                         child: CardImageWithText(
-                          asset: 'assets/images/home_2.jpg',
-                          title: 'Projekt öffnen',
+                          asset: 'assets/images/sain_background_2.png',
+                          title: 'Experiment öffnen',
+                          gradientColor1: softBlue,
+                          gradientColor2: lightGreen,
                           fontColor: Colors.white,
                           onTap: () {
                             return Navigator.pushNamed(

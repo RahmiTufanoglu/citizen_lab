@@ -552,6 +552,7 @@ class _ImagePageState extends State<ImagePage> {
           _image.path,
           _createdAt,
           dateFormatted(),
+          0,
         );
         //operation = 'save';
         //await _noteDb.insertNote(note: newNote);
@@ -583,6 +584,7 @@ class _ImagePageState extends State<ImagePage> {
       DatabaseProvider.columnNoteContent: _image.path,
       DatabaseProvider.columnNoteCreatedAt: note.dateCreated,
       DatabaseProvider.columnNoteUpdatedAt: dateFormatted(),
+      DatabaseProvider.columnNoteEdited: 1,
     });
     //await _noteDb.updateNote(newNote: newNote);
     Navigator.pop(context, newNote);
@@ -770,39 +772,47 @@ class _ImagePageState extends State<ImagePage> {
     @required GestureTapCallback onPressed,
   }) {
     return SnackBar(
-      backgroundColor: Colors.black.withOpacity(0.5),
+      backgroundColor: Colors.black.withOpacity(0.8),
       duration: Duration(seconds: 3),
       content: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          Text(
-            text,
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Spacer(flex: 1),
-          RaisedButton(
-            child: Text('Nein'),
-            color: Colors.green,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(
-                Radius.circular(8.0),
+          Expanded(
+            flex: 2,
+            child: Text(
+              text,
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
               ),
             ),
-            onPressed: () => _scaffoldKey.currentState.hideCurrentSnackBar(),
           ),
-          Spacer(flex: 1),
-          RaisedButton(
-            child: Text('Ja'),
-            color: Colors.red,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(
-                Radius.circular(8.0),
+          SizedBox(width: 8.0),
+          Expanded(
+            flex: 1,
+            child: RaisedButton(
+              child: Text('Nein'),
+              color: Colors.green,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(8.0),
+                ),
               ),
+              onPressed: () => _scaffoldKey.currentState.hideCurrentSnackBar(),
             ),
-            onPressed: onPressed,
+          ),
+          SizedBox(width: 8.0),
+          Expanded(
+            flex: 1,
+            child: RaisedButton(
+              child: Text('Ja'),
+              color: Colors.red,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(8.0),
+                ),
+              ),
+              onPressed: onPressed,
+            ),
           ),
         ],
       ),

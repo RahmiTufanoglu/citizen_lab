@@ -328,6 +328,7 @@ class _TextPageState extends State<TextPage> {
           '',
           _createdAt,
           dateFormatted(),
+          0,
         );
         //await _noteDb.insertNote(note: newNote);
         Navigator.pop(context, note);
@@ -336,7 +337,6 @@ class _TextPageState extends State<TextPage> {
         _updateNote(widget.note);
       }
     } else {
-      print('ASDASD');
       _scaffoldKey.currentState.showSnackBar(
         _buildSnackBarWithButton(
           text: 'Bitte einen Titel eingeben.\nNotiz abbrechen?',
@@ -357,6 +357,7 @@ class _TextPageState extends State<TextPage> {
       DatabaseProvider.columnNoteContent: '',
       DatabaseProvider.columnNoteCreatedAt: note.dateCreated,
       DatabaseProvider.columnNoteUpdatedAt: dateFormatted(),
+      DatabaseProvider.columnNoteEdited: 1,
     });
     //await _noteDb.updateNote(newNote: newNote);
     Navigator.pop(context, newNote);
@@ -425,13 +426,19 @@ class _TextPageState extends State<TextPage> {
       ExperimentItem('', Icons.keyboard_arrow_down),
       ExperimentItem('In diesem Verusch wird ', Icons.add),
       ExperimentItem('Ziel des Versuchs ist ', Icons.add),
+      ExperimentItem('Ich denke, dass ', Icons.add),
+      ExperimentItem('Es könnte so ein, dass ', Icons.add),
+      ExperimentItem('Wahrscheinlich könnte ', Icons.add),
+      ExperimentItem('Man beobachtet, dass ', Icons.add),
+      ExperimentItem('Man sieht, dass ', Icons.add),
+      ExperimentItem('Man riecht, dass ', Icons.add),
+      ExperimentItem('Am Reagenzglas kann man erfühlen, dass ', Icons.add),
+      ExperimentItem('In diesem Auswertungsteil wird ', Icons.add),
       ExperimentItem('Der Versuchsstand wurde nach ', Icons.add),
       ExperimentItem('Der Versuch wurde gemäß Versuchanleitung ', Icons.add),
-      ExperimentItem('In diesem Auswertungsteil wird ', Icons.add),
-      ExperimentItem('', Icons.add),
-      ExperimentItem('', Icons.add),
-      ExperimentItem('', Icons.add),
-      ExperimentItem('', Icons.add),
+      ExperimentItem('Das ist geschehen, weil ', Icons.add),
+      ExperimentItem('Die Erklärung dafür ist, dass ', Icons.add),
+      ExperimentItem('Der Grund dafür ist, dass ', Icons.add),
     ];
 
     List<Widget> experimentItemsWidgets = [];
@@ -524,39 +531,47 @@ class _TextPageState extends State<TextPage> {
     @required GestureTapCallback onPressed,
   }) {
     return SnackBar(
-      backgroundColor: Colors.black.withOpacity(0.5),
+      backgroundColor: Colors.black.withOpacity(0.8),
       duration: Duration(seconds: 3),
       content: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          Text(
-            text,
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Spacer(flex: 1),
-          RaisedButton(
-            color: Colors.green,
-            child: Text('Nein'),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(
-                Radius.circular(8.0),
+          Expanded(
+            flex: 2,
+            child: Text(
+              text,
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
               ),
             ),
-            onPressed: () => _scaffoldKey.currentState.hideCurrentSnackBar(),
           ),
-          Spacer(flex: 1),
-          RaisedButton(
-            color: Colors.red,
-            child: Text('Ja'),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(
-                Radius.circular(8.0),
+          SizedBox(width: 8.0),
+          Expanded(
+            flex: 1,
+            child: RaisedButton(
+              color: Colors.green,
+              child: Text('Nein'),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(8.0),
+                ),
               ),
+              onPressed: () => _scaffoldKey.currentState.hideCurrentSnackBar(),
             ),
-            onPressed: onPressed,
+          ),
+          SizedBox(width: 8.0),
+          Expanded(
+            flex: 1,
+            child: RaisedButton(
+              color: Colors.red,
+              child: Text('Ja'),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(8.0),
+                ),
+              ),
+              onPressed: onPressed,
+            ),
           ),
         ],
       ),

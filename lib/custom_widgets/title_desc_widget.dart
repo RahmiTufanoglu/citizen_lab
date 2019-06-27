@@ -79,7 +79,6 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
             Container(
               margin: EdgeInsets.all(8.0),
               decoration: ShapeDecoration(
-                color: Colors.white,
                 shape: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(8.0)),
                   borderSide: BorderSide(color: Colors.grey, width: 2.0),

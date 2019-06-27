@@ -9,6 +9,7 @@ class Note {
   String content;
   String dateCreated;
   String dateEdited;
+  int edited;
 
   Note(
     this.projectRandom,
@@ -18,6 +19,7 @@ class Note {
     this.content,
     this.dateCreated,
     this.dateEdited,
+    this.edited,
   );
 
   Note.withId(
@@ -29,6 +31,7 @@ class Note {
     this.content,
     this.dateCreated,
     this.dateEdited,
+    this.edited,
   );
 
   Note.map(dynamic obj) {
@@ -40,6 +43,7 @@ class Note {
     this.content = obj[DatabaseProvider.columnNoteContent];
     this.dateCreated = obj[DatabaseProvider.columnNoteCreatedAt];
     this.dateEdited = obj[DatabaseProvider.columnNoteUpdatedAt];
+    this.edited = obj[DatabaseProvider.columnNoteEdited];
   }
 
   Map<String, dynamic> toMap() {
@@ -55,6 +59,7 @@ class Note {
     map[DatabaseProvider.columnNoteContent] = content;
     map[DatabaseProvider.columnNoteCreatedAt] = dateCreated;
     map[DatabaseProvider.columnNoteUpdatedAt] = dateEdited;
+    map[DatabaseProvider.columnNoteEdited] = edited;
 
     return map;
   }
@@ -68,6 +73,7 @@ class Note {
     this.content = map[DatabaseProvider.columnNoteContent];
     this.dateCreated = map[DatabaseProvider.columnNoteCreatedAt];
     this.dateEdited = map[DatabaseProvider.columnNoteUpdatedAt];
+    this.edited = map[DatabaseProvider.columnNoteEdited];
   }
 
   /*factory Note.fromMap(Map<String, dynamic> map) => Note.withId(

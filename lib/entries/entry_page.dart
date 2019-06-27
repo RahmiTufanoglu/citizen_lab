@@ -52,13 +52,28 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
 
   NotesBloc _notesBloc;
   ThemeChangerProvider _themeChanger;
-  List<Note> _noteList = [];
+
+  //List<Note> _noteList = [];
   String _title;
   String _createdAt;
 
+  AsyncSnapshot _snapshot;
+  List<Note> _noteList = [];
+
+  String createdAtDesc = 'created_at DESC';
+  String createdAtAsc = 'created_at ASC';
+  String titleDesc = 'title DESC';
+  String titleAsc = 'title ASC';
+  String order = 'created_at DESC';
+
   @override
   void initState() {
-    _notesBloc = NotesBloc(random: widget.project.random);
+    _notesBloc = NotesBloc(
+      random: widget.project.random,
+      order: order,
+    );
+
+    //_loadNoteList();
 
     _titleProjectController.text = widget.project.title;
     _descProjectController.text = widget.project.description;
@@ -95,6 +110,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
       body: StreamBuilder(
         stream: _notesBloc.notes,
         builder: (context, snapshot) {
+          _snapshot = snapshot;
           return _buildBody(snapshot);
         },
       ),
@@ -155,7 +171,8 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   }
 
   Future<void> _backToHomePage() async {
-    final String cancel = 'Notiz abbrechen und zur Hauptseite zurückkehren?';
+    final String cancel =
+        'Experiment abbrechen und zur Hauptseite zurückkehren?';
 
     await showDialog(
       context: context,
@@ -191,6 +208,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
                 itemBuilder: (context, index) {
                   //final note = _noteList[index];
                   final note = snapshot.data[index];
+                  _noteList.add(note);
                   final key = Key('${note.hashCode}');
                   return Dismissible(
                     key: key,
@@ -398,7 +416,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
     await _projectDb.updateProject(newProject: updatedProject);
   }
 
-  _openNotePage(String type, [Note note]) async {
+  Future<void> _openNotePage(String type, [Note note]) async {
     switch (type) {
       case 'Text':
         final result = await Navigator.pushNamed(
@@ -411,19 +429,10 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
           },
         ) as Note;
 
-        bool exits = false;
-        //if (result != null && result) _loadNoteList();
-        for (int i = 0; i < _noteList.length; i++) {
-          if (_noteList[i].id == result.id) {
-            exits = true;
-          }
-        }
+        bool exists;
+        (result.edited == 0) ? exists = false : exists = true;
 
-        if (!exits) {
-          _notesBloc.add(result);
-        } else {
-          _notesBloc.update(result);
-        }
+        (!exists) ? _notesBloc.add(result) : _notesBloc.update(result);
         break;
       case 'Tabelle':
         final result = await Navigator.pushNamed(
@@ -436,18 +445,10 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
           },
         ) as Note;
 
-        bool exits = false;
-        for (int i = 0; i < _noteList.length; i++) {
-          if (_noteList[i].id == result.id) {
-            exits = true;
-          }
-        }
+        bool exists;
+        (result.edited == 0) ? exists = false : exists = true;
 
-        if (!exits) {
-          _notesBloc.add(result);
-        } else {
-          _notesBloc.update(result);
-        }
+        (!exists) ? _notesBloc.add(result) : _notesBloc.update(result);
         break;
       case 'Bild':
         final result = await Navigator.pushNamed(
@@ -460,18 +461,10 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
           },
         ) as Note;
 
-        bool exits = false;
-        for (int i = 0; i < _noteList.length; i++) {
-          if (_noteList[i].id == result.id) {
-            exits = true;
-          }
-        }
+        bool exists;
+        (result.edited == 0) ? exists = false : exists = true;
 
-        if (!exits) {
-          _notesBloc.add(result);
-        } else {
-          _notesBloc.update(result);
-        }
+        (!exists) ? _notesBloc.add(result) : _notesBloc.update(result);
         break;
       case 'Wetter':
         final result = await Navigator.pushNamed(
@@ -482,18 +475,10 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
           },
         ) as Note;
 
-        bool exits = false;
-        for (int i = 0; i < _noteList.length; i++) {
-          if (_noteList[i].id == result.id) {
-            exits = true;
-          }
-        }
+        bool exists;
+        (result.edited == 0) ? exists = false : exists = true;
 
-        if (!exits) {
-          _notesBloc.add(result);
-        } else {
-          _notesBloc.update(result);
-        }
+        (!exists) ? _notesBloc.add(result) : _notesBloc.update(result);
         break;
       case 'Verlinkung':
         final result = await Navigator.pushNamed(
@@ -506,18 +491,10 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
           },
         ) as Note;
 
-        bool exits = false;
-        for (int i = 0; i < _noteList.length; i++) {
-          if (_noteList[i].id == result.id) {
-            exits = true;
-          }
-        }
+        bool exists;
+        (result.edited == 0) ? exists = false : exists = true;
 
-        if (!exits) {
-          _notesBloc.add(result);
-        } else {
-          _notesBloc.update(result);
-        }
+        (!exists) ? _notesBloc.add(result) : _notesBloc.update(result);
         break;
       default:
         break;
@@ -532,9 +509,9 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
     }*/
     //List notes = await _noteDb.getAllNotes();
 
+    //List notes = await _noteDb.getNotesOfProject(random: widget.project.random);
     //List notes = await _noteDb.getAllNotes();
     //List notes = await _noteDb.getNotesOfProject(id: widget.projectTitle);
-    List notes = await _noteDb.getNotesOfProject(random: widget.project.random);
     //List notes = await _noteDb.getNotesOfProject(id: widget.project.id);
 
     //List notes = await _noteDb.getNote(id: widget.projectTitle);
@@ -542,13 +519,17 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
     //List notes = await _noteDb.getNotesOfProject(id: 0);
     //List notes = await _noteDb.getAllNotes(title: widget.projectTitle);
 
+    //List notes = _notesBloc.getNotes(random: widget.project.random);
+
     /*notes.forEach((note) {
       setState(() {
-        _noteList.insert(0, Note.map(note));
+        //_noteList.insert(0, Note.map(note));
+        //_noteList.insert(0, note[notes]);
       });
     });*/
 
-    _choiceSortOption(sort_by_release_date_desc);
+    //_choiceSortOption(sort_by_release_date_desc);
+    _choiceSortOption(sort_by_release_date_asc);
   }
 
   void _deleteNote(AsyncSnapshot snapshot, int index) async {
@@ -585,10 +566,48 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
             icon: Icons.warning,
             onTap: () {
               if (_noteList.isNotEmpty) {
+                //final note = snapshot.data[index];
+
+                for (int i = 0; i < _noteList.length; i++) {}
+
+                _notesBloc.deleteAllNotesFromProject(
+                  //widget.note,
+                  //_snapshot.data[index],
+                  _noteList,
+                  widget.project.random,
+                );
+
+                _scaffoldKey.currentState.showSnackBar(
+                  _buildSnackBar(text: list_deleted),
+                );
+              } else {
+                _scaffoldKey.currentState.showSnackBar(
+                  _buildSnackBar(text: nothing_to_delete),
+                );
+              }
+
+              Navigator.pop(context);
+            },
+          ),
+    );
+  }
+
+  Future<bool> _deleteAllNotes2(BuildContext contextSnackBar) async {
+    final String doYouWantToDeleteAllNotes =
+        'Wollen sie alle Einträge löschen?';
+
+    return await showDialog(
+      context: context,
+      builder: (context) => AlarmDialog(
+            text: doYouWantToDeleteAllNotes,
+            icon: Icons.warning,
+            /*onTap: () {
+              if (_noteList.isNotEmpty) {
                 //_noteDb.deleteAllNotes();
 
-                _noteDb.deleteAllNotesFromProject(
-                    random: widget.project.random);
+                /*_noteDb.deleteAllNotesFromProject(
+                    random: widget.project.random);*/
+                //_notesBloc.deleteAllNotesFromProject(widget.project.random);
 
                 _scaffoldKey.currentState.showSnackBar(
                   _buildSnackBar(text: list_deleted),
@@ -604,7 +623,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
               });
 
               Navigator.pop(context);
-            },
+            },*/
           ),
     );
   }
@@ -697,33 +716,49 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   void _choiceSortOption(String choice) {
     switch (choice) {
       case sort_by_title_arc:
-        setState(() {
+        /*setState(() {
           _noteList.sort(
             (Note a, Note b) =>
                 a.title.toLowerCase().compareTo(b.title.toLowerCase()),
           );
+        });*/
+        //_notesBloc.sortByTitleArc();
+        setState(() {
+          order = 'created_at DESC';
         });
         break;
       case sort_by_title_desc:
-        setState(() {
+        /*setState(() {
           _noteList.sort(
             (Note a, Note b) =>
                 b.title.toLowerCase().compareTo(a.title.toLowerCase()),
           );
+        });*/
+        //_notesBloc.sortByTitleDesc();
+        setState(() {
+          order = 'created_at ASC';
         });
         break;
       case sort_by_release_date_asc:
-        setState(() {
+        /*setState(() {
           _noteList.sort(
             (Note a, Note b) => a.dateCreated.compareTo(b.dateCreated),
           );
+        });*/
+        //_notesBloc.sortByReleaseDateArc();
+        setState(() {
+          order = 'title DESC';
         });
         break;
       case sort_by_release_date_desc:
-        setState(() {
+        /*setState(() {
           _noteList.sort(
             (Note a, Note b) => b.dateCreated.compareTo(a.dateCreated),
           );
+        });*/
+        //_notesBloc.sortByReleaseDateDesc();
+        setState(() {
+          order = 'title DESC';
         });
         break;
       default:

@@ -30,7 +30,7 @@ Das Speichern einer Notiz erfolgt, durch Drücken des Pfeil-Icons in der AppBar 
 """;
 
 final String pageFive = """
-Zu Beginn macht es durchaus Sinn sich mit den restlichen Funktionaliäten der App vertraut zu machen.\n
+Zu Beginn macht es durchaus Sinn sich mit den Funktionaliäten der App vertraut zu machen.\n
 Die App nutzt die Vorteile der Gestensteuerung, wie z.B. das Löschen von Notiz-Karten durch ein Wischen nach rechts uvm. Am besten selbst ausprobieren.\n
 Viel Spaß mit der App.
 """;

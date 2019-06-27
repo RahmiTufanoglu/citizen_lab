@@ -2,22 +2,22 @@ import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class AboutPage extends StatefulWidget {
+class SimpleInfoPage extends StatefulWidget {
   final Key key;
   final String title;
   final String content;
 
-  AboutPage({
+  SimpleInfoPage({
     this.key,
     @required this.title,
     @required this.content,
   }) : super(key: key);
 
   @override
-  _AboutPageState createState() => _AboutPageState();
+  _SimpleInfoPageState createState() => _SimpleInfoPageState();
 }
 
-class _AboutPageState extends State<AboutPage> {
+class _SimpleInfoPageState extends State<SimpleInfoPage> {
   ThemeChangerProvider _themeChanger;
 
   @override

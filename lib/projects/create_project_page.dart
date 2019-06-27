@@ -10,8 +10,6 @@ import 'package:citizen_lab/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'create_project_info_page_data.dart';
-
 class CreateProjectPage extends StatefulWidget {
   @override
   _CreateProjectPageState createState() => _CreateProjectPageState();
@@ -35,7 +33,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
     _descEditingController.addListener(() => _checkTextsAreNotEmpty());
   }
 
-  _checkTextsAreNotEmpty() {
+  void _checkTextsAreNotEmpty() {
     setState(() {
       if (_titleEditingController.text.isNotEmpty &&
           _descEditingController.text.isNotEmpty) {
@@ -94,7 +92,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
           width: double.infinity,
           child: Tooltip(
             message: create_project,
-            child: Text(create_project),
+            child: Text('Experiment erstellen'),
           ),
         ),
       ),
@@ -108,16 +106,20 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
   }
 
   void _setInfoPage() {
-    Navigator.pushNamed(
+    /*Navigator.pushNamed(
       context,
       RouteGenerator.infoPage,
       arguments: {
         'title': 'Text-Info',
-        'tabLength': 2,
+        'tabLength': 1,
         'tabs': createProjectTabList,
         'tabChildren': createProjectSingleChildScrollViewList,
       },
-    );
+    );*/
+    Navigator.pushNamed(context, RouteGenerator.aboutPage, arguments: {
+      'title': 'Das Labornotizbuch',
+      'content': lab_notebook,
+    });
   }
 
   Widget _buildBody(BuildContext context) {

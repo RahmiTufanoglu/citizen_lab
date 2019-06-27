@@ -56,7 +56,7 @@ class _ProjectPageState extends State<ProjectPage> {
           width: double.infinity,
           child: Tooltip(
             message: '',
-            child: Text('Projekte'),
+            child: Text('Experimente'),
           ),
         ),
       ),

@@ -16,11 +16,15 @@ class CardImageWithText extends StatelessWidget {
   final Color shadow2Color;
   final Color fontColor;
   final GestureTapCallback onTap;
+  final Color gradientColor1;
+  final Color gradientColor2;
 
   CardImageWithText({
     @required this.asset,
     @required this.title,
     @required this.onTap,
+    @required this.gradientColor1,
+    @required this.gradientColor2,
     this.fontSize = 36.0,
     this.fontColor = Colors.black,
     this.shadow1Color = Colors.black,
@@ -54,32 +58,50 @@ class CardImageWithText extends StatelessWidget {
                 image: AssetImage(asset),
                 fit: BoxFit.fill,
               ),
+              /*gradient: RadialGradient(
+                colors: [
+                  Colors.white,
+                  gradientColor1,
+                  gradientColor2,
+                ],
+              ),*/
             ),
             child: Center(
-              child: Text(
-                title,
-                style: TextStyle(
-                  color: fontColor,
-                  fontSize: fontSize,
-                  shadows: <Shadow>[
-                    Shadow(
-                      offset: Offset(
-                        shadow1OffsetX,
-                        shadow1OffsetY,
+              child: ClipRect(
+                //child: BackdropFilter(
+                //filter: ImageFilter.blur(sigmaX: 0.0, sigmaY: 0.0),
+                child: Container(
+                  width: double.infinity,
+                  height: 50.0,
+                  child: Center(
+                    child: Text(
+                      title,
+                      style: TextStyle(
+                        color: fontColor,
+                        fontSize: fontSize,
+                        shadows: <Shadow>[
+                          Shadow(
+                            offset: Offset(
+                              shadow1OffsetX,
+                              shadow1OffsetY,
+                            ),
+                            blurRadius: shadow1Blur,
+                            color: shadow1Color,
+                          ),
+                          Shadow(
+                            offset: Offset(
+                              shadow2OffsetX,
+                              shadow2OffsetY,
+                            ),
+                            blurRadius: shadow2Blur,
+                            color: shadow2Color,
+                          ),
+                        ],
                       ),
-                      blurRadius: shadow1Blur,
-                      color: shadow1Color,
                     ),
-                    Shadow(
-                      offset: Offset(
-                        shadow2OffsetX,
-                        shadow2OffsetY,
-                      ),
-                      blurRadius: shadow2Blur,
-                      color: shadow2Color,
-                    ),
-                  ],
+                  ),
                 ),
+                //),
               ),
             ),
           ),

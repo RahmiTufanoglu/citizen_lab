@@ -37,6 +37,7 @@ class DatabaseProvider {
   static final String columnNoteTableRow = 'table_row';
   static final String columnNoteCreatedAt = 'created_at';
   static final String columnNoteUpdatedAt = 'updated_at';
+  static final String columnNoteEdited = 'edited';
 
   static final String createProjectTable = 'CREATE TABLE $projectTable('
       '$columnProjectId INTEGER PRIMARY KEY AUTOINCREMENT,'
@@ -57,7 +58,8 @@ class DatabaseProvider {
       '$columnNoteDescription TEXT, '
       '$columnNoteContent TEXT NOT NULL, '
       '$columnNoteCreatedAt TEXT NOT NULL, '
-      '$columnNoteUpdatedAt TEXT NOT NULL)';
+      '$columnNoteUpdatedAt TEXT NOT NULL, '
+      '$columnNoteEdited INTEGER NOT NULL)';
 
   Future<Database> get db async {
     return _db != null ? _db : _db = await initDb();
@@ -142,7 +144,10 @@ class DatabaseProvider {
   }
 
   //Future<List> getNotesOfProject({@required String id}) async {
-  Future<List<Note>> getNotesOfProject({@required int random}) async {
+  Future<List<Note>> getNotesOfProject({
+    @required int random,
+    @required String order,
+  }) async {
     final db = await this.db;
     //final List<Map<String, dynamic>> maps = await db.query(
     var res = await db.query(
@@ -151,7 +156,9 @@ class DatabaseProvider {
       where: '$columnProjectRandom = ?',
       //whereArgs: [id],
       whereArgs: [random],
+      orderBy: order == null ? '$columnNoteCreatedAt DESC' : order,
       //orderBy: '$columnNoteCreatedAt DESC',
+      //orderBy: order,
     );
     //return maps.toList();
     List<Note> list =
@@ -214,6 +221,7 @@ class DatabaseProvider {
   }
 
   Future<int> deleteAllNotesFromProject({@required int random}) async {
+    print('deleteAllNotesFromProject');
     final Database db = await this.db;
     return await db.delete(
       noteTable,

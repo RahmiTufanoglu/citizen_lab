@@ -7,7 +7,6 @@ import 'package:citizen_lab/custom_widgets/ColumnRowEditWidget.dart';
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/custom_widgets/simple_timer_dialog.dart';
 import 'package:citizen_lab/custom_widgets/table_widget.dart';
-import 'package:citizen_lab/custom_widgets/title_desc_widget.dart';
 import 'package:citizen_lab/database/database_provider.dart';
 import 'package:citizen_lab/entries/note.dart';
 import 'package:citizen_lab/entries/table/table_info_page_data.dart';
@@ -19,8 +18,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
-
-import '../experiment_item.dart';
 
 class TablePage extends StatefulWidget {
   final Key key;
@@ -168,12 +165,13 @@ class _TablePageState extends State<TablePage> {
   void _shareContent() {
     if (_title.isNotEmpty) {
       _createCsv(_title);
-      _scaffoldKey.currentState.showSnackBar(
+      /*_scaffoldKey.currentState.showSnackBar(
         _buildSnackBarWithButton(
           text: 'Tabelle erstellt. Teilen?',
           onPressed: () => _shareCsv(),
         ),
-      );
+      );*/
+      _shareCsv();
     } else {
       _scaffoldKey.currentState.showSnackBar(
         _buildSnackBar(text: 'Bitte einen Titel eingeben.'),
@@ -244,144 +242,6 @@ class _TablePageState extends State<TablePage> {
     );
   }
 
-  Widget _buildBody2() {
-    generateTable();
-
-    return SafeArea(
-      child: WillPopScope(
-        onWillPop: () => _saveNote(),
-        child: Padding(
-          padding: const EdgeInsets.only(bottom: 88.0),
-          child: PageView(
-            controller: _pageController,
-            onPageChanged: (int page) {
-              setState(() {
-                _initialPage = page;
-              });
-            },
-            children: <Widget>[
-              //_buildForm(),
-              TitleDescWidget(
-                title: _title,
-                createdAt: _createdAt,
-                titleEditingController: _titleEditingController,
-                descEditingController: _descriptionEditingController,
-              ),
-              (_column != null || _row != null)
-                  ? TableWidget(
-                      listTextEditingController: _listTextEditingController,
-                      column: _column,
-                      row: _row,
-                    )
-                  : Center(
-                      child: Icon(
-                        Icons.table_chart,
-                        color: Colors.grey,
-                        size: 100.0,
-                      ),
-                    ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildForm() {
-    final created = 'Erstellt am';
-    final title = 'Titel';
-    final titleHere = 'Titel hier';
-    final content = 'Inhalt';
-    final contentHere = 'Inhalt hier';
-    final String plsEnterATitle = 'Bitte einen Titel eingeben';
-
-    return SingleChildScrollView(
-      padding: EdgeInsets.only(top: 8.0, bottom: 88.0),
-      child: Column(
-        children: <Widget>[
-          Container(
-            margin: EdgeInsets.all(8.0),
-            decoration: ShapeDecoration(
-              shape: OutlineInputBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(8.0),
-                ),
-                borderSide: BorderSide(color: Colors.grey),
-              ),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Text(
-                    //_timeString,
-                    '',
-                    style: TextStyle(
-                      fontSize: 14.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 8.0),
-                  Text(
-                    '$created: $_createdAt',
-                    style: TextStyle(
-                      fontSize: 14.0,
-                      fontStyle: FontStyle.italic,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          SizedBox(height: 8.0),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                TextField(
-                  controller: _titleEditingController,
-                  keyboardType: TextInputType.text,
-                  maxLines: 2,
-                  style: TextStyle(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  decoration: InputDecoration(
-                    hintText: '$titleHere.',
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.transparent),
-                    ),
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.transparent),
-                    ),
-                    //errorText: _titleValidate ? plsEnterATitle : null,
-                  ),
-                  onChanged: (String changed) => _title = changed,
-                  //validator: (text) => text.isEmpty ? plsEnterATitle : null,
-                ),
-                SizedBox(height: 42.0),
-                TextField(
-                  controller: _descriptionEditingController,
-                  keyboardType: TextInputType.text,
-                  maxLines: 20,
-                  style: TextStyle(fontSize: 16.0),
-                  decoration: InputDecoration(
-                    hintText: '$contentHere.',
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.transparent),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   void generateTable() {
     if (widget.note == null) {
       if (_row != null && _column != null) {
@@ -428,7 +288,7 @@ class _TablePageState extends State<TablePage> {
 
   Widget _buildFabs() {
     return Padding(
-      padding: const EdgeInsets.only(left: 32.0),
+      padding: EdgeInsets.only(left: 32.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
@@ -459,14 +319,6 @@ class _TablePageState extends State<TablePage> {
         ],
       ),
     );
-  }
-
-  Widget _buildFabs2() {
-    if (_initialPage == 1) {
-      return _buildFabsTable();
-    } else {
-      return _buildFabsContent();
-    }
   }
 
   Widget _buildFabsTable() {
@@ -504,39 +356,6 @@ class _TablePageState extends State<TablePage> {
     );
   }
 
-  Widget _buildFabsContent() {
-    final String editTitleAndDesc = 'Titel und Beschreibung editieren';
-    final String getImage = 'Foto aus dem Ordner importieren';
-    final String createImage = 'Foto erstellen';
-
-    return Padding(
-      padding: const EdgeInsets.only(left: 32.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          FloatingActionButton(
-            heroTag: null,
-            tooltip: '$createImage.',
-            child: Icon(Icons.keyboard_arrow_up),
-            onPressed: () => _openModalBottomSheet(),
-          ),
-          FloatingActionButton(
-            heroTag: null,
-            tooltip: '$createImage.',
-            child: Icon(Icons.remove),
-            onPressed: () => _refreshTextFormFields(),
-          ),
-          FloatingActionButton(
-            heroTag: null,
-            tooltip: '$createImage.',
-            child: Icon(Icons.content_copy),
-            onPressed: () => _copyContent(),
-          ),
-        ],
-      ),
-    );
-  }
-
   void _copyContent() {
     final String copyContent = 'Inhalt kopiert';
     final String copyNotPossible = 'Kein Inhalt zum kopieren';
@@ -552,84 +371,6 @@ class _TablePageState extends State<TablePage> {
         _buildSnackBar(text: '$copyNotPossible.'),
       );
     }
-  }
-
-  void _openModalBottomSheet() {
-    List<ExperimentItem> experimentItems = [
-      ExperimentItem('', Icons.keyboard_arrow_down),
-      ExperimentItem('AAA', Icons.add),
-      ExperimentItem('BBB', Icons.add),
-      ExperimentItem('CCC', Icons.add),
-      ExperimentItem('DDD', Icons.add),
-      ExperimentItem('EEE', Icons.add),
-      ExperimentItem('FFF', Icons.add),
-      ExperimentItem('GGG', Icons.add),
-      ExperimentItem('HHH', Icons.add),
-      ExperimentItem('III', Icons.add),
-    ];
-
-    List<Widget> experimentItemsWidgets = [];
-    for (int i = 0; i < experimentItems.length; i++) {
-      if (i == 0) {
-        experimentItemsWidgets.add(_createTile(experimentItems[i], true));
-      } else {
-        experimentItemsWidgets.add(_createTile(experimentItems[i], false));
-      }
-    }
-
-    _buildMainBottomSheet(experimentItemsWidgets);
-  }
-
-  void _buildMainBottomSheet(List<Widget> experimentItemsWidgets) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return ListView(
-          shrinkWrap: true,
-          children: experimentItemsWidgets,
-        );
-      },
-    );
-  }
-
-  Widget _createTile(ExperimentItem experimentItem, bool centerIcon) {
-    return Material(
-      child: InkWell(
-        child: Container(
-          height: 50.0,
-          child: Stack(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Center(
-                  child: (!centerIcon)
-                      ? Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text(
-                              experimentItem.name,
-                              style: TextStyle(fontSize: 16.0),
-                            ),
-                            Icon(experimentItem.icon, size: 20.0),
-                          ],
-                        )
-                      : Center(
-                          child: Icon(experimentItem.icon, size: 28.0),
-                        ),
-                ),
-              ),
-              Divider(height: 1.0, color: Colors.black),
-            ],
-          ),
-        ),
-        onTap: () {
-          if (experimentItem.name.isNotEmpty) {
-            _descriptionEditingController.text += experimentItem.name;
-          }
-          Navigator.pop(context);
-        },
-      ),
-    );
   }
 
   void _setClipboard(String text, String snackText) {
@@ -692,10 +433,26 @@ class _TablePageState extends State<TablePage> {
     return _csv.path;
   }
 
+  bool checkIfTableIsEmpty() {
+    bool empty = false;
+    int count = 0;
+    for (int i = 0; i < _listTextEditingController.length; i++) {
+      if (_listTextEditingController[i].text.isEmpty) {
+        count++;
+      }
+    }
+
+    print(count);
+    print(_listTextEditingController.length);
+    (count == _listTextEditingController.length) ? empty = true : empty = false;
+    return empty;
+  }
+
   Future<void> _saveNote() async {
     if (_titleEditingController.text.isNotEmpty &&
         _column != null &&
-        _row != null) {
+        _row != null &&
+        !checkIfTableIsEmpty()) {
       if (widget.note == null) {
         String path = '';
         if (_column != null && _row != null) {
@@ -710,6 +467,7 @@ class _TablePageState extends State<TablePage> {
           path,
           _createdAt,
           dateFormatted(),
+          0,
         );
         //await _noteDb.insertNote(note: newNote);
         Navigator.pop(context, note);
@@ -722,7 +480,7 @@ class _TablePageState extends State<TablePage> {
     } else {
       _scaffoldKey.currentState.showSnackBar(
         _buildSnackBarWithButton(
-          text: 'Bitte einen Titel eingeben\nNotiz abbrechen?',
+          text: 'Titel oder Tabelle unvollständig.\nNotiz abbrechen?',
           onPressed: () => Navigator.pop(context),
         ),
       );
@@ -741,6 +499,7 @@ class _TablePageState extends State<TablePage> {
       DatabaseProvider.columnNoteContent: path,
       DatabaseProvider.columnNoteCreatedAt: note.dateCreated,
       DatabaseProvider.columnNoteUpdatedAt: dateFormatted(),
+      DatabaseProvider.columnNoteEdited: 1,
     });
     //await _noteDb.updateNote(newNote: newNote);
     Navigator.pop(context, newNote);
@@ -864,39 +623,45 @@ class _TablePageState extends State<TablePage> {
     @required GestureTapCallback onPressed,
   }) {
     return SnackBar(
-      backgroundColor: Colors.black.withOpacity(0.5),
+      backgroundColor: Colors.black.withOpacity(0.8),
       duration: Duration(seconds: 3),
       content: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          Text(
-            text,
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Spacer(flex: 1),
-          RaisedButton(
-            color: Colors.green,
-            child: Text('Nein'),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(
-                Radius.circular(8.0),
+          Expanded(
+            flex: 2,
+            child: Text(
+              text,
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
               ),
             ),
-            onPressed: () => _scaffoldKey.currentState.hideCurrentSnackBar(),
           ),
-          Spacer(flex: 1),
-          RaisedButton(
-            color: Colors.red,
-            child: Text('Ja'),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(
-                Radius.circular(8.0),
+          SizedBox(width: 8.0),
+          Expanded(
+            flex: 1,
+            child: RaisedButton(
+              color: Colors.green,
+              child: Text('Nein'),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(8.0)),
               ),
+              onPressed: () => _scaffoldKey.currentState.hideCurrentSnackBar(),
             ),
-            onPressed: onPressed,
+          ),
+          SizedBox(width: 8.0),
+          Expanded(
+            flex: 1,
+            child: RaisedButton(
+              color: Colors.red,
+              child: Text('Ja'),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(8.0),
+                ),
+              ),
+              onPressed: onPressed,
+            ),
           ),
         ],
       ),

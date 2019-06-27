@@ -74,6 +74,9 @@ class _ColumnRowEditingWidgetState extends State<ColumnRowEditingWidget> {
               border: OutlineInputBorder(
                 borderSide: BorderSide(color: Colors.grey),
               ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.grey),
+              ),
             ),
             validator: (text) =>
                 text.isEmpty ? 'Bitte einen Titel eingeben' : null,
@@ -97,6 +100,9 @@ class _ColumnRowEditingWidgetState extends State<ColumnRowEditingWidget> {
                       hintText: 'Spalten',
                       labelStyle: TextStyle(fontSize: 14.0),
                       border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey),
+                      ),
+                      focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.grey),
                       ),
                     ),
@@ -129,6 +135,9 @@ class _ColumnRowEditingWidgetState extends State<ColumnRowEditingWidget> {
                       hintText: 'Zeilen',
                       labelStyle: TextStyle(fontSize: 14.0),
                       border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey),
+                      ),
+                      focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.grey),
                       ),
                     ),
