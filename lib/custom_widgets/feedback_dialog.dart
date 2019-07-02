@@ -3,6 +3,7 @@ import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class FeedbackDialog extends StatefulWidget {
+  final Key key;
   final String title;
   final String titleButtonLeft;
   final String titleButtonRight;
@@ -13,7 +14,7 @@ class FeedbackDialog extends StatefulWidget {
   final IconData iconButtonRight;
 
   FeedbackDialog({
-    Key key,
+    this.key,
     this.title = 'Feedback',
     this.titleButtonLeft = 'Email',
     this.titleButtonRight = 'Webseite',
@@ -40,9 +41,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
       child: SimpleDialog(
         elevation: 4.0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(8.0),
-          ),
+          borderRadius: BorderRadius.all(Radius.circular(8.0)),
         ),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -44,7 +44,7 @@ class _ImagePageState extends State<ImagePage> {
   final _titleEditingController = TextEditingController();
   final _descEditingController = TextEditingController();
   final _pageController = PageController(initialPage: _initialPage);
-  final _noteDb = DatabaseProvider();
+  final _noteDb = DatabaseProvider.db;
 
   ThemeChangerProvider _themeChanger;
   File _image;
@@ -99,7 +99,7 @@ class _ImagePageState extends State<ImagePage> {
   @override
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
-    _themeChanger.checkIfDarkModeEnabled(context);
+    //_themeChanger.checkIfDarkModeEnabled(context);
 
     return Scaffold(
       key: _scaffoldKey,
@@ -591,6 +591,8 @@ class _ImagePageState extends State<ImagePage> {
   }
 
   Future<void> _showEditDialog() async {
+    final String oldTitle = _title;
+
     await showDialog(
       context: context,
       builder: (context) {
@@ -599,7 +601,10 @@ class _ImagePageState extends State<ImagePage> {
           textEditingController: _titleEditingController,
           descEditingController: _descEditingController,
           descExists: true,
-          onPressedClose: () => Navigator.pop(context),
+          onPressedClose: () {
+            _titleEditingController.text = oldTitle;
+            Navigator.pop(context);
+          },
           onPressedClear: () {
             if (_titleEditingController.text.isNotEmpty) {
               _titleEditingController.clear();
@@ -772,7 +777,7 @@ class _ImagePageState extends State<ImagePage> {
     @required GestureTapCallback onPressed,
   }) {
     return SnackBar(
-      backgroundColor: Colors.black.withOpacity(0.8),
+      backgroundColor: Colors.black87,
       duration: Duration(seconds: 3),
       content: Row(
         children: <Widget>[

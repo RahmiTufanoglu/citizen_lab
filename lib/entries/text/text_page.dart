@@ -37,7 +37,7 @@ class _TextPageState extends State<TextPage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _titleEditingController = TextEditingController();
   final _descEditingController = TextEditingController();
-  final _noteDb = DatabaseProvider();
+  final _noteDb = DatabaseProvider.db;
 
   final _titleBloc = TitleBloc();
 
@@ -71,6 +71,7 @@ class _TextPageState extends State<TextPage> {
         if (_titleEditingController.text.isEmpty) {
           _title = _savedTitle;
         }
+        print('Textlänge: ${_titleEditingController.text.length}');
       });
     });
 
@@ -96,7 +97,7 @@ class _TextPageState extends State<TextPage> {
   @override
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
-    _themeChanger.checkIfDarkModeEnabled(context);
+    //_themeChanger.checkIfDarkModeEnabled(context);
 
     return Scaffold(
       key: _scaffoldKey,
@@ -456,12 +457,10 @@ class _TextPageState extends State<TextPage> {
   void _buildMainBottomSheet(List<Widget> experimentItemsWidgets) {
     showModalBottomSheet(
       context: context,
-      builder: (BuildContext context) {
-        return ListView(
-          shrinkWrap: true,
-          children: experimentItemsWidgets,
-        );
-      },
+      builder: (BuildContext context) => ListView(
+            shrinkWrap: true,
+            children: experimentItemsWidgets,
+          ),
     );
   }
 
@@ -473,7 +472,7 @@ class _TextPageState extends State<TextPage> {
           child: Stack(
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: EdgeInsets.all(8.0),
                 child: Center(
                   child: (!centerIcon)
                       ? Row(
@@ -517,7 +516,7 @@ class _TextPageState extends State<TextPage> {
 
   Widget _buildSnackBar({@required String text}) {
     return SnackBar(
-      backgroundColor: Colors.black.withOpacity(0.5),
+      backgroundColor: Colors.black87,
       duration: Duration(milliseconds: 500),
       content: Text(
         text,
@@ -530,8 +529,11 @@ class _TextPageState extends State<TextPage> {
     @required String text,
     @required GestureTapCallback onPressed,
   }) {
+    final String yes = 'Ja';
+    final String no = 'Nein';
+
     return SnackBar(
-      backgroundColor: Colors.black.withOpacity(0.8),
+      backgroundColor: Colors.black87,
       duration: Duration(seconds: 3),
       content: Row(
         children: <Widget>[
@@ -539,10 +541,8 @@ class _TextPageState extends State<TextPage> {
             flex: 2,
             child: Text(
               text,
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
+              style:
+                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
             ),
           ),
           SizedBox(width: 8.0),
@@ -550,11 +550,9 @@ class _TextPageState extends State<TextPage> {
             flex: 1,
             child: RaisedButton(
               color: Colors.green,
-              child: Text('Nein'),
+              child: Text(no),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(8.0),
-                ),
+                borderRadius: BorderRadius.all(Radius.circular(8.0)),
               ),
               onPressed: () => _scaffoldKey.currentState.hideCurrentSnackBar(),
             ),
@@ -564,11 +562,9 @@ class _TextPageState extends State<TextPage> {
             flex: 1,
             child: RaisedButton(
               color: Colors.red,
-              child: Text('Ja'),
+              child: Text(yes),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(8.0),
-                ),
+                borderRadius: BorderRadius.all(Radius.circular(8.0)),
               ),
               onPressed: onPressed,
             ),

@@ -23,7 +23,7 @@ class _SimpleInfoPageState extends State<SimpleInfoPage> {
   @override
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
-    _themeChanger.checkIfDarkModeEnabled(context);
+    //_themeChanger.checkIfDarkModeEnabled(context);
 
     return Scaffold(
       appBar: _buildAppBar(context),

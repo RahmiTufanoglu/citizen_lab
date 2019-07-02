@@ -1,59 +1,43 @@
 import 'package:flutter/material.dart';
 
 final Color mainDarkColor = Color(0xFF404040);
-final Color mainLightColor = Color(0xFFE3E3E3);
+final Color mainLightColor = Color(0xFFF2F2F2);
 
 ThemeData appLightTheme() {
   final ThemeData theme = ThemeData.light();
   return theme.copyWith(
     brightness: Brightness.light,
     scaffoldBackgroundColor: mainLightColor,
+    //scaffoldBackgroundColor: Colors.white,
     accentColor: Colors.deepPurpleAccent,
     primaryColor: Colors.white,
     buttonColor: Colors.black,
     backgroundColor: Colors.white,
     primaryTextTheme: TextTheme(
-      title: TextStyle(
-        color: Colors.black,
-      ),
+      title: TextStyle(color: Colors.black),
     ),
-    primaryIconTheme: theme.iconTheme.copyWith(
-      color: Colors.black,
-    ),
+    primaryIconTheme: theme.iconTheme.copyWith(color: Colors.black),
     floatingActionButtonTheme: FloatingActionButtonThemeData(
       elevation: 6.0,
       highlightElevation: 16.0,
       backgroundColor: Colors.white,
       foregroundColor: Colors.black,
       shape: ContinuousRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topRight: Radius.circular(42.0),
-          topLeft: Radius.circular(42.0),
-          bottomRight: Radius.circular(42.0),
-          bottomLeft: Radius.circular(42.0),
-        ),
+        borderRadius: BorderRadius.all(Radius.circular(42.0)),
       ),
     ),
-    iconTheme: IconThemeData(
-      color: mainDarkColor,
-    ),
+    iconTheme: IconThemeData(color: mainDarkColor),
     appBarTheme: AppBarTheme(
       color: Colors.white,
       elevation: 6.0,
-      iconTheme: IconThemeData(
-        color: mainDarkColor,
-      ),
-      actionsIconTheme: IconThemeData(
-        color: mainDarkColor,
-      ),
+      iconTheme: IconThemeData(color: mainDarkColor),
+      actionsIconTheme: IconThemeData(color: mainDarkColor),
     ),
     cardTheme: CardTheme(
       color: Colors.white,
       elevation: 6.0,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(
-          Radius.circular(8.0),
-        ),
+        borderRadius: BorderRadius.all(Radius.circular(8.0)),
       ),
     ),
     splashColor: Colors.deepPurpleAccent.withOpacity(0.2),
@@ -63,9 +47,7 @@ ThemeData appLightTheme() {
       splashColor: Colors.deepPurpleAccent.withOpacity(0.2),
       highlightColor: Colors.deepPurpleAccent.withOpacity(0.2),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(
-          Radius.circular(8.0),
-        ),
+        borderRadius: BorderRadius.all(Radius.circular(8.0)),
       ),
     ),
     indicatorColor: Colors.black,
@@ -73,9 +55,7 @@ ThemeData appLightTheme() {
       labelColor: Colors.black,
       unselectedLabelColor: Colors.grey,
       indicator: UnderlineTabIndicator(
-        borderSide: BorderSide(
-          color: Colors.grey,
-        ),
+        borderSide: BorderSide(color: Colors.grey),
       ),
     ),
   );
@@ -91,47 +71,30 @@ ThemeData appDarkTheme() {
     buttonColor: Colors.white,
     backgroundColor: Colors.black,
     primaryTextTheme: TextTheme(
-      title: TextStyle(
-        color: Colors.white,
-      ),
+      title: TextStyle(color: Colors.white),
     ),
-    primaryIconTheme: theme.iconTheme.copyWith(
-      color: Colors.white,
-    ),
+    primaryIconTheme: theme.iconTheme.copyWith(color: Colors.white),
     floatingActionButtonTheme: FloatingActionButtonThemeData(
       elevation: 6.0,
       highlightElevation: 16.0,
       backgroundColor: Colors.white,
       foregroundColor: Colors.black,
       shape: ContinuousRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topRight: Radius.circular(42.0),
-          topLeft: Radius.circular(42.0),
-          bottomRight: Radius.circular(42.0),
-          bottomLeft: Radius.circular(42.0),
-        ),
+        borderRadius: BorderRadius.all(Radius.circular(42.0)),
       ),
     ),
-    iconTheme: IconThemeData(
-      color: Colors.white,
-    ),
+    iconTheme: IconThemeData(color: Colors.white),
     appBarTheme: AppBarTheme(
       color: mainDarkColor,
       elevation: 6.0,
-      iconTheme: IconThemeData(
-        color: Colors.white,
-      ),
-      actionsIconTheme: IconThemeData(
-        color: Colors.white,
-      ),
+      iconTheme: IconThemeData(color: Colors.white),
+      actionsIconTheme: IconThemeData(color: Colors.white),
     ),
     cardTheme: CardTheme(
       color: mainDarkColor,
       elevation: 6.0,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(
-          Radius.circular(8.0),
-        ),
+        borderRadius: BorderRadius.all(Radius.circular(8.0)),
       ),
     ),
     splashColor: Colors.deepOrangeAccent.withOpacity(0.2),
@@ -141,9 +104,7 @@ ThemeData appDarkTheme() {
       splashColor: Colors.deepOrangeAccent.withOpacity(0.2),
       highlightColor: Colors.deepOrangeAccent.withOpacity(0.2),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(
-          Radius.circular(8.0),
-        ),
+        borderRadius: BorderRadius.all(Radius.circular(8.0)),
       ),
     ),
     indicatorColor: Colors.white,
@@ -151,9 +112,7 @@ ThemeData appDarkTheme() {
       labelColor: Colors.white,
       unselectedLabelColor: Colors.grey,
       indicator: UnderlineTabIndicator(
-        borderSide: BorderSide(
-          color: Colors.grey,
-        ),
+        borderSide: BorderSide(color: Colors.grey),
       ),
     ),
   );

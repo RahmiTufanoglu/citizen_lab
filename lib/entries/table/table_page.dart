@@ -3,7 +3,8 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:citizen_lab/citizen_science/title_provider.dart';
-import 'package:citizen_lab/custom_widgets/ColumnRowEditWidget.dart';
+import 'package:citizen_lab/custom_widgets/column_row_edit_widget.dart';
+import 'package:citizen_lab/custom_widgets/main_table_widget.dart';
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/custom_widgets/simple_timer_dialog.dart';
 import 'package:citizen_lab/custom_widgets/table_widget.dart';
@@ -42,7 +43,7 @@ class _TablePageState extends State<TablePage> {
   final _rowTextEditingController = TextEditingController();
   final _columnTextEditingController = TextEditingController();
   final _pageController = PageController(initialPage: _initialPage);
-  final _noteDb = DatabaseProvider();
+  final _noteDb = DatabaseProvider.db;
   final _listTextEditingController = <TextEditingController>[];
 
   ThemeChangerProvider _themeChanger;
@@ -115,9 +116,9 @@ class _TablePageState extends State<TablePage> {
   @override
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
-    _themeChanger.checkIfDarkModeEnabled(context);
 
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
       key: _scaffoldKey,
       appBar: _buildAppBar(),
       body: _buildBody(),
@@ -133,7 +134,7 @@ class _TablePageState extends State<TablePage> {
       leading: IconButton(
         tooltip: back,
         icon: Icon(Icons.arrow_back),
-        onPressed: () => _saveNote(),
+        onPressed: _saveNote,
       ),
       title: GestureDetector(
         onPanStart: (_) => _themeChanger.setTheme(),
@@ -141,7 +142,7 @@ class _TablePageState extends State<TablePage> {
           width: double.infinity,
           child: Tooltip(
             message: noteType,
-            child: Text((_title != null) ? _title : noteType),
+            child: Text(_title != null ? _title : noteType),
           ),
         ),
       ),
@@ -163,7 +164,7 @@ class _TablePageState extends State<TablePage> {
   }
 
   void _shareContent() {
-    if (_title.isNotEmpty) {
+    if (_title != null && !_checkIfTableIsEmpty()) {
       _createCsv(_title);
       /*_scaffoldKey.currentState.showSnackBar(
         _buildSnackBarWithButton(
@@ -192,39 +193,42 @@ class _TablePageState extends State<TablePage> {
     );
   }
 
-  Future<void> _backToHomePage() async {
+  void _backToHomePage() async {
     final String cancel = 'Notiz abbrechen und zur Hauptseite zurückkehren?';
 
     await showDialog(
       context: context,
-      builder: (_) {
-        return NoYesDialog(
-          text: cancel,
-          onPressed: () {
-            Navigator.popUntil(
-              context,
-              ModalRoute.withName(RouteGenerator.routeHomePage),
-            );
-          },
-        );
-      },
+      builder: (_) => NoYesDialog(
+            text: cancel,
+            onPressed: () {
+              Navigator.popUntil(
+                context,
+                ModalRoute.withName(RouteGenerator.routeHomePage),
+              );
+            },
+          ),
+    );
+  }
+
+  Widget _buildBody2() {
+    return MainTableWidet(
+      onWillPop: _saveNote,
+      column: _column,
+      row: _row,
+      textEditingController: _listTextEditingController,
+      generateTable: () => _generateTable(),
     );
   }
 
   Widget _buildBody() {
-    generateTable();
+    _generateTable();
 
     return SafeArea(
       child: WillPopScope(
         onWillPop: () => _saveNote(),
         child: Padding(
-          padding: EdgeInsets.only(
-            top: 8.0,
-            left: 8.0,
-            right: 8.0,
-            bottom: 88.0,
-          ),
-          child: (_column != null || _row != null)
+          padding: EdgeInsets.only(bottom: 88.0),
+          child: _column != null || _row != null
               ? TableWidget(
                   listTextEditingController: _listTextEditingController,
                   column: _column,
@@ -242,7 +246,7 @@ class _TablePageState extends State<TablePage> {
     );
   }
 
-  void generateTable() {
+  void _generateTable() {
     if (widget.note == null) {
       if (_row != null && _column != null) {
         for (int x = 0; x < _row; x++) {
@@ -281,45 +285,41 @@ class _TablePageState extends State<TablePage> {
     return listCreated;
   }
 
-  String _listToCsv(List listToConvert) {
-    String csvPath = ListToCsvConverter().convert(listToConvert);
-    return csvPath;
-  }
+  String _listToCsv(List listToConvert) =>
+      ListToCsvConverter().convert(listToConvert);
 
-  Widget _buildFabs() {
-    return Padding(
-      padding: EdgeInsets.only(left: 32.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          FloatingActionButton(
-            heroTag: null,
-            tooltip: 'Beschreibung editieren.',
-            elevation: 4.0,
-            highlightElevation: 16.0,
-            child: Icon(Icons.description),
-            onPressed: () => _showDialogEditImage(),
-          ),
-          FloatingActionButton(
-            heroTag: null,
-            tooltip: 'Tabelle leeren.',
-            elevation: 4.0,
-            highlightElevation: 16.0,
-            child: Icon(Icons.remove),
-            onPressed: () => _clearTableContent(),
-          ),
-          FloatingActionButton(
-            heroTag: null,
-            tooltip: 'Tabelle erstellen.',
-            elevation: 4.0,
-            highlightElevation: 16.0,
-            child: Icon(Icons.add),
-            onPressed: () => _buildTableCreate(),
-          ),
-        ],
-      ),
-    );
-  }
+  Widget _buildFabs() => Padding(
+        padding: EdgeInsets.only(left: 32.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            FloatingActionButton(
+              heroTag: null,
+              tooltip: 'Beschreibung editieren.',
+              elevation: 4.0,
+              highlightElevation: 16.0,
+              child: Icon(Icons.description),
+              onPressed: () => _showDialogEditImage(),
+            ),
+            FloatingActionButton(
+              heroTag: null,
+              tooltip: 'Tabelle leeren.',
+              elevation: 4.0,
+              highlightElevation: 16.0,
+              child: Icon(Icons.remove),
+              onPressed: () => _clearTableContent(),
+            ),
+            FloatingActionButton(
+              heroTag: null,
+              tooltip: 'Tabelle erstellen.',
+              elevation: 4.0,
+              highlightElevation: 16.0,
+              child: Icon(Icons.add),
+              onPressed: () => _buildTableCreate(),
+            ),
+          ],
+        ),
+      );
 
   Widget _buildFabsTable() {
     return Padding(
@@ -374,13 +374,8 @@ class _TablePageState extends State<TablePage> {
   }
 
   void _setClipboard(String text, String snackText) {
-    Clipboard.setData(
-      ClipboardData(text: text),
-    );
-
-    _scaffoldKey.currentState.showSnackBar(
-      _buildSnackBar(text: snackText),
-    );
+    Clipboard.setData(ClipboardData(text: text));
+    _scaffoldKey.currentState.showSnackBar(_buildSnackBar(text: snackText));
   }
 
   void _refreshTextFormFields() {
@@ -401,11 +396,16 @@ class _TablePageState extends State<TablePage> {
 
   void _clearTableContent() {
     int i = 0;
-    for (int x = 0; x < _row; x++) {
+    /*for (int x = 0; x < _row; x++) {
       for (int y = 0; y < _column; y++) {
         if (_listTextEditingController[i].text.isNotEmpty) {
           _listTextEditingController[i++].clear();
         }
+      }
+    }*/
+    for (int i = 0; i < _listTextEditingController.length; i++) {
+      if (_listTextEditingController[i].text.isNotEmpty) {
+        _listTextEditingController[i].clear();
       }
     }
   }
@@ -433,18 +433,16 @@ class _TablePageState extends State<TablePage> {
     return _csv.path;
   }
 
-  bool checkIfTableIsEmpty() {
+  bool _checkIfTableIsEmpty() {
     bool empty = false;
     int count = 0;
     for (int i = 0; i < _listTextEditingController.length; i++) {
-      if (_listTextEditingController[i].text.isEmpty) {
-        count++;
-      }
+      if (_listTextEditingController[i].text.isEmpty) count++;
     }
 
     print(count);
     print(_listTextEditingController.length);
-    (count == _listTextEditingController.length) ? empty = true : empty = false;
+    count == _listTextEditingController.length ? empty = true : empty = false;
     return empty;
   }
 
@@ -452,7 +450,7 @@ class _TablePageState extends State<TablePage> {
     if (_titleEditingController.text.isNotEmpty &&
         _column != null &&
         _row != null &&
-        !checkIfTableIsEmpty()) {
+        !_checkIfTableIsEmpty()) {
       if (widget.note == null) {
         String path = '';
         if (_column != null && _row != null) {
@@ -487,7 +485,7 @@ class _TablePageState extends State<TablePage> {
     }
   }
 
-  void _updateNote(Note note, String path) async {
+  Future<void> _updateNote(Note note, String path) async {
     Note newNote = Note.fromMap({
       DatabaseProvider.columnNoteId: note.id,
       //ProjectDatabaseHelper.columnProjectId: note.projectId,
@@ -529,6 +527,8 @@ class _TablePageState extends State<TablePage> {
   }
 
   Future<void> _showDialogEditImage() async {
+    final String oldTitle = _title;
+
     await showDialog(
       context: context,
       builder: (context) {
@@ -539,18 +539,16 @@ class _TablePageState extends State<TablePage> {
           textEditingController: _titleEditingController,
           descEditingController: _descriptionEditingController,
           descExists: true,
-          onPressedClose: () => Navigator.of(context).pop(),
+          onPressedClose: () {
+            _titleEditingController.text = oldTitle;
+            Navigator.of(context).pop();
+          },
           onPressedClear: () {
-            if (_titleEditingController.text.isNotEmpty) {
-              _titleEditingController.clear();
-            }
-
-            if (_descriptionEditingController.text.isNotEmpty) {
-              _descriptionEditingController.clear();
-            }
+            _titleEditingController.clear();
+            _descriptionEditingController.clear();
           },
           onPressedUpdate: () {
-            _title = _titleEditingController.text;
+            //_title = _titleEditingController.text;
             Navigator.pop(context);
           },
         );
@@ -577,21 +575,10 @@ class _TablePageState extends State<TablePage> {
   }
 
   void _clearAllFields() {
-    if (_rowTextEditingController.text.isNotEmpty) {
-      _rowTextEditingController.clear();
-    }
-
-    if (_columnTextEditingController.text.isNotEmpty) {
-      _columnTextEditingController.clear();
-    }
-
-    if (_titleEditingController.text.isNotEmpty) {
-      _titleEditingController.clear();
-    }
-
-    if (_descriptionEditingController.text.isNotEmpty) {
-      _descriptionEditingController.clear();
-    }
+    _rowTextEditingController.clear();
+    _columnTextEditingController.clear();
+    _titleEditingController.clear();
+    _descriptionEditingController.clear();
   }
 
   void _checkAllFields() {
@@ -622,8 +609,11 @@ class _TablePageState extends State<TablePage> {
     @required String text,
     @required GestureTapCallback onPressed,
   }) {
+    final String no = 'Nein';
+    final String yes = 'Ja';
+
     return SnackBar(
-      backgroundColor: Colors.black.withOpacity(0.8),
+      backgroundColor: Colors.black87,
       duration: Duration(seconds: 3),
       content: Row(
         children: <Widget>[
@@ -642,7 +632,7 @@ class _TablePageState extends State<TablePage> {
             flex: 1,
             child: RaisedButton(
               color: Colors.green,
-              child: Text('Nein'),
+              child: Text(no),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(8.0)),
               ),
@@ -654,11 +644,9 @@ class _TablePageState extends State<TablePage> {
             flex: 1,
             child: RaisedButton(
               color: Colors.red,
-              child: Text('Ja'),
+              child: Text(yes),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(8.0),
-                ),
+                borderRadius: BorderRadius.all(Radius.circular(8.0)),
               ),
               onPressed: onPressed,
             ),

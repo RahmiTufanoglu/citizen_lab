@@ -13,6 +13,7 @@ class TitleDescWidget extends StatefulWidget {
   final String createdAt;
   final titleEditingController;
   final descEditingController;
+
   //final GestureTapCallback onWillPop;
   final Function onWillPop;
 
@@ -173,9 +174,6 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
     );
   }
 
-  UnderlineInputBorder _buildUnderlineInputBorder() {
-    return UnderlineInputBorder(
-      borderSide: BorderSide(color: Colors.transparent),
-    );
-  }
+  UnderlineInputBorder _buildUnderlineInputBorder() =>
+      UnderlineInputBorder(borderSide: BorderSide(color: Colors.transparent));
 }

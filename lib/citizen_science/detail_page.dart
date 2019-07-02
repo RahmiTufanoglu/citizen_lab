@@ -40,7 +40,7 @@ class _DetailPageState extends State<DetailPage> {
   @override
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
-    _themeChanger.checkIfDarkModeEnabled(context);
+    //_themeChanger.checkIfDarkModeEnabled(context);
 
     return Scaffold(
       body: _buildBody(),

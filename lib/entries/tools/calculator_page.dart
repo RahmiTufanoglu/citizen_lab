@@ -26,7 +26,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
   @override
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
-    _themeChanger.checkIfDarkModeEnabled(context);
+    //_themeChanger.checkIfDarkModeEnabled(context);
 
     return Scaffold(
       key: _scaffoldKey,
@@ -206,7 +206,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
   Widget _buildSnackBar({@required String text}) {
     return SnackBar(
-      backgroundColor: Colors.black.withOpacity(0.5),
+      backgroundColor: Colors.black87,
       duration: Duration(milliseconds: 500),
       content: Text(
         text,

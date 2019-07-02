@@ -20,7 +20,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
   final _formKey = GlobalKey<FormState>();
   final _titleEditingController = TextEditingController();
   final _descEditingController = TextEditingController();
-  final _projectDb = DatabaseProvider();
+  final _projectDb = DatabaseProvider.db;
 
   ThemeChangerProvider _themeChanger;
 
@@ -69,7 +69,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
   @override
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
-    _themeChanger.checkIfDarkModeEnabled(context);
+    //_themeChanger.checkIfDarkModeEnabled(context);
 
     return Scaffold(
       key: _snackBarKey,
@@ -216,7 +216,15 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
 
     if (_formKey.currentState.validate() && !_projectExists) {
       await _projectDb.insertProject(project: project);
-      _navigateToEntry(project);
+      // TODO: WORKAROUND
+      //_navigateToEntry(project);
+      return Navigator.pushNamed(
+        context,
+        RouteGenerator.projectPage,
+        arguments: {
+          'isFromCreateProjectPage': true,
+        },
+      );
     }
   }
 

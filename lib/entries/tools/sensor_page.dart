@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:citizen_lab/themes/theme.dart';
+import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +8,6 @@ import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:share/share.dart';
-import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 
 class SensorPage extends StatefulWidget {
   final Key key;
@@ -65,7 +64,7 @@ class _SensorPageState extends State<SensorPage>
   @override
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
-    _themeChanger.checkIfDarkModeEnabled(context);
+    //_themeChanger.checkIfDarkModeEnabled(context);
     //_checkIfDarkModeEnabled();
 
     return Scaffold(

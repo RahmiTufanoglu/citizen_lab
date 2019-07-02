@@ -43,6 +43,7 @@ dependencies:
   flutter_sound: ^1.4.1
   webview_flutter: ^0.3.9+1
   rxdart: ^0.22.0
+  flutter_html: ^0.10.4
 
 dev_dependencies:
   flutter_test:

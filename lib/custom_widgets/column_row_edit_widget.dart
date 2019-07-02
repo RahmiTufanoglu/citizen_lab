@@ -40,9 +40,7 @@ class _ColumnRowEditingWidgetState extends State<ColumnRowEditingWidget> {
       autovalidate: true,
       child: SimpleDialog(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(8.0),
-          ),
+          borderRadius: BorderRadius.all(Radius.circular(8.0)),
         ),
         contentPadding: const EdgeInsets.all(16.0),
         titlePadding: const EdgeInsets.only(left: 0.0),
@@ -86,11 +84,6 @@ class _ColumnRowEditingWidgetState extends State<ColumnRowEditingWidget> {
             children: <Widget>[
               Expanded(
                 child: Container(
-                  padding: const EdgeInsets.only(
-                    top: 8.0,
-                    bottom: 8.0,
-                    right: 8.0,
-                  ),
                   child: TextFormField(
                     controller: widget.columnEditingController,
                     keyboardType: TextInputType.number,

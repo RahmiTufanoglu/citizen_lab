@@ -31,7 +31,7 @@ class _AppState extends State<App> {
         ),
         ChangeNotifierProvider<TimerProvider>(
           builder: (_) => TimerProvider(),
-        )
+        ),
       ],
       child: MaterialAppWithTheme(),
     );

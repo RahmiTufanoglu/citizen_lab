@@ -20,34 +20,17 @@ class NotesBloc implements BaseBloc {
   void getNotes({@required int random, String order}) async {
     //_notesController.sink.add(await DatabaseProvider().getAllNotes());
     _notesController.sink.add(
-      await DatabaseProvider().getNotesOfProject(
+      await DatabaseProvider.db.getNotesOfProject(
         random: random,
         order: order,
       ),
     );
   }
 
-  String getOrder(int i) {
-    switch (i) {
-      case 0:
-        return 'created_at DESC';
-        break;
-      case 1:
-        return 'created_at ASC';
-        break;
-      case 2:
-        return 'title ASC';
-        break;
-      case 3:
-        return 'title DESC';
-        break;
-      default:
-        break;
-    }
-    return '';
-  }
-
-  NotesBloc({@required int random, String order}) {
+  NotesBloc({
+    @required int random,
+    String order,
+  }) {
     getNotes(random: random, order: order);
   }
 
@@ -58,25 +41,25 @@ class NotesBloc implements BaseBloc {
 
   void add(Note note) {
     if (note != null) {
-      DatabaseProvider().insertNote(note: note);
+      DatabaseProvider.db.insertNote(note: note);
       getNotes(random: note.projectRandom);
     }
   }
 
   void update(Note note) {
     if (note != null) {
-      DatabaseProvider().updateNote(newNote: note);
+      DatabaseProvider.db.updateNote(newNote: note);
       getNotes(random: note.projectRandom);
     }
   }
 
   void delete(Note note) {
-    DatabaseProvider().deleteNote(id: note.id);
+    DatabaseProvider.db.deleteNote(id: note.id);
     getNotes(random: note.projectRandom);
   }
 
   void deleteAllNotesFromProject(List<Note> notes, int random) {
-    DatabaseProvider().deleteAllNotesFromProject(random: random);
+    DatabaseProvider.db.deleteAllNotesFromProject(random: random);
     for (int i = 0; i < notes.length; i++) {
       getNotes(random: notes[i].projectRandom);
     }
@@ -86,27 +69,27 @@ class NotesBloc implements BaseBloc {
    *
    */
 
-  void sortByTitleArc() {
-    /*notes.sort(
+  void sortByTitleArc(List<Note> notes) {
+    notes.sort(
       (Note a, Note b) =>
           a.title.toLowerCase().compareTo(b.title.toLowerCase()),
-    );*/
+    );
   }
 
-  void sortByTitleDesc() {
+  void sortByTitleDesc(List<Note> notes) {
     notes.toList().sort(
           (Note a, Note b) =>
               a.title.toLowerCase().compareTo(b.title.toLowerCase()),
         );
   }
 
-  void sortByReleaseDateArc() {
+  void sortByReleaseDateArc(List<Note> notes) {
     notes.toList().sort(
           (Note a, Note b) => a.dateCreated.compareTo(b.dateCreated),
         );
   }
 
-  void sortByReleaseDateDesc() {
+  void sortByReleaseDateDesc(List<Note> notes) {
     notes.toList().sort(
           (Note a, Note b) => b.dateCreated.compareTo(a.dateCreated),
         );

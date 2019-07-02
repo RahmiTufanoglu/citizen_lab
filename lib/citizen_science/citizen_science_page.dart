@@ -51,7 +51,7 @@ class _CitizenSciencePageState extends State<CitizenSciencePage> {
   @override
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
-    _themeChanger.checkIfDarkModeEnabled(context);
+    //_themeChanger.checkIfDarkModeEnabled(context);
 
     return Scaffold(
       appBar: _buildAppbar(),

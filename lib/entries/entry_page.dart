@@ -3,9 +3,9 @@ import 'dart:io';
 import 'package:citizen_lab/bloc/notes_bloc.dart';
 import 'package:citizen_lab/custom_widgets/alarm_dialog.dart';
 import 'package:citizen_lab/custom_widgets/card_item.dart';
+import 'package:citizen_lab/custom_widgets/dial_floating_action_button.dart';
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/custom_widgets/simple_timer_dialog.dart';
-import 'package:citizen_lab/custom_widgets/speed_dial_floating_action_button.dart';
 import 'package:citizen_lab/database/database_provider.dart';
 import 'package:citizen_lab/entries/note.dart';
 import 'package:citizen_lab/projects/project.dart';
@@ -20,7 +20,6 @@ import '../entry_fab_data.dart';
 import 'experiment_item.dart';
 
 class EntryPage extends StatefulWidget {
-  final Key key;
   final bool isFromCreateProjectPage;
   final bool isFromProjectPage;
   final bool isFromProjectSearchPage;
@@ -29,14 +28,13 @@ class EntryPage extends StatefulWidget {
   final Note note;
 
   EntryPage({
-    this.key,
     @required this.isFromCreateProjectPage,
     @required this.isFromProjectPage,
     @required this.isFromProjectSearchPage,
     @required this.projectTitle,
     @required this.project,
     this.note,
-  }) : super(key: key);
+  });
 
   @override
   _EntryPageState createState() => _EntryPageState();
@@ -47,13 +45,11 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   final _titleProjectController = TextEditingController();
   final _descProjectController = TextEditingController();
   final _textEditingController = TextEditingController();
-  final _projectDb = DatabaseProvider();
-  final _noteDb = DatabaseProvider();
+  final _projectDb = DatabaseProvider.db;
 
   NotesBloc _notesBloc;
   ThemeChangerProvider _themeChanger;
 
-  //List<Note> _noteList = [];
   String _title;
   String _createdAt;
 
@@ -65,6 +61,8 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   String titleDesc = 'title DESC';
   String titleAsc = 'title ASC';
   String order = 'created_at DESC';
+
+  bool _tapped = false;
 
   @override
   void initState() {
@@ -101,7 +99,6 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
-    _themeChanger.checkIfDarkModeEnabled(context);
 
     return Scaffold(
       resizeToAvoidBottomPadding: false,
@@ -141,16 +138,14 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
           elevation: 2.0,
           tooltip: sort_options,
           onSelected: _choiceSortOption,
-          itemBuilder: (BuildContext context) {
-            return choices.map(
-              (String choice) {
-                return PopupMenuItem<String>(
-                  value: choice,
-                  child: Text(choice),
-                );
-              },
-            ).toList();
-          },
+          itemBuilder: (BuildContext context) => choices.map(
+                (String choice) {
+                  return PopupMenuItem<String>(
+                    value: choice,
+                    child: Text(choice),
+                  );
+                },
+              ).toList(),
         ),
         Builder(
           builder: (contextSnackBar) {
@@ -176,17 +171,15 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
 
     await showDialog(
       context: context,
-      builder: (_) {
-        return NoYesDialog(
-          text: cancel,
-          onPressed: () {
-            Navigator.popUntil(
-              context,
-              ModalRoute.withName(RouteGenerator.routeHomePage),
-            );
-          },
-        );
-      },
+      builder: (_) => NoYesDialog(
+            text: cancel,
+            onPressed: () {
+              Navigator.popUntil(
+                context,
+                ModalRoute.withName(RouteGenerator.routeHomePage),
+              );
+            },
+          ),
     );
   }
 
@@ -199,12 +192,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
             ? ListView.builder(
                 //itemCount: _noteList.length,
                 itemCount: snapshot.data.length,
-                padding: const EdgeInsets.only(
-                  top: 8.0,
-                  bottom: 88.0,
-                  left: 8.0,
-                  right: 8.0,
-                ),
+                padding: EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 88.0),
                 itemBuilder: (context, index) {
                   //final note = _noteList[index];
                   final note = snapshot.data[index];
@@ -249,10 +237,15 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   }
 
   Widget _buildItem(AsyncSnapshot snapshot, int index) {
+    final double screenHeight =
+        MediaQuery.of(context).size.height - kToolbarHeight;
+
     //final _note = _noteList[index];
     final note = snapshot.data[index];
     return Container(
-      height: 80.0,
+      height: MediaQuery.of(context).orientation == Orientation.portrait
+          ? screenHeight / 8
+          : screenHeight / 4,
       child: CardItem(
         note: note,
         onTap: () => _openNotePage(note.type, note),
@@ -267,7 +260,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
     final String edit = 'Editieren';
 
     return Padding(
-      padding: const EdgeInsets.only(left: 32.0),
+      padding: EdgeInsets.only(left: 32.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -284,7 +277,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
             tooltip: edit,
             onPressed: () => _openModalBottomSheet(),
           ),
-          SpeedDialFloatingActionButton(
+          DialFloatingActionButton(
             iconList: iconList,
             colorList: colorList,
             stringList: stringList,
@@ -295,32 +288,25 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
     );
   }
 
-  Future<void> _showEditDialog() async {
+  void _showEditDialog() async {
     await showDialog(
       context: context,
-      builder: (context) {
-        return SimpleTimerDialog(
-          createdAt: _createdAt,
-          textEditingController: _titleProjectController,
-          descEditingController: _descProjectController,
-          descExists: true,
-          onPressedClose: () => Navigator.pop(context),
-          onPressedClear: () {
-            if (_titleProjectController.text.isNotEmpty) {
+      builder: (context) => SimpleTimerDialog(
+            createdAt: _createdAt,
+            textEditingController: _titleProjectController,
+            descEditingController: _descProjectController,
+            descExists: true,
+            onPressedClose: () => Navigator.pop(context),
+            onPressedClear: () {
               _titleProjectController.clear();
-            }
-
-            if (_descProjectController.text.isNotEmpty) {
               _descProjectController.clear();
-            }
-          },
-          onPressedUpdate: () {
-            _updateProject(widget.project);
-            //_title = _titleProjectController.text;
-            Navigator.pop(context);
-          },
-        );
-      },
+            },
+            onPressedUpdate: () {
+              _updateProject(widget.project);
+              //_title = _titleProjectController.text;
+              Navigator.pop(context);
+            },
+          ),
     );
   }
 
@@ -347,24 +333,25 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   void _buildMainBottomSheet(List<Widget> experimentItemsWidgets) {
     showModalBottomSheet(
       context: context,
-      builder: (BuildContext context) {
-        return ListView(
-          shrinkWrap: true,
-          children: experimentItemsWidgets,
-        );
-      },
+      builder: (BuildContext context) => ListView(
+            shrinkWrap: true,
+            children: experimentItemsWidgets,
+          ),
     );
   }
 
   Widget _createTile(ExperimentItem experimentItem, bool centerIcon) {
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final double tileHeight = screenHeight / 12;
+
     return Material(
       child: InkWell(
         child: Container(
-          height: 50.0,
+          height: tileHeight,
           child: Stack(
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: EdgeInsets.all(8.0),
                 child: Center(
                   child: (!centerIcon)
                       ? Row(
@@ -404,7 +391,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
     );
   }
 
-  Future<void> _updateProject(Project project) async {
+  void _updateProject(Project project) async {
     Project updatedProject = Project.fromMap({
       DatabaseProvider.columnProjectId: project.id,
       DatabaseProvider.columnProjectRandom: project.random,
@@ -416,89 +403,42 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
     await _projectDb.updateProject(newProject: updatedProject);
   }
 
-  Future<void> _openNotePage(String type, [Note note]) async {
+  void _openNotePage(String type, [Note note]) async {
     switch (type) {
       case 'Text':
-        final result = await Navigator.pushNamed(
-          context,
-          RouteGenerator.textPage,
-          arguments: {
-            'projectRandom': widget.project.random,
-            'projectId': widget.project.id,
-            'note': note,
-          },
-        ) as Note;
-
-        bool exists;
-        (result.edited == 0) ? exists = false : exists = true;
-
-        (!exists) ? _notesBloc.add(result) : _notesBloc.update(result);
+        _updateList(note, RouteGenerator.textPage);
         break;
       case 'Tabelle':
-        final result = await Navigator.pushNamed(
-          context,
-          RouteGenerator.tablePage,
-          arguments: {
-            'projectRandom': widget.project.random,
-            'projectId': widget.project.id,
-            'note': note,
-          },
-        ) as Note;
-
-        bool exists;
-        (result.edited == 0) ? exists = false : exists = true;
-
-        (!exists) ? _notesBloc.add(result) : _notesBloc.update(result);
+        _updateList(note, RouteGenerator.tablePage);
         break;
       case 'Bild':
-        final result = await Navigator.pushNamed(
-          context,
-          RouteGenerator.imagePage,
-          arguments: {
-            'projectRandom': widget.project.random,
-            'projectId': widget.project.id,
-            'note': note,
-          },
-        ) as Note;
-
-        bool exists;
-        (result.edited == 0) ? exists = false : exists = true;
-
-        (!exists) ? _notesBloc.add(result) : _notesBloc.update(result);
-        break;
-      case 'Wetter':
-        final result = await Navigator.pushNamed(
-          context,
-          RouteGenerator.audioRecordPage,
-          arguments: {
-            'note': note,
-          },
-        ) as Note;
-
-        bool exists;
-        (result.edited == 0) ? exists = false : exists = true;
-
-        (!exists) ? _notesBloc.add(result) : _notesBloc.update(result);
+        _updateList(note, RouteGenerator.imagePage);
         break;
       case 'Verlinkung':
-        final result = await Navigator.pushNamed(
-          context,
-          RouteGenerator.linkingPage,
-          arguments: {
-            'projectRandom': widget.project.random,
-            'projectId': widget.project.id,
-            'note': note,
-          },
-        ) as Note;
-
-        bool exists;
-        (result.edited == 0) ? exists = false : exists = true;
-
-        (!exists) ? _notesBloc.add(result) : _notesBloc.update(result);
-        break;
-      default:
+        _updateList(note, RouteGenerator.linkingPage);
         break;
     }
+  }
+
+  void _updateList(Note note, String route) async {
+    final result = await Navigator.pushNamed(
+      context,
+      route,
+      arguments: {
+        'projectRandom': widget.project.random,
+        'projectId': widget.project.id,
+        'note': note,
+      },
+    ) as Note;
+
+    bool exists;
+    if (result != null && result.edited == 0) {
+      exists = false;
+    } else {
+      exists = true;
+    }
+
+    !exists ? _notesBloc.add(result) : _notesBloc.update(result);
   }
 
   void _loadNoteList() async {
@@ -568,7 +508,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
               if (_noteList.isNotEmpty) {
                 //final note = snapshot.data[index];
 
-                for (int i = 0; i < _noteList.length; i++) {}
+                //for (int i = 0; i < _noteList.length; i++) {}
 
                 _notesBloc.deleteAllNotesFromProject(
                   //widget.note,
@@ -632,10 +572,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
     return SnackBar(
       backgroundColor: Colors.black.withOpacity(0.5),
       duration: Duration(seconds: 1),
-      content: Text(
-        text,
-        style: TextStyle(fontWeight: FontWeight.bold),
-      ),
+      content: Text(text, style: TextStyle(fontWeight: FontWeight.bold)),
     );
   }
 
@@ -644,72 +581,59 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
 
     showDialog(
       context: context,
-      builder: (context) {
-        return SimpleDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(
-              Radius.circular(8.0),
+      builder: (context) => SimpleDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(8.0)),
             ),
-          ),
-          contentPadding: const EdgeInsets.all(16.0),
-          titlePadding: const EdgeInsets.only(left: 16.0),
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  SizedBox(height: 16.0),
-                  Text(
-                    '$createdAt: '
-                    //'${_noteList[index].dateCreated}',
-                    '${snapshot.data[index].dateCreated}',
-                    style: TextStyle(
-                      fontSize: 14.0,
-                      fontWeight: FontWeight.bold,
+            contentPadding: EdgeInsets.all(16.0),
+            titlePadding: EdgeInsets.only(left: 16.0),
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    SizedBox(height: 16.0),
+                    Text(
+                      '$createdAt: '
+                      //'${_noteList[index].dateCreated}',
+                      '${snapshot.data[index].dateCreated}',
+                      style: TextStyle(
+                          fontSize: 14.0, fontWeight: FontWeight.bold),
                     ),
-                  ),
-                  SizedBox(height: 16.0),
-                ],
+                    SizedBox(height: 16.0),
+                  ],
+                ),
+                IconButton(
+                  icon: Icon(Icons.close),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ],
+            ),
+            children: <Widget>[
+              Text(
+                '$title:',
+                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
               ),
-              IconButton(
-                icon: Icon(Icons.close),
-                onPressed: () => Navigator.pop(context),
+              SizedBox(height: 8.0),
+              Text(
+                  //_noteList[index].title,
+                  snapshot.data[index].title,
+                  style: TextStyle(fontSize: 16.0)),
+              SizedBox(height: 32.0),
+              Text(
+                '$desc:',
+                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
               ),
+              SizedBox(height: 8.0),
+              Text(
+                //_noteList[index].description,
+                snapshot.data[index].description,
+                style: TextStyle(fontSize: 16.0),
+              ),
+              SizedBox(height: 8.0),
             ],
           ),
-          children: <Widget>[
-            Text(
-              '$title:',
-              style: TextStyle(
-                fontSize: 16.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 8.0),
-            Text(
-              //_noteList[index].title,
-              snapshot.data[index].title,
-              style: TextStyle(fontSize: 16.0),
-            ),
-            SizedBox(height: 32.0),
-            Text(
-              '$desc:',
-              style: TextStyle(
-                fontSize: 16.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 8.0),
-            Text(
-              //_noteList[index].description,
-              snapshot.data[index].description,
-              style: TextStyle(fontSize: 16.0),
-            ),
-            SizedBox(height: 8.0),
-          ],
-        );
-      },
     );
   }
 
@@ -722,10 +646,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
                 a.title.toLowerCase().compareTo(b.title.toLowerCase()),
           );
         });*/
-        //_notesBloc.sortByTitleArc();
-        setState(() {
-          order = 'created_at DESC';
-        });
+        _notesBloc.sortByTitleArc(_noteList);
         break;
       case sort_by_title_desc:
         /*setState(() {
@@ -734,10 +655,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
                 b.title.toLowerCase().compareTo(a.title.toLowerCase()),
           );
         });*/
-        //_notesBloc.sortByTitleDesc();
-        setState(() {
-          order = 'created_at ASC';
-        });
+        _notesBloc.sortByTitleDesc(_noteList);
         break;
       case sort_by_release_date_asc:
         /*setState(() {
@@ -745,10 +663,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
             (Note a, Note b) => a.dateCreated.compareTo(b.dateCreated),
           );
         });*/
-        //_notesBloc.sortByReleaseDateArc();
-        setState(() {
-          order = 'title DESC';
-        });
+        _notesBloc.sortByReleaseDateArc(_noteList);
         break;
       case sort_by_release_date_desc:
         /*setState(() {
@@ -756,12 +671,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
             (Note a, Note b) => b.dateCreated.compareTo(a.dateCreated),
           );
         });*/
-        //_notesBloc.sortByReleaseDateDesc();
-        setState(() {
-          order = 'title DESC';
-        });
-        break;
-      default:
+        _notesBloc.sortByReleaseDateDesc(_noteList);
         break;
     }
   }

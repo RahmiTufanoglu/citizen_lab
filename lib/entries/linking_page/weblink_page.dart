@@ -15,22 +15,20 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 import '../note.dart';
 
-class LinkingPage extends StatefulWidget {
-  final key;
+class WeblinkPage extends StatefulWidget {
   final Note note;
   final int projectRandom;
 
-  LinkingPage({
-    this.key,
+  WeblinkPage({
     @required this.note,
     @required this.projectRandom,
-  }) : super(key: key);
+  });
 
   @override
-  _LinkingPageState createState() => _LinkingPageState();
+  _WeblinkPageState createState() => _WeblinkPageState();
 }
 
-class _LinkingPageState extends State<LinkingPage> {
+class _WeblinkPageState extends State<WeblinkPage> {
   static int _initialPage = 1;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _titleEditingController = TextEditingController();
@@ -38,7 +36,7 @@ class _LinkingPageState extends State<LinkingPage> {
   final _pageController = PageController(initialPage: _initialPage);
   final _webViewController = Completer<WebViewController>();
   final _key = UniqueKey();
-  final _noteDb = DatabaseProvider();
+  final _noteDb = DatabaseProvider.db;
 
   ThemeChangerProvider _themeChanger;
   String _url = 'https://www.google.de';
@@ -79,7 +77,7 @@ class _LinkingPageState extends State<LinkingPage> {
   @override
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
-    _themeChanger.checkIfDarkModeEnabled(context);
+    //_themeChanger.checkIfDarkModeEnabled(context);
 
     return Scaffold(
       key: _scaffoldKey,
@@ -199,6 +197,9 @@ class _LinkingPageState extends State<LinkingPage> {
                   createdAt: _createdAt,
                   titleEditingController: _titleEditingController,
                   descEditingController: _descEditingController,
+                  onWillPop: () {},
+                  titleChanger: null,
+                  titleBloc: null,
                 ),
                 WebView(
                   key: _key,
@@ -274,9 +275,7 @@ class _LinkingPageState extends State<LinkingPage> {
   }
 
   void _setClipboard(String text, String snackText) {
-    Clipboard.setData(
-      ClipboardData(text: text),
-    );
+    Clipboard.setData(ClipboardData(text: text));
 
     _scaffoldKey.currentState.showSnackBar(
       _buildSnackBar(text: snackText),
@@ -284,6 +283,8 @@ class _LinkingPageState extends State<LinkingPage> {
   }
 
   Future<void> _showEditDialog() async {
+    final String oldTitle = _title;
+
     await showDialog(
       context: context,
       builder: (context) => SimpleTimerDialog(
@@ -291,7 +292,10 @@ class _LinkingPageState extends State<LinkingPage> {
             textEditingController: _titleEditingController,
             descEditingController: _descEditingController,
             descExists: true,
-            onPressedClose: () => Navigator.pop(context),
+            onPressedClose: () {
+              _titleEditingController.text = oldTitle;
+              Navigator.pop(context);
+            },
             onPressedClear: () {
               if (_titleEditingController.text.isNotEmpty) {
                 _titleEditingController.clear();
@@ -375,7 +379,7 @@ class _LinkingPageState extends State<LinkingPage> {
     final String no = 'Nein';
 
     return SnackBar(
-      backgroundColor: Colors.black.withOpacity(0.8),
+      backgroundColor: Colors.black87,
       duration: Duration(seconds: 3),
       content: Row(
         children: <Widget>[

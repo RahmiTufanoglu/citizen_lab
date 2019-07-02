@@ -25,16 +25,16 @@ class CardImageWithText extends StatelessWidget {
     @required this.onTap,
     @required this.gradientColor1,
     @required this.gradientColor2,
-    this.fontSize = 36.0,
+    this.fontSize = 32.0,
     this.fontColor = Colors.black,
-    this.shadow1Color = Colors.black,
-    this.shadow2Color = Colors.black,
-    this.shadow1OffsetX = 4.0,
-    this.shadow1OffsetY = 4.0,
-    this.shadow2OffsetX = 4.0,
-    this.shadow2OffsetY = 4.0,
-    this.shadow1Blur = 12.0,
-    this.shadow2Blur = 16.0,
+    this.shadow1Color = Colors.grey,
+    this.shadow2Color = Colors.grey,
+    this.shadow1OffsetX = 12.0,
+    this.shadow1OffsetY = 12.0,
+    this.shadow2OffsetX = 12.0,
+    this.shadow2OffsetY = 12.0,
+    this.shadow1Blur = 8.0,
+    this.shadow2Blur = 24.0,
   })  : assert(asset != null),
         assert(title != null),
         assert(onTap != null);
@@ -43,22 +43,18 @@ class CardImageWithText extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(
-          Radius.circular(16.0),
-        ),
+        borderRadius: BorderRadius.all(Radius.circular(16.0)),
       ),
       child: Stack(
         children: <Widget>[
           Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(
-                Radius.circular(16.0),
-              ),
+              borderRadius: BorderRadius.all(Radius.circular(16.0)),
               image: DecorationImage(
                 image: AssetImage(asset),
                 fit: BoxFit.fill,
               ),
-              /*gradient: RadialGradient(
+              /*gradient: LinearGradient(
                 colors: [
                   Colors.white,
                   gradientColor1,
@@ -68,40 +64,39 @@ class CardImageWithText extends StatelessWidget {
             ),
             child: Center(
               child: ClipRect(
-                //child: BackdropFilter(
-                //filter: ImageFilter.blur(sigmaX: 0.0, sigmaY: 0.0),
-                child: Container(
-                  width: double.infinity,
-                  height: 50.0,
-                  child: Center(
-                    child: Text(
-                      title,
-                      style: TextStyle(
-                        color: fontColor,
-                        fontSize: fontSize,
-                        shadows: <Shadow>[
-                          Shadow(
-                            offset: Offset(
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(16.0)),
+                    ),
+                    width: double.infinity,
+                    height: 60.0,
+                    child: Center(
+                      child: Text(
+                        title,
+                        style: TextStyle(
+                          color: fontColor,
+                          fontSize: fontSize,
+                          shadows: <Shadow>[
+                            _buildShadow(
                               shadow1OffsetX,
                               shadow1OffsetY,
+                              shadow1Blur,
+                              shadow1Color,
                             ),
-                            blurRadius: shadow1Blur,
-                            color: shadow1Color,
-                          ),
-                          Shadow(
-                            offset: Offset(
+                            _buildShadow(
                               shadow2OffsetX,
                               shadow2OffsetY,
+                              shadow2Blur,
+                              shadow2Color,
                             ),
-                            blurRadius: shadow2Blur,
-                            color: shadow2Color,
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-                //),
               ),
             ),
           ),
@@ -116,6 +111,22 @@ class CardImageWithText extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Shadow _buildShadow(
+    double shadowOffsetX,
+    double shadowOffsetY,
+    double shadowBlur,
+    Color shadowColor,
+  ) {
+    return Shadow(
+      offset: Offset(
+        shadowOffsetX,
+        shadowOffsetY,
+      ),
+      blurRadius: shadowBlur,
+      color: shadowColor,
     );
   }
 }

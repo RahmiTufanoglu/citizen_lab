@@ -17,7 +17,6 @@ class StopwatchPage extends StatefulWidget {
 class _StopwatchPageState extends State<StopwatchPage>
     with TickerProviderStateMixin {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  final _timerTextEditingController = TextEditingController();
   final _stopWatch = Stopwatch();
   final _timeout = const Duration(milliseconds: 30);
   final _scrollController = ScrollController();
@@ -28,21 +27,9 @@ class _StopwatchPageState extends State<StopwatchPage>
   Icon _icon = Icon(Icons.play_arrow);
   List<String> _elapsedTimeList = [];
 
-  void _startTimeout() => Timer(_timeout, _handleTimeout);
-
-  void _handleTimeout() {
-    if (_stopWatch.isRunning) {
-      _startTimeout();
-    }
-    setState(() {
-      _setStopwatchText();
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
-    _themeChanger.checkIfDarkModeEnabled(context);
 
     return Scaffold(
       key: _scaffoldKey,
@@ -53,21 +40,35 @@ class _StopwatchPageState extends State<StopwatchPage>
   }
 
   Widget _buildAppBar() {
+    final String stopWatch = 'Stoppuhr';
+    final String back = 'Zurück';
+
     return AppBar(
+      leading: IconButton(
+        tooltip: back,
+        icon: Icon(Icons.arrow_back),
+        onPressed: () => _onBackPressed(),
+      ),
       title: GestureDetector(
         onPanStart: (_) => _themeChanger.setTheme(),
         child: Container(
           width: double.infinity,
           child: Tooltip(
-            message: '',
-            child: Text('Stopwatch'),
+            message: stopWatch,
+            child: Text(stopWatch),
           ),
         ),
       ),
       actions: <Widget>[
         IconButton(
           icon: Icon(Icons.share),
-          onPressed: () => _shareContent(),
+          onPressed: () {
+            String content = '';
+            for (int i = 0; i < _elapsedTimeList.length; i++) {
+              content += _elapsedTimeList[i] + '\n';
+            }
+            _shareContent(content);
+          },
         ),
         IconButton(
           icon: Icon(Icons.home),
@@ -77,12 +78,11 @@ class _StopwatchPageState extends State<StopwatchPage>
     );
   }
 
-  void _shareContent() {
+  void _shareContent(String content) {
     final String sharingNotPossible = 'Teilvorgang nicht möglich.';
 
     if (_elapsedTime != '00:00:000') {
-      final String _content = _elapsedTimeList[_elapsedTimeList.length - 1];
-      Share.share(_content);
+      Share.share(content);
     } else {
       _scaffoldKey.currentState.showSnackBar(
         _buildSnackBar(text: sharingNotPossible),
@@ -110,17 +110,188 @@ class _StopwatchPageState extends State<StopwatchPage>
   }
 
   Widget _buildBody() {
+    final double statusBarHeight = MediaQuery.of(context).padding.top;
     final double screenHeight = MediaQuery.of(context).size.height;
-    final double containerHeight = (screenHeight / 3) - kToolbarHeight - 24.0;
 
     return SafeArea(
       child: Center(
-        child: Column(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(vertical: 16.0),
+          child: Column(
+            children: <Widget>[
+              Center(
+                child: Text(
+                  _stopWatchText,
+                  style: TextStyle(fontSize: 56.0),
+                ),
+              ),
+              SizedBox(height: 56.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  IconButton(
+                    icon: _icon,
+                    iconSize: 56.0,
+                    onPressed: _startStopButtonPressed,
+                  ),
+                  SizedBox(width: 42.0),
+                  IconButton(
+                    icon: Icon(Icons.stop),
+                    iconSize: 56.0,
+                    onPressed: _resetButtonPressed,
+                  ),
+                ],
+              ),
+              SizedBox(height: 56.0),
+              Container(
+                height: 200.0,
+                /*height: MediaQuery.of(context).orientation ==
+                        Orientation.portrait
+                    ? (screenHeight / 1.5) - kToolbarHeight - statusBarHeight
+                    : (screenHeight / 2) - kToolbarHeight - statusBarHeight,*/
+                decoration: BoxDecoration(color: Colors.grey.withOpacity(0.2)),
+                child: ListView.builder(
+                  controller: _scrollController,
+                  shrinkWrap: true,
+                  reverse: true,
+                  itemCount: _elapsedTimeList.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    final String content = _elapsedTimeList[index];
+                    return Padding(
+                      padding: EdgeInsets.fromLTRB(42.0, 0.0, 42.0, 0.0),
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                            flex: 16,
+                            child: Text(
+                              index == _elapsedTimeList.length - 1
+                                  ? 'Letzte Zeit:\t${_elapsedTimeList[index]}'
+                                  : _elapsedTimeList[index],
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontSize: 20.0),
+                            ),
+                          ),
+                          Spacer(),
+                          Expanded(
+                            flex: 2,
+                            child: IconButton(
+                              icon: Icon(Icons.share),
+                              onPressed: () => _shareContent(content),
+                            ),
+                          ),
+                          Spacer(flex: 2),
+                          Expanded(
+                            flex: 2,
+                            child: IconButton(
+                              icon: Icon(Icons.content_copy),
+                              onPressed: () => _copyContent(content),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+              /*Container(
+                height: MediaQuery.of(context).orientation == Orientation.portrait
+                    ? (screenHeight / 1.5) - kToolbarHeight - statusBarHeight
+                    : (screenHeight / 2) - kToolbarHeight - statusBarHeight,
+                decoration: BoxDecoration(color: Colors.grey.withOpacity(0.2)),
+                child: ListView.builder(
+                  controller: _scrollController,
+                  shrinkWrap: true,
+                  reverse: true,
+                  itemCount: _elapsedTimeList.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    final String content = _elapsedTimeList[index];
+                    return Padding(
+                      padding: EdgeInsets.fromLTRB(42.0, 0.0, 42.0, 0.0),
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                            flex: 16,
+                            child: Text(
+                              index == _elapsedTimeList.length - 1
+                                  ? 'Letzte Zeit:\t${_elapsedTimeList[index]}'
+                                  : _elapsedTimeList[index],
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontSize: 20.0),
+                            ),
+                          ),
+                          Spacer(),
+                          Expanded(
+                            flex: 2,
+                            child: IconButton(
+                              icon: Icon(Icons.share),
+                              onPressed: () => _shareContent(content),
+                            ),
+                          ),
+                          Spacer(),
+                          Expanded(
+                            flex: 2,
+                            child: IconButton(
+                              icon: Icon(Icons.content_copy),
+                              onPressed: () => _copyContent(content),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),*/
+            ],
+          ),
+        ),
+      ),
+    );
+
+    /*return SafeArea(
+      child: NestedScrollView(
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+          return <Widget>[
+            SliverAppBar(
+              pinned: true,
+              elevation: 16.0,
+              title: GestureDetector(
+                onPanStart: (_) => _themeChanger.setTheme(),
+                child: Container(
+                  width: double.infinity,
+                  child: Tooltip(
+                    message: '',
+                    child: Text('Stoppuhr'),
+                  ),
+                ),
+              ),
+              actions: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.share),
+                  onPressed: () {
+                    String content = '';
+                    for (int i = 0; i < _elapsedTimeList.length; i++) {
+                      content += _elapsedTimeList[i] + '\n';
+                    }
+                    _shareContent(content);
+                  },
+                ),
+                IconButton(
+                  icon: Icon(Icons.home),
+                  onPressed: () => _backToHomePage(),
+                ),
+              ],
+            ),
+          ];
+        },
+        body: Column(
+          mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              _stopWatchText,
-              style: TextStyle(fontSize: 56.0),
+            Center(
+              child: Text(
+                _stopWatchText,
+                style: TextStyle(fontSize: 56.0),
+              ),
             ),
             SizedBox(height: 56.0),
             Row(
@@ -141,25 +312,48 @@ class _StopwatchPageState extends State<StopwatchPage>
             ),
             SizedBox(height: 56.0),
             Container(
-              padding: const EdgeInsets.all(8.0),
-              height: containerHeight,
-              decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.1),
-              ),
+              height: MediaQuery.of(context).orientation == Orientation.portrait
+                  ? (screenHeight / 1.5) - kToolbarHeight - statusBarHeight
+                  : (screenHeight / 2) - kToolbarHeight - statusBarHeight,
+              decoration: BoxDecoration(color: Colors.grey.withOpacity(0.2)),
               child: ListView.builder(
                 controller: _scrollController,
                 shrinkWrap: true,
                 reverse: true,
                 itemCount: _elapsedTimeList.length,
                 itemBuilder: (BuildContext context, int index) {
+                  final String content = _elapsedTimeList[index];
                   return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      (index == _elapsedTimeList.length - 1)
-                          ? 'Letzte Zeit:\t${_elapsedTimeList[index]}'
-                          : _elapsedTimeList[index],
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 20.0),
+                    padding: EdgeInsets.fromLTRB(42.0, 0.0, 42.0, 0.0),
+                    child: Row(
+                      children: <Widget>[
+                        Expanded(
+                          flex: 16,
+                          child: Text(
+                            index == _elapsedTimeList.length - 1
+                                ? 'Letzte Zeit:\t${_elapsedTimeList[index]}'
+                                : _elapsedTimeList[index],
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 20.0),
+                          ),
+                        ),
+                        Spacer(),
+                        Expanded(
+                          flex: 2,
+                          child: IconButton(
+                            icon: Icon(Icons.share),
+                            onPressed: () => _shareContent(content),
+                          ),
+                        ),
+                        Spacer(),
+                        Expanded(
+                          flex: 2,
+                          child: IconButton(
+                            icon: Icon(Icons.content_copy),
+                            onPressed: () => _copyContent(content),
+                          ),
+                        ),
+                      ],
                     ),
                   );
                 },
@@ -168,7 +362,7 @@ class _StopwatchPageState extends State<StopwatchPage>
           ],
         ),
       ),
-    );
+    );*/
   }
 
   void _startStopButtonPressed() {
@@ -182,6 +376,15 @@ class _StopwatchPageState extends State<StopwatchPage>
         _stopWatch.start();
         _startTimeout();
       }
+    });
+  }
+
+  void _startTimeout() => Timer(_timeout, _handleTimeout);
+
+  void _handleTimeout() {
+    if (_stopWatch.isRunning) _startTimeout();
+    setState(() {
+      _setStopwatchText();
     });
   }
 
@@ -210,24 +413,28 @@ class _StopwatchPageState extends State<StopwatchPage>
 
   void _setStopwatchText() {
     _stopWatchText = _stopWatch.elapsed.inMinutes.toString().padLeft(2, '0') +
-        ":" +
+        ':' +
         (_stopWatch.elapsed.inSeconds % 60).toString().padLeft(2, '0') +
-        ":" +
+        ':' +
         (_stopWatch.elapsed.inMilliseconds % 1000).toString().padLeft(3, '0');
   }
 
   Widget _buildFabs() {
     return FloatingActionButton(
       child: Icon(Icons.content_copy),
-      onPressed: () => _copyContent(),
+      onPressed: () {
+        String content = '';
+        for (int i = 0; i < _elapsedTimeList.length; i++) {
+          content += _elapsedTimeList[i] + '\n';
+        }
+        _copyContent(content);
+      },
     );
   }
 
-  void _copyContent() {
+  void _copyContent(String content) {
     final copyContent = 'Inhalt kopiert';
     final copyNotPossible = 'Kein Inhalt zum kopieren';
-
-    String content = _elapsedTimeList[_elapsedTimeList.length - 1];
 
     if (_elapsedTimeList.isNotEmpty) {
       _setClipboard(content, '$copyContent.');
@@ -239,18 +446,13 @@ class _StopwatchPageState extends State<StopwatchPage>
   }
 
   void _setClipboard(String text, String snackText) {
-    Clipboard.setData(
-      ClipboardData(text: text),
-    );
-
-    _scaffoldKey.currentState.showSnackBar(
-      _buildSnackBar(text: snackText),
-    );
+    Clipboard.setData(ClipboardData(text: text));
+    _scaffoldKey.currentState.showSnackBar(_buildSnackBar(text: snackText));
   }
 
   Widget _buildSnackBar({@required String text}) {
     return SnackBar(
-      backgroundColor: Colors.black.withOpacity(0.5),
+      backgroundColor: Colors.black87,
       duration: Duration(milliseconds: 500),
       content: Text(
         text,
@@ -258,4 +460,6 @@ class _StopwatchPageState extends State<StopwatchPage>
       ),
     );
   }
+
+  void _onBackPressed() => Navigator.pop(context, true);
 }

@@ -63,7 +63,7 @@ class _HomePageState extends State<HomePage>
   @override
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
-    _themeChanger.checkIfDarkModeEnabled(context);
+    //_themeChanger.checkIfDarkModeEnabled(context);
     _checkIfDarkModeEnabled();
 
     return Scaffold(
@@ -234,11 +234,7 @@ class _HomePageState extends State<HomePage>
   }
 
   void _onChangedSwitch(bool value) {
-    value
-        //? _themeChanger.setTheme(appDarkTheme())
-        ? _themeChanger.setTheme()
-        //: _themeChanger.setTheme(appLightTheme());
-        : _themeChanger.setTheme();
+    value ? _themeChanger.setTheme() : _themeChanger.setTheme();
     setState(() {
       _valueSwitch = value;
     });
@@ -258,7 +254,7 @@ class _HomePageState extends State<HomePage>
         child: InkWell(
           onTap: onTap,
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: EdgeInsets.all(16.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
@@ -282,83 +278,47 @@ class _HomePageState extends State<HomePage>
         onWillPop: () => SystemNavigator.pop(),
         child: FadeTransition(
           opacity: _animation,
-          child: Container(
-            child: Stack(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    children: <Widget>[
-                      Expanded(
-                        child: CardImageWithText(
-                          asset: 'assets/images/background6.jpg',
-                          title: 'Experiment erstellen',
-                          gradientColor1: lightGreen,
-                          gradientColor2: softBlue,
-                          fontColor: Colors.white,
-                          onTap: () {
-                            Navigator.pushNamed(
+          child: Stack(
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Column(
+                  children: <Widget>[
+                    Expanded(
+                      child: CardImageWithText(
+                        asset: 'assets/images/stadtgärtnern_oberhausen.jpg',
+                        title: 'Experiment erstellen',
+                        gradientColor1: lightGreen,
+                        gradientColor2: softBlue,
+                        //fontColor: Colors.white,
+                        onTap: () => Navigator.pushNamed(
                               context,
                               RouteGenerator.createProject,
-                            );
-                          },
-                        ),
+                            ),
                       ),
-                      SizedBox(height: 8.0),
-                      Expanded(
-                        child: CardImageWithText(
-                          asset: 'assets/images/sain_background_2.png',
-                          title: 'Experiment öffnen',
-                          gradientColor1: softBlue,
-                          gradientColor2: lightGreen,
-                          fontColor: Colors.white,
-                          onTap: () {
-                            return Navigator.pushNamed(
+                    ),
+                    SizedBox(height: 8.0),
+                    Expanded(
+                      //child: CardImageWithText(
+                      child: CardImageWithText(
+                        asset: 'assets/images/aquaponik_anlage.jpg',
+                        title: 'Experiment öffnen',
+                        gradientColor1: softBlue,
+                        gradientColor2: lightGreen,
+                        //fontColor: Colors.white,
+                        onTap: () => Navigator.pushNamed(
                               context,
                               RouteGenerator.projectPage,
-                            );
-                          },
-                        ),
+                              arguments: {
+                                'isFromCreateProjectPage': false,
+                              },
+                            ),
                       ),
-                      /*Container(
-                        height: height,
-                        child: ClipPath(
-                          clipper: TopClipper(),
-                          child: CardImageWithText(
-                            asset: 'assets/images/home_1.jpg',
-                            title: 'Projekt öffnen',
-                            fontColor: Colors.white,
-                            onTap: () {
-                              return Navigator.pushNamed(
-                                context,
-                                RouteGenerator.projectPage,
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                      Container(
-                        height: height,
-                        child: ClipPath(
-                          clipper: BottomClipper(),
-                          child: CardImageWithText(
-                            asset: 'assets/images/home_2.jpg',
-                            title: 'Projekt öffnen',
-                            fontColor: Colors.white,
-                            onTap: () {
-                              return Navigator.pushNamed(
-                                context,
-                                RouteGenerator.projectPage,
-                              );
-                            },
-                          ),
-                        ),
-                      ),*/
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

@@ -14,7 +14,7 @@ class DatabaseBloc {
 
   // Daten aus der Datenbank asynchron holen
   getNotes() async {
-    _noteController.sink.add(await DatabaseProvider().getAllNotes());
+    _noteController.sink.add(await DatabaseProvider.db.getAllNotes());
   }
 
   DatabaseBloc() {
@@ -22,12 +22,12 @@ class DatabaseBloc {
   }
 
   delete(int id) {
-    DatabaseProvider().deleteNote(id: id);
+    DatabaseProvider.db.deleteNote(id: id);
     getNotes();
   }
 
   add(Note note) {
-    DatabaseProvider().insertNote(note: note);
+    DatabaseProvider.db.insertNote(note: note);
     getNotes();
   }
 }
