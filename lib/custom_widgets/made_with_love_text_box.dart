@@ -23,7 +23,12 @@ class MadeWithLoveTextBox extends StatelessWidget {
     final String and = 'and';
 
     return Card(
-      shape: Border(),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16.0),
+          topRight: Radius.circular(16.0),
+        ),
+      ),
       margin: const EdgeInsets.all(0.0),
       child: Padding(
         padding: const EdgeInsets.all(8.0),

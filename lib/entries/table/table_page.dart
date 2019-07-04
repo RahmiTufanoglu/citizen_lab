@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:citizen_lab/citizen_science/title_provider.dart';
 import 'package:citizen_lab/custom_widgets/column_row_edit_widget.dart';
 import 'package:citizen_lab/custom_widgets/main_table_widget.dart';
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
@@ -21,15 +20,13 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 class TablePage extends StatefulWidget {
-  final Key key;
   final Note note;
   final int projectRandom;
 
   TablePage({
-    this.key,
     @required this.note,
     @required this.projectRandom,
-  }) : super(key: key);
+  });
 
   @override
   _TablePageState createState() => _TablePageState();
@@ -52,9 +49,9 @@ class _TablePageState extends State<TablePage> {
   int _row;
   String _title;
   String _createdAt;
-  List<String> _data;
-  List<List<dynamic>> _list = [];
-  TitleProvider _titleProvider;
+  //List<String> _data;
+  //List<List<dynamic>> _list = [];
+  //TitleProvider _titleProvider;
 
   //Timer _timer;
   //String _timeString;
@@ -268,7 +265,7 @@ class _TablePageState extends State<TablePage> {
     }
   }
 
-  void _csvRead(List<List<dynamic>> list, int column, int row) {
+  void _csvRead(List<List> list, int column, int row) {
     List newCsvList = [];
     int tmp = 0;
     for (int i = 0; i < row; i++) {

@@ -7,8 +7,8 @@ class MainDrawer extends StatelessWidget {
   final List<Widget> children;
 
   MainDrawer({
-    this.location = 'Dortmund',
     @required this.drawerWidth,
+    @required this.location,
     @required this.children,
   });
 
@@ -20,14 +20,10 @@ class MainDrawer extends StatelessWidget {
         elevation: 16.0,
         child: Stack(
           children: <Widget>[
-            Container(
-              child: ListView(children: children),
-            ),
+            Container(child: ListView(children: children)),
             Positioned(
               child: SafeArea(
-                child: MadeWithLoveTextBox(
-                  place: 'in $location',
-                ),
+                child: MadeWithLoveTextBox(place: 'in $location'),
               ),
               width: drawerWidth,
               bottom: 0.0,

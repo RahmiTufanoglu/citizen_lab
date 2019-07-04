@@ -144,11 +144,11 @@ class _StopwatchPageState extends State<StopwatchPage>
               ),
               SizedBox(height: 56.0),
               Container(
-                height: 200.0,
-                /*height: MediaQuery.of(context).orientation ==
+                //height: 200.0,
+                height: MediaQuery.of(context).orientation ==
                         Orientation.portrait
-                    ? (screenHeight / 1.5) - kToolbarHeight - statusBarHeight
-                    : (screenHeight / 2) - kToolbarHeight - statusBarHeight,*/
+                    ? (screenHeight / 2.5) - kToolbarHeight - statusBarHeight
+                    : (screenHeight / 1.5) - kToolbarHeight - statusBarHeight,
                 decoration: BoxDecoration(color: Colors.grey.withOpacity(0.2)),
                 child: ListView.builder(
                   controller: _scrollController,
@@ -193,176 +193,11 @@ class _StopwatchPageState extends State<StopwatchPage>
                   },
                 ),
               ),
-              /*Container(
-                height: MediaQuery.of(context).orientation == Orientation.portrait
-                    ? (screenHeight / 1.5) - kToolbarHeight - statusBarHeight
-                    : (screenHeight / 2) - kToolbarHeight - statusBarHeight,
-                decoration: BoxDecoration(color: Colors.grey.withOpacity(0.2)),
-                child: ListView.builder(
-                  controller: _scrollController,
-                  shrinkWrap: true,
-                  reverse: true,
-                  itemCount: _elapsedTimeList.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    final String content = _elapsedTimeList[index];
-                    return Padding(
-                      padding: EdgeInsets.fromLTRB(42.0, 0.0, 42.0, 0.0),
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(
-                            flex: 16,
-                            child: Text(
-                              index == _elapsedTimeList.length - 1
-                                  ? 'Letzte Zeit:\t${_elapsedTimeList[index]}'
-                                  : _elapsedTimeList[index],
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 20.0),
-                            ),
-                          ),
-                          Spacer(),
-                          Expanded(
-                            flex: 2,
-                            child: IconButton(
-                              icon: Icon(Icons.share),
-                              onPressed: () => _shareContent(content),
-                            ),
-                          ),
-                          Spacer(),
-                          Expanded(
-                            flex: 2,
-                            child: IconButton(
-                              icon: Icon(Icons.content_copy),
-                              onPressed: () => _copyContent(content),
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-              ),*/
             ],
           ),
         ),
       ),
     );
-
-    /*return SafeArea(
-      child: NestedScrollView(
-        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-          return <Widget>[
-            SliverAppBar(
-              pinned: true,
-              elevation: 16.0,
-              title: GestureDetector(
-                onPanStart: (_) => _themeChanger.setTheme(),
-                child: Container(
-                  width: double.infinity,
-                  child: Tooltip(
-                    message: '',
-                    child: Text('Stoppuhr'),
-                  ),
-                ),
-              ),
-              actions: <Widget>[
-                IconButton(
-                  icon: Icon(Icons.share),
-                  onPressed: () {
-                    String content = '';
-                    for (int i = 0; i < _elapsedTimeList.length; i++) {
-                      content += _elapsedTimeList[i] + '\n';
-                    }
-                    _shareContent(content);
-                  },
-                ),
-                IconButton(
-                  icon: Icon(Icons.home),
-                  onPressed: () => _backToHomePage(),
-                ),
-              ],
-            ),
-          ];
-        },
-        body: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Center(
-              child: Text(
-                _stopWatchText,
-                style: TextStyle(fontSize: 56.0),
-              ),
-            ),
-            SizedBox(height: 56.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                IconButton(
-                  icon: _icon,
-                  iconSize: 56.0,
-                  onPressed: _startStopButtonPressed,
-                ),
-                SizedBox(width: 42.0),
-                IconButton(
-                  icon: Icon(Icons.stop),
-                  iconSize: 56.0,
-                  onPressed: _resetButtonPressed,
-                ),
-              ],
-            ),
-            SizedBox(height: 56.0),
-            Container(
-              height: MediaQuery.of(context).orientation == Orientation.portrait
-                  ? (screenHeight / 1.5) - kToolbarHeight - statusBarHeight
-                  : (screenHeight / 2) - kToolbarHeight - statusBarHeight,
-              decoration: BoxDecoration(color: Colors.grey.withOpacity(0.2)),
-              child: ListView.builder(
-                controller: _scrollController,
-                shrinkWrap: true,
-                reverse: true,
-                itemCount: _elapsedTimeList.length,
-                itemBuilder: (BuildContext context, int index) {
-                  final String content = _elapsedTimeList[index];
-                  return Padding(
-                    padding: EdgeInsets.fromLTRB(42.0, 0.0, 42.0, 0.0),
-                    child: Row(
-                      children: <Widget>[
-                        Expanded(
-                          flex: 16,
-                          child: Text(
-                            index == _elapsedTimeList.length - 1
-                                ? 'Letzte Zeit:\t${_elapsedTimeList[index]}'
-                                : _elapsedTimeList[index],
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 20.0),
-                          ),
-                        ),
-                        Spacer(),
-                        Expanded(
-                          flex: 2,
-                          child: IconButton(
-                            icon: Icon(Icons.share),
-                            onPressed: () => _shareContent(content),
-                          ),
-                        ),
-                        Spacer(),
-                        Expanded(
-                          flex: 2,
-                          child: IconButton(
-                            icon: Icon(Icons.content_copy),
-                            onPressed: () => _copyContent(content),
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-    );*/
   }
 
   void _startStopButtonPressed() {

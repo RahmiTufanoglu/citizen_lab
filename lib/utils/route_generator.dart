@@ -9,7 +9,7 @@ import 'package:citizen_lab/entries/linking_page/weblink_page.dart';
 import 'package:citizen_lab/entries/table/table_page.dart';
 import 'package:citizen_lab/entries/text/text_page.dart';
 import 'package:citizen_lab/entries/tools/calculator_page.dart';
-import 'package:citizen_lab/entries/tools/sensor_page.dart';
+import 'package:citizen_lab/entries/tools/geolocation_page.dart';
 import 'package:citizen_lab/entries/tools/stopwatch/stopwatch_page.dart';
 import 'package:citizen_lab/home/home_page.dart';
 import 'package:citizen_lab/onboarding/onboarding.dart';
@@ -123,7 +123,7 @@ class RouteGenerator {
           route = routeTablePage;
           break;
         case sensorPage:
-          page = SensorPage();
+          page = GeolocationPage();
           route = routeSensorPage;
           break;
         case infoPage:

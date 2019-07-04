@@ -233,13 +233,13 @@ class _WeblinkPageState extends State<WeblinkPage> {
             child: Icon(Icons.content_copy),
             onPressed: () => _copyContent(),
           ),*/
-          _test(),
+          _buildWebView(),
         ],
       ),
     );
   }
 
-  Widget _test() {
+  Widget _buildWebView() {
     return FutureBuilder<WebViewController>(
       future: _webViewController.future,
       builder: (

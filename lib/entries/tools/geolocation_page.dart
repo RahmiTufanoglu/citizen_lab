@@ -9,27 +9,21 @@ import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:share/share.dart';
 
-class SensorPage extends StatefulWidget {
-  final Key key;
-
-  SensorPage({this.key}) : super(key: key);
-
+class GeolocationPage extends StatefulWidget {
   @override
-  _SensorPageState createState() => _SensorPageState();
+  _GeolocationPageState createState() => _GeolocationPageState();
 }
 
-class _SensorPageState extends State<SensorPage>
+class _GeolocationPageState extends State<GeolocationPage>
     with SingleTickerProviderStateMixin {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _geolocator = Geolocator();
 
-  var _position = Position(latitude: 0.0, longitude: 0.0, accuracy: 0.0);
+  Position _position = Position(latitude: 0.0, longitude: 0.0, accuracy: 0.0);
   AnimationController _animationController;
   Animation<double> _animation;
   Timer _timer;
-
   ThemeChangerProvider _themeChanger;
-  //bool _darkModeEnabled = false;
 
   @override
   void initState() {

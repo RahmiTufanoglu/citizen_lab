@@ -85,12 +85,8 @@ class _OnboardingPageState extends State<OnboardingPage>
                             child: Container(
                               color: mainLightColor,
                               child: ListView(
-                                padding: const EdgeInsets.only(
-                                  top: 36.0,
-                                  bottom: 80.0,
-                                  left: 36.0,
-                                  right: 36.0,
-                                ),
+                                padding:
+                                    EdgeInsets.fromLTRB(36.0, 36.0, 36.0, 80.0),
                                 children: <Widget>[
                                   Text(
                                     page.title,

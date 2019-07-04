@@ -18,15 +18,13 @@ import 'package:share/share.dart';
 import '../../title_change_provider.dart';
 
 class TextPage extends StatefulWidget {
-  final Key key;
   final Note note;
   final int projectRandom;
 
   TextPage({
-    this.key,
     @required this.note,
     @required this.projectRandom,
-  }) : super(key: key);
+  });
 
   @override
   _TextPageState createState() => _TextPageState();

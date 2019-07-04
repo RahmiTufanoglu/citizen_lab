@@ -19,14 +19,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
   String operand = '';
 
   @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
-    //_themeChanger.checkIfDarkModeEnabled(context);
 
     return Scaffold(
       key: _scaffoldKey,
@@ -37,14 +31,16 @@ class _CalculatorPageState extends State<CalculatorPage> {
   }
 
   Widget _buildAppBar() {
+    final String calculator = 'Rechner';
+
     return AppBar(
       title: GestureDetector(
         onPanStart: (_) => _themeChanger.setTheme(),
         child: Container(
           width: double.infinity,
           child: Tooltip(
-            message: '',
-            child: Text('CALC'),
+            message: calculator,
+            child: Text(calculator),
           ),
         ),
       ),
@@ -53,60 +49,63 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
   Widget _buildBody() {
     return SafeArea(
-      child: Column(
-        children: <Widget>[
-          Container(
-            alignment: Alignment.centerRight,
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              output,
-              style: TextStyle(fontSize: 42.0),
+      child: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(vertical: 16.0),
+        child: Column(
+          children: <Widget>[
+            Container(
+              alignment: Alignment.centerRight,
+              padding: EdgeInsets.all(16.0),
+              child: Text(
+                output,
+                style: TextStyle(fontSize: 42.0),
+              ),
             ),
-          ),
-          Divider(),
-          Column(
-            children: [
-              Row(
-                children: [
-                  _buildButton('7'),
-                  _buildButton('8'),
-                  _buildButton('9'),
-                  _buildButton('/')
-                ],
-              ),
-              Row(
-                children: [
-                  _buildButton('4'),
-                  _buildButton('5'),
-                  _buildButton('6'),
-                  _buildButton('X')
-                ],
-              ),
-              Row(
-                children: [
-                  _buildButton('1'),
-                  _buildButton('2'),
-                  _buildButton('3'),
-                  _buildButton('-')
-                ],
-              ),
-              Row(
-                children: [
-                  _buildButton('.'),
-                  _buildButton('0'),
-                  _buildButton('00'),
-                  _buildButton('+')
-                ],
-              ),
-              Row(
-                children: [
-                  _buildButton('CLEAR'),
-                  _buildButton('='),
-                ],
-              )
-            ],
-          ),
-        ],
+            Divider(),
+            Column(
+              children: [
+                Row(
+                  children: [
+                    _buildButton('7'),
+                    _buildButton('8'),
+                    _buildButton('9'),
+                    _buildButton('/')
+                  ],
+                ),
+                Row(
+                  children: [
+                    _buildButton('4'),
+                    _buildButton('5'),
+                    _buildButton('6'),
+                    _buildButton('X')
+                  ],
+                ),
+                Row(
+                  children: [
+                    _buildButton('1'),
+                    _buildButton('2'),
+                    _buildButton('3'),
+                    _buildButton('-')
+                  ],
+                ),
+                Row(
+                  children: [
+                    _buildButton('.'),
+                    _buildButton('0'),
+                    _buildButton('00'),
+                    _buildButton('+')
+                  ],
+                ),
+                Row(
+                  children: [
+                    _buildButton('CLEAR'),
+                    _buildButton('='),
+                  ],
+                )
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -133,18 +132,10 @@ class _CalculatorPageState extends State<CalculatorPage> {
     } else if (buttonText == '=') {
       num2 = double.parse(output);
 
-      if (operand == '+') {
-        _output = (num1 + num2).toString();
-      }
-      if (operand == '-') {
-        _output = (num1 - num2).toString();
-      }
-      if (operand == 'X') {
-        _output = (num1 * num2).toString();
-      }
-      if (operand == '/') {
-        _output = (num1 / num2).toString();
-      }
+      if (operand == '+') _output = (num1 + num2).toString();
+      if (operand == '-') _output = (num1 - num2).toString();
+      if (operand == 'X') _output = (num1 * num2).toString();
+      if (operand == '/') _output = (num1 / num2).toString();
 
       num1 = 0.0;
       num2 = 0.0;
@@ -161,12 +152,11 @@ class _CalculatorPageState extends State<CalculatorPage> {
   Widget _buildButton(String buttonText) {
     return Expanded(
       child: Padding(
-        padding: const EdgeInsets.all(4.0),
+        padding: EdgeInsets.all(4.0),
         child: RaisedButton(
-          padding: const EdgeInsets.all(8.0),
           child: Text(
             buttonText,
-            style: TextStyle(fontSize: 24.0),
+            style: TextStyle(fontSize: 18.0),
           ),
           onPressed: () => _buttonPressed(buttonText),
         ),

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:citizen_lab/themes/theme.dart';
 import 'package:citizen_lab/utils/date_formater.dart';
 import 'package:flutter/material.dart';
 
@@ -62,8 +63,16 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
     return _buildWidget();
   }
 
+  bool _checkIfDarkModeEnabled() {
+    final ThemeData theme = Theme.of(context);
+    if (theme.brightness == appDarkTheme().brightness) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   Widget _buildWidget() {
-    final created = 'Erstellt am';
     final title = 'Titel';
     final titleHere = 'Titel hier';
     final content = 'Inhalt';
@@ -78,69 +87,86 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
           padding: EdgeInsets.only(top: 8.0, bottom: 88.0),
           children: <Widget>[
             Container(
-              margin: EdgeInsets.all(8.0),
-              decoration: ShapeDecoration(
-                shape: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                  borderSide: BorderSide(color: Colors.grey, width: 2.0),
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    Text(
-                      _timeString,
-                      style: TextStyle(
-                        fontSize: 14.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 8.0),
-                    Text(
-                      '$created: ${widget.createdAt}',
-                      style: TextStyle(
-                        fontSize: 14.0,
-                        fontStyle: FontStyle.italic,
-                      ),
-                    ),
-                  ],
-                ),
+              color: _checkIfDarkModeEnabled() ? Colors.black12 : Colors.white,
+              child: ExpansionTile(
+                title: null,
+                leading: Icon(Icons.access_time),
+                children: <Widget>[_topWidget()],
               ),
             ),
-            Card(
-              margin: EdgeInsets.all(8.0),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    StreamBuilder(
-                      stream: widget.titleBloc.title,
-                      builder: (BuildContext context, AsyncSnapshot snapshot) {
-                        return _buildTextField(
-                          controller: widget.titleEditingController,
-                          maxLines: 2,
-                          maxLength: 50,
-                          hintText: titleHere,
-                          onChanged: widget.titleBloc.changeTitle,
-                          snapshot: snapshot,
-                        );
-                      },
-                    ),
-                    Divider(color: Colors.black),
-                    _buildTextField(
-                      controller: widget.descEditingController,
-                      maxLines: 20,
-                      maxLength: 500,
-                      hintText: contentHere,
-                      onChanged: null,
-                      snapshot: null,
-                    ),
-                  ],
-                ),
+            _bottomWidget(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _topWidget() {
+    final created = 'Erstellt am';
+    return Container(
+      margin: EdgeInsets.all(8.0),
+      decoration: ShapeDecoration(
+        shape: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+          borderSide: BorderSide(color: Colors.grey, width: 2.0),
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Text(
+              _timeString,
+              style: TextStyle(
+                fontSize: 14.0,
+                fontWeight: FontWeight.bold,
               ),
+            ),
+            SizedBox(height: 8.0),
+            Text(
+              '$created: ${widget.createdAt}',
+              style: TextStyle(
+                fontSize: 14.0,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _bottomWidget() {
+    final titleHere = 'Titel hier';
+    final contentHere = 'Inhalt hier';
+    return Card(
+      margin: const EdgeInsets.all(8.0),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            StreamBuilder(
+              stream: widget.titleBloc.title,
+              builder: (BuildContext context, AsyncSnapshot snapshot) =>
+                  _buildTextField(
+                    controller: widget.titleEditingController,
+                    maxLines: 2,
+                    maxLength: 50,
+                    hintText: titleHere,
+                    onChanged: widget.titleBloc.changeTitle,
+                    snapshot: snapshot,
+                  ),
+            ),
+            Divider(color: Colors.black),
+            _buildTextField(
+              controller: widget.descEditingController,
+              maxLines: 20,
+              maxLength: 500,
+              hintText: contentHere,
+              onChanged: null,
+              snapshot: null,
             ),
           ],
         ),

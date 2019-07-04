@@ -1,4 +1,4 @@
-const String app_title = 'Citizen Lab';
+const String APP_TITLE = 'Citizen Lab';
 
 const String feedback = 'Feedback';
 

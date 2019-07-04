@@ -50,7 +50,7 @@ class _MaterialAppWithThemeState extends State<MaterialAppWithTheme> {
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: app_title,
+      title: APP_TITLE,
       home: SplashPage(),
       theme: theme.getTheme,
       //darkTheme: appDarkTheme(),

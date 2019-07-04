@@ -11,10 +11,6 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
-  final Key key;
-
-  HomePage({this.key}) : super(key: key);
-
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -26,13 +22,13 @@ class _HomePageState extends State<HomePage>
   ThemeChangerProvider _themeChanger;
   bool _valueSwitch = false;
 
-  //bool _darkModeEnabled = false;
-
   @override
   void initState() {
+    super.initState();
+
     _animationController = AnimationController(
-      duration: Duration(milliseconds: 800),
       vsync: this,
+      duration: Duration(milliseconds: 800),
     );
 
     _animation = Tween(
@@ -41,8 +37,6 @@ class _HomePageState extends State<HomePage>
     ).animate(_animationController);
 
     _animationController.forward();
-
-    super.initState();
   }
 
   void _checkIfDarkModeEnabled() {
@@ -53,17 +47,14 @@ class _HomePageState extends State<HomePage>
 
     if (theme.brightness == appDarkTheme().brightness) {
       _valueSwitch = true;
-      //_darkModeEnabled = true;
     } else {
       _valueSwitch = false;
-      //_darkModeEnabled = false;
     }
   }
 
   @override
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
-    //_themeChanger.checkIfDarkModeEnabled(context);
     _checkIfDarkModeEnabled();
 
     return Scaffold(
@@ -75,16 +66,14 @@ class _HomePageState extends State<HomePage>
   }
 
   Widget _buildAppBar() {
-    final String citizenLab = 'Citizen Lab';
-
     return AppBar(
       title: GestureDetector(
         onPanStart: (_) => _themeChanger.setTheme(),
         child: Container(
           width: double.infinity,
           child: Tooltip(
-            message: citizenLab,
-            child: Text(citizenLab),
+            message: APP_TITLE,
+            child: Text(APP_TITLE),
           ),
         ),
       ),
@@ -99,12 +88,6 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  /*void _enableDarkMode() {
-    _darkModeEnabled
-        ? _themeChanger.setTheme(appLightTheme())
-        : _themeChanger.setTheme(appDarkTheme());
-  }*/
-
   Widget _buildDrawer() {
     final double screenHeight = MediaQuery.of(context).size.height;
     final double statusBarHeight = MediaQuery.of(context).padding.top;
@@ -113,22 +96,34 @@ class _HomePageState extends State<HomePage>
     final double screenWidth = MediaQuery.of(context).size.width;
     final double drawerWidth = screenWidth / 1.5;
 
-    final String citizenLab = 'Citizen Lab';
+    final String createExperiment = 'Experiment erstellen';
+    final String openExperiment = 'Experiment öffnen';
+    final String about = 'Über';
+    final String location = 'Dortmund';
 
     return MainDrawer(
       drawerWidth: drawerWidth,
+      location: location,
       children: <Widget>[
         Container(
           height: drawerHeaderHeight,
           child: Card(
-            shape: Border(),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(16.0),
+                bottomRight: Radius.circular(16.0),
+              ),
+            ),
             margin: const EdgeInsets.all(0.0),
             child: Align(
               alignment: Alignment.bottomLeft,
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.only(
+                  left: 16.0,
+                  bottom: 8.0,
+                ),
                 child: Text(
-                  citizenLab,
+                  APP_TITLE,
                   style: TextStyle(fontSize: 24.0),
                 ),
               ),
@@ -141,35 +136,24 @@ class _HomePageState extends State<HomePage>
             _buildDrawerItem(
               context: context,
               icon: Icons.border_color,
-              title: 'Experiment erstellen',
-              onTap: () {
-                Navigator.pushNamed(
-                  context,
-                  RouteGenerator.createProject,
-                );
-              },
+              title: createExperiment,
+              onTap: () => _setNavigation(RouteGenerator.createProject),
             ),
             _buildDrawerItem(
               context: context,
               icon: Icons.assignment,
-              title: 'Experiment öffnen',
+              title: openExperiment,
               onTap: () {
-                Navigator.pushNamed(
-                  context,
-                  RouteGenerator.projectPage,
-                );
+                Map map = Map<String, bool>();
+                map['isFromCreateProjectPage'] = false;
+                _setNavigation(RouteGenerator.projectPage, map);
               },
             ),
             _buildDrawerItem(
               context: context,
               icon: Icons.public,
-              title: 'Citizen Science',
-              onTap: () {
-                Navigator.pushNamed(
-                  context,
-                  RouteGenerator.citizenSciencePage,
-                );
-              },
+              title: APP_TITLE,
+              onTap: () => _setNavigation(RouteGenerator.citizenSciencePage),
             ),
           ],
         ),
@@ -193,16 +177,12 @@ class _HomePageState extends State<HomePage>
             _buildDrawerItem(
               context: context,
               icon: Icons.info,
-              title: 'Über',
+              title: about,
               onTap: () {
-                Navigator.pushNamed(
-                  context,
-                  RouteGenerator.aboutPage,
-                  arguments: {
-                    'title': 'Über',
-                    'content': lorem,
-                  },
-                );
+                Map map = Map<String, String>();
+                map['title'] = 'Über';
+                map['content'] = lorem;
+                _setNavigation(RouteGenerator.aboutPage, map);
               },
             ),
           ],
@@ -233,6 +213,14 @@ class _HomePageState extends State<HomePage>
     );
   }
 
+  void _setNavigation(String route, [Object arguments]) {
+    Navigator.pushNamed(
+      context,
+      route,
+      arguments: arguments,
+    );
+  }
+
   void _onChangedSwitch(bool value) {
     value ? _themeChanger.setTheme() : _themeChanger.setTheme();
     setState(() {
@@ -254,7 +242,7 @@ class _HomePageState extends State<HomePage>
         child: InkWell(
           onTap: onTap,
           child: Padding(
-            padding: EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
@@ -269,9 +257,13 @@ class _HomePageState extends State<HomePage>
   }
 
   Widget _buildBody() {
-    double height = MediaQuery.of(context).size.height - kToolbarHeight;
-    final Color lightGreen = Color(0xFFBFE0D0);
-    final Color softBlue = Color(0xFF009FE3);
+    final Color topColor1 = Color(0xFFBFDFCF);
+    final Color topColor2 = Color(0xFF009FE3);
+    final Color bottomColor1 = Color(0xFFF1CF7F);
+    final Color bottomColor2 = Color(0xFFE7F7C0);
+
+    final String createExperiment = 'Experiment erstellen';
+    final String openExperiment = 'Experiment öffnen';
 
     return SafeArea(
       child: WillPopScope(
@@ -287,32 +279,25 @@ class _HomePageState extends State<HomePage>
                     Expanded(
                       child: CardImageWithText(
                         asset: 'assets/images/stadtgärtnern_oberhausen.jpg',
-                        title: 'Experiment erstellen',
-                        gradientColor1: lightGreen,
-                        gradientColor2: softBlue,
-                        //fontColor: Colors.white,
-                        onTap: () => Navigator.pushNamed(
-                              context,
-                              RouteGenerator.createProject,
-                            ),
+                        title: createExperiment,
+                        gradientColor1: topColor1,
+                        gradientColor2: topColor2,
+                        onTap: () =>
+                            _setNavigation(RouteGenerator.createProject),
                       ),
                     ),
                     SizedBox(height: 8.0),
                     Expanded(
-                      //child: CardImageWithText(
                       child: CardImageWithText(
                         asset: 'assets/images/aquaponik_anlage.jpg',
-                        title: 'Experiment öffnen',
-                        gradientColor1: softBlue,
-                        gradientColor2: lightGreen,
-                        //fontColor: Colors.white,
-                        onTap: () => Navigator.pushNamed(
-                              context,
-                              RouteGenerator.projectPage,
-                              arguments: {
-                                'isFromCreateProjectPage': false,
-                              },
-                            ),
+                        title: openExperiment,
+                        gradientColor1: bottomColor2,
+                        gradientColor2: bottomColor1,
+                        onTap: () {
+                          Map map = Map<String, bool>();
+                          map['isFromCreateProjectPage'] = false;
+                          _setNavigation(RouteGenerator.projectPage, map);
+                        },
                       ),
                     ),
                   ],
@@ -323,37 +308,5 @@ class _HomePageState extends State<HomePage>
         ),
       ),
     );
-  }
-}
-
-class TopClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    Path path = Path();
-    path.lineTo(0.0, size.height);
-    path.lineTo(size.width, 0.0);
-    path.close();
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) {
-    return false;
-  }
-}
-
-class BottomClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    Path path = Path();
-    path.lineTo(size.height, 0.0);
-    path.lineTo(size.width, 0.0);
-    path.close();
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) {
-    return false;
   }
 }

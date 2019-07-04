@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 final Color mainDarkColor = Color(0xFF404040);
-final Color mainLightColor = Color(0xFFF2F2F2);
+final Color mainLightColor = Color(0xFFEBEBEB);
+final Color accentLight = Color(0xFF009FE3);
+final Color accentDark = Color(0xFFBFDFCF);
 
 ThemeData appLightTheme() {
   final ThemeData theme = ThemeData.light();
@@ -9,7 +11,7 @@ ThemeData appLightTheme() {
     brightness: Brightness.light,
     scaffoldBackgroundColor: mainLightColor,
     //scaffoldBackgroundColor: Colors.white,
-    accentColor: Colors.deepPurpleAccent,
+    accentColor: accentLight,
     primaryColor: Colors.white,
     buttonColor: Colors.black,
     backgroundColor: Colors.white,
@@ -18,7 +20,7 @@ ThemeData appLightTheme() {
     ),
     primaryIconTheme: theme.iconTheme.copyWith(color: Colors.black),
     floatingActionButtonTheme: FloatingActionButtonThemeData(
-      elevation: 6.0,
+      elevation: 4.0,
       highlightElevation: 16.0,
       backgroundColor: Colors.white,
       foregroundColor: Colors.black,
@@ -29,23 +31,24 @@ ThemeData appLightTheme() {
     iconTheme: IconThemeData(color: mainDarkColor),
     appBarTheme: AppBarTheme(
       color: Colors.white,
-      elevation: 6.0,
+      elevation: 4.0,
+      //elevation: 0.0,
       iconTheme: IconThemeData(color: mainDarkColor),
       actionsIconTheme: IconThemeData(color: mainDarkColor),
     ),
     cardTheme: CardTheme(
       color: Colors.white,
-      elevation: 6.0,
+      elevation: 4.0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(8.0)),
       ),
     ),
-    splashColor: Colors.deepPurpleAccent.withOpacity(0.2),
-    highlightColor: Colors.deepPurpleAccent.withOpacity(0.2),
+    splashColor: accentLight.withOpacity(0.2),
+    highlightColor: accentLight.withOpacity(0.2),
     buttonTheme: ButtonThemeData(
       buttonColor: Colors.white,
-      splashColor: Colors.deepPurpleAccent.withOpacity(0.2),
-      highlightColor: Colors.deepPurpleAccent.withOpacity(0.2),
+      splashColor: accentLight.withOpacity(0.2),
+      highlightColor: accentLight.withOpacity(0.2),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(8.0)),
       ),
@@ -66,7 +69,7 @@ ThemeData appDarkTheme() {
   return theme.copyWith(
     brightness: Brightness.dark,
     scaffoldBackgroundColor: mainDarkColor,
-    accentColor: Colors.deepOrangeAccent,
+    accentColor: accentDark,
     primaryColor: mainDarkColor,
     buttonColor: Colors.white,
     backgroundColor: Colors.black,
@@ -75,7 +78,7 @@ ThemeData appDarkTheme() {
     ),
     primaryIconTheme: theme.iconTheme.copyWith(color: Colors.white),
     floatingActionButtonTheme: FloatingActionButtonThemeData(
-      elevation: 6.0,
+      elevation: 4.0,
       highlightElevation: 16.0,
       backgroundColor: Colors.white,
       foregroundColor: Colors.black,
@@ -86,23 +89,23 @@ ThemeData appDarkTheme() {
     iconTheme: IconThemeData(color: Colors.white),
     appBarTheme: AppBarTheme(
       color: mainDarkColor,
-      elevation: 6.0,
+      elevation: 4.0,
       iconTheme: IconThemeData(color: Colors.white),
       actionsIconTheme: IconThemeData(color: Colors.white),
     ),
     cardTheme: CardTheme(
       color: mainDarkColor,
-      elevation: 6.0,
+      elevation: 4.0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(8.0)),
       ),
     ),
-    splashColor: Colors.deepOrangeAccent.withOpacity(0.2),
-    highlightColor: Colors.deepOrangeAccent.withOpacity(0.2),
+    splashColor: accentDark.withOpacity(0.2),
+    highlightColor: accentDark.withOpacity(0.2),
     buttonTheme: ButtonThemeData(
       buttonColor: mainDarkColor,
-      splashColor: Colors.deepOrangeAccent.withOpacity(0.2),
-      highlightColor: Colors.deepOrangeAccent.withOpacity(0.2),
+      splashColor: accentDark.withOpacity(0.2),
+      highlightColor: accentDark.withOpacity(0.2),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(8.0)),
       ),

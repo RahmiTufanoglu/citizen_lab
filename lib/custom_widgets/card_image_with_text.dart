@@ -25,15 +25,15 @@ class CardImageWithText extends StatelessWidget {
     @required this.onTap,
     @required this.gradientColor1,
     @required this.gradientColor2,
-    this.fontSize = 32.0,
+    this.fontSize = 28.0,
     this.fontColor = Colors.black,
-    this.shadow1Color = Colors.grey,
-    this.shadow2Color = Colors.grey,
-    this.shadow1OffsetX = 12.0,
-    this.shadow1OffsetY = 12.0,
-    this.shadow2OffsetX = 12.0,
-    this.shadow2OffsetY = 12.0,
-    this.shadow1Blur = 8.0,
+    this.shadow1Color = Colors.black,
+    this.shadow2Color = Colors.black,
+    this.shadow1OffsetX = 56.0,
+    this.shadow1OffsetY = 56.0,
+    this.shadow2OffsetX = 56.0,
+    this.shadow2OffsetY = 56.0,
+    this.shadow1Blur = 16.0,
     this.shadow2Blur = 24.0,
   })  : assert(asset != null),
         assert(title != null),
@@ -41,6 +41,67 @@ class CardImageWithText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: RaisedButton(
+        padding: EdgeInsets.all(0.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(16.0)),
+        ),
+        child: Stack(
+          children: <Widget>[
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(16.0)),
+                gradient: LinearGradient(
+                  colors: [
+                    gradientColor1,
+                    gradientColor2,
+                  ],
+                ),
+              ),
+              child: Center(
+                child: Container(
+                  color: Colors.white.withOpacity(0.4),
+                  width: double.infinity,
+                  child: Text(
+                    title,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: fontColor,
+                      fontSize: fontSize,
+                      shadows: <Shadow>[
+                        _buildShadow(
+                          shadow1OffsetX,
+                          shadow1OffsetY,
+                          shadow1Blur,
+                          shadow1Color,
+                        ),
+                        _buildShadow(
+                          shadow2OffsetX,
+                          shadow2OffsetY,
+                          shadow2Blur,
+                          shadow2Color,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: BorderRadius.all(Radius.circular(16.0)),
+                onTap: onTap,
+              ),
+            ),
+          ],
+        ),
+        onPressed: () {},
+      ),
+    );
+
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(16.0)),
@@ -50,51 +111,41 @@ class CardImageWithText extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(16.0)),
-              image: DecorationImage(
+              /*image: DecorationImage(
                 image: AssetImage(asset),
                 fit: BoxFit.fill,
-              ),
-              /*gradient: LinearGradient(
+              ),*/
+              gradient: LinearGradient(
                 colors: [
-                  Colors.white,
                   gradientColor1,
                   gradientColor2,
                 ],
-              ),*/
+              ),
             ),
             child: Center(
-              child: ClipRect(
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(16.0)),
-                    ),
-                    width: double.infinity,
-                    height: 60.0,
-                    child: Center(
-                      child: Text(
-                        title,
-                        style: TextStyle(
-                          color: fontColor,
-                          fontSize: fontSize,
-                          shadows: <Shadow>[
-                            _buildShadow(
-                              shadow1OffsetX,
-                              shadow1OffsetY,
-                              shadow1Blur,
-                              shadow1Color,
-                            ),
-                            _buildShadow(
-                              shadow2OffsetX,
-                              shadow2OffsetY,
-                              shadow2Blur,
-                              shadow2Color,
-                            ),
-                          ],
-                        ),
+              child: Container(
+                color: Colors.white,
+                width: double.infinity,
+                child: Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: fontColor,
+                    fontSize: fontSize,
+                    /*shadows: <Shadow>[
+                      _buildShadow(
+                        shadow1OffsetX,
+                        shadow1OffsetY,
+                        shadow1Blur,
+                        shadow1Color,
                       ),
-                    ),
+                      _buildShadow(
+                        shadow2OffsetX,
+                        shadow2OffsetY,
+                        shadow2Blur,
+                        shadow2Color,
+                      ),
+                    ],*/
                   ),
                 ),
               ),
@@ -103,9 +154,7 @@ class CardImageWithText extends StatelessWidget {
           Material(
             color: Colors.transparent,
             child: InkWell(
-              borderRadius: BorderRadius.all(
-                Radius.circular(16.0),
-              ),
+              borderRadius: BorderRadius.all(Radius.circular(16.0)),
               onTap: onTap,
             ),
           ),

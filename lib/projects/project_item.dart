@@ -13,20 +13,15 @@ class ProjectItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.only(
-        top: 8.0,
-        bottom: 8.0,
-      ),
+      margin: EdgeInsets.symmetric(vertical: 8.0),
       child: InkWell(
         onTap: onTap,
         onLongPress: () {},
         customBorder: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(8.0),
-          ),
+          borderRadius: BorderRadius.all(Radius.circular(8.0)),
         ),
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: EdgeInsets.all(16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,

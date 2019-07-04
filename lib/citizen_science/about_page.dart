@@ -3,15 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class SimpleInfoPage extends StatefulWidget {
-  final Key key;
   final String title;
   final String content;
 
   SimpleInfoPage({
-    this.key,
     @required this.title,
     @required this.content,
-  }) : super(key: key);
+  });
 
   @override
   _SimpleInfoPageState createState() => _SimpleInfoPageState();

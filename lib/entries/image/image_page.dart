@@ -19,19 +19,16 @@ import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
 
-import '../experiment_item.dart';
 import 'image_info_page_data.dart';
 
 class ImagePage extends StatefulWidget {
-  final Key key;
   final Note note;
   final int projectRandom;
 
   ImagePage({
-    this.key,
     this.note,
     this.projectRandom,
-  }) : super(key: key);
+  });
 
   @override
   _ImagePageState createState() => _ImagePageState();
@@ -135,59 +132,6 @@ class _ImagePageState extends State<ImagePage> {
             tooltip: '$createImage.',
             child: Icon(Icons.camera_alt),
             onPressed: () => _createImage(),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _setFabs() {
-    if (_initialPage == 1) {
-      return _buildFabImage();
-    } else {
-      return _buildFabsContent();
-    }
-  }
-
-  Widget _buildFabImage() {
-    final String editTitleAndDesc = 'Titel und Beschreibung editieren';
-    final String getImage = 'Foto aus dem Ordner importieren';
-    final String createImage = 'Foto erstellen';
-
-    return FloatingActionButton(
-      tooltip: '$createImage.',
-      child: Icon(Icons.camera_alt),
-      onPressed: () => _createImage(),
-    );
-  }
-
-  Widget _buildFabsContent() {
-    final String editTitleAndDesc = 'Titel und Beschreibung editieren';
-    final String getImage = 'Foto aus dem Ordner importieren';
-    final String createImage = 'Foto erstellen';
-
-    return Padding(
-      padding: const EdgeInsets.only(left: 32.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          FloatingActionButton(
-            heroTag: null,
-            tooltip: '$createImage.',
-            child: Icon(Icons.keyboard_arrow_up),
-            onPressed: () => _openModalBottomSheet(),
-          ),
-          FloatingActionButton(
-            heroTag: null,
-            tooltip: '$createImage.',
-            child: Icon(Icons.remove),
-            onPressed: () => _refreshTextFormFields(),
-          ),
-          FloatingActionButton(
-            heroTag: null,
-            tooltip: '$createImage.',
-            child: Icon(Icons.content_copy),
-            onPressed: () => _copyContent(),
           ),
         ],
       ),
@@ -537,7 +481,7 @@ class _ImagePageState extends State<ImagePage> {
     file.writeAsBytesSync(uint8List);
   }
 
-  String operation;
+  //String operation;
 
   Future<void> _saveNote() async {
     if (_titleEditingController.text.isNotEmpty && (_image != null)) {
@@ -621,126 +565,6 @@ class _ImagePageState extends State<ImagePage> {
           },
         );
       },
-    );
-  }
-
-  void _refreshTextFormFields() {
-    final String textDeleted = 'Text gelöscht';
-
-    if (_titleEditingController.text.isNotEmpty) {
-      _titleEditingController.clear();
-    }
-
-    if (_descEditingController.text.isNotEmpty) {
-      _descEditingController.clear();
-    }
-
-    _scaffoldKey.currentState.showSnackBar(
-      _buildSnackBar(text: '$textDeleted.'),
-    );
-  }
-
-  void _copyContent() {
-    final String copyContent = 'Inhalt kopiert';
-    final String copyNotPossible = 'Kein Inhalt zum kopieren';
-
-    if (_titleEditingController.text.isNotEmpty &&
-        _descEditingController.text.isNotEmpty) {
-      String fullContent =
-          _titleEditingController.text + '\n' + _descEditingController.text;
-      _setClipboard(fullContent, '$copyContent.');
-    } else {
-      _scaffoldKey.currentState.showSnackBar(
-        _buildSnackBar(text: '$copyNotPossible.'),
-      );
-    }
-  }
-
-  void _openModalBottomSheet() {
-    List<ExperimentItem> experimentItems = [
-      ExperimentItem('', Icons.keyboard_arrow_down),
-      ExperimentItem('AAA', Icons.add),
-      ExperimentItem('BBB', Icons.add),
-      ExperimentItem('CCC', Icons.add),
-      ExperimentItem('DDD', Icons.add),
-      ExperimentItem('EEE', Icons.add),
-      ExperimentItem('FFF', Icons.add),
-      ExperimentItem('GGG', Icons.add),
-      ExperimentItem('HHH', Icons.add),
-      ExperimentItem('III', Icons.add),
-    ];
-
-    List<Widget> experimentItemsWidgets = [];
-    for (int i = 0; i < experimentItems.length; i++) {
-      if (i == 0) {
-        experimentItemsWidgets.add(_createTile(experimentItems[i], true));
-      } else {
-        experimentItemsWidgets.add(_createTile(experimentItems[i], false));
-      }
-    }
-
-    _buildMainBottomSheet(experimentItemsWidgets);
-  }
-
-  void _buildMainBottomSheet(List<Widget> experimentItemsWidgets) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return ListView(
-          shrinkWrap: true,
-          children: experimentItemsWidgets,
-        );
-      },
-    );
-  }
-
-  Widget _createTile(ExperimentItem experimentItem, bool centerIcon) {
-    return Material(
-      child: InkWell(
-        child: Container(
-          height: 50.0,
-          child: Stack(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Center(
-                  child: (!centerIcon)
-                      ? Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text(
-                              experimentItem.name,
-                              style: TextStyle(fontSize: 16.0),
-                            ),
-                            Icon(experimentItem.icon, size: 20.0),
-                          ],
-                        )
-                      : Center(
-                          child: Icon(experimentItem.icon, size: 28.0),
-                        ),
-                ),
-              ),
-              Divider(height: 1.0, color: Colors.black),
-            ],
-          ),
-        ),
-        onTap: () {
-          if (experimentItem.name.isNotEmpty) {
-            _descEditingController.text += experimentItem.name;
-          }
-          Navigator.pop(context);
-        },
-      ),
-    );
-  }
-
-  void _setClipboard(String text, String snackText) {
-    Clipboard.setData(
-      ClipboardData(text: text),
-    );
-
-    _scaffoldKey.currentState.showSnackBar(
-      _buildSnackBar(text: snackText),
     );
   }
 
