@@ -74,6 +74,7 @@ class NotesBloc implements BaseBloc {
       (Note a, Note b) =>
           a.title.toLowerCase().compareTo(b.title.toLowerCase()),
     );
+    getNotes(random: null);
   }
 
   void sortByTitleDesc(List<Note> notes) {

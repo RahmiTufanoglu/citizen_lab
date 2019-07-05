@@ -205,7 +205,7 @@ class _ProjectPageState extends State<ProjectPage> {
         onWillPop: _onBackPressed,
         child: _projectList.isNotEmpty
             ? ListView.builder(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 88.0),
                 reverse: false,
                 itemCount: _projectList.length,
                 itemBuilder: (context, index) {
@@ -241,6 +241,7 @@ class _ProjectPageState extends State<ProjectPage> {
                       child: ProjectItem(
                         project: _projectList[index],
                         onTap: () => _navigateToEntry(index),
+                        onLongPress: () => _showContent(index),
                       ),
                     ),
                   );
@@ -272,9 +273,65 @@ class _ProjectPageState extends State<ProjectPage> {
     if (result) _loadProjectList();
   }
 
+  void _showContent(int index) {
+    final String createdAt = 'Erstellt am';
+
+    showDialog(
+      context: context,
+      builder: (context) => SimpleDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(8.0)),
+            ),
+            contentPadding: EdgeInsets.all(16.0),
+            titlePadding: EdgeInsets.only(left: 16.0),
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    SizedBox(height: 16.0),
+                    Text(
+                      '$createdAt: '
+                      '${_projectList[index].dateCreated}',
+                      style: TextStyle(
+                          fontSize: 14.0, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 16.0),
+                  ],
+                ),
+                IconButton(
+                  icon: Icon(Icons.close),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ],
+            ),
+            children: <Widget>[
+              Text(
+                '$title:',
+                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 8.0),
+              Text(_projectList[index].title, style: TextStyle(fontSize: 16.0)),
+              SizedBox(height: 32.0),
+              Text(
+                '$desc:',
+                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 8.0),
+              Text(
+                _projectList[index].description,
+                style: TextStyle(fontSize: 16.0),
+              ),
+              SizedBox(height: 8.0),
+            ],
+          ),
+    );
+  }
+
   Widget _buildSnackBar({@required String text}) {
     return SnackBar(
-      backgroundColor: Colors.black.withOpacity(0.5),
+      backgroundColor: Colors.black87,
       duration: Duration(seconds: 1),
       content: Text(
         text,
@@ -323,7 +380,6 @@ class _ProjectPageState extends State<ProjectPage> {
     } else {
       Navigator.pop(context, true);
     }
-
     return false;
   }
 }

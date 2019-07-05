@@ -4,19 +4,21 @@ import 'package:flutter/material.dart';
 class ProjectItem extends StatelessWidget {
   final Project project;
   final GestureTapCallback onTap;
+  final GestureTapCallback onLongPress;
 
   ProjectItem({
     @required this.project,
+    @required this.onLongPress,
     this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.symmetric(vertical: 8.0),
+      margin: EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
       child: InkWell(
         onTap: onTap,
-        onLongPress: () {},
+        onLongPress: onLongPress,
         customBorder: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(8.0)),
         ),

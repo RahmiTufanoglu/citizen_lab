@@ -2,9 +2,9 @@ import 'dart:io';
 
 import 'package:citizen_lab/bloc/notes_bloc.dart';
 import 'package:citizen_lab/custom_widgets/alarm_dialog.dart';
-import 'package:citizen_lab/custom_widgets/card_item.dart';
 import 'package:citizen_lab/custom_widgets/dial_floating_action_button.dart';
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
+import 'package:citizen_lab/custom_widgets/note_item.dart';
 import 'package:citizen_lab/custom_widgets/simple_timer_dialog.dart';
 import 'package:citizen_lab/database/database_provider.dart';
 import 'package:citizen_lab/entries/note.dart';
@@ -60,15 +60,15 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   String createdAtAsc = 'created_at ASC';
   String titleDesc = 'title DESC';
   String titleAsc = 'title ASC';
-  String order = 'created_at DESC';
-
-  bool _tapped = false;
+  String _order = 'created_at DESC';
 
   @override
   void initState() {
+    super.initState();
+
     _notesBloc = NotesBloc(
       random: widget.project.random,
-      order: order,
+      order: _order,
     );
 
     //_loadNoteList();
@@ -85,8 +85,6 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
         }
       });
     });
-
-    super.initState();
   }
 
   @override
@@ -192,11 +190,11 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
             ? ListView.builder(
                 //itemCount: _noteList.length,
                 itemCount: snapshot.data.length,
-                padding: EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 88.0),
+                padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 88.0),
                 itemBuilder: (context, index) {
                   //final note = _noteList[index];
                   final note = snapshot.data[index];
-                  _noteList.add(note);
+                  //_noteList.add(note);
                   final key = Key('${note.hashCode}');
                   return Dismissible(
                     key: key,
@@ -246,7 +244,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
       height: MediaQuery.of(context).orientation == Orientation.portrait
           ? screenHeight / 8
           : screenHeight / 4,
-      child: CardItem(
+      child: NoteItem(
         note: note,
         onTap: () => _openNotePage(note.type, note),
         //onLongPress: () => _showContent(index),
@@ -288,24 +286,27 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
     );
   }
 
-  void _showEditDialog() async {
-    await showDialog(
+  void _showEditDialog() {
+    showDialog(
       context: context,
-      builder: (context) => SimpleTimerDialog(
-            createdAt: _createdAt,
-            textEditingController: _titleProjectController,
-            descEditingController: _descProjectController,
-            descExists: true,
-            onPressedClose: () => Navigator.pop(context),
-            onPressedClear: () {
-              _titleProjectController.clear();
-              _descProjectController.clear();
-            },
-            onPressedUpdate: () {
-              _updateProject(widget.project);
-              //_title = _titleProjectController.text;
-              Navigator.pop(context);
-            },
+      builder: (context) => Container(
+            width: 2000.0,
+            child: SimpleTimerDialog(
+              createdAt: _createdAt,
+              textEditingController: _titleProjectController,
+              descEditingController: _descProjectController,
+              descExists: true,
+              onPressedClose: () => Navigator.pop(context),
+              onPressedClear: () {
+                _titleProjectController.clear();
+                _descProjectController.clear();
+              },
+              onPressedUpdate: () {
+                _updateProject(widget.project);
+                //_title = _titleProjectController.text;
+                Navigator.pop(context);
+              },
+            ),
           ),
     );
   }
@@ -646,7 +647,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
                 a.title.toLowerCase().compareTo(b.title.toLowerCase()),
           );
         });*/
-        _notesBloc.sortByTitleArc(_noteList);
+        //_notesBloc.sortByTitleArc(_noteList);
         break;
       case sort_by_title_desc:
         /*setState(() {
@@ -655,7 +656,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
                 b.title.toLowerCase().compareTo(a.title.toLowerCase()),
           );
         });*/
-        _notesBloc.sortByTitleDesc(_noteList);
+        //_notesBloc.sortByTitleDesc(_noteList);
         break;
       case sort_by_release_date_asc:
         /*setState(() {
@@ -663,7 +664,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
             (Note a, Note b) => a.dateCreated.compareTo(b.dateCreated),
           );
         });*/
-        _notesBloc.sortByReleaseDateArc(_noteList);
+        //_notesBloc.sortByReleaseDateArc(_noteList);
         break;
       case sort_by_release_date_desc:
         /*setState(() {
@@ -671,7 +672,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
             (Note a, Note b) => b.dateCreated.compareTo(a.dateCreated),
           );
         });*/
-        _notesBloc.sortByReleaseDateDesc(_noteList);
+        //_notesBloc.sortByReleaseDateDesc(_noteList);
         break;
     }
   }

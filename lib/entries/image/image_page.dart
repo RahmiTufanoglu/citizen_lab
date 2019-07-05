@@ -86,17 +86,9 @@ class _ImagePageState extends State<ImagePage> {
     super.dispose();
   }
 
-  /*void _getTime() {
-    final String formattedDateTime = dateFormatted();
-    setState(() {
-      _timeString = formattedDateTime;
-    });
-  }*/
-
   @override
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
-    //_themeChanger.checkIfDarkModeEnabled(context);
 
     return Scaffold(
       key: _scaffoldKey,
@@ -122,11 +114,17 @@ class _ImagePageState extends State<ImagePage> {
             child: Icon(Icons.description),
             onPressed: () => _showEditDialog(),
           ),
-          /*FloatingActionButton(
+          FloatingActionButton(
             heroTag: null,
-            child: Icon(Icons.remove),
-            onPressed: () => _refreshTextFormFields(),
-          ),*/
+            tooltip: 'aadfjksdhflkfb',
+            elevation: 4.0,
+            highlightElevation: 16.0,
+            backgroundColor: Colors.white.withOpacity(0.8),
+            child: Icon(Icons.folder),
+            onPressed: () async {
+              await _getImage(false);
+            },
+          ),
           FloatingActionButton(
             heroTag: null,
             tooltip: '$createImage.',
@@ -175,6 +173,7 @@ class _ImagePageState extends State<ImagePage> {
     );
   }
 
+  // TODO: Fehler wird nicht angezeigt
   void _shareContent() {
     if (_image != null) {
       try {
@@ -210,10 +209,10 @@ class _ImagePageState extends State<ImagePage> {
     );
   }
 
-  Future<void> _backToHomePage() async {
+  void _backToHomePage() {
     final String cancel = 'Notiz abbrechen und zur Hauptseite zurückkehren?';
 
-    await showDialog(
+    showDialog(
       context: context,
       builder: (_) {
         return NoYesDialog(
@@ -266,7 +265,7 @@ class _ImagePageState extends State<ImagePage> {
         key: _formKey,
         autovalidate: true,
         child: WillPopScope(
-          onWillPop: () => _saveNote(),
+          onWillPop: _saveNote,
           child: Stack(
             children: <Widget>[
               (_initialPage == 1)
@@ -517,7 +516,7 @@ class _ImagePageState extends State<ImagePage> {
     }
   }
 
-  Future<void> _updateNote(Note note) async {
+  void _updateNote(Note note) {
     Note newNote = Note.fromMap({
       DatabaseProvider.columnNoteId: note.id,
       DatabaseProvider.columnProjectRandom: note.projectRandom,
@@ -534,10 +533,10 @@ class _ImagePageState extends State<ImagePage> {
     Navigator.pop(context, newNote);
   }
 
-  Future<void> _showEditDialog() async {
+  void _showEditDialog() {
     final String oldTitle = _title;
 
-    await showDialog(
+    showDialog(
       context: context,
       builder: (context) {
         return SimpleTimerDialog(
@@ -584,7 +583,7 @@ class _ImagePageState extends State<ImagePage> {
 
   Widget _buildSnackBar({@required String text}) {
     return SnackBar(
-      backgroundColor: Colors.black.withOpacity(0.5),
+      backgroundColor: Colors.black87,
       duration: Duration(milliseconds: 500),
       content: Text(
         text,
@@ -622,9 +621,7 @@ class _ImagePageState extends State<ImagePage> {
               child: Text('Nein'),
               color: Colors.green,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(8.0),
-                ),
+                borderRadius: BorderRadius.all(Radius.circular(8.0)),
               ),
               onPressed: () => _scaffoldKey.currentState.hideCurrentSnackBar(),
             ),
@@ -636,9 +633,7 @@ class _ImagePageState extends State<ImagePage> {
               child: Text('Ja'),
               color: Colors.red,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(8.0),
-                ),
+                borderRadius: BorderRadius.all(Radius.circular(8.0)),
               ),
               onPressed: onPressed,
             ),

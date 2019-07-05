@@ -2,13 +2,13 @@ import 'package:citizen_lab/entries/note.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
-class CardItem extends StatelessWidget {
+class NoteItem extends StatelessWidget {
   final Key key;
   final Note note;
   final GestureTapCallback onTap;
   final GestureTapCallback onLongPress;
 
-  CardItem({
+  NoteItem({
     this.key,
     @required this.note,
     @required this.onTap,

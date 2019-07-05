@@ -44,12 +44,6 @@ class _HomePageState extends State<HomePage>
     theme.brightness == appDarkTheme().brightness
         ? _valueSwitch = true
         : _valueSwitch = false;
-
-    if (theme.brightness == appDarkTheme().brightness) {
-      _valueSwitch = true;
-    } else {
-      _valueSwitch = false;
-    }
   }
 
   @override
@@ -58,7 +52,6 @@ class _HomePageState extends State<HomePage>
     _checkIfDarkModeEnabled();
 
     return Scaffold(
-      resizeToAvoidBottomPadding: false,
       appBar: _buildAppBar(),
       drawer: _buildDrawer(),
       body: _buildBody(),
@@ -270,40 +263,73 @@ class _HomePageState extends State<HomePage>
         onWillPop: () => SystemNavigator.pop(),
         child: FadeTransition(
           opacity: _animation,
-          child: Stack(
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Column(
-                  children: <Widget>[
-                    Expanded(
-                      child: CardImageWithText(
-                        asset: 'assets/images/stadtgärtnern_oberhausen.jpg',
-                        title: createExperiment,
-                        gradientColor1: topColor1,
-                        gradientColor2: topColor2,
-                        onTap: () =>
-                            _setNavigation(RouteGenerator.createProject),
+          child: Padding(
+            padding: EdgeInsets.all(8.0),
+            child: MediaQuery.of(context).orientation == Orientation.portrait
+                ? Column(
+                    children: <Widget>[
+                      Expanded(
+                        child: CardImageWithText(
+                          asset: 'assets/images/stadtgärtnern_oberhausen.jpg',
+                          title: createExperiment,
+                          gradientColor1: topColor1,
+                          gradientColor2: topColor2,
+                          onTap: () =>
+                              _setNavigation(RouteGenerator.createProject),
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 8.0),
-                    Expanded(
-                      child: CardImageWithText(
-                        asset: 'assets/images/aquaponik_anlage.jpg',
-                        title: openExperiment,
-                        gradientColor1: bottomColor2,
-                        gradientColor2: bottomColor1,
-                        onTap: () {
-                          Map map = Map<String, bool>();
-                          map['isFromCreateProjectPage'] = false;
-                          _setNavigation(RouteGenerator.projectPage, map);
-                        },
+                      SizedBox(height: 8.0),
+                      Expanded(
+                        child: CardImageWithText(
+                          asset: 'assets/images/aquaponik_anlage.jpg',
+                          title: openExperiment,
+                          gradientColor1: bottomColor2,
+                          gradientColor2: bottomColor1,
+                          onTap: () {
+                            Map map = Map<String, bool>();
+                            map['isFromCreateProjectPage'] = false;
+                            _setNavigation(RouteGenerator.projectPage, map);
+                          },
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+                    ],
+                  )
+                : Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: CardImageWithText(
+                          asset: 'assets/images/stadtgärtnern_oberhausen.jpg',
+                          title: createExperiment,
+                          gradientColor1: topColor1,
+                          gradientColor2: topColor2,
+                          shadow1OffsetX: 16.0,
+                          shadow2OffsetX: 16.0,
+                          shadow1OffsetY: 84.0,
+                          shadow2OffsetY: 84.0,
+                          onTap: () =>
+                              _setNavigation(RouteGenerator.createProject),
+                        ),
+                      ),
+                      SizedBox(height: 8.0),
+                      Expanded(
+                        child: CardImageWithText(
+                          asset: 'assets/images/aquaponik_anlage.jpg',
+                          title: openExperiment,
+                          gradientColor1: bottomColor2,
+                          gradientColor2: bottomColor1,
+                          shadow1OffsetX: 16.0,
+                          shadow2OffsetX: 16.0,
+                          shadow1OffsetY: 84.0,
+                          shadow2OffsetY: 84.0,
+                          onTap: () {
+                            Map map = Map<String, bool>();
+                            map['isFromCreateProjectPage'] = false;
+                            _setNavigation(RouteGenerator.projectPage, map);
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
           ),
         ),
       ),

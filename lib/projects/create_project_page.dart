@@ -8,6 +8,7 @@ import 'package:citizen_lab/utils/date_formater.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:citizen_lab/utils/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 class CreateProjectPage extends StatefulWidget {
@@ -23,10 +24,18 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
   final _projectDb = DatabaseProvider.db;
 
   ThemeChangerProvider _themeChanger;
-
   List<Project> _projectList = [];
+
   Color _buttonColor = Colors.white;
-  Color _buttonIconColor = Colors.black;
+
+  //double _fabHeight = 16.0;
+  //double _fabWidth = 16.0;
+  double _iconSize = 0.0;
+
+  IconData _fabIcon = Icons.close;
+  Color _iconColor = Colors.black;
+
+  //String _animationChecked = '';
 
   _CreateProjectPageState() {
     _titleEditingController.addListener(() => _checkTextsAreNotEmpty());
@@ -37,19 +46,27 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
     setState(() {
       if (_titleEditingController.text.isNotEmpty &&
           _descEditingController.text.isNotEmpty) {
+        //_fabHeight = 56.0;
+        //_fabWidth = 56.0;
+        //_iconSize = 24.0;
         _buttonColor = Colors.green;
-        _buttonIconColor = Colors.white.withOpacity(0.8);
+        //_animationChecked = 'ok';
+        _iconColor = Colors.white;
       } else {
-        _buttonColor = Colors.white.withOpacity(0.8);
-        _buttonIconColor = Colors.black;
+        //_fabHeight = 16.0;
+        //_fabWidth = 16.0;
+        //_iconSize = 0.0;
+        _buttonColor = Colors.white;
+        //_animationChecked = '';
+        _iconColor = Colors.black;
       }
     });
   }
 
   @override
   void initState() {
-    _loadProjectList();
     super.initState();
+    _loadProjectList();
   }
 
   Future<void> _loadProjectList() async {
@@ -61,25 +78,23 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
 
   @override
   void dispose() {
+    super.dispose();
     _titleEditingController.dispose();
     _descEditingController.dispose();
-    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    _themeChanger = Provider.of<ThemeChangerProvider>(context);
-    //_themeChanger.checkIfDarkModeEnabled(context);
-
     return Scaffold(
       key: _snackBarKey,
       appBar: _buildAppBar(),
-      body: _buildBody(context),
-      floatingActionButton: _buildFab(),
+      body: _buildBody(),
+      floatingActionButton: _buildFabs(),
     );
   }
 
   Widget _buildAppBar() {
+    _themeChanger = Provider.of<ThemeChangerProvider>(context);
     return AppBar(
       leading: IconButton(
         tooltip: 'Zurück',
@@ -122,7 +137,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
     });
   }
 
-  Widget _buildBody(BuildContext context) {
+  Widget _buildBody() {
     return SafeArea(
       child: Form(
         key: _formKey,
@@ -136,39 +151,61 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    '$title:',
+                    'Titel:',
                     style: TextStyle(
-                      fontSize: 18.0,
+                      fontSize: 16.0,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+                  SizedBox(height: 8.0),
                   TextFormField(
                     controller: _titleEditingController,
                     keyboardType: TextInputType.text,
                     maxLength: 50,
-                    maxLines: 2,
-                    decoration: InputDecoration(
-                      hintText: '$title_here.',
-                      labelStyle: TextStyle(fontSize: 18.0),
+                    maxLines: 1,
+                    decoration: InputDecoration.collapsed(
+                      //hintText: '$title_here.',
+                      hintText: '...',
+                      hasFloatingPlaceholder: true,
                     ),
-                    validator: (text) {
-                      return text.isEmpty ? 'Bitte einen Titel eingeben' : null;
-                    },
+                    /*buildCounter: (
+                      BuildContext context, {
+                      int currentLength,
+                      int maxLength,
+                      bool isFocused,
+                    }) {
+                      return null;
+                    },*/
+                    validator: (text) =>
+                        text.isEmpty ? 'Bitte einen Titel eingeben' : null,
                   ),
-                  SizedBox(height: 42.0),
+                  Divider(color: Colors.black),
+                  SizedBox(height: 8.0),
                   Text(
-                    '$desc:',
+                    'Beschreibung:',
                     style: TextStyle(
-                      fontSize: 18.0,
+                      fontSize: 16.0,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+                  SizedBox(height: 8.0),
                   TextFormField(
                     controller: _descEditingController,
                     keyboardType: TextInputType.text,
-                    maxLength: 500,
+                    maxLength: 250,
                     maxLines: 10,
-                    decoration: InputDecoration(hintText: '$desc_here.'),
+                    decoration: InputDecoration.collapsed(
+                      //hintText: '$desc_here.',
+                      hintText: '...',
+                    ),
+                    /*buildCounter: (
+                      BuildContext context, {
+                      int currentLength,
+                      int maxLength,
+                      bool isFocused,
+                    }) {
+                      return null;
+                    },*/
                     validator: (text) => text.isEmpty ? enter_a_desc : null,
                   ),
                 ],
@@ -180,16 +217,48 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
     );
   }
 
-  Widget _buildFab() {
-    return AnimatedContainer(
-      duration: Duration(seconds: 1),
-      child: FloatingActionButton(
-        backgroundColor: _buttonColor,
-        child: Icon(
-          Icons.check,
-          color: _buttonIconColor,
-        ),
-        onPressed: () => _createProject(context),
+  Widget _buildFabs() {
+    return Padding(
+      padding: const EdgeInsets.only(left: 32.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          FloatingActionButton(
+            heroTag: null,
+            child: Icon(Icons.remove),
+            onPressed: () {
+              _titleEditingController.clear();
+              _descEditingController.clear();
+            },
+          ),
+          AnimatedContainer(
+            curve: ElasticOutCurve(),
+            //height: _fabHeight,
+            height: 56.0,
+            //width: _fabWidth,
+            width: 56.0,
+            duration: Duration(seconds: 1),
+            child: FloatingActionButton(
+                heroTag: null,
+                backgroundColor: _buttonColor,
+                child: Icon(
+                  Icons.check,
+                  //size: _iconSize,
+                  color: _iconColor,
+                ),
+                /*child: FlareActor(
+                'assets/ok.flr',
+                fit: BoxFit.fill,
+                animation: _animationChecked,
+              ),*/
+                onPressed: () {
+                  if (_titleEditingController.text.isNotEmpty &&
+                      _descEditingController.text.isNotEmpty) {
+                    _createProject(context);
+                  }
+                }),
+          ),
+        ],
       ),
     );
   }

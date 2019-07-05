@@ -4,7 +4,6 @@ import 'package:citizen_lab/utils/date_formater.dart';
 import 'package:flutter/material.dart';
 
 class SimpleTimerDialog extends StatefulWidget {
-  final Key key;
   final String createdAt;
   final TextEditingController textEditingController;
   final TextEditingController descEditingController;
@@ -17,7 +16,6 @@ class SimpleTimerDialog extends StatefulWidget {
   //final String title;
 
   SimpleTimerDialog({
-    this.key,
     @required this.createdAt,
     @required this.textEditingController,
     @required this.descEditingController,
@@ -27,7 +25,7 @@ class SimpleTimerDialog extends StatefulWidget {
     @required this.descExists,
     //@required this.titleProvider,
     //@required this.title,
-  }) : super(key: key);
+  });
 
   @override
   _SimpleTimerDialogState createState() => _SimpleTimerDialogState();
@@ -70,9 +68,7 @@ class _SimpleTimerDialogState extends State<SimpleTimerDialog> {
       child: SimpleDialog(
         elevation: 4.0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(8.0),
-          ),
+          borderRadius: BorderRadius.all(Radius.circular(8.0)),
         ),
         contentPadding: const EdgeInsets.all(16.0),
         titlePadding: const EdgeInsets.all(0.0),
@@ -197,8 +193,8 @@ class _SimpleTimerDialogState extends State<SimpleTimerDialog> {
           TextField(
             controller: widget.descEditingController,
             keyboardType: TextInputType.text,
-            maxLength: 50,
-            maxLines: 1,
+            maxLength: 250,
+            maxLines: 10,
             decoration: InputDecoration(
               hintText: 'Beschreibung hier.',
               labelStyle: TextStyle(fontSize: 14.0),

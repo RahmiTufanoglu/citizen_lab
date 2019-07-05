@@ -104,11 +104,14 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
   Widget _topWidget() {
     final created = 'Erstellt am';
     return Container(
-      margin: EdgeInsets.all(8.0),
+      margin: EdgeInsets.all(16.0),
       decoration: ShapeDecoration(
         shape: OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(8.0)),
-          borderSide: BorderSide(color: Colors.grey, width: 2.0),
+          borderSide: BorderSide(
+            color: Colors.grey,
+            width: 2.0,
+          ),
         ),
       ),
       child: Padding(
@@ -141,29 +144,44 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
     final titleHere = 'Titel hier';
     final contentHere = 'Inhalt hier';
     return Card(
-      margin: const EdgeInsets.all(8.0),
+      margin: const EdgeInsets.all(16.0),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
+            Text(
+              'Titel:',
+              style: TextStyle(
+                fontSize: 16.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             StreamBuilder(
               stream: widget.titleBloc.title,
               builder: (BuildContext context, AsyncSnapshot snapshot) =>
                   _buildTextField(
                     controller: widget.titleEditingController,
-                    maxLines: 2,
                     maxLength: 50,
+                    maxLines: 1,
                     hintText: titleHere,
                     onChanged: widget.titleBloc.changeTitle,
                     snapshot: snapshot,
                   ),
             ),
             Divider(color: Colors.black),
+            Text(
+              'Beschreibung:',
+              style: TextStyle(
+                fontSize: 16.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 8.0),
             _buildTextField(
               controller: widget.descEditingController,
-              maxLines: 20,
-              maxLength: 500,
+              maxLength: 250,
+              maxLines: 10,
               hintText: contentHere,
               onChanged: null,
               snapshot: null,
@@ -190,7 +208,7 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
       style: TextStyle(fontSize: 16.0),
       onChanged: onChanged,
       decoration: InputDecoration(
-        hintText: '$hintText.',
+        hintText: '...',
         errorText: (snapshot != null) ? snapshot.error : '',
         focusedErrorBorder: _buildUnderlineInputBorder(),
         errorBorder: _buildUnderlineInputBorder(),

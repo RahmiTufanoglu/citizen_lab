@@ -62,6 +62,7 @@ class _DetailPageState extends State<DetailPage> {
       ),
       image: widget.image,
       body: ListView(
+        padding: const EdgeInsets.all(8.0),
         children: <Widget>[
           _titleAndContent('Standort', widget.location),
           //_dividerWithPadding(),
@@ -78,24 +79,21 @@ class _DetailPageState extends State<DetailPage> {
   }
 
   Widget _titleAndContent(String title, String content) {
-    return Card(
-      margin: EdgeInsets.all(8.0),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              '$title:',
-              style: TextStyle(
-                fontSize: 16.0,
-                fontWeight: FontWeight.bold,
-              ),
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            '$title:',
+            style: TextStyle(
+              fontSize: 16.0,
+              fontWeight: FontWeight.bold,
             ),
-            SizedBox(height: 8.0),
-            Text(content),
-          ],
-        ),
+          ),
+          SizedBox(height: 8.0),
+          Text(content),
+        ],
       ),
     );
   }

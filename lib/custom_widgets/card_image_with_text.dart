@@ -29,10 +29,10 @@ class CardImageWithText extends StatelessWidget {
     this.fontColor = Colors.black,
     this.shadow1Color = Colors.black,
     this.shadow2Color = Colors.black,
-    this.shadow1OffsetX = 56.0,
-    this.shadow1OffsetY = 56.0,
-    this.shadow2OffsetX = 56.0,
-    this.shadow2OffsetY = 56.0,
+    this.shadow1OffsetX = 36.0,
+    this.shadow1OffsetY = 72.0,
+    this.shadow2OffsetX = 36.0,
+    this.shadow2OffsetY = 72.0,
     this.shadow1Blur = 16.0,
     this.shadow2Blur = 24.0,
   })  : assert(asset != null),
@@ -44,7 +44,7 @@ class CardImageWithText extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: RaisedButton(
-        padding: EdgeInsets.all(0.0),
+        padding: const EdgeInsets.all(0.0),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(16.0)),
         ),
@@ -99,66 +99,6 @@ class CardImageWithText extends StatelessWidget {
           ],
         ),
         onPressed: () {},
-      ),
-    );
-
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(16.0)),
-      ),
-      child: Stack(
-        children: <Widget>[
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(16.0)),
-              /*image: DecorationImage(
-                image: AssetImage(asset),
-                fit: BoxFit.fill,
-              ),*/
-              gradient: LinearGradient(
-                colors: [
-                  gradientColor1,
-                  gradientColor2,
-                ],
-              ),
-            ),
-            child: Center(
-              child: Container(
-                color: Colors.white,
-                width: double.infinity,
-                child: Text(
-                  title,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: fontColor,
-                    fontSize: fontSize,
-                    /*shadows: <Shadow>[
-                      _buildShadow(
-                        shadow1OffsetX,
-                        shadow1OffsetY,
-                        shadow1Blur,
-                        shadow1Color,
-                      ),
-                      _buildShadow(
-                        shadow2OffsetX,
-                        shadow2OffsetY,
-                        shadow2Blur,
-                        shadow2Color,
-                      ),
-                    ],*/
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Material(
-            color: Colors.transparent,
-            child: InkWell(
-              borderRadius: BorderRadius.all(Radius.circular(16.0)),
-              onTap: onTap,
-            ),
-          ),
-        ],
       ),
     );
   }
