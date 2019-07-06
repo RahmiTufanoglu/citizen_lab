@@ -37,7 +37,7 @@ class _SplashPageState extends State<SplashPage> {
     if (_seen) {
       Navigator.pushNamed(
         context,
-        RouteGenerator.home,
+        RouteGenerator.homePage,
       );
     } else {
       prefs.setBool('seen', true);

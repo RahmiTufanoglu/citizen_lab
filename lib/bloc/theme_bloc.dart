@@ -5,9 +5,9 @@ import 'base_bloc.dart';
 class ThemeBloc implements BaseBloc {
   final _themeController = StreamController<bool>();
 
-  get changeTheme => _themeController.sink.add;
+  void get changeTheme => _themeController.sink.add;
 
-  get darkThemeEnabled => _themeController.stream;
+  Stream<bool> get darkThemeEnabled => _themeController.stream;
 
   @override
   void dispose() {

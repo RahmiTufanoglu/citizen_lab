@@ -14,17 +14,16 @@ import 'package:citizen_lab/entries/tools/stopwatch/stopwatch_page.dart';
 import 'package:citizen_lab/home/home_page.dart';
 import 'package:citizen_lab/onboarding/onboarding.dart';
 import 'package:citizen_lab/projects/create_project_page.dart';
-import 'package:citizen_lab/projects/project_page.dart';
 import 'package:citizen_lab/splash_page.dart';
 import 'package:flutter/material.dart';
 
 class RouteGenerator {
-  static const String home = '/home_page';
+  static const String homePage = '/home_page';
   static const String splashPage = '/splash_page';
   static const String createProject = '/create_project';
   static const String aboutPage = '/about';
   static const String entry = '/entry';
-  static const String projectPage = '/project_page';
+  //static const String projectPage = '/project_page';
   static const String textPage = '/text_page';
   static const String imagePage = '/image_page';
   static const String tablePage = '/table_page';
@@ -45,7 +44,7 @@ class RouteGenerator {
   static const String routeCreateProject = 'create_project';
   static const String routeAboutPage = 'about';
   static const String routeEntryPage = 'entry';
-  static const String routeProjectPage = 'project_page';
+  //static const String routeProjectPage = 'project_page';
   static const String routeTextPage = 'text_page';
   static const String routeImagePage = 'image_page';
   static const String routeTablePage = 'table_page';
@@ -67,7 +66,7 @@ class RouteGenerator {
       Widget page;
       String route;
       switch (settings.name) {
-        case home:
+        case homePage:
           page = HomePage();
           route = routeHomePage;
           break;
@@ -89,12 +88,12 @@ class RouteGenerator {
           );
           route = routeEntryPage;
           break;
-        case projectPage:
+        /*case projectPage:
           page = ProjectPage(
             isFromCreateProjectPage: args['isFromCreateProjectPage'],
           );
           route = routeProjectPage;
-          break;
+          break;*/
         case textPage:
           page = TextPage(
             projectRandom: args['projectRandom'],

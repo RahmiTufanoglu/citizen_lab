@@ -33,7 +33,7 @@ class CardImageWithText extends StatelessWidget {
     this.shadow1OffsetY = 72.0,
     this.shadow2OffsetX = 36.0,
     this.shadow2OffsetY = 72.0,
-    this.shadow1Blur = 16.0,
+    this.shadow1Blur = 24.0,
     this.shadow2Blur = 24.0,
   })  : assert(asset != null),
         assert(title != null),

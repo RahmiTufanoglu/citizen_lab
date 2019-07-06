@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-final Color mainDarkColor = Color(0xFF404040);
+final Color mainDarkColor = Color(0xFF3B3B3B);
 final Color mainLightColor = Color(0xFFEBEBEB);
 final Color accentLight = Color(0xFF009FE3);
 final Color accentDark = Color(0xFFBFDFCF);

@@ -1,6 +1,10 @@
-import 'package:citizen_lab/custom_widgets/card_image_with_text.dart';
+import 'package:citizen_lab/custom_widgets/alarm_dialog.dart';
 import 'package:citizen_lab/custom_widgets/feedback_dialog.dart';
+import 'package:citizen_lab/database/database_provider.dart';
 import 'package:citizen_lab/home/main_drawer.dart';
+import 'package:citizen_lab/projects/project.dart';
+import 'package:citizen_lab/projects/project_item.dart';
+import 'package:citizen_lab/projects/project_search_page.dart';
 import 'package:citizen_lab/themes/theme.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/utils/constants.dart';
@@ -22,11 +26,16 @@ class _HomePageState extends State<HomePage>
   ThemeChangerProvider _themeChanger;
   bool _valueSwitch = false;
 
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+  final _projectDb = DatabaseProvider.db;
+  final List<Project> _projectList = [];
+
   @override
   void initState() {
     super.initState();
+    _loadProjectList();
 
-    _animationController = AnimationController(
+    /*_animationController = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: 800),
     );
@@ -36,25 +45,29 @@ class _HomePageState extends State<HomePage>
       end: 1.0,
     ).animate(_animationController);
 
-    _animationController.forward();
+    _animationController.forward();*/
   }
 
   void _checkIfDarkModeEnabled() {
-    final ThemeData theme = Theme.of(context);
-    theme.brightness == appDarkTheme().brightness
+    Theme.of(context).brightness == appDarkTheme().brightness
         ? _valueSwitch = true
         : _valueSwitch = false;
+
+    print(_valueSwitch.toString());
   }
 
   @override
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
     _checkIfDarkModeEnabled();
+    //_themeChanger.getTheme;
 
     return Scaffold(
+      key: _scaffoldKey,
       appBar: _buildAppBar(),
       drawer: _buildDrawer(),
       body: _buildBody(),
+      floatingActionButton: _buildFab(),
     );
   }
 
@@ -71,14 +84,124 @@ class _HomePageState extends State<HomePage>
         ),
       ),
       actions: <Widget>[
-        Image(
-          height: 36.0,
-          width: 36.0,
-          image: AssetImage('assets/app_logo.png'),
+        IconButton(
+          icon: Icon(Icons.search),
+          onPressed: () {
+            showSearch(
+              context: context,
+              delegate: ProjectSearchPage(
+                projectList: _projectList,
+                isFromProjectSearchPage: false,
+                reloadProjectList: () => _loadProjectList(),
+              ),
+            );
+          },
         ),
-        SizedBox(width: 16.0),
+        PopupMenuButton(
+          icon: Icon(Icons.sort),
+          elevation: 2.0,
+          tooltip: sort_options,
+          onSelected: _choiceSortOption,
+          itemBuilder: (BuildContext context) {
+            return choices.map(
+              (String choice) {
+                return PopupMenuItem<String>(
+                  value: choice,
+                  child: Text(choice),
+                );
+              },
+            ).toList();
+          },
+        ),
+        /*Builder(
+          builder: (contextSnackBar) {
+            return IconButton(
+              highlightColor: Colors.red.withOpacity(0.2),
+              splashColor: Colors.red.withOpacity(0.8),
+              icon: Icon(Icons.delete),
+              onPressed: () => _deleteAllProjects(contextSnackBar),
+            );
+          },
+        ),*/
       ],
     );
+  }
+
+  Widget _buildFab() {
+    return FloatingActionButton(
+      child: Icon(Icons.add),
+      onPressed: () {
+        Navigator.pushNamed(
+          context,
+          RouteGenerator.createProject,
+        );
+      },
+    );
+  }
+
+  Future<bool> _deleteAllProjects(BuildContext context) async {
+    return await showDialog(
+      context: context,
+      builder: (context) => AlarmDialog(
+            text: 'Alle Projekte löschen?',
+            icon: Icons.warning,
+            onTap: () {
+              if (_projectList.isNotEmpty) {
+                _projectDb.deleteAllProjects();
+                _scaffoldKey.currentState.showSnackBar(
+                  _buildSnackBar(text: 'Projekte gelöscht.'),
+                );
+              } else {
+                _scaffoldKey.currentState.showSnackBar(
+                  _buildSnackBar(text: 'Nichts gelöscht.'),
+                );
+              }
+
+              setState(() {
+                _projectList.clear();
+              });
+
+              Navigator.pop(context);
+            },
+          ),
+    );
+  }
+
+  void _choiceSortOption(String choice) {
+    switch (choice) {
+      case sort_by_title_arc:
+        setState(() {
+          _projectList.sort(
+            (Project a, Project b) =>
+                a.title.toLowerCase().compareTo(b.title.toLowerCase()),
+          );
+        });
+        break;
+      case sort_by_title_desc:
+        setState(() {
+          _projectList.sort(
+            (Project a, Project b) =>
+                b.title.toLowerCase().compareTo(a.title.toLowerCase()),
+          );
+        });
+        break;
+      case sort_by_release_date_asc:
+        setState(() {
+          _projectList.sort(
+            (Project a, Project b) => a.dateCreated.compareTo(b.dateCreated),
+          );
+        });
+        break;
+      case sort_by_release_date_desc:
+        setState(() {
+          _projectList.sort(
+            (Project a, Project b) => b.dateCreated.compareTo(a.dateCreated),
+          );
+        });
+        break;
+      default:
+        break;
+    }
   }
 
   Widget _buildDrawer() {
@@ -88,9 +211,6 @@ class _HomePageState extends State<HomePage>
         (screenHeight / 3) - kToolbarHeight - statusBarHeight;
     final double screenWidth = MediaQuery.of(context).size.width;
     final double drawerWidth = screenWidth / 1.5;
-
-    final String createExperiment = 'Experiment erstellen';
-    final String openExperiment = 'Experiment öffnen';
     final String about = 'Über';
     final String location = 'Dortmund';
 
@@ -103,21 +223,29 @@ class _HomePageState extends State<HomePage>
           child: Card(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(16.0),
-                bottomRight: Radius.circular(16.0),
+                bottomLeft: Radius.circular(8.0),
+                bottomRight: Radius.circular(8.0),
               ),
             ),
             margin: const EdgeInsets.all(0.0),
             child: Align(
               alignment: Alignment.bottomLeft,
               child: Padding(
-                padding: const EdgeInsets.only(
-                  left: 16.0,
-                  bottom: 8.0,
-                ),
-                child: Text(
-                  APP_TITLE,
-                  style: TextStyle(fontSize: 24.0),
+                padding: const EdgeInsets.only(left: 16.0, bottom: 8.0),
+                child: Row(
+                  children: <Widget>[
+                    Text(
+                      APP_TITLE,
+                      style: TextStyle(fontSize: 24.0),
+                    ),
+                    Spacer(),
+                    Image(
+                      image: AssetImage('assets/app_logo.png'),
+                      height: 42.0,
+                      width: 42.0,
+                    ),
+                    SizedBox(width: 16.0),
+                  ],
                 ),
               ),
             ),
@@ -126,13 +254,13 @@ class _HomePageState extends State<HomePage>
         Column(
           children: <Widget>[
             SizedBox(height: 16.0),
-            _buildDrawerItem(
+            /*_buildDrawerItem(
               context: context,
               icon: Icons.border_color,
               title: createExperiment,
               onTap: () => _setNavigation(RouteGenerator.createProject),
-            ),
-            _buildDrawerItem(
+            ),*/
+            /*_buildDrawerItem(
               context: context,
               icon: Icons.assignment,
               title: openExperiment,
@@ -141,11 +269,11 @@ class _HomePageState extends State<HomePage>
                 map['isFromCreateProjectPage'] = false;
                 _setNavigation(RouteGenerator.projectPage, map);
               },
-            ),
+            ),*/
             _buildDrawerItem(
               context: context,
               icon: Icons.public,
-              title: APP_TITLE,
+              title: 'Citizen Science',
               onTap: () => _setNavigation(RouteGenerator.citizenSciencePage),
             ),
           ],
@@ -153,6 +281,28 @@ class _HomePageState extends State<HomePage>
         Divider(
           color: Colors.black,
           height: 0.5,
+        ),
+        Builder(
+          builder: (BuildContext context) {
+            return ExpansionTile(
+              title: null,
+              //leading: Icon(Icons.settings),
+              leading: Icon(
+                Icons.settings,
+                color: Theme.of(context).brightness == appDarkTheme().brightness
+                    ? Colors.white
+                    : Color(0xFF3B3B3B),
+              ),
+              children: <Widget>[
+                _buildDrawerItem(
+                  context: context,
+                  icon: Icons.delete_forever,
+                  title: 'Alles löschen',
+                  onTap: () => _deleteAllProjects(context),
+                ),
+              ],
+            );
+          },
         ),
         Column(
           children: <Widget>[
@@ -196,7 +346,7 @@ class _HomePageState extends State<HomePage>
                 inactiveThumbColor: Colors.white,
                 activeColor: Color(0xFF191919),
                 value: _valueSwitch,
-                onChanged: (value) => _onChangedSwitch(value),
+                onChanged: (bool value) => _onChangedSwitch(value),
               ),
             ],
           ),
@@ -215,10 +365,8 @@ class _HomePageState extends State<HomePage>
   }
 
   void _onChangedSwitch(bool value) {
-    value ? _themeChanger.setTheme() : _themeChanger.setTheme();
-    setState(() {
-      _valueSwitch = value;
-    });
+    _themeChanger.setTheme();
+    _valueSwitch = value;
   }
 
   Widget _buildDrawerItem({
@@ -250,6 +398,176 @@ class _HomePageState extends State<HomePage>
   }
 
   Widget _buildBody() {
+    return SafeArea(
+      child: WillPopScope(
+        onWillPop: () => SystemNavigator.pop(),
+        child: _projectList.isNotEmpty
+            ? ListView.builder(
+                padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 88.0),
+                reverse: false,
+                itemCount: _projectList.length,
+                itemBuilder: (context, index) {
+                  final _project = _projectList[index];
+                  final key = Key('${_project.hashCode}');
+                  return Dismissible(
+                    key: key,
+                    direction: DismissDirection.startToEnd,
+                    background: Container(
+                      alignment: Alignment.centerLeft,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(8.0),
+                        ),
+                      ),
+                      child: Row(
+                        children: <Widget>[
+                          Icon(
+                            Icons.arrow_forward,
+                            size: 28.0,
+                          ),
+                          SizedBox(width: 8.0),
+                          Icon(
+                            Icons.delete,
+                            size: 28.0,
+                          ),
+                        ],
+                      ),
+                    ),
+                    onDismissed: (direction) => _deleteProject(index),
+                    child: Container(
+                      width: double.infinity,
+                      child: ProjectItem(
+                        project: _projectList[index],
+                        onTap: () => _navigateToEntry(index),
+                        onLongPress: () => _showContent(index),
+                      ),
+                    ),
+                  );
+                },
+              )
+            : Center(
+                child: Text(
+                  empty_list,
+                  style: TextStyle(fontSize: 24.0),
+                ),
+              ),
+      ),
+    );
+  }
+
+  void _navigateToEntry(int index) async {
+    final result = await Navigator.pushNamed(
+      context,
+      RouteGenerator.entry,
+      arguments: {
+        'project': _projectList[index],
+        'projectTitle': _projectList[index].title,
+        'isFromCreateProjectPage': false,
+        'isFromProjectPage': true,
+        'isFromProjectSearchPage': false,
+      },
+    );
+
+    if (result) _loadProjectList();
+  }
+
+  void _showContent(int index) {
+    final String createdAt = 'Erstellt am';
+
+    showDialog(
+      context: context,
+      builder: (context) => SimpleDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(8.0)),
+            ),
+            contentPadding: EdgeInsets.all(16.0),
+            titlePadding: EdgeInsets.only(left: 16.0),
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    SizedBox(height: 16.0),
+                    Text(
+                      '$createdAt: '
+                      '${_projectList[index].dateCreated}',
+                      style: TextStyle(
+                          fontSize: 14.0, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 16.0),
+                  ],
+                ),
+                IconButton(
+                  icon: Icon(Icons.close),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ],
+            ),
+            children: <Widget>[
+              Text(
+                '$title:',
+                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 8.0),
+              Text(_projectList[index].title, style: TextStyle(fontSize: 16.0)),
+              SizedBox(height: 32.0),
+              Text(
+                '$desc:',
+                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 8.0),
+              Text(
+                _projectList[index].description,
+                style: TextStyle(fontSize: 16.0),
+              ),
+              SizedBox(height: 8.0),
+            ],
+          ),
+    );
+  }
+
+  Widget _buildSnackBar({@required String text}) {
+    return SnackBar(
+      backgroundColor: Colors.black87,
+      duration: Duration(seconds: 1),
+      content: Text(
+        text,
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+
+  Future<void> _loadProjectList() async {
+    for (int i = 0; i < _projectList.length; i++) {
+      _projectList.removeWhere((element) {
+        _projectList[i].id = _projectList[i].id;
+      });
+    }
+
+    List projects = await _projectDb.getAllProjects();
+
+    projects.forEach((project) {
+      setState(() {
+        _projectList.add(Project.map(project));
+      });
+    });
+
+    // TODO: check this
+    _choiceSortOption(sort_by_release_date_desc);
+  }
+
+  Future<void> _deleteProject(int index) async {
+    await _projectDb.deleteProject(id: _projectList[index].id);
+
+    if (_projectList.contains(_projectList[index])) {
+      setState(() {
+        _projectList.removeAt(index);
+      });
+    }
+  }
+
+/*Widget _buildBody2() {
     final Color topColor1 = Color(0xFFBFDFCF);
     final Color topColor2 = Color(0xFF009FE3);
     final Color bottomColor1 = Color(0xFFF1CF7F);
@@ -334,5 +652,5 @@ class _HomePageState extends State<HomePage>
         ),
       ),
     );
-  }
+  }*/
 }

@@ -289,10 +289,10 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
       //_navigateToEntry(project);
       return Navigator.pushNamed(
         context,
-        RouteGenerator.projectPage,
-        arguments: {
+        RouteGenerator.homePage,
+        /*arguments: {
           'isFromCreateProjectPage': true,
-        },
+        },*/
       );
     }
   }

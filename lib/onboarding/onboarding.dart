@@ -160,7 +160,7 @@ class _OnboardingPageState extends State<OnboardingPage>
   void _setNavigation() {
     Navigator.pushNamed(
       context,
-      RouteGenerator.home,
+      RouteGenerator.homePage,
     );
   }
 }

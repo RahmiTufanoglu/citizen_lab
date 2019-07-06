@@ -503,13 +503,8 @@ class _TextPageState extends State<TextPage> {
   }
 
   void _setClipboard(String text, String snackText) {
-    Clipboard.setData(
-      ClipboardData(text: text),
-    );
-
-    _scaffoldKey.currentState.showSnackBar(
-      _buildSnackBar(text: snackText),
-    );
+    Clipboard.setData(ClipboardData(text: text));
+    _scaffoldKey.currentState.showSnackBar(_buildSnackBar(text: snackText));
   }
 
   Widget _buildSnackBar({@required String text}) {

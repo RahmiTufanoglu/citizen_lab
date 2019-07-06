@@ -10,10 +10,10 @@ class NotesBloc implements BaseBloc {
   //final _notesController = StreamController<List<Map<String, dynamic>>>.broadcast();
   final _notesController = StreamController<List<Note>>.broadcast();
 
-  get notes => _notesController.stream;
+  Stream<List<Note>> get notes => _notesController.stream;
 
   @override
-  dispose() {
+  void dispose() {
     _notesController.close();
   }
 
