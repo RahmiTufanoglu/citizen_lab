@@ -21,45 +21,17 @@ class _CitizenSciencePageState extends State<CitizenSciencePage> {
   ThemeChangerProvider _themeChanger;
 
   @override
-  void initState() {
-    /*_pageController =
-        PageController(initialPage: citizenScienceImages.length - 1);
-    _pageController.addListener(() {
-      setState(() {
-        _currentPage = _pageController.page;
-      });
-    });*/
-
-    //_citizenScienceList = [];
-    _createCitizenScienceList();
-
-    super.initState();
-  }
-
-  void _createCitizenScienceList() {
-    // TODO:
-    /*for (int i = 0; i < 3; i++) {
-      _citizenScienceList.add(
-        CitizenScienceModel(
-          citizenScienceTitles[i],
-          citizenScienceImages[i],
-          citizenScienceContent[i],
-        ),
-      );*/
-  }
-
-  @override
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
     //_themeChanger.checkIfDarkModeEnabled(context);
 
     return Scaffold(
-      appBar: _buildAppbar(),
+      appBar: _buildAppBar(),
       body: _buildBody(),
     );
   }
 
-  Widget _buildAppbar() {
+  Widget _buildAppBar() {
     final String citizenScience = 'Citizen Science';
 
     return AppBar(

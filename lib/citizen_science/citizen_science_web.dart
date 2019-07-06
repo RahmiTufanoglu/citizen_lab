@@ -6,13 +6,9 @@ import 'package:provider/provider.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class CitizenScienceWebPage extends StatefulWidget {
-  final Key key;
   final String url;
 
-  CitizenScienceWebPage({
-    this.key,
-    @required this.url,
-  }) : super(key: key);
+  CitizenScienceWebPage({@required this.url});
 
   @override
   _CitizenScienceWebPageState createState() => _CitizenScienceWebPageState();
@@ -94,17 +90,5 @@ class _CitizenScienceWebPageState extends State<CitizenScienceWebPage> {
         ],
       ),
     );
-  }
-
-  Widget _loadIndicator() {
-    if (_isLoadingPage) {
-      return Center(
-        child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
-        ),
-      );
-    } else {
-      return Center();
-    }
   }
 }

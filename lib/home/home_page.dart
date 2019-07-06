@@ -1,4 +1,5 @@
 import 'package:citizen_lab/custom_widgets/alarm_dialog.dart';
+import 'package:citizen_lab/custom_widgets/dial_floating_action_button.dart';
 import 'package:citizen_lab/custom_widgets/feedback_dialog.dart';
 import 'package:citizen_lab/database/database_provider.dart';
 import 'package:citizen_lab/home/main_drawer.dart';
@@ -13,6 +14,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+
+import '../entry_fab_data.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -35,9 +38,9 @@ class _HomePageState extends State<HomePage>
     super.initState();
     _loadProjectList();
 
-    /*_animationController = AnimationController(
+    _animationController = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 800),
+      duration: Duration(seconds: 1),
     );
 
     _animation = Tween(
@@ -45,7 +48,7 @@ class _HomePageState extends State<HomePage>
       end: 1.0,
     ).animate(_animationController);
 
-    _animationController.forward();*/
+    _animationController.forward();
   }
 
   void _checkIfDarkModeEnabled() {
@@ -128,7 +131,7 @@ class _HomePageState extends State<HomePage>
   }
 
   Widget _buildFab() {
-    return FloatingActionButton(
+    /*return FloatingActionButton(
       child: Icon(Icons.add),
       onPressed: () {
         Navigator.pushNamed(
@@ -136,7 +139,34 @@ class _HomePageState extends State<HomePage>
           RouteGenerator.createProject,
         );
       },
+    );*/
+    return DialFloatingActionButton(
+      iconList: projectIconList,
+      colorList: projectColorList,
+      stringList: projectStringList,
+      function: _createProject,
     );
+  }
+
+  void _createProject(String type, [Project project]) async {
+    switch (type) {
+      case 'Neues Projekt':
+        bool result = await Navigator.pushNamed(
+          context,
+          RouteGenerator.createProject,
+        ) as bool;
+
+        if (result) _loadProjectList();
+        break;
+      case 'Vorlagen':
+        bool result = await Navigator.pushNamed(
+          context,
+          RouteGenerator.projectTemplatePage,
+        ) as bool;
+
+        if (result) _loadProjectList();
+        break;
+    }
   }
 
   Future<bool> _deleteAllProjects(BuildContext context) async {
@@ -401,56 +431,62 @@ class _HomePageState extends State<HomePage>
     return SafeArea(
       child: WillPopScope(
         onWillPop: () => SystemNavigator.pop(),
-        child: _projectList.isNotEmpty
-            ? ListView.builder(
-                padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 88.0),
-                reverse: false,
-                itemCount: _projectList.length,
-                itemBuilder: (context, index) {
-                  final _project = _projectList[index];
-                  final key = Key('${_project.hashCode}');
-                  return Dismissible(
-                    key: key,
-                    direction: DismissDirection.startToEnd,
-                    background: Container(
-                      alignment: Alignment.centerLeft,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(8.0),
+        child: FadeTransition(
+          opacity: _animation,
+          child: _projectList.isNotEmpty
+              ? ListView.builder(
+                  padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 88.0),
+                  reverse: false,
+                  itemCount: _projectList.length,
+                  itemBuilder: (context, index) {
+                    final _project = _projectList[index];
+                    final key = Key('${_project.hashCode}');
+                    return Dismissible(
+                      key: key,
+                      direction: DismissDirection.startToEnd,
+                      background: Container(
+                        alignment: Alignment.centerLeft,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                        ),
+                        child: Row(
+                          children: <Widget>[
+                            Icon(
+                              Icons.arrow_forward,
+                              size: 28.0,
+                            ),
+                            SizedBox(width: 8.0),
+                            Icon(
+                              Icons.delete,
+                              size: 28.0,
+                            ),
+                          ],
                         ),
                       ),
-                      child: Row(
-                        children: <Widget>[
-                          Icon(
-                            Icons.arrow_forward,
-                            size: 28.0,
-                          ),
-                          SizedBox(width: 8.0),
-                          Icon(
-                            Icons.delete,
-                            size: 28.0,
-                          ),
-                        ],
+                      onDismissed: (direction) => _deleteProject(index),
+                      child: Container(
+                        width: double.infinity,
+                        child: ProjectItem(
+                          project: _projectList[index],
+                          onTap: () => _navigateToEntry(index),
+                          onLongPress: () => _showContent(index),
+                        ),
                       ),
+                    );
+                  },
+                )
+              : /*Center(
+                  child: Opacity(
+                    opacity: 0.5,
+                    child: Image(
+                      image: AssetImage('assets/app_logo.png'),
+                      width: 150.0,
+                      height: 150.0,
                     ),
-                    onDismissed: (direction) => _deleteProject(index),
-                    child: Container(
-                      width: double.infinity,
-                      child: ProjectItem(
-                        project: _projectList[index],
-                        onTap: () => _navigateToEntry(index),
-                        onLongPress: () => _showContent(index),
-                      ),
-                    ),
-                  );
-                },
-              )
-            : Center(
-                child: Text(
-                  empty_list,
-                  style: TextStyle(fontSize: 24.0),
-                ),
-              ),
+                  ),
+                ),*/
+              Container(),
+        ),
       ),
     );
   }

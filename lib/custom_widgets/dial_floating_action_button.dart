@@ -29,12 +29,12 @@ class _DialFloatingActionButtonState extends State<DialFloatingActionButton>
     with TickerProviderStateMixin {
   AnimationController _animationController;
 
-  static const List<IconData> _iconList = const [
+  /*static const List<IconData> _iconList = const [
     Icons.link,
     Icons.camera_alt,
     Icons.table_chart,
     Icons.edit,
-  ];
+  ];*/
 
   @override
   void initState() {
@@ -56,13 +56,13 @@ class _DialFloatingActionButtonState extends State<DialFloatingActionButton>
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
-      children: List.generate(_iconList.length, (int index) {
+      children: List.generate(widget.iconList.length, (int index) {
         Widget child = ScaleTransition(
           scale: CurvedAnimation(
             parent: _animationController,
             curve: Interval(
               0.0,
-              1.0 - index / _iconList.length,
+              1.0 - index / widget.iconList.length,
               curve: Curves.easeInCirc,
             ),
           ),

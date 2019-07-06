@@ -163,11 +163,11 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
     );
   }
 
-  Future<void> _backToHomePage() async {
+  void _backToHomePage() {
     final String cancel =
         'Experiment abbrechen und zur Hauptseite zurückkehren?';
 
-    await showDialog(
+    showDialog(
       context: context,
       builder: (_) => NoYesDialog(
             text: cancel,
@@ -187,42 +187,44 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
         onWillPop: _onBackPressed,
         //child: _noteList.isNotEmpty
         child: (snapshot.hasData)
-            ? ListView.builder(
-                //itemCount: _noteList.length,
-                itemCount: snapshot.data.length,
-                padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 88.0),
-                itemBuilder: (context, index) {
-                  //final note = _noteList[index];
-                  final note = snapshot.data[index];
-                  //_noteList.add(note);
-                  final key = Key('${note.hashCode}');
-                  return Dismissible(
-                    key: key,
-                    direction: DismissDirection.startToEnd,
-                    background: Container(
-                      alignment: Alignment.centerLeft,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+            ? Container(
+                child: ListView.builder(
+                  //itemCount: _noteList.length,
+                  itemCount: snapshot.data.length,
+                  padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 88.0),
+                  itemBuilder: (context, index) {
+                    //final note = _noteList[index];
+                    final note = snapshot.data[index];
+                    //_noteList.add(note);
+                    final key = Key('${note.hashCode}');
+                    return Dismissible(
+                      key: key,
+                      direction: DismissDirection.startToEnd,
+                      background: Container(
+                        alignment: Alignment.centerLeft,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                        ),
+                        child: Row(
+                          children: <Widget>[
+                            Icon(Icons.arrow_forward, size: 28.0),
+                            SizedBox(width: 8.0),
+                            Icon(Icons.delete, size: 28.0),
+                          ],
+                        ),
                       ),
-                      child: Row(
-                        children: <Widget>[
-                          Icon(Icons.arrow_forward, size: 28.0),
-                          SizedBox(width: 8.0),
-                          Icon(Icons.delete, size: 28.0),
-                        ],
-                      ),
-                    ),
-                    //onDismissed: (_) => _deleteNote(index),
-                    onDismissed: (_) {
-                      //_notesBloc.delete(note.id);
-                      _notesBloc.delete(note);
-                      _deleteNote(snapshot, index);
-                    },
-                    //onDismissed: (_) => _notesBloc.delete(note.id),
-                    //child: _buildItem(index),
-                    child: _buildItem(snapshot, index),
-                  );
-                },
+                      //onDismissed: (_) => _deleteNote(index),
+                      onDismissed: (_) {
+                        //_notesBloc.delete(note.id);
+                        _notesBloc.delete(note);
+                        _deleteNote(snapshot, index);
+                      },
+                      //onDismissed: (_) => _notesBloc.delete(note.id),
+                      //child: _buildItem(index),
+                      child: _buildItem(snapshot, index),
+                    );
+                  },
+                ),
               )
             : Center(
                 child: Text(
@@ -248,7 +250,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
         note: note,
         onTap: () => _openNotePage(note.type, note),
         //onLongPress: () => _showContent(index),
-        onLongPress: () => _showContent(snapshot, index),
+        //onLongPress: () => _showContent(snapshot, index),
       ),
     );
   }
@@ -276,9 +278,9 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
             onPressed: () => _openModalBottomSheet(),
           ),
           DialFloatingActionButton(
-            iconList: iconList,
-            colorList: colorList,
-            stringList: stringList,
+            iconList: entryIconList,
+            colorList: entryColorList,
+            stringList: entryStringList,
             function: _openNotePage,
           ),
         ],

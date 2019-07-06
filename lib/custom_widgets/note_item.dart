@@ -12,7 +12,8 @@ class NoteItem extends StatelessWidget {
     this.key,
     @required this.note,
     @required this.onTap,
-    @required this.onLongPress,
+    this.onLongPress,
+    //@required this.onLongPress,
   }) : super(key: key);
 
   @override

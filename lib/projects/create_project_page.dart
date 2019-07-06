@@ -266,6 +266,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
   Future<void> _createProject(BuildContext context) async {
     bool _projectExists = false;
     for (int i = 0; i < _projectList.length; i++) {
+      // TODO VORLAGEN BEACHTEN
       if (_projectList[i].title == _titleEditingController.text) {
         _projectExists = true;
         _snackBarKey.currentState.showSnackBar(
@@ -287,13 +288,11 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
       await _projectDb.insertProject(project: project);
       // TODO: WORKAROUND
       //_navigateToEntry(project);
-      return Navigator.pushNamed(
+      Navigator.pop(context, true);
+      /*Navigator.pushNamed(
         context,
         RouteGenerator.homePage,
-        /*arguments: {
-          'isFromCreateProjectPage': true,
-        },*/
-      );
+      );*/
     }
   }
 

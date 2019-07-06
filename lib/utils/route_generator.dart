@@ -17,12 +17,15 @@ import 'package:citizen_lab/projects/create_project_page.dart';
 import 'package:citizen_lab/splash_page.dart';
 import 'package:flutter/material.dart';
 
+import '../project_template_page.dart';
+
 class RouteGenerator {
   static const String homePage = '/home_page';
   static const String splashPage = '/splash_page';
   static const String createProject = '/create_project';
   static const String aboutPage = '/about';
   static const String entry = '/entry';
+
   //static const String projectPage = '/project_page';
   static const String textPage = '/text_page';
   static const String imagePage = '/image_page';
@@ -38,12 +41,14 @@ class RouteGenerator {
   static const String audioRecordPage = '/audio_record_page';
   static const String linkingPage = '/linking_page';
   static const String citizenScienceWebPage = '/citizen_science_web_page';
+  static const String projectTemplatePage = '/project_template_page';
 
   static const String routeHomePage = 'home';
   static const String routeSplashPage = 'splash_page';
   static const String routeCreateProject = 'create_project';
   static const String routeAboutPage = 'about';
   static const String routeEntryPage = 'entry';
+
   //static const String routeProjectPage = 'project_page';
   static const String routeTextPage = 'text_page';
   static const String routeImagePage = 'image_page';
@@ -59,6 +64,7 @@ class RouteGenerator {
   static const String routeAudioRecordPage = 'audio_record_page';
   static const String routeLinkingRecordPage = 'linking_page';
   static const String routeCitizenScienceWebPage = 'citizen_science_web_page';
+  static const String routeProjectTemplatePage = 'project_template_page';
 
   static RouteFactory routes() {
     return (settings) {
@@ -186,8 +192,10 @@ class RouteGenerator {
           );
           route = routeCitizenScienceWebPage;
           break;
-        default:
-          return null;
+        case projectTemplatePage:
+          page = ProjectTemplatePage();
+          route = routeProjectTemplatePage;
+          break;
       }
       return MaterialPageRoute(
         builder: (context) => page,

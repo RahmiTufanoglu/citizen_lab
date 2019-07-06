@@ -5,10 +5,8 @@ import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class DetailPage extends StatefulWidget {
-  final Key key;
   final String title;
   final String image;
   final String location;
@@ -19,7 +17,6 @@ class DetailPage extends StatefulWidget {
   final String url;
 
   DetailPage({
-    this.key,
     @required this.title,
     @required this.image,
     @required this.location,
@@ -28,7 +25,7 @@ class DetailPage extends StatefulWidget {
     @required this.extended,
     @required this.contactPerson,
     @required this.url,
-  }) : super(key: key);
+  });
 
   @override
   _DetailPageState createState() => _DetailPageState();
@@ -98,16 +95,6 @@ class _DetailPageState extends State<DetailPage> {
     );
   }
 
-  Widget _dividerWithPadding() {
-    return Padding(
-      padding: const EdgeInsets.only(
-        left: 24.0,
-        right: 24.0,
-      ),
-      child: Divider(color: Colors.black),
-    );
-  }
-
   Widget _buildFab() {
     return FloatingActionButton(
       child: Icon(Icons.web),
@@ -124,13 +111,5 @@ class _DetailPageState extends State<DetailPage> {
         'url': widget.url,
       },
     );
-  }
-
-  Future<void> _launchUrl() async {
-    if (await canLaunch(widget.url)) {
-      await launch(widget.url);
-    } else {
-      throw 'Could not launch ${widget.url}';
-    }
   }
 }
