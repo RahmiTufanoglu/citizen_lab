@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:citizen_lab/bloc/notes_bloc.dart';
 import 'package:citizen_lab/custom_widgets/alarm_dialog.dart';
 import 'package:citizen_lab/custom_widgets/dial_floating_action_button.dart';
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
@@ -16,11 +15,11 @@ import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../card_colors.dart';
 import '../entry_fab_data.dart';
 import 'experiment_item.dart';
 
 class EntryPage extends StatefulWidget {
-  final bool isFromCreateProjectPage;
   final bool isFromProjectPage;
   final bool isFromProjectSearchPage;
   final String projectTitle;
@@ -28,7 +27,6 @@ class EntryPage extends StatefulWidget {
   final Note note;
 
   EntryPage({
-    @required this.isFromCreateProjectPage,
     @required this.isFromProjectPage,
     @required this.isFromProjectSearchPage,
     @required this.projectTitle,
@@ -47,13 +45,13 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   final _textEditingController = TextEditingController();
   final _projectDb = DatabaseProvider.db;
 
-  NotesBloc _notesBloc;
+  //NotesBloc _notesBloc;
   ThemeChangerProvider _themeChanger;
 
   String _title;
   String _createdAt;
 
-  AsyncSnapshot _snapshot;
+  //AsyncSnapshot _snapshot;
   List<Note> _noteList = [];
 
   String createdAtDesc = 'created_at DESC';
@@ -61,17 +59,18 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   String titleDesc = 'title DESC';
   String titleAsc = 'title ASC';
   String _order = 'created_at DESC';
+  bool _listLoaded = false;
 
   @override
   void initState() {
     super.initState();
 
-    _notesBloc = NotesBloc(
+    /*_notesBloc = NotesBloc(
       random: widget.project.random,
       order: _order,
-    );
+    );*/
 
-    //_loadNoteList();
+    _loadNoteList();
 
     _titleProjectController.text = widget.project.title;
     _descProjectController.text = widget.project.description;
@@ -90,7 +89,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   @override
   void dispose() {
     _textEditingController.dispose();
-    _notesBloc.dispose();
+    //_notesBloc.dispose();
     super.dispose();
   }
 
@@ -99,6 +98,12 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
 
     return Scaffold(
+      key: _scaffoldKey,
+      appBar: _buildAppBar(),
+      body: _buildBody(),
+      floatingActionButton: _buildFabs(),
+    );
+    /*return Scaffold(
       resizeToAvoidBottomPadding: false,
       key: _scaffoldKey,
       appBar: _buildAppBar(),
@@ -110,7 +115,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
         },
       ),
       floatingActionButton: _buildFabs(),
-    );
+    );*/
   }
 
   Widget _buildAppBar() {
@@ -118,7 +123,9 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
       leading: IconButton(
         tooltip: back,
         icon: Icon(Icons.arrow_back),
-        onPressed: () => _onBackPressed(),
+        onPressed: () {
+          Navigator.pop(context, true);
+        },
       ),
       title: GestureDetector(
         onPanStart: (_) => _themeChanger.setTheme(),
@@ -155,10 +162,6 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
             );
           },
         ),
-        IconButton(
-          icon: Icon(Icons.home),
-          onPressed: () => _backToHomePage(),
-        ),
       ],
     );
   }
@@ -181,7 +184,51 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildBody(AsyncSnapshot snapshot) {
+  Widget _buildBody() {
+    return SafeArea(
+      child: WillPopScope(
+        onWillPop: () {
+          Navigator.pop(context, true);
+        },
+        child: _noteList.isNotEmpty
+            ? ListView.builder(
+                itemCount: _noteList.length,
+                padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 88.0),
+                itemBuilder: (context, index) {
+                  final _note = _noteList[index];
+                  final key = Key('${_note.hashCode}');
+                  return Dismissible(
+                    key: key,
+                    direction: DismissDirection.startToEnd,
+                    background: Container(
+                      alignment: Alignment.centerLeft,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                      ),
+                      child: Row(
+                        children: <Widget>[
+                          Icon(Icons.arrow_forward, size: 28.0),
+                          SizedBox(width: 8.0),
+                          Icon(Icons.delete, size: 28.0),
+                        ],
+                      ),
+                    ),
+                    onDismissed: (_) => _deleteNote(index),
+                    child: _buildItem(index),
+                  );
+                },
+              )
+            : Center(
+                child: Text(
+                  empty_list,
+                  style: TextStyle(fontSize: 24.0),
+                ),
+              ),
+      ),
+    );
+  }
+
+  /*Widget _buildBody2(AsyncSnapshot snapshot) {
     return SafeArea(
       child: WillPopScope(
         onWillPop: _onBackPressed,
@@ -234,9 +281,26 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
               ),
       ),
     );
+  }*/
+
+  Widget _buildItem(int index) {
+    final double screenHeight =
+        MediaQuery.of(context).size.height - kToolbarHeight;
+    final _note = _noteList[index];
+
+    return Container(
+      height: MediaQuery.of(context).orientation == Orientation.portrait
+          ? screenHeight / 8
+          : screenHeight / 4,
+      child: NoteItem(
+        note: _note,
+        onTap: () => _openNotePage(_note.type, _note),
+        onLongPress: () => _setCardColor(_note),
+      ),
+    );
   }
 
-  Widget _buildItem(AsyncSnapshot snapshot, int index) {
+  Widget _buildItem2(AsyncSnapshot snapshot, int index) {
     final double screenHeight =
         MediaQuery.of(context).size.height - kToolbarHeight;
 
@@ -251,8 +315,101 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
         onTap: () => _openNotePage(note.type, note),
         //onLongPress: () => _showContent(index),
         //onLongPress: () => _showContent(snapshot, index),
+        onLongPress: () => _setCardColor(note),
       ),
     );
+  }
+
+  void _setCardColor(Note note) {
+    List<CardColors> cardColors = [
+      CardColors(0xFF61BD6D, 0xFF000000),
+      CardColors(0xFF1ABC9C, 0xFF000000),
+      CardColors(0xFF54ACD2, 0xFF000000),
+      CardColors(0xFF2C82C9, 0xFFFFFFFF),
+      CardColors(0xFF41A85F, 0xFFFFFFFF),
+      CardColors(0xFF00A885, 0xFF000000),
+      CardColors(0xFF3D8EB9, 0xFF000000),
+      CardColors(0xFF2969B0, 0xFFFFFFFF),
+      CardColors(0xFFF7DA64, 0xFF000000),
+      CardColors(0xFFFBA026, 0xFF000000),
+      CardColors(0xFFEB6B56, 0xFFFFFFFF),
+      CardColors(0xFFE14938, 0xFFFFFFFF),
+      CardColors(0xFFFAC51C, 0xFF000000),
+      CardColors(0xFFF37934, 0xFF000000),
+      CardColors(0xFFD14841, 0xFFFFFFFF),
+      CardColors(0xFFB8312F, 0xFFFFFFFF),
+      CardColors(0xFF9365B8, 0xFFFFFFFF),
+      CardColors(0xFF553982, 0xFFFFFFFF),
+      CardColors(0xFF475577, 0xFFFFFFFF),
+      CardColors(0xFF28324E, 0xFFFFFFFF),
+      CardColors(0xFFA38F84, 0xFF000000),
+      CardColors(0xFF75706B, 0xFFFFFFFF),
+      CardColors(0xFFD1D5D8, 0xFF000000),
+      CardColors(0xFFEFEFEF, 0xFF000000),
+    ];
+
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenWidth = MediaQuery.of(context).size.width;
+
+    showDialog(
+      context: context,
+      builder: (context) => SimpleDialog(
+            contentPadding: const EdgeInsets.all(0.0),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(8.0)),
+            ),
+            children: <Widget>[
+              Scrollbar(
+                child: Container(
+                  height: screenHeight / 2,
+                  width: screenWidth / 2,
+                  child: GridView.builder(
+                    padding: const EdgeInsets.all(8.0),
+                    itemCount: cardColors.length,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 4,
+                    ),
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: FloatingActionButton(
+                          backgroundColor:
+                              Color(cardColors[index].cardBackgroundColor),
+                          onPressed: () {
+                            _updateNote(
+                              note,
+                              cardColors[index].cardBackgroundColor,
+                              cardColors[index].cardItemColor,
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+    );
+  }
+
+  Future<void> _updateNote(Note note, int cardColor, int cardTextColor) async {
+    Note newNote = Note.fromMap({
+      DatabaseProvider.columnNoteId: note.id,
+      DatabaseProvider.columnProjectRandom: note.projectRandom,
+      DatabaseProvider.columnNoteType: note.type,
+      DatabaseProvider.columnNoteTitle: note.title,
+      DatabaseProvider.columnNoteDescription: note.description,
+      DatabaseProvider.columnNoteContent: '',
+      DatabaseProvider.columnNoteCreatedAt: note.dateCreated,
+      DatabaseProvider.columnNoteUpdatedAt: dateFormatted(),
+      DatabaseProvider.columnNoteEdited: 1,
+      DatabaseProvider.columnNoteCardColor: cardColor,
+      DatabaseProvider.columnNoteCardTextColor: cardTextColor,
+    });
+    await _projectDb.updateNote(newNote: newNote);
+    _loadNoteList();
+    Navigator.pop(context, newNote);
   }
 
   Widget _buildFabs() {
@@ -279,7 +436,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
           ),
           DialFloatingActionButton(
             iconList: entryIconList,
-            colorList: entryColorList,
+            //colorList: entryColorList,
             stringList: entryStringList,
             function: _openNotePage,
           ),
@@ -291,24 +448,21 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   void _showEditDialog() {
     showDialog(
       context: context,
-      builder: (context) => Container(
-            width: 2000.0,
-            child: SimpleTimerDialog(
-              createdAt: _createdAt,
-              textEditingController: _titleProjectController,
-              descEditingController: _descProjectController,
-              descExists: true,
-              onPressedClose: () => Navigator.pop(context),
-              onPressedClear: () {
-                _titleProjectController.clear();
-                _descProjectController.clear();
-              },
-              onPressedUpdate: () {
-                _updateProject(widget.project);
-                //_title = _titleProjectController.text;
-                Navigator.pop(context);
-              },
-            ),
+      builder: (context) => SimpleTimerDialog(
+            createdAt: _createdAt,
+            textEditingController: _titleProjectController,
+            descEditingController: _descProjectController,
+            descExists: true,
+            onPressedClose: () => Navigator.pop(context),
+            onPressedClear: () {
+              _titleProjectController.clear();
+              _descProjectController.clear();
+            },
+            onPressedUpdate: () {
+              _updateProject(widget.project);
+              //_title = _titleProjectController.text;
+              Navigator.pop(context);
+            },
           ),
     );
   }
@@ -316,7 +470,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   void _openModalBottomSheet() {
     List<ExperimentItem> experimentItems = [
       ExperimentItem('', Icons.keyboard_arrow_down),
-      ExperimentItem('Rechnen', Icons.straighten),
+      ExperimentItem('Rechner', Icons.straighten),
       ExperimentItem('Stoppuhr', Icons.timer),
       ExperimentItem('Ortsbestimmung', Icons.location_on),
     ];
@@ -402,6 +556,8 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
       DatabaseProvider.columnProjectDesc: _descProjectController.text,
       DatabaseProvider.columnProjectCreatedAt: project.dateCreated,
       DatabaseProvider.columnProjectUpdatedAt: dateFormatted(),
+      DatabaseProvider.columnProjectCardColor: project.cardColor,
+      DatabaseProvider.columnProjectCardTextColor: project.cardTextColor,
     });
     await _projectDb.updateProject(newProject: updatedProject);
   }
@@ -435,24 +591,27 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
     ) as Note;
 
     bool exists;
-    if (result != null && result.edited == 0) {
-      exists = false;
-    } else {
-      exists = true;
-    }
+    result != null && result.edited == 0 ? exists = false : exists = true;
 
-    !exists ? _notesBloc.add(result) : _notesBloc.update(result);
+    //!exists ? _notesBloc.add(result) : _notesBloc.update(result);
+    if (!exists) {
+      _projectDb.insertNote(note: result);
+    } else {
+      if (result != null) _projectDb.updateNote(newNote: result);
+    }
+    _loadNoteList();
   }
 
   void _loadNoteList() async {
-    /*for (int i = 0; i < _noteList.length; i++) {
+    for (int i = 0; i < _noteList.length; i++) {
       _noteList.removeWhere((element) {
         _noteList[i].id = _noteList[i].id;
       });
-    }*/
+    }
     //List notes = await _noteDb.getAllNotes();
 
-    //List notes = await _noteDb.getNotesOfProject(random: widget.project.random);
+    List notes =
+        await _projectDb.getNotesOfProject(random: widget.project.random);
     //List notes = await _noteDb.getAllNotes();
     //List notes = await _noteDb.getNotesOfProject(id: widget.projectTitle);
     //List notes = await _noteDb.getNotesOfProject(id: widget.project.id);
@@ -464,10 +623,15 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
 
     //List notes = _notesBloc.getNotes(random: widget.project.random);
 
+    for (int i = 0; i < notes.length; i++) {
+      setState(() {
+        _noteList.insert(i, notes[i]);
+      });
+    }
+
     /*notes.forEach((note) {
       setState(() {
-        //_noteList.insert(0, Note.map(note));
-        //_noteList.insert(0, note[notes]);
+        _noteList.insert(0, Note.map(note));
       });
     });*/
 
@@ -475,27 +639,28 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
     _choiceSortOption(sort_by_release_date_asc);
   }
 
-  void _deleteNote(AsyncSnapshot snapshot, int index) async {
-    //await _noteDb.deleteNote(id: _noteList[index].id);
+  //void _deleteNote(AsyncSnapshot snapshot, int index) async {
+  void _deleteNote(int index) async {
+    await _projectDb.deleteNote(id: _noteList[index].id);
     //await _noteDb.deleteNote(id: _noteList[index].id);
 
-    //if (_noteList[index].type == 'Tabelle') {
-    if (snapshot.data[index].type == 'Tabelle') {
-      //File file = File(_noteList[index].content);
-      File file = File(snapshot.data[index].content);
+    if (_noteList[index].type == 'Tabelle') {
+      //if (snapshot.data[index].type == 'Tabelle') {
+      File file = File(_noteList[index].content);
+      //File file = File(snapshot.data[index].content);
       file.delete();
     }
 
-    //if (_noteList[index].type == 'Bild') {
-    if (snapshot.data[index].type == 'Bild') {
-      //File file = File(_noteList[index].content);
-      File file = File(snapshot.data[index].content);
+    if (_noteList[index].type == 'Bild') {
+      //if (snapshot.data[index].type == 'Bild') {
+      File file = File(_noteList[index].content);
+      //File file = File(snapshot.data[index].content);
       file.delete();
     }
 
-    /*setState(() {
+    setState(() {
       _noteList.removeAt(index);
-    });*/
+    });
   }
 
   Future<bool> _deleteAllNotes(BuildContext contextSnackBar) async {
@@ -513,12 +678,15 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
 
                 //for (int i = 0; i < _noteList.length; i++) {}
 
-                _notesBloc.deleteAllNotesFromProject(
+                _projectDb.deleteAllNotesFromProject(
+                    random: widget.project.random);
+
+                /*_notesBloc.deleteAllNotesFromProject(
                   //widget.note,
                   //_snapshot.data[index],
                   _noteList,
                   widget.project.random,
-                );
+                );*/
 
                 _scaffoldKey.currentState.showSnackBar(
                   _buildSnackBar(text: list_deleted),
@@ -535,7 +703,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
     );
   }
 
-  Future<bool> _deleteAllNotes2(BuildContext contextSnackBar) async {
+  /*Future<bool> _deleteAllNotes2(BuildContext contextSnackBar) async {
     final String doYouWantToDeleteAllNotes =
         'Wollen sie alle Einträge löschen?';
 
@@ -569,13 +737,16 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
             },*/
           ),
     );
-  }
+  }*/
 
   Widget _buildSnackBar({@required String text}) {
     return SnackBar(
       backgroundColor: Colors.black.withOpacity(0.5),
       duration: Duration(seconds: 1),
-      content: Text(text, style: TextStyle(fontWeight: FontWeight.bold)),
+      content: Text(text,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          )),
     );
   }
 
@@ -599,8 +770,8 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
                     SizedBox(height: 16.0),
                     Text(
                       '$createdAt: '
-                      //'${_noteList[index].dateCreated}',
-                      '${snapshot.data[index].dateCreated}',
+                      '${_noteList[index].dateCreated}',
+                      //'${snapshot.data[index].dateCreated}',
                       style: TextStyle(
                           fontSize: 14.0, fontWeight: FontWeight.bold),
                     ),
@@ -619,9 +790,8 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
                 style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 8.0),
-              Text(
-                  //_noteList[index].title,
-                  snapshot.data[index].title,
+              Text(_noteList[index].title,
+                  //snapshot.data[index].title,
                   style: TextStyle(fontSize: 16.0)),
               SizedBox(height: 32.0),
               Text(
@@ -630,8 +800,8 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
               ),
               SizedBox(height: 8.0),
               Text(
-                //_noteList[index].description,
-                snapshot.data[index].description,
+                _noteList[index].description,
+                //snapshot.data[index].description,
                 style: TextStyle(fontSize: 16.0),
               ),
               SizedBox(height: 8.0),
@@ -643,54 +813,35 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   void _choiceSortOption(String choice) {
     switch (choice) {
       case sort_by_title_arc:
-        /*setState(() {
+        setState(() {
           _noteList.sort(
             (Note a, Note b) =>
                 a.title.toLowerCase().compareTo(b.title.toLowerCase()),
           );
-        });*/
-        //_notesBloc.sortByTitleArc(_noteList);
+        });
         break;
       case sort_by_title_desc:
-        /*setState(() {
+        setState(() {
           _noteList.sort(
             (Note a, Note b) =>
                 b.title.toLowerCase().compareTo(a.title.toLowerCase()),
           );
-        });*/
-        //_notesBloc.sortByTitleDesc(_noteList);
+        });
         break;
       case sort_by_release_date_asc:
-        /*setState(() {
+        setState(() {
           _noteList.sort(
             (Note a, Note b) => a.dateCreated.compareTo(b.dateCreated),
           );
-        });*/
-        //_notesBloc.sortByReleaseDateArc(_noteList);
+        });
         break;
       case sort_by_release_date_desc:
-        /*setState(() {
+        setState(() {
           _noteList.sort(
             (Note a, Note b) => b.dateCreated.compareTo(a.dateCreated),
           );
-        });*/
-        //_notesBloc.sortByReleaseDateDesc(_noteList);
+        });
         break;
     }
-  }
-
-  Future<bool> _onBackPressed() async {
-    if (widget.isFromCreateProjectPage) {
-      Navigator.popUntil(
-        context,
-        ModalRoute.withName(RouteGenerator.routeHomePage),
-      );
-      /*} else if (widget.isFromProjectSearchPage) {
-      Navigator.pop(context, 'fromEntry');*/
-    } else {
-      Navigator.pop(context, true);
-    }
-
-    return false;
   }
 }

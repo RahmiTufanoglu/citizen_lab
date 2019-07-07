@@ -2,7 +2,6 @@ import 'package:citizen_lab/utils/utils.dart';
 import 'package:flutter/material.dart';
 
 class ColumnRowEditingWidget extends StatefulWidget {
-  final Key key;
   final String title;
   final TextEditingController titleEditingController;
   final TextEditingController columnEditingController;
@@ -11,14 +10,13 @@ class ColumnRowEditingWidget extends StatefulWidget {
   final GestureTapCallback onPressedCheck;
 
   ColumnRowEditingWidget({
-    this.key,
     @required this.title,
     @required this.titleEditingController,
     @required this.columnEditingController,
     @required this.rowEditingController,
     @required this.onPressedClear,
     @required this.onPressedCheck,
-  }) : super(key: key);
+  });
 
   @override
   _ColumnRowEditingWidgetState createState() => _ColumnRowEditingWidgetState();
@@ -34,7 +32,6 @@ class _ColumnRowEditingWidgetState extends State<ColumnRowEditingWidget> {
 
   Widget _buildDialog() {
     final String plsEnterANumber = 'Bitte eine\nZahl eingeben';
-
     return Form(
       key: _formKey,
       autovalidate: true,

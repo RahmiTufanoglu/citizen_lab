@@ -463,6 +463,8 @@ class _TablePageState extends State<TablePage> {
           _createdAt,
           dateFormatted(),
           0,
+          0xFFFFFFFF,
+          0xFF000000,
         );
         //await _noteDb.insertNote(note: newNote);
         Navigator.pop(context, note);
@@ -495,6 +497,8 @@ class _TablePageState extends State<TablePage> {
       DatabaseProvider.columnNoteCreatedAt: note.dateCreated,
       DatabaseProvider.columnNoteUpdatedAt: dateFormatted(),
       DatabaseProvider.columnNoteEdited: 1,
+      DatabaseProvider.columnNoteCardColor: note.cardColor,
+      DatabaseProvider.columnNoteCardTextColor: note.cardTextColor,
     });
     //await _noteDb.updateNote(newNote: newNote);
     Navigator.pop(context, newNote);

@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
@@ -7,7 +6,7 @@ class DialFloatingActionButton extends StatefulWidget {
   final IconData firstIcon;
   final IconData secondIcon;
   final List<Icon> iconList;
-  final List<Color> colorList;
+  //final List<Color> colorList;
   final List<String> stringList;
   final Function function;
 
@@ -15,7 +14,7 @@ class DialFloatingActionButton extends StatefulWidget {
     this.firstIcon = Icons.add,
     this.secondIcon = Icons.add,
     @required this.iconList,
-    @required this.colorList,
+    //@required this.colorList,
     @required this.stringList,
     @required this.function,
   });
@@ -71,7 +70,7 @@ class _DialFloatingActionButtonState extends State<DialFloatingActionButton>
             child: FloatingActionButton(
               heroTag: null,
               //mini: true,
-              backgroundColor: widget.colorList[index],
+              //backgroundColor: widget.colorList[index],
               tooltip: '${widget.stringList[index]}note erstellen.',
               child: widget.iconList[index],
               onPressed: () {

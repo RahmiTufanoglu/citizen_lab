@@ -282,6 +282,8 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
       _descEditingController.text,
       dateFormatted(),
       '',
+      0xFFFFFFFF,
+      0xFF000000,
     );
 
     if (_formKey.currentState.validate() && !_projectExists) {

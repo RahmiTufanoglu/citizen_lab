@@ -60,7 +60,9 @@ class _SimpleTimerDialogState extends State<SimpleTimerDialog> {
   Widget build(BuildContext context) => _buildDialog();
 
   Widget _buildDialog() {
+    final double screenHeight = MediaQuery.of(context).size.height;
     final double screenWidth = MediaQuery.of(context).size.width;
+    final double keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
 
     return Form(
       key: _formKey,
@@ -70,7 +72,7 @@ class _SimpleTimerDialogState extends State<SimpleTimerDialog> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(8.0)),
         ),
-        contentPadding: const EdgeInsets.all(16.0),
+        contentPadding: const EdgeInsets.all(0.0),
         titlePadding: const EdgeInsets.all(0.0),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -116,62 +118,134 @@ class _SimpleTimerDialogState extends State<SimpleTimerDialog> {
           ],
         ),
         children: <Widget>[
-          Text(
-            'Titel:',
-            style: TextStyle(
-              fontSize: 16.0,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          TextFormField(
-            controller: widget.textEditingController,
-            keyboardType: TextInputType.text,
-            maxLength: 50,
-            maxLines: 1,
-            decoration: InputDecoration(
-              hintText: 'Titel hier.',
-              labelStyle: TextStyle(fontSize: 14.0),
-            ),
-            validator: (text) =>
-                text.isEmpty ? 'Bitte einen Titel eingeben' : null,
-            //onChanged: (String changed) => widget.textEditingController.text = changed,
-            /*onChanged: (changed) {
+          Container(
+            height: screenHeight / 1.5,
+            width: screenHeight / 2,
+            /*child: SliverList(
+              delegate: SliverChildListDelegate(
+                [
+                  Text(
+                    'Titel:',
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  TextFormField(
+                    controller: widget.textEditingController,
+                    keyboardType: TextInputType.text,
+                    maxLength: 50,
+                    maxLines: 1,
+                    decoration: InputDecoration(
+                      hintText: 'Titel hier.',
+                      labelStyle: TextStyle(fontSize: 14.0),
+                    ),
+                    validator: (text) =>
+                        text.isEmpty ? 'Bitte einen Titel eingeben' : null,
+                    //onChanged: (String changed) => widget.textEditingController.text = changed,
+                    /*onChanged: (changed) {
               widget.titleProvider.setTitle(changed);
               widget.title = widget.titleProvider.getTitle;
               (widget.title.isEmpty)
                   ? _titleValidate = true
                   : _titleValidate = false;
             },*/
-          ),
-          SizedBox(height: 56.0),
-          _descWidget(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Expanded(
-                child: RaisedButton(
-                  elevation: 4.0,
-                  highlightElevation: 16.0,
-                  padding: const EdgeInsets.all(0.0),
-                  child: Icon(Icons.remove),
-                  onPressed: widget.onPressedClear,
-                ),
+                  ),
+                  SizedBox(height: 56.0),
+                  _descWidget(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Expanded(
+                        child: RaisedButton(
+                          elevation: 4.0,
+                          highlightElevation: 16.0,
+                          padding: const EdgeInsets.all(0.0),
+                          child: Icon(Icons.remove),
+                          onPressed: widget.onPressedClear,
+                        ),
+                      ),
+                      SizedBox(width: 16.0),
+                      Expanded(
+                        child: RaisedButton(
+                          elevation: 4.0,
+                          highlightElevation: 16.0,
+                          padding: const EdgeInsets.all(0.0),
+                          child: Icon(Icons.check),
+                          onPressed: () {
+                            if (_formKey.currentState.validate()) {
+                              widget.onPressedUpdate();
+                            }
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-              SizedBox(width: 16.0),
-              Expanded(
-                child: RaisedButton(
-                  elevation: 4.0,
-                  highlightElevation: 16.0,
-                  padding: const EdgeInsets.all(0.0),
-                  child: Icon(Icons.check),
-                  onPressed: () {
-                    if (_formKey.currentState.validate()) {
-                      widget.onPressedUpdate();
-                    }
-                  },
+            ),*/
+            child: ListView(
+              padding: const EdgeInsets.all(16.0),
+              children: <Widget>[
+                Text(
+                  'Titel:',
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-            ],
+                TextFormField(
+                  controller: widget.textEditingController,
+                  keyboardType: TextInputType.text,
+                  maxLength: 50,
+                  maxLines: 1,
+                  decoration: InputDecoration(
+                    hintText: 'Titel hier.',
+                    labelStyle: TextStyle(fontSize: 14.0),
+                  ),
+                  validator: (text) =>
+                      text.isEmpty ? 'Bitte einen Titel eingeben' : null,
+                  //onChanged: (String changed) => widget.textEditingController.text = changed,
+                  /*onChanged: (changed) {
+              widget.titleProvider.setTitle(changed);
+              widget.title = widget.titleProvider.getTitle;
+              (widget.title.isEmpty)
+            ? _titleValidate = true
+            : _titleValidate = false;
+            },*/
+                ),
+                SizedBox(height: 56.0),
+                _descWidget(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Expanded(
+                      child: RaisedButton(
+                        elevation: 4.0,
+                        highlightElevation: 16.0,
+                        padding: const EdgeInsets.all(0.0),
+                        child: Icon(Icons.remove),
+                        onPressed: widget.onPressedClear,
+                      ),
+                    ),
+                    SizedBox(width: 16.0),
+                    Expanded(
+                      child: RaisedButton(
+                        elevation: 4.0,
+                        highlightElevation: 16.0,
+                        padding: const EdgeInsets.all(0.0),
+                        child: Icon(Icons.check),
+                        onPressed: () {
+                          if (_formKey.currentState.validate()) {
+                            widget.onPressedUpdate();
+                          }
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ],
       ),

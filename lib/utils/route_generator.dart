@@ -88,7 +88,6 @@ class RouteGenerator {
           page = EntryPage(
             project: args['project'],
             projectTitle: args['projectTitle'],
-            isFromCreateProjectPage: args['isFromCreateProjectPage'],
             isFromProjectPage: args['isFromProjectPage'],
             isFromProjectSearchPage: args['isFromProjectSearchPage'],
           );

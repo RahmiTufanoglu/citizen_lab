@@ -10,6 +10,8 @@ class Note {
   String dateCreated;
   String dateEdited;
   int edited;
+  int cardColor;
+  int cardTextColor;
 
   Note(
     this.projectRandom,
@@ -20,6 +22,8 @@ class Note {
     this.dateCreated,
     this.dateEdited,
     this.edited,
+    this.cardColor,
+    this.cardTextColor,
   );
 
   Note.withId(
@@ -32,6 +36,8 @@ class Note {
     this.dateCreated,
     this.dateEdited,
     this.edited,
+    this.cardColor,
+    this.cardTextColor,
   );
 
   Note.map(dynamic obj) {
@@ -43,7 +49,8 @@ class Note {
     this.content = obj[DatabaseProvider.columnNoteContent];
     this.dateCreated = obj[DatabaseProvider.columnNoteCreatedAt];
     this.dateEdited = obj[DatabaseProvider.columnNoteUpdatedAt];
-    this.edited = obj[DatabaseProvider.columnNoteEdited];
+    this.cardColor = obj[DatabaseProvider.columnNoteCardColor];
+    this.cardTextColor = obj[DatabaseProvider.columnNoteCardTextColor];
   }
 
   Map<String, dynamic> toMap() {
@@ -60,6 +67,8 @@ class Note {
     map[DatabaseProvider.columnNoteCreatedAt] = dateCreated;
     map[DatabaseProvider.columnNoteUpdatedAt] = dateEdited;
     map[DatabaseProvider.columnNoteEdited] = edited;
+    map[DatabaseProvider.columnNoteCardColor] = cardColor;
+    map[DatabaseProvider.columnNoteCardTextColor] = cardTextColor;
 
     return map;
   }
@@ -74,9 +83,11 @@ class Note {
     this.dateCreated = map[DatabaseProvider.columnNoteCreatedAt];
     this.dateEdited = map[DatabaseProvider.columnNoteUpdatedAt];
     this.edited = map[DatabaseProvider.columnNoteEdited];
+    this.cardColor = map[DatabaseProvider.columnNoteCardColor];
+    this.cardTextColor = map[DatabaseProvider.columnNoteCardTextColor];
   }
 
-  /*factory Note.fromMap(Map<String, dynamic> map) => Note.withId(
+/*factory Note.fromMap(Map<String, dynamic> map) => Note.withId(
       id: map[DatabaseProvider.columnNoteId],
       projectRandom: map[DatabaseProvider.columnProjectRandom],
   type: map[DatabaseProvider.columnNoteType],

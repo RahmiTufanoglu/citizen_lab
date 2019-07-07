@@ -65,6 +65,8 @@ class ProjectTemplatePage extends StatelessWidget {
       desc,
       dateFormatted(),
       '',
+      0xFFFFFFFF,
+      0xFF000000,
     );
     await _projectDb.insertProject(project: project);
 
@@ -77,6 +79,8 @@ class ProjectTemplatePage extends StatelessWidget {
       dateFormatted(),
       dateFormatted(),
       0,
+      0xFFFFFFFF,
+      0xFF000000,
     );
 
     if (project != null) {

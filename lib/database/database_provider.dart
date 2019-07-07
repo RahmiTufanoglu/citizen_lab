@@ -25,6 +25,8 @@ class DatabaseProvider {
   static final String columnProjectDesc = 'description';
   static final String columnProjectCreatedAt = 'created_at';
   static final String columnProjectUpdatedAt = 'updated_at';
+  static final String columnProjectCardColor = 'card_color';
+  static final String columnProjectCardTextColor = 'card_text_color';
 
   static final String noteTable = 'notes';
   static final String columnNoteId = 'id';
@@ -38,6 +40,8 @@ class DatabaseProvider {
   static final String columnNoteCreatedAt = 'created_at';
   static final String columnNoteUpdatedAt = 'updated_at';
   static final String columnNoteEdited = 'edited';
+  static final String columnNoteCardColor = 'card_color';
+  static final String columnNoteCardTextColor = 'card_text_color';
 
   static final String createProjectTable = 'CREATE TABLE $projectTable('
       '$columnProjectId INTEGER PRIMARY KEY AUTOINCREMENT,'
@@ -46,7 +50,9 @@ class DatabaseProvider {
       '$columnProjectTitle TEXT NOT NULL, '
       '$columnProjectDesc TEXT NOT NULL, '
       '$columnProjectCreatedAt TEXT NOT NULL, '
-      '$columnProjectUpdatedAt TEXT NOT NULL)';
+      '$columnProjectUpdatedAt TEXT NOT NULL, '
+      '$columnProjectCardColor INTEGER NOT NULL, '
+      '$columnProjectCardTextColor INTEGER NOT NULL)';
 
   static final String createNoteTable = 'CREATE TABLE $noteTable('
       '$columnNoteId INTEGER PRIMARY KEY AUTOINCREMENT,'
@@ -55,11 +61,13 @@ class DatabaseProvider {
       //'$columnProjectId TEXT NOT NULL, '
       '$columnNoteType TEXT NOT NULL, '
       '$columnNoteTitle TEXT NOT NULL, '
-      '$columnNoteDescription TEXT, '
+      '$columnNoteDescription TEXT NOT NULL, '
       '$columnNoteContent TEXT NOT NULL, '
       '$columnNoteCreatedAt TEXT NOT NULL, '
       '$columnNoteUpdatedAt TEXT NOT NULL, '
-      '$columnNoteEdited INTEGER NOT NULL)';
+      '$columnNoteEdited INTEGER NOT NULL, '
+      '$columnNoteCardColor INTEGER NOT NULL, '
+      '$columnNoteCardTextColor INTEGER NOT NULL)';
 
   Future<Database> get database async {
     return _db != null ? _db : _db = await initDb();
@@ -144,10 +152,7 @@ class DatabaseProvider {
   }
 
   //Future<List> getNotesOfProject({@required String id}) async {
-  Future<List<Note>> getNotesOfProject({
-    @required int random,
-    @required String order,
-  }) async {
+  Future<List<Note>> getNotesOfProject({@required int random}) async {
     final db = await this.database;
     //final List<Map<String, dynamic>> maps = await db.query(
     var res = await db.query(
@@ -156,8 +161,8 @@ class DatabaseProvider {
       where: '$columnProjectRandom = ?',
       //whereArgs: [id],
       whereArgs: [random],
-      orderBy: order == null ? '$columnNoteCreatedAt DESC' : order,
-      //orderBy: '$columnNoteCreatedAt DESC',
+      //orderBy: order == null ? '$columnNoteCreatedAt DESC' : order,
+      orderBy: '$columnNoteCreatedAt DESC',
       //orderBy: order,
     );
     //return maps.toList();

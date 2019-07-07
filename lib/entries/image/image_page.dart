@@ -496,6 +496,8 @@ class _ImagePageState extends State<ImagePage> {
           _createdAt,
           dateFormatted(),
           0,
+          0xFFFFFFFF,
+          0xFF000000,
         );
         //operation = 'save';
         //await _noteDb.insertNote(note: newNote);
@@ -528,6 +530,8 @@ class _ImagePageState extends State<ImagePage> {
       DatabaseProvider.columnNoteCreatedAt: note.dateCreated,
       DatabaseProvider.columnNoteUpdatedAt: dateFormatted(),
       DatabaseProvider.columnNoteEdited: 1,
+      DatabaseProvider.columnNoteCardColor: note.cardColor,
+      DatabaseProvider.columnNoteCardTextColor: note.cardTextColor,
     });
     //await _noteDb.updateNote(newNote: newNote);
     Navigator.pop(context, newNote);

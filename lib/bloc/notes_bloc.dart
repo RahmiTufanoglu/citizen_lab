@@ -20,10 +20,7 @@ class NotesBloc implements BaseBloc {
   void getNotes({@required int random, String order}) async {
     //_notesController.sink.add(await DatabaseProvider().getAllNotes());
     _notesController.sink.add(
-      await DatabaseProvider.db.getNotesOfProject(
-        random: random,
-        order: order,
-      ),
+      await DatabaseProvider.db.getNotesOfProject(random: random),
     );
   }
 

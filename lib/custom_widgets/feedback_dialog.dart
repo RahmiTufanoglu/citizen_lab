@@ -3,7 +3,6 @@ import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class FeedbackDialog extends StatefulWidget {
-  final Key key;
   final String title;
   final String titleButtonLeft;
   final String titleButtonRight;
@@ -14,7 +13,6 @@ class FeedbackDialog extends StatefulWidget {
   final IconData iconButtonRight;
 
   FeedbackDialog({
-    this.key,
     this.title = 'Feedback',
     this.titleButtonLeft = 'Email',
     this.titleButtonRight = 'Webseite',
@@ -23,7 +21,7 @@ class FeedbackDialog extends StatefulWidget {
     this.iconButtonLeft = Icons.email,
     this.iconButtonRight = Icons.public,
     @required this.url,
-  }) : super(key: key);
+  });
 
   @override
   _FeedbackDialogState createState() => _FeedbackDialogState();

@@ -3,14 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class InfoPage extends StatefulWidget {
-  final Key key;
   final String title;
   final int tabLength;
   final List<Widget> tabs;
   final List<Widget> tabChildren;
 
   InfoPage({
-    this.key,
     @required this.title,
     @required this.tabLength,
     @required this.tabs,
@@ -64,9 +62,5 @@ class _InfoPageState extends State<InfoPage> {
     );
   }
 
-  Widget _buildBody() {
-    return TabBarView(
-      children: widget.tabChildren,
-    );
-  }
+  Widget _buildBody() => TabBarView(children: widget.tabChildren);
 }

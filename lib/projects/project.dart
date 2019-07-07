@@ -7,6 +7,8 @@ class Project {
   String description;
   String dateCreated;
   String dateEdited;
+  int cardColor;
+  int cardTextColor;
 
   Project(
     this.title,
@@ -14,6 +16,8 @@ class Project {
     this.description,
     this.dateCreated,
     this.dateEdited,
+    this.cardColor,
+    this.cardTextColor,
   );
 
   Project.withId(
@@ -23,6 +27,8 @@ class Project {
     this.description,
     this.dateCreated,
     this.dateEdited,
+    this.cardColor,
+    this.cardTextColor,
   );
 
   Project.map(dynamic obj) {
@@ -32,6 +38,8 @@ class Project {
     this.description = obj[DatabaseProvider.columnProjectDesc];
     this.dateCreated = obj[DatabaseProvider.columnProjectCreatedAt];
     this.dateEdited = obj[DatabaseProvider.columnProjectUpdatedAt];
+    this.cardColor = obj[DatabaseProvider.columnProjectCardColor];
+    this.cardTextColor = obj[DatabaseProvider.columnProjectCardTextColor];
   }
 
   Map<String, dynamic> toMap() {
@@ -45,6 +53,8 @@ class Project {
     map[DatabaseProvider.columnProjectDesc] = description;
     map[DatabaseProvider.columnProjectCreatedAt] = dateCreated;
     map[DatabaseProvider.columnProjectUpdatedAt] = dateEdited;
+    map[DatabaseProvider.columnProjectCardColor] = cardColor;
+    map[DatabaseProvider.columnProjectCardTextColor] = cardTextColor;
 
     return map;
   }
@@ -56,5 +66,7 @@ class Project {
     this.description = map[DatabaseProvider.columnProjectDesc];
     this.dateCreated = map[DatabaseProvider.columnProjectCreatedAt];
     this.dateEdited = map[DatabaseProvider.columnProjectUpdatedAt];
+    this.cardColor = map[DatabaseProvider.columnProjectCardColor];
+    this.cardTextColor = map[DatabaseProvider.columnProjectCardTextColor];
   }
 }

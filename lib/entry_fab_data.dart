@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 final List<Icon> entryIconList = [
-  Icon(Icons.link, color: Colors.white),
-  Icon(Icons.camera_alt, color: Colors.white),
-  Icon(Icons.table_chart, color: Colors.white),
-  Icon(Icons.create, color: Colors.white),
+  Icon(Icons.link, color: Colors.black),
+  Icon(Icons.camera_alt, color: Colors.black),
+  Icon(Icons.table_chart, color: Colors.black),
+  Icon(Icons.create, color: Colors.black),
 ];
 
 final List<Color> entryColorList = [
@@ -22,8 +22,8 @@ final List<String> entryStringList = [
 ];
 
 final List<Icon> projectIconList = [
-  Icon(Icons.assignment, color: Colors.white),
-  Icon(Icons.content_paste, color: Colors.white),
+  Icon(Icons.assignment, color: Colors.black),
+  Icon(Icons.content_paste, color: Colors.black),
 ];
 
 final List<Color> projectColorList = [

@@ -13,6 +13,9 @@ class NoteModel with ChangeNotifier implements NoteBase {
   String dateEdited;
   int edited;
 
+  //String cardColor;
+  //String textColor;
+
   @override
   void saveNote(Note note) {
     this.id = note.id;

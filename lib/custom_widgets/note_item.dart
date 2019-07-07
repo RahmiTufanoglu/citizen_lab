@@ -3,24 +3,24 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 class NoteItem extends StatelessWidget {
-  final Key key;
   final Note note;
   final GestureTapCallback onTap;
   final GestureTapCallback onLongPress;
 
   NoteItem({
-    this.key,
     @required this.note,
     @required this.onTap,
     this.onLongPress,
     //@required this.onLongPress,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return Card(
       margin: EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
-      color: _getColor(note.type),
+      //color: _getColor(note.type),
+      //color: Color(note.cardColor),
+      color: Color(note.cardColor),
       child: InkWell(
         onTap: onTap,
         onLongPress: onLongPress,
@@ -34,13 +34,14 @@ class NoteItem extends StatelessWidget {
               children: <Widget>[
                 Padding(
                   padding: EdgeInsets.all(16.0),
-                  child: _getIcon(note.type),
+                  child: _getIcon(note),
                 ),
                 Padding(
                   //padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
                   padding: EdgeInsets.symmetric(vertical: 8.0),
                   child: Container(
-                    color: Colors.white,
+                    //color: Colors.white,
+                    color: Color(note.cardTextColor),
                     height: double.infinity,
                     width: 2.0,
                     alignment: Alignment.center,
@@ -60,7 +61,8 @@ class NoteItem extends StatelessWidget {
                         softWrap: false,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          color: Colors.white,
+                          //color: Colors.white,
+                          color: Color(note.cardTextColor),
                           fontSize: 14.0,
                           fontWeight: FontWeight.bold,
                         ),
@@ -70,7 +72,8 @@ class NoteItem extends StatelessWidget {
                     Text(
                       'Erstellt am: ' + note.dateCreated,
                       style: TextStyle(
-                        color: Colors.white,
+                        //color: Colors.white,
+                        color: Color(note.cardTextColor),
                         fontSize: 14,
                         fontStyle: FontStyle.italic,
                       ),
@@ -81,7 +84,11 @@ class NoteItem extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.only(right: 8.0),
-              child: Icon(Icons.touch_app, color: Colors.white),
+              child: Icon(
+                Icons.touch_app,
+                //color: Colors.white,
+                color: Color(note.cardTextColor),
+              ),
             ),
           ],
         ),
@@ -109,19 +116,35 @@ class NoteItem extends StatelessWidget {
     }
   }
 
-  Icon _getIcon(String type) {
-    switch (type) {
+  Icon _getIcon(Note note) {
+    switch (note.type) {
       case 'Text':
-        return Icon(Icons.create, color: Colors.white);
+        return Icon(
+          Icons.create,
+          //color: Colors.white,
+          color: Color(note.cardTextColor),
+        );
         break;
       case 'Tabelle':
-        return Icon(Icons.table_chart, color: Colors.white);
+        return Icon(
+          Icons.table_chart,
+          //color: Colors.white,
+          color: Color(note.cardTextColor),
+        );
         break;
       case 'Bild':
-        return Icon(Icons.camera_alt, color: Colors.white);
+        return Icon(
+          Icons.camera_alt,
+          //color: Colors.white,
+          color: Color(note.cardTextColor),
+        );
         break;
       case 'Verlinkung':
-        return Icon(Icons.link, color: Colors.white);
+        return Icon(
+          Icons.link,
+          //color: Colors.white,
+          color: Color(note.cardTextColor),
+        );
         break;
       default:
         return null;

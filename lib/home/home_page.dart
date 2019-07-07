@@ -9,12 +9,14 @@ import 'package:citizen_lab/projects/project_search_page.dart';
 import 'package:citizen_lab/themes/theme.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/utils/constants.dart';
+import 'package:citizen_lab/utils/date_formater.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
+import '../card_colors.dart';
 import '../entry_fab_data.dart';
 
 class HomePage extends StatefulWidget {
@@ -142,7 +144,7 @@ class _HomePageState extends State<HomePage>
     );*/
     return DialFloatingActionButton(
       iconList: projectIconList,
-      colorList: projectColorList,
+      //colorList: projectColorList,
       stringList: projectStringList,
       function: _createProject,
     );
@@ -469,7 +471,8 @@ class _HomePageState extends State<HomePage>
                         child: ProjectItem(
                           project: _projectList[index],
                           onTap: () => _navigateToEntry(index),
-                          onLongPress: () => _showContent(index),
+                          //onLongPress: () => _showContent(index),
+                          onLongPress: () => _setCardColor(_project),
                         ),
                       ),
                     );
@@ -491,6 +494,95 @@ class _HomePageState extends State<HomePage>
     );
   }
 
+  void _setCardColor(Project project) {
+    List<CardColors> cardColors = [
+      CardColors(0xFF61BD6D, 0xFF000000),
+      CardColors(0xFF1ABC9C, 0xFF000000),
+      CardColors(0xFF54ACD2, 0xFF000000),
+      CardColors(0xFF2C82C9, 0xFFFFFFFF),
+      CardColors(0xFF41A85F, 0xFFFFFFFF),
+      CardColors(0xFF00A885, 0xFF000000),
+      CardColors(0xFF3D8EB9, 0xFF000000),
+      CardColors(0xFF2969B0, 0xFFFFFFFF),
+      CardColors(0xFFF7DA64, 0xFF000000),
+      CardColors(0xFFFBA026, 0xFF000000),
+      CardColors(0xFFEB6B56, 0xFFFFFFFF),
+      CardColors(0xFFE14938, 0xFFFFFFFF),
+      CardColors(0xFFFAC51C, 0xFF000000),
+      CardColors(0xFFF37934, 0xFF000000),
+      CardColors(0xFFD14841, 0xFFFFFFFF),
+      CardColors(0xFFB8312F, 0xFFFFFFFF),
+      CardColors(0xFF9365B8, 0xFFFFFFFF),
+      CardColors(0xFF553982, 0xFFFFFFFF),
+      CardColors(0xFF475577, 0xFFFFFFFF),
+      CardColors(0xFF28324E, 0xFFFFFFFF),
+      CardColors(0xFFA38F84, 0xFF000000),
+      CardColors(0xFF75706B, 0xFFFFFFFF),
+      CardColors(0xFFD1D5D8, 0xFF000000),
+      CardColors(0xFFEFEFEF, 0xFF000000),
+    ];
+
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenWidth = MediaQuery.of(context).size.width;
+
+    showDialog(
+      context: context,
+      builder: (context) => SimpleDialog(
+            contentPadding: const EdgeInsets.all(0.0),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(8.0)),
+            ),
+            children: <Widget>[
+              Scrollbar(
+                child: Container(
+                  height: screenHeight / 2,
+                  width: screenWidth / 2,
+                  child: GridView.builder(
+                    padding: const EdgeInsets.all(8.0),
+                    itemCount: cardColors.length,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 4,
+                    ),
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: FloatingActionButton(
+                          backgroundColor:
+                              Color(cardColors[index].cardBackgroundColor),
+                          onPressed: () {
+                            _updateProject(
+                              project,
+                              cardColors[index].cardBackgroundColor,
+                              cardColors[index].cardItemColor,
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+    );
+  }
+
+  void _updateProject(Project project, int cardColor, int cardTextColor) async {
+    Project updatedProject = Project.fromMap({
+      DatabaseProvider.columnProjectId: project.id,
+      DatabaseProvider.columnProjectRandom: project.random,
+      DatabaseProvider.columnProjectTitle: project.title,
+      DatabaseProvider.columnProjectDesc: project.description,
+      DatabaseProvider.columnProjectCreatedAt: project.dateCreated,
+      DatabaseProvider.columnProjectUpdatedAt: dateFormatted(),
+      DatabaseProvider.columnProjectCardColor: cardColor,
+      DatabaseProvider.columnProjectCardTextColor: cardTextColor,
+    });
+    await _projectDb.updateProject(newProject: updatedProject);
+    _loadProjectList();
+    Navigator.pop(context, updatedProject);
+  }
+
   void _navigateToEntry(int index) async {
     final result = await Navigator.pushNamed(
       context,
@@ -498,7 +590,6 @@ class _HomePageState extends State<HomePage>
       arguments: {
         'project': _projectList[index],
         'projectTitle': _projectList[index].title,
-        'isFromCreateProjectPage': false,
         'isFromProjectPage': true,
         'isFromProjectSearchPage': false,
       },
@@ -582,6 +673,12 @@ class _HomePageState extends State<HomePage>
     }
 
     List projects = await _projectDb.getAllProjects();
+
+    /*for (int i = 0; i < projects.length; i++) {
+      setState(() {
+        _projectList.insert(i, projects[i]);
+      });
+    }*/
 
     projects.forEach((project) {
       setState(() {

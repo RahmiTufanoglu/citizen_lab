@@ -3,19 +3,17 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class AlarmDialog extends StatefulWidget {
-  final Key key;
   final IconData icon;
   final Color iconColor;
   final String text;
   final GestureTapCallback onTap;
 
   AlarmDialog({
-    this.key,
     this.iconColor = Colors.redAccent,
     @required this.icon,
     @required this.text,
     @required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   _AlarmDialogState createState() => _AlarmDialogState();
@@ -31,9 +29,7 @@ class _AlarmDialogState extends State<AlarmDialog> {
       contentPadding: const EdgeInsets.all(16.0),
       elevation: 4.0,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(
-          Radius.circular(8.0),
-        ),
+        borderRadius: BorderRadius.all(Radius.circular(8.0)),
       ),
       children: <Widget>[
         Column(

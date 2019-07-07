@@ -15,6 +15,7 @@ class ProjectItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: Color(project.cardColor),
       margin: EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
       child: InkWell(
         onTap: onTap,
@@ -33,6 +34,7 @@ class ProjectItem extends StatelessWidget {
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16.0,
+                  color: Color(project.cardTextColor),
                 ),
               ),
               SizedBox(height: 8.0),
@@ -41,6 +43,7 @@ class ProjectItem extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 14.0,
                   fontStyle: FontStyle.italic,
+                  color: Color(project.cardTextColor),
                 ),
               ),
             ],
