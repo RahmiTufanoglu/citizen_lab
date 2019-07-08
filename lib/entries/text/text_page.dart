@@ -7,6 +7,7 @@ import 'package:citizen_lab/database/database_provider.dart';
 import 'package:citizen_lab/entries/experiment_item.dart';
 import 'package:citizen_lab/entries/note.dart';
 import 'package:citizen_lab/entries/text/text_info_page_data.dart';
+import 'package:citizen_lab/pdf_creator.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/utils/date_formater.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
@@ -90,6 +91,19 @@ class _TextPageState extends State<TextPage> {
     setState(() {
       _timeString = formattedDateTime;
     });
+  }
+
+  // TODO
+  PdfCreator _pdfCreator;
+
+  void _createPdf() {
+    _pdfCreator = PdfCreator(
+      title: _titleEditingController.text,
+      content: _descEditingController.text,
+    );
+
+    _pdfCreator.createPdf();
+    _pdfCreator.savePdf();
   }
 
   @override

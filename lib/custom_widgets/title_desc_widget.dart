@@ -80,6 +80,8 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
     final String plsEnterATitle = 'Bitte einen Titel eingeben';
     String pageTitle = widget.title;
 
+    final double screenWith = MediaQuery.of(context).size.width;
+
     return SafeArea(
       child: WillPopScope(
         onWillPop: () => widget.onWillPop(),
@@ -89,8 +91,11 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
             Container(
               color: _checkIfDarkModeEnabled() ? Colors.black12 : Colors.white,
               child: ExpansionTile(
-                title: null,
-                leading: Icon(Icons.access_time),
+                title: Text(''),
+                leading: Padding(
+                  padding: EdgeInsets.only(left: (screenWith / 2) - 24.0),
+                  child: Icon(Icons.access_time),
+                ),
                 children: <Widget>[_topWidget()],
               ),
             ),

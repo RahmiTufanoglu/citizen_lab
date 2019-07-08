@@ -17,6 +17,7 @@ import 'package:provider/provider.dart';
 
 import '../card_colors.dart';
 import '../entry_fab_data.dart';
+import '../note_search_page.dart';
 import 'experiment_item.dart';
 
 class EntryPage extends StatefulWidget {
@@ -138,6 +139,20 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
         ),
       ),
       actions: <Widget>[
+        IconButton(
+          icon: Icon(Icons.search),
+          onPressed: () {
+            showSearch(
+              context: context,
+              delegate: NoteSearchPage(
+                noteList: _noteList,
+                isFromNoteSearchPage: false,
+                reloadNoteList: () => _loadNoteList(),
+                openNotePage: _openNotePage,
+              ),
+            );
+          },
+        ),
         PopupMenuButton(
           icon: Icon(Icons.sort),
           elevation: 2.0,
@@ -153,14 +168,12 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
               ).toList(),
         ),
         Builder(
-          builder: (contextSnackBar) {
-            return IconButton(
-              highlightColor: Colors.red.withOpacity(0.2),
-              splashColor: Colors.red.withOpacity(0.8),
-              icon: Icon(Icons.delete),
-              onPressed: () => _deleteAllNotes(contextSnackBar),
-            );
-          },
+          builder: (contextSnackBar) => IconButton(
+                highlightColor: Colors.red.withOpacity(0.2),
+                splashColor: Colors.red.withOpacity(0.8),
+                icon: Icon(Icons.delete),
+                onPressed: () => _deleteAllNotes(contextSnackBar),
+              ),
         ),
       ],
     );
@@ -536,7 +549,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
         onTap: () {
           if (experimentItem.name.isEmpty) {
             Navigator.pop(context);
-          } else if (experimentItem.name == 'Rechnen') {
+          } else if (experimentItem.name == 'Rechner') {
             Navigator.popAndPushNamed(context, RouteGenerator.calculatorPage);
           } else if (experimentItem.name == 'Stoppuhr') {
             Navigator.popAndPushNamed(context, RouteGenerator.stopwatchPage);
@@ -599,6 +612,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
     } else {
       if (result != null) _projectDb.updateNote(newNote: result);
     }
+
     _loadNoteList();
   }
 

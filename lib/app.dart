@@ -4,6 +4,7 @@ import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/title_change_provider.dart';
 import 'package:citizen_lab/utils/constants.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -49,6 +50,9 @@ class _MaterialAppWithThemeState extends State<MaterialAppWithTheme> {
     final theme = Provider.of<ThemeChangerProvider>(context);
 
     return MaterialApp(
+      localizationsDelegates: [
+        CustomLocalizationDelegate(),
+      ],
       debugShowCheckedModeBanner: false,
       title: APP_TITLE,
       home: SplashPage(),
@@ -57,4 +61,29 @@ class _MaterialAppWithThemeState extends State<MaterialAppWithTheme> {
       onGenerateRoute: RouteGenerator.routes(),
     );
   }
+}
+
+class CustomLocalizationDelegate
+    extends LocalizationsDelegate<MaterialLocalizations> {
+  const CustomLocalizationDelegate();
+
+  @override
+  bool isSupported(Locale locale) => locale.languageCode == 'en';
+
+  @override
+  Future<MaterialLocalizations> load(Locale locale) =>
+      SynchronousFuture<MaterialLocalizations>(const CustomLocalization());
+
+  @override
+  bool shouldReload(CustomLocalizationDelegate old) => false;
+
+  @override
+  String toString() => 'CustomLocalization.delegate(en_US)';
+}
+
+class CustomLocalization extends DefaultMaterialLocalizations {
+  const CustomLocalization();
+
+  @override
+  String get searchFieldLabel => 'Suche';
 }

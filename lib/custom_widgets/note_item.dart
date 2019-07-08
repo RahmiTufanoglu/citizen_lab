@@ -18,8 +18,6 @@ class NoteItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       margin: EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
-      //color: _getColor(note.type),
-      //color: Color(note.cardColor),
       color: Color(note.cardColor),
       child: InkWell(
         onTap: onTap,
@@ -37,7 +35,6 @@ class NoteItem extends StatelessWidget {
                   child: _getIcon(note),
                 ),
                 Padding(
-                  //padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
                   padding: EdgeInsets.symmetric(vertical: 8.0),
                   child: Container(
                     //color: Colors.white,
@@ -53,7 +50,6 @@ class NoteItem extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Container(
-                      //width: MediaQuery.of(context).size.width - 144.0,
                       width: MediaQuery.of(context).size.width / 2,
                       child: Text(
                         note.title,
@@ -61,7 +57,6 @@ class NoteItem extends StatelessWidget {
                         softWrap: false,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          //color: Colors.white,
                           color: Color(note.cardTextColor),
                           fontSize: 14.0,
                           fontWeight: FontWeight.bold,
@@ -86,7 +81,6 @@ class NoteItem extends StatelessWidget {
               padding: const EdgeInsets.only(right: 8.0),
               child: Icon(
                 Icons.touch_app,
-                //color: Colors.white,
                 color: Color(note.cardTextColor),
               ),
             ),
@@ -94,26 +88,6 @@ class NoteItem extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Color _getColor(String type) {
-    switch (type) {
-      case 'Text':
-        return Colors.green;
-        break;
-      case 'Tabelle':
-        return Colors.indigoAccent;
-        break;
-      case 'Bild':
-        return Colors.deepOrange;
-        break;
-      case 'Verlinkung':
-        return Colors.purple;
-        break;
-      default:
-        return null;
-        break;
-    }
   }
 
   Icon _getIcon(Note note) {
