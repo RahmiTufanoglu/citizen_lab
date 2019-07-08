@@ -474,6 +474,14 @@ class _HomePageState extends State<HomePage>
                           //onLongPress: () => _showContent(index),
                           onLongPress: () => _setCardColor(_project),
                         ),
+                        /*child: NoteItem(
+                          note: _projectList[index],
+                          isNote: false,
+                          isFromNoteSearchPage: false,
+                          close: null,
+                          noteFunction: () => _navigateToEntry(index),
+                          onLongPress: () => _setCardColor(_project),
+                        ),*/
                       ),
                     );
                   },
@@ -509,7 +517,7 @@ class _HomePageState extends State<HomePage>
       CardColors(0xFFEB6B56, 0xFFFFFFFF),
       CardColors(0xFFE14938, 0xFFFFFFFF),
       CardColors(0xFFFAC51C, 0xFF000000),
-      CardColors(0xFFF37934, 0xFF000000),
+      CardColors(0xFFF37934, 0xFFFFFFFF),
       CardColors(0xFFD14841, 0xFFFFFFFF),
       CardColors(0xFFB8312F, 0xFFFFFFFF),
       CardColors(0xFF9365B8, 0xFFFFFFFF),

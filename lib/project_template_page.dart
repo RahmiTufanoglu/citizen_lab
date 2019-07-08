@@ -30,7 +30,7 @@ class ProjectTemplatePage extends StatelessWidget {
 
   Widget _buildBody(BuildContext context) {
     return WillPopScope(
-      onWillPop: () {},
+      onWillPop: _onWillPop,
       child: ListView.builder(
         itemCount: _templateList.length,
         itemBuilder: (context, index) {
@@ -87,4 +87,6 @@ class ProjectTemplatePage extends StatelessWidget {
       _projectDb.insertNote(note: note);
     }
   }
+
+  Future<bool> _onWillPop() async => true;
 }

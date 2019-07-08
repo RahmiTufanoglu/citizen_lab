@@ -307,28 +307,11 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
           : screenHeight / 4,
       child: NoteItem(
         note: _note,
-        onTap: () => _openNotePage(_note.type, _note),
+        isNote: true,
+        isFromNoteSearchPage: false,
+        close: null,
+        noteFunction: () => _openNotePage(_note.type, _note),
         onLongPress: () => _setCardColor(_note),
-      ),
-    );
-  }
-
-  Widget _buildItem2(AsyncSnapshot snapshot, int index) {
-    final double screenHeight =
-        MediaQuery.of(context).size.height - kToolbarHeight;
-
-    //final _note = _noteList[index];
-    final note = snapshot.data[index];
-    return Container(
-      height: MediaQuery.of(context).orientation == Orientation.portrait
-          ? screenHeight / 8
-          : screenHeight / 4,
-      child: NoteItem(
-        note: note,
-        onTap: () => _openNotePage(note.type, note),
-        //onLongPress: () => _showContent(index),
-        //onLongPress: () => _showContent(snapshot, index),
-        onLongPress: () => _setCardColor(note),
       ),
     );
   }
@@ -348,7 +331,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
       CardColors(0xFFEB6B56, 0xFFFFFFFF),
       CardColors(0xFFE14938, 0xFFFFFFFF),
       CardColors(0xFFFAC51C, 0xFF000000),
-      CardColors(0xFFF37934, 0xFF000000),
+      CardColors(0xFFF37934, 0xFFFFFFFF),
       CardColors(0xFFD14841, 0xFFFFFFFF),
       CardColors(0xFFB8312F, 0xFFFFFFFF),
       CardColors(0xFF9365B8, 0xFFFFFFFF),

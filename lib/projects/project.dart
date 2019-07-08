@@ -1,6 +1,7 @@
+import 'package:citizen_lab/bloc/entry.dart';
 import 'package:citizen_lab/database/database_provider.dart';
 
-class Project {
+class Project extends Entry {
   int id;
   int random;
   String title;

@@ -2,14 +2,15 @@ import 'package:citizen_lab/themes/theme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import 'custom_widgets/note_item.dart';
 import 'entries/note.dart';
 
 class NoteSearchPage extends SearchDelegate<String> {
   List<Note> noteList = [];
   bool isFromNoteSearchPage;
+  final Function openNotePage;
   final Function reloadNoteList;
   bool _darkModeEnabled = false;
-  final Function openNotePage;
 
   NoteSearchPage({
     @required this.noteList,
@@ -64,19 +65,19 @@ class NoteSearchPage extends SearchDelegate<String> {
         itemCount: suggestionList == null ? 0 : suggestionList.length,
         padding: EdgeInsets.all(4.0),
         itemBuilder: (context, index) {
-          /*return NoteItem(
+          return NoteItem(
             note: suggestionList[index],
-            onTap: () async {
-              close(context, null);
-              openNotePage(
-                suggestionList[index].type,
-                suggestionList[index],
-              );
-              //reloadNoteList();
-            },
-          );*/
+            isNote: true,
+            isFromNoteSearchPage: true,
+            noteFunction: () => openNotePage(
+                  suggestionList[index].type,
+                  suggestionList[index],
+                ),
+            close: () => close(context, null),
+            onLongPress: null,
+          );
 
-          final double screenHeight = MediaQuery.of(context).size.height;
+          /*final double screenHeight = MediaQuery.of(context).size.height;
           final double topBarHeight =
               MediaQuery.of(context).padding.top + kToolbarHeight;
 
@@ -138,7 +139,7 @@ class NoteSearchPage extends SearchDelegate<String> {
                 );
               },
             ),
-          );
+          );*/
         },
       ),
     );
