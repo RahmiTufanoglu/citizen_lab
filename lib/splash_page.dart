@@ -31,7 +31,7 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   Future _checkFirstSeen() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     bool _seen = (prefs.getBool('seen') ?? false);
 
     if (_seen) {

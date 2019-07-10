@@ -1,4 +1,5 @@
 import 'package:citizen_lab/projects/project.dart';
+import 'package:citizen_lab/utils/constants.dart';
 import 'package:citizen_lab/utils/date_formater.dart';
 import 'package:citizen_lab/utils/utils.dart';
 import 'package:flutter/material.dart';
@@ -9,10 +10,12 @@ import 'entries/note.dart';
 class ProjectTemplatePage extends StatelessWidget {
   final _projectDb = DatabaseProvider.db;
   final List<String> _templateList = ['A', 'B', 'C', 'D', 'E'];
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: _buildAppBar(context),
       body: _buildBody(context),
     );
@@ -41,19 +44,34 @@ class ProjectTemplatePage extends StatelessWidget {
                 padding: const EdgeInsets.only(left: 16.0),
                 child: Align(
                   alignment: Alignment.bottomLeft,
-                  child: Text('...'),
+                  child: Text('$lorem_shorter'),
                 ),
               ),
               IconButton(
-                icon: Icon(Icons.add),
-                onPressed: () => _createTemplateContent(
+                  icon: Icon(Icons.add),
+                  onPressed: () {
+                    _createTemplateContent(
                       'Vorlage ${index + 1}',
                       'Vorlage Beschreibung ${index + 1}',
-                    ),
-              ),
+                    );
+                    _scaffoldKey.currentState.showSnackBar(
+                      _buildSnackBar(text: 'Vorlage ${index + 1} hinzugefügt.'),
+                    );
+                  }),
             ],
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildSnackBar({@required String text}) {
+    return SnackBar(
+      backgroundColor: Colors.black87,
+      duration: Duration(seconds: 1),
+      content: Text(
+        text,
+        style: TextStyle(fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -73,8 +91,8 @@ class ProjectTemplatePage extends StatelessWidget {
     Note note = Note(
       project.random,
       'Text',
-      'sdasadasd',
-      'dfdsfdsgfdgfdgmf',
+      'Vorlage Titel',
+      'Vorlage Beschreibung',
       '',
       dateFormatted(),
       dateFormatted(),

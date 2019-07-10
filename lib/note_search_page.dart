@@ -67,7 +67,6 @@ class NoteSearchPage extends SearchDelegate<String> {
         itemBuilder: (context, index) {
           return NoteItem(
             note: suggestionList[index],
-            isNote: true,
             isFromNoteSearchPage: true,
             noteFunction: () => openNotePage(
                   suggestionList[index].type,

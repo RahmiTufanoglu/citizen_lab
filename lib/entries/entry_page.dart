@@ -9,13 +9,14 @@ import 'package:citizen_lab/database/database_provider.dart';
 import 'package:citizen_lab/entries/note.dart';
 import 'package:citizen_lab/projects/project.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
+import 'package:citizen_lab/utils/colors.dart';
 import 'package:citizen_lab/utils/constants.dart';
 import 'package:citizen_lab/utils/date_formater.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import '../card_colors.dart';
 import '../entry_fab_data.dart';
 import '../note_search_page.dart';
 import 'experiment_item.dart';
@@ -307,7 +308,6 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
           : screenHeight / 4,
       child: NoteItem(
         note: _note,
-        isNote: true,
         isFromNoteSearchPage: false,
         close: null,
         noteFunction: () => _openNotePage(_note.type, _note),
@@ -317,33 +317,6 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   }
 
   void _setCardColor(Note note) {
-    List<CardColors> cardColors = [
-      CardColors(0xFF61BD6D, 0xFF000000),
-      CardColors(0xFF1ABC9C, 0xFF000000),
-      CardColors(0xFF54ACD2, 0xFF000000),
-      CardColors(0xFF2C82C9, 0xFFFFFFFF),
-      CardColors(0xFF41A85F, 0xFFFFFFFF),
-      CardColors(0xFF00A885, 0xFF000000),
-      CardColors(0xFF3D8EB9, 0xFF000000),
-      CardColors(0xFF2969B0, 0xFFFFFFFF),
-      CardColors(0xFFF7DA64, 0xFF000000),
-      CardColors(0xFFFBA026, 0xFF000000),
-      CardColors(0xFFEB6B56, 0xFFFFFFFF),
-      CardColors(0xFFE14938, 0xFFFFFFFF),
-      CardColors(0xFFFAC51C, 0xFF000000),
-      CardColors(0xFFF37934, 0xFFFFFFFF),
-      CardColors(0xFFD14841, 0xFFFFFFFF),
-      CardColors(0xFFB8312F, 0xFFFFFFFF),
-      CardColors(0xFF9365B8, 0xFFFFFFFF),
-      CardColors(0xFF553982, 0xFFFFFFFF),
-      CardColors(0xFF475577, 0xFFFFFFFF),
-      CardColors(0xFF28324E, 0xFFFFFFFF),
-      CardColors(0xFFA38F84, 0xFF000000),
-      CardColors(0xFF75706B, 0xFFFFFFFF),
-      CardColors(0xFFD1D5D8, 0xFF000000),
-      CardColors(0xFFEFEFEF, 0xFF000000),
-    ];
-
     final double screenHeight = MediaQuery.of(context).size.height;
     final double screenWidth = MediaQuery.of(context).size.width;
 
@@ -396,7 +369,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
       DatabaseProvider.columnNoteType: note.type,
       DatabaseProvider.columnNoteTitle: note.title,
       DatabaseProvider.columnNoteDescription: note.description,
-      DatabaseProvider.columnNoteContent: '',
+      DatabaseProvider.columnNoteContent: note.content,
       DatabaseProvider.columnNoteCreatedAt: note.dateCreated,
       DatabaseProvider.columnNoteUpdatedAt: dateFormatted(),
       DatabaseProvider.columnNoteEdited: 1,
@@ -596,7 +569,28 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
       if (result != null) _projectDb.updateNote(newNote: result);
     }
 
+    _scaffoldKey.currentState.showSnackBar(
+      _buildSnackBar(text: 'Neues ${result.title} hinzugefügt.'),
+    );
+
     _loadNoteList();
+  }
+
+  final String _kSortingOrderPrefs = 'sortNotes';
+
+  Future<String> _getSortingOrder() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    //return prefs.getString(_kSortingOrderPrefs) ?? sort_by_release_date_desc;
+    final order = prefs.getString(_kSortingOrderPrefs);
+    if (order == null) {
+      return sort_by_release_date_desc;
+    }
+    return order;
+  }
+
+  Future<void> setSortingOrder(String value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(_kSortingOrderPrefs, value);
   }
 
   void _loadNoteList() async {
@@ -622,7 +616,8 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
 
     for (int i = 0; i < notes.length; i++) {
       setState(() {
-        _noteList.insert(i, notes[i]);
+        //_noteList.insert(i, notes[i]);
+        _noteList.insert(0, notes[i]);
       });
     }
 
@@ -633,7 +628,8 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
     });*/
 
     //_choiceSortOption(sort_by_release_date_desc);
-    _choiceSortOption(sort_by_release_date_asc);
+    //_choiceSortOption(sort_by_release_date_asc);
+    _choiceSortOption(await _getSortingOrder());
   }
 
   //void _deleteNote(AsyncSnapshot snapshot, int index) async {
@@ -654,6 +650,10 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
       //File file = File(snapshot.data[index].content);
       file.delete();
     }
+
+    _scaffoldKey.currentState.showSnackBar(
+      _buildSnackBar(text: 'Projekt ${_noteList[index].title} gelöscht.'),
+    );
 
     setState(() {
       _noteList.removeAt(index);
@@ -816,6 +816,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
                 a.title.toLowerCase().compareTo(b.title.toLowerCase()),
           );
         });
+        setSortingOrder(sort_by_title_arc);
         break;
       case sort_by_title_desc:
         setState(() {
@@ -824,6 +825,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
                 b.title.toLowerCase().compareTo(a.title.toLowerCase()),
           );
         });
+        setSortingOrder(sort_by_title_desc);
         break;
       case sort_by_release_date_asc:
         setState(() {
@@ -831,6 +833,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
             (Note a, Note b) => a.dateCreated.compareTo(b.dateCreated),
           );
         });
+        setSortingOrder(sort_by_release_date_asc);
         break;
       case sort_by_release_date_desc:
         setState(() {
@@ -838,6 +841,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
             (Note a, Note b) => b.dateCreated.compareTo(a.dateCreated),
           );
         });
+        setSortingOrder(sort_by_release_date_desc);
         break;
     }
   }

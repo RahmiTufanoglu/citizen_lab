@@ -290,7 +290,8 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
       await _projectDb.insertProject(project: project);
       // TODO: WORKAROUND
       //_navigateToEntry(project);
-      Navigator.pop(context, true);
+      //Navigator.pop(context, true);
+      Navigator.pop(context, project);
       /*Navigator.pushNamed(
         context,
         RouteGenerator.homePage,

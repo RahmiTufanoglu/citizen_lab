@@ -119,7 +119,6 @@ class _ImagePageState extends State<ImagePage> {
             tooltip: 'aadfjksdhflkfb',
             elevation: 4.0,
             highlightElevation: 16.0,
-            backgroundColor: Colors.white.withOpacity(0.8),
             child: Icon(Icons.folder),
             onPressed: () async {
               await _getImage(false);

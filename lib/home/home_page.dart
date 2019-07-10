@@ -8,6 +8,7 @@ import 'package:citizen_lab/projects/project_item.dart';
 import 'package:citizen_lab/projects/project_search_page.dart';
 import 'package:citizen_lab/themes/theme.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
+import 'package:citizen_lab/utils/colors.dart';
 import 'package:citizen_lab/utils/constants.dart';
 import 'package:citizen_lab/utils/date_formater.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
@@ -15,8 +16,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import '../card_colors.dart';
 import '../entry_fab_data.dart';
 
 class HomePage extends StatefulWidget {
@@ -38,7 +39,7 @@ class _HomePageState extends State<HomePage>
   @override
   void initState() {
     super.initState();
-    _loadProjectList();
+    _loadProjectList(false);
 
     _animationController = AnimationController(
       vsync: this,
@@ -65,7 +66,6 @@ class _HomePageState extends State<HomePage>
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
     _checkIfDarkModeEnabled();
-    //_themeChanger.getTheme;
 
     return Scaffold(
       key: _scaffoldKey,
@@ -97,7 +97,7 @@ class _HomePageState extends State<HomePage>
               delegate: ProjectSearchPage(
                 projectList: _projectList,
                 isFromProjectSearchPage: false,
-                reloadProjectList: () => _loadProjectList(),
+                reloadProjectList: () => _loadProjectList(false),
               ),
             );
           },
@@ -153,12 +153,22 @@ class _HomePageState extends State<HomePage>
   void _createProject(String type, [Project project]) async {
     switch (type) {
       case 'Neues Projekt':
-        bool result = await Navigator.pushNamed(
+        //bool result = await Navigator.pushNamed(
+        Project result = await Navigator.pushNamed(
           context,
           RouteGenerator.createProject,
-        ) as bool;
+          //) as bool;
+        ) as Project;
 
-        if (result) _loadProjectList();
+        //if (result != null && result) {
+        if (result != null) {
+          _scaffoldKey.currentState.showSnackBar(
+            //_buildSnackBar(text: 'Neues Projekt hinzugefügt.'),
+            _buildSnackBar(text: 'Neues ${result.title} hinzugefügt.'),
+          );
+
+          _loadProjectList(true);
+        }
         break;
       case 'Vorlagen':
         bool result = await Navigator.pushNamed(
@@ -166,7 +176,13 @@ class _HomePageState extends State<HomePage>
           RouteGenerator.projectTemplatePage,
         ) as bool;
 
-        if (result) _loadProjectList();
+        if (result != null && result) {
+          _scaffoldKey.currentState.showSnackBar(
+            _buildSnackBar(text: 'Neues Projekt hinzugefügt.'),
+          );
+
+          _loadProjectList(true);
+        }
         break;
     }
   }
@@ -208,6 +224,7 @@ class _HomePageState extends State<HomePage>
                 a.title.toLowerCase().compareTo(b.title.toLowerCase()),
           );
         });
+        setSortingOrder(sort_by_title_arc);
         break;
       case sort_by_title_desc:
         setState(() {
@@ -216,6 +233,7 @@ class _HomePageState extends State<HomePage>
                 b.title.toLowerCase().compareTo(a.title.toLowerCase()),
           );
         });
+        setSortingOrder(sort_by_title_desc);
         break;
       case sort_by_release_date_asc:
         setState(() {
@@ -223,6 +241,7 @@ class _HomePageState extends State<HomePage>
             (Project a, Project b) => a.dateCreated.compareTo(b.dateCreated),
           );
         });
+        setSortingOrder(sort_by_release_date_asc);
         break;
       case sort_by_release_date_desc:
         setState(() {
@@ -230,6 +249,7 @@ class _HomePageState extends State<HomePage>
             (Project a, Project b) => b.dateCreated.compareTo(a.dateCreated),
           );
         });
+        setSortingOrder(sort_by_release_date_desc);
         break;
       default:
         break;
@@ -441,8 +461,8 @@ class _HomePageState extends State<HomePage>
                   reverse: false,
                   itemCount: _projectList.length,
                   itemBuilder: (context, index) {
-                    final _project = _projectList[index];
-                    final key = Key('${_project.hashCode}');
+                    final project = _projectList[index];
+                    final key = Key('${project.hashCode}');
                     return Dismissible(
                       key: key,
                       direction: DismissDirection.startToEnd,
@@ -453,27 +473,16 @@ class _HomePageState extends State<HomePage>
                         ),
                         child: Row(
                           children: <Widget>[
-                            Icon(
-                              Icons.arrow_forward,
-                              size: 28.0,
-                            ),
+                            Icon(Icons.arrow_forward, size: 28.0),
                             SizedBox(width: 8.0),
-                            Icon(
-                              Icons.delete,
-                              size: 28.0,
-                            ),
+                            Icon(Icons.delete, size: 28.0),
                           ],
                         ),
                       ),
                       onDismissed: (direction) => _deleteProject(index),
                       child: Container(
                         width: double.infinity,
-                        child: ProjectItem(
-                          project: _projectList[index],
-                          onTap: () => _navigateToEntry(index),
-                          //onLongPress: () => _showContent(index),
-                          onLongPress: () => _setCardColor(_project),
-                        ),
+                        child: _buildItem(project, index),
                         /*child: NoteItem(
                           note: _projectList[index],
                           isNote: false,
@@ -502,34 +511,29 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  void _setCardColor(Project project) {
-    List<CardColors> cardColors = [
-      CardColors(0xFF61BD6D, 0xFF000000),
-      CardColors(0xFF1ABC9C, 0xFF000000),
-      CardColors(0xFF54ACD2, 0xFF000000),
-      CardColors(0xFF2C82C9, 0xFFFFFFFF),
-      CardColors(0xFF41A85F, 0xFFFFFFFF),
-      CardColors(0xFF00A885, 0xFF000000),
-      CardColors(0xFF3D8EB9, 0xFF000000),
-      CardColors(0xFF2969B0, 0xFFFFFFFF),
-      CardColors(0xFFF7DA64, 0xFF000000),
-      CardColors(0xFFFBA026, 0xFF000000),
-      CardColors(0xFFEB6B56, 0xFFFFFFFF),
-      CardColors(0xFFE14938, 0xFFFFFFFF),
-      CardColors(0xFFFAC51C, 0xFF000000),
-      CardColors(0xFFF37934, 0xFFFFFFFF),
-      CardColors(0xFFD14841, 0xFFFFFFFF),
-      CardColors(0xFFB8312F, 0xFFFFFFFF),
-      CardColors(0xFF9365B8, 0xFFFFFFFF),
-      CardColors(0xFF553982, 0xFFFFFFFF),
-      CardColors(0xFF475577, 0xFFFFFFFF),
-      CardColors(0xFF28324E, 0xFFFFFFFF),
-      CardColors(0xFFA38F84, 0xFF000000),
-      CardColors(0xFF75706B, 0xFFFFFFFF),
-      CardColors(0xFFD1D5D8, 0xFF000000),
-      CardColors(0xFFEFEFEF, 0xFF000000),
-    ];
+  Widget _buildItem(Project project, int index) {
+    final double screenHeight =
+        MediaQuery.of(context).size.height - kToolbarHeight;
+    final _note = _projectList[index];
 
+    return Container(
+      height: MediaQuery.of(context).orientation == Orientation.portrait
+          ? screenHeight / 8
+          : screenHeight / 4,
+      child: ProjectItem(
+        project: _projectList[index],
+        onTap: () => _navigateToEntry(index),
+        onLongPress: () => _setCardColor(project),
+      ),
+    );
+    return ProjectItem(
+      project: _projectList[index],
+      onTap: () => _navigateToEntry(index),
+      onLongPress: () => _setCardColor(project),
+    );
+  }
+
+  void _setCardColor(Project project) {
     final double screenHeight = MediaQuery.of(context).size.height;
     final double screenWidth = MediaQuery.of(context).size.width;
 
@@ -587,7 +591,7 @@ class _HomePageState extends State<HomePage>
       DatabaseProvider.columnProjectCardTextColor: cardTextColor,
     });
     await _projectDb.updateProject(newProject: updatedProject);
-    _loadProjectList();
+    _loadProjectList(true);
     Navigator.pop(context, updatedProject);
   }
 
@@ -603,7 +607,7 @@ class _HomePageState extends State<HomePage>
       },
     );
 
-    if (result) _loadProjectList();
+    if (result) _loadProjectList(false);
   }
 
   void _showContent(int index) {
@@ -673,7 +677,24 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  Future<void> _loadProjectList() async {
+  final String _kSortingOrderPrefs = 'sortOrder';
+
+  Future<String> _getSortingOrder() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    //return prefs.getString(_kSortingOrderPrefs) ?? sort_by_release_date_desc;
+    final order = prefs.getString(_kSortingOrderPrefs);
+    if (order == null) {
+      return sort_by_release_date_desc;
+    }
+    return order;
+  }
+
+  Future<void> setSortingOrder(String value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(_kSortingOrderPrefs, value);
+  }
+
+  Future<void> _loadProjectList(bool newProject) async {
     for (int i = 0; i < _projectList.length; i++) {
       _projectList.removeWhere((element) {
         _projectList[i].id = _projectList[i].id;
@@ -690,16 +711,22 @@ class _HomePageState extends State<HomePage>
 
     projects.forEach((project) {
       setState(() {
-        _projectList.add(Project.map(project));
+        //_projectList.add(Project.map(project));
+        _projectList.insert(0, Project.map(project));
       });
     });
 
-    // TODO: check this
-    _choiceSortOption(sort_by_release_date_desc);
+    // Add new projects on top of the list without sorting the list
+    //if (!newProject) _choiceSortOption(await _getSortingOrder());
+    _choiceSortOption(await _getSortingOrder());
   }
 
   Future<void> _deleteProject(int index) async {
     await _projectDb.deleteProject(id: _projectList[index].id);
+
+    _scaffoldKey.currentState.showSnackBar(
+      _buildSnackBar(text: 'Projekt ${_projectList[index].title} gelöscht.'),
+    );
 
     if (_projectList.contains(_projectList[index])) {
       setState(() {
@@ -707,91 +734,4 @@ class _HomePageState extends State<HomePage>
       });
     }
   }
-
-/*Widget _buildBody2() {
-    final Color topColor1 = Color(0xFFBFDFCF);
-    final Color topColor2 = Color(0xFF009FE3);
-    final Color bottomColor1 = Color(0xFFF1CF7F);
-    final Color bottomColor2 = Color(0xFFE7F7C0);
-
-    final String createExperiment = 'Experiment erstellen';
-    final String openExperiment = 'Experiment öffnen';
-
-    return SafeArea(
-      child: WillPopScope(
-        onWillPop: () => SystemNavigator.pop(),
-        child: FadeTransition(
-          opacity: _animation,
-          child: Padding(
-            padding: EdgeInsets.all(8.0),
-            child: MediaQuery.of(context).orientation == Orientation.portrait
-                ? Column(
-                    children: <Widget>[
-                      Expanded(
-                        child: CardImageWithText(
-                          asset: 'assets/images/stadtgärtnern_oberhausen.jpg',
-                          title: createExperiment,
-                          gradientColor1: topColor1,
-                          gradientColor2: topColor2,
-                          onTap: () =>
-                              _setNavigation(RouteGenerator.createProject),
-                        ),
-                      ),
-                      SizedBox(height: 8.0),
-                      Expanded(
-                        child: CardImageWithText(
-                          asset: 'assets/images/aquaponik_anlage.jpg',
-                          title: openExperiment,
-                          gradientColor1: bottomColor2,
-                          gradientColor2: bottomColor1,
-                          onTap: () {
-                            Map map = Map<String, bool>();
-                            map['isFromCreateProjectPage'] = false;
-                            _setNavigation(RouteGenerator.projectPage, map);
-                          },
-                        ),
-                      ),
-                    ],
-                  )
-                : Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: CardImageWithText(
-                          asset: 'assets/images/stadtgärtnern_oberhausen.jpg',
-                          title: createExperiment,
-                          gradientColor1: topColor1,
-                          gradientColor2: topColor2,
-                          shadow1OffsetX: 16.0,
-                          shadow2OffsetX: 16.0,
-                          shadow1OffsetY: 84.0,
-                          shadow2OffsetY: 84.0,
-                          onTap: () =>
-                              _setNavigation(RouteGenerator.createProject),
-                        ),
-                      ),
-                      SizedBox(height: 8.0),
-                      Expanded(
-                        child: CardImageWithText(
-                          asset: 'assets/images/aquaponik_anlage.jpg',
-                          title: openExperiment,
-                          gradientColor1: bottomColor2,
-                          gradientColor2: bottomColor1,
-                          shadow1OffsetX: 16.0,
-                          shadow2OffsetX: 16.0,
-                          shadow1OffsetY: 84.0,
-                          shadow2OffsetY: 84.0,
-                          onTap: () {
-                            Map map = Map<String, bool>();
-                            map['isFromCreateProjectPage'] = false;
-                            _setNavigation(RouteGenerator.projectPage, map);
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-          ),
-        ),
-      ),
-    );
-  }*/
 }

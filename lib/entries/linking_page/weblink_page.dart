@@ -89,7 +89,7 @@ class _WeblinkPageState extends State<WeblinkPage> {
 
   Widget _buildAppBar() {
     final String back = 'Zurück';
-    final String linking = 'Linking';
+    final String linking = 'Verlinking';
 
     return AppBar(
       leading: IconButton(

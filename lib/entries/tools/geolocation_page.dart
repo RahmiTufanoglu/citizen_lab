@@ -25,6 +25,10 @@ class _GeolocationPageState extends State<GeolocationPage>
   Timer _timer;
   ThemeChangerProvider _themeChanger;
 
+  final String latitude = 'Breitengrad';
+  final String longitude = 'Längengrad';
+  final String accuracy = 'Genauigkeitsgrad';
+
   @override
   void initState() {
     if (!mounted) return;
@@ -121,7 +125,7 @@ class _GeolocationPageState extends State<GeolocationPage>
 
     if (_position != null) {
       final String _content =
-          'Latitude: ${_position.latitude.toString()}\nLongitude: ${_position.longitude.toString()}\nAccuracy: ${_position.accuracy.toString()}';
+          '$latitude: ${_position.latitude.toString()}\n$longitude: ${_position.longitude.toString()}\n$accuracy: ${_position.accuracy.toString()}';
       Share.share(_content);
     } else {
       _scaffoldKey.currentState.showSnackBar(
@@ -163,7 +167,7 @@ class _GeolocationPageState extends State<GeolocationPage>
             (_position != null)
                 ? Center(
                     child: Text(
-                      'Latitude: ${_position.latitude.toString()}\nLongitude: ${_position.longitude.toString()}\nAccuracy: ${_position.accuracy.toString()}',
+                      '$latitude: ${_position.latitude.toString()}\n$longitude: ${_position.longitude.toString()}\n$accuracy: ${_position.accuracy.toString()}',
                       style: TextStyle(
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold,

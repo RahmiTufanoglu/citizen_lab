@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:citizen_lab/database/database_provider.dart';
+import 'package:citizen_lab/entries/note.dart';
 import 'package:citizen_lab/themes/theme.dart';
 import 'package:citizen_lab/utils/date_formater.dart';
 import 'package:flutter/material.dart';
@@ -7,19 +9,16 @@ import 'package:flutter/material.dart';
 import '../title_change_provider.dart';
 
 class TitleDescWidget extends StatefulWidget {
-  final Key key;
   final titleBloc;
   final TitleChangerProvider titleChanger;
   final String title;
   final String createdAt;
   final titleEditingController;
   final descEditingController;
-
-  //final GestureTapCallback onWillPop;
   final Function onWillPop;
+  final DatabaseProvider db;
 
   TitleDescWidget({
-    this.key,
     @required this.titleBloc,
     @required this.titleChanger,
     @required this.title,
@@ -27,13 +26,17 @@ class TitleDescWidget extends StatefulWidget {
     @required this.titleEditingController,
     @required this.descEditingController,
     @required this.onWillPop,
-  }) : super(key: key);
+    @required this.db,
+  });
 
   @override
   _TitleDescWidgetState createState() => _TitleDescWidgetState();
 }
 
 class _TitleDescWidgetState extends State<TitleDescWidget> {
+  List<Note> notelist = [];
+  String noteTitle = '';
+  String noteDesc = '';
   Timer _timer;
   String _timeString;
 
@@ -41,6 +44,8 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
   void initState() {
     _timeString = dateFormatted();
     _timer = Timer.periodic(Duration(seconds: 1), (_) => _getTime());
+
+    _getNotesFromDb();
 
     super.initState();
   }
@@ -146,55 +151,145 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
   }
 
   Widget _bottomWidget() {
-    final titleHere = 'Titel hier';
-    final contentHere = 'Inhalt hier';
-    return Card(
-      margin: const EdgeInsets.all(16.0),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              'Titel:',
-              style: TextStyle(
-                fontSize: 16.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            StreamBuilder(
-              stream: widget.titleBloc.title,
-              builder: (BuildContext context, AsyncSnapshot snapshot) =>
-                  _buildTextField(
-                    controller: widget.titleEditingController,
-                    maxLength: 50,
-                    maxLines: 1,
-                    hintText: titleHere,
-                    onChanged: widget.titleBloc.changeTitle,
-                    snapshot: snapshot,
+    final String titleHere = 'Titel hier';
+    final String contentHere = 'Inhalt hier';
+    return Column(
+      children: <Widget>[
+        Card(
+          margin: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0.0),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  'Titel:',
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.bold,
                   ),
+                ),
+                StreamBuilder(
+                  stream: widget.titleBloc.title,
+                  builder: (BuildContext context, AsyncSnapshot snapshot) =>
+                      _buildTextField(
+                        controller: widget.titleEditingController,
+                        maxLength: 100,
+                        maxLines: 1,
+                        hintText: titleHere,
+                        onChanged: widget.titleBloc.changeTitle,
+                        snapshot: snapshot,
+                      ),
+                ),
+                Divider(color: Colors.black),
+                Text(
+                  'Beschreibung:',
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 8.0),
+                _buildTextField(
+                  controller: widget.descEditingController,
+                  maxLength: 500,
+                  maxLines: 10,
+                  hintText: contentHere,
+                  onChanged: null,
+                  snapshot: null,
+                ),
+              ],
             ),
-            Divider(color: Colors.black),
-            Text(
-              'Beschreibung:',
-              style: TextStyle(
-                fontSize: 16.0,
-                fontWeight: FontWeight.bold,
+          ),
+        ),
+        Container(
+          width: double.infinity,
+          child: Card(
+            margin: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0.0),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  DropdownButton<Note>(
+                    items: notelist
+                        .map((note) => DropdownMenuItem(
+                              child: Container(
+                                padding: const EdgeInsets.only(bottom: 8.0),
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                    bottom: BorderSide(
+                                      width: 1.0,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ),
+                                child: Text(
+                                  note.title,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              value: note,
+                            ))
+                        .toList(),
+                    onChanged: (Note note) {
+                      setState(() {
+                        noteTitle = note.title;
+                        noteDesc = note.description;
+                      });
+                    },
+                    isExpanded: true,
+                    hint: Text(
+                      'Notiz zum Vergleich abrufen.',
+                      style: TextStyle(
+                        color: _checkIfDarkModeEnabled()
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20.0),
+                  Text(
+                    'Titel:',
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 8.0),
+                  Text(
+                    noteTitle,
+                    style: TextStyle(fontSize: 16.0),
+                  ),
+                  SizedBox(height: 24.0),
+                  Text(
+                    'Beschreibung:',
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 8.0),
+                  Text(
+                    noteDesc,
+                    style: TextStyle(fontSize: 16.0),
+                  ),
+                ],
               ),
             ),
-            SizedBox(height: 8.0),
-            _buildTextField(
-              controller: widget.descEditingController,
-              maxLength: 250,
-              maxLines: 10,
-              hintText: contentHere,
-              onChanged: null,
-              snapshot: null,
-            ),
-          ],
+          ),
         ),
-      ),
+      ],
     );
+  }
+
+  void _getNotesFromDb() async {
+    notelist = await widget.db.getAllNotes();
+
+    for (int i = 0; i < notelist.length; i++) {
+      print('$i: ${notelist[i].title}');
+    }
   }
 
   TextField _buildTextField({

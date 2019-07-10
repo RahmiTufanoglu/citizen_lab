@@ -48,6 +48,8 @@ class _TextPageState extends State<TextPage> {
   String _createdAt;
   String _timeString;
 
+  double screenHeight;
+
   @override
   void initState() {
     _timeString = dateFormatted();
@@ -111,20 +113,27 @@ class _TextPageState extends State<TextPage> {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
     //_themeChanger.checkIfDarkModeEnabled(context);
 
+    screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       key: _scaffoldKey,
       appBar: _buildAppBar(),
       //body: _buildBody(),
-      body: TitleDescWidget(
-        titleBloc: _titleBloc,
-        titleChanger: _titleChanger,
-        title: _title,
-        createdAt: _createdAt,
-        titleEditingController: _titleEditingController,
-        descEditingController: _descEditingController,
-        onWillPop: _saveNote,
-      ),
+      body: _buildBody(),
       floatingActionButton: _buildFabs(),
+    );
+  }
+
+  Widget _buildBody() {
+    return TitleDescWidget(
+      titleBloc: _titleBloc,
+      titleChanger: _titleChanger,
+      title: _title,
+      createdAt: _createdAt,
+      titleEditingController: _titleEditingController,
+      descEditingController: _descEditingController,
+      onWillPop: _saveNote,
+      db: _noteDb,
     );
   }
 
@@ -224,7 +233,7 @@ class _TextPageState extends State<TextPage> {
     );
   }
 
-  Widget _buildBody() {
+  Widget _buildBody2() {
     final created = 'Erstellt am';
     final title = 'Titel';
     final titleHere = 'Titel hier';
@@ -466,7 +475,6 @@ class _TextPageState extends State<TextPage> {
         experimentItemsWidgets.add(_createTile(experimentItems[i], false));
       }
     }
-
     _buildMainBottomSheet(experimentItemsWidgets);
   }
 
@@ -484,7 +492,8 @@ class _TextPageState extends State<TextPage> {
     return Material(
       child: InkWell(
         child: Container(
-          height: 50.0,
+          //height: 50.0,
+          height: screenHeight / 16,
           child: Stack(
             children: <Widget>[
               Padding(
@@ -498,7 +507,7 @@ class _TextPageState extends State<TextPage> {
                               experimentItem.name,
                               style: TextStyle(fontSize: 16.0),
                             ),
-                            Icon(experimentItem.icon, size: 20.0),
+                            //Icon(experimentItem.icon, size: 20.0),
                           ],
                         )
                       : Center(
@@ -583,5 +592,9 @@ class _TextPageState extends State<TextPage> {
         ],
       ),
     );
+  }
+
+  void _searchSpecificNote(Note note) {
+    _noteDb.getNote(id: note.id);
   }
 }
