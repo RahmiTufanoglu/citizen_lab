@@ -4,7 +4,7 @@ import 'package:citizen_lab/bloc/title_bloc.dart';
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/custom_widgets/title_desc_widget.dart';
 import 'package:citizen_lab/database/database_provider.dart';
-import 'package:citizen_lab/entries/experiment_item.dart';
+import 'package:citizen_lab/entries/formulation_item.dart';
 import 'package:citizen_lab/entries/note.dart';
 import 'package:citizen_lab/entries/text/text_info_page_data.dart';
 import 'package:citizen_lab/pdf_creator.dart';
@@ -16,6 +16,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:share/share.dart';
 
+import '../../formulations.dart';
 import '../../title_change_provider.dart';
 
 class TextPage extends StatefulWidget {
@@ -118,7 +119,6 @@ class _TextPageState extends State<TextPage> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: _buildAppBar(),
-      //body: _buildBody(),
       body: _buildBody(),
       floatingActionButton: _buildFabs(),
     );
@@ -448,31 +448,12 @@ class _TextPageState extends State<TextPage> {
   }
 
   void _openModalBottomSheet() {
-    List<ExperimentItem> experimentItems = [
-      ExperimentItem('', Icons.keyboard_arrow_down),
-      ExperimentItem('In diesem Verusch wird ', Icons.add),
-      ExperimentItem('Ziel des Versuchs ist ', Icons.add),
-      ExperimentItem('Ich denke, dass ', Icons.add),
-      ExperimentItem('Es könnte so ein, dass ', Icons.add),
-      ExperimentItem('Wahrscheinlich könnte ', Icons.add),
-      ExperimentItem('Man beobachtet, dass ', Icons.add),
-      ExperimentItem('Man sieht, dass ', Icons.add),
-      ExperimentItem('Man riecht, dass ', Icons.add),
-      ExperimentItem('Am Reagenzglas kann man erfühlen, dass ', Icons.add),
-      ExperimentItem('In diesem Auswertungsteil wird ', Icons.add),
-      ExperimentItem('Der Versuchsstand wurde nach ', Icons.add),
-      ExperimentItem('Der Versuch wurde gemäß Versuchanleitung ', Icons.add),
-      ExperimentItem('Das ist geschehen, weil ', Icons.add),
-      ExperimentItem('Die Erklärung dafür ist, dass ', Icons.add),
-      ExperimentItem('Der Grund dafür ist, dass ', Icons.add),
-    ];
-
     List<Widget> experimentItemsWidgets = [];
-    for (int i = 0; i < experimentItems.length; i++) {
+    for (int i = 0; i < formulations.length; i++) {
       if (i == 0) {
-        experimentItemsWidgets.add(_createTile(experimentItems[i], true));
+        experimentItemsWidgets.add(_createTile(formulations[i], true));
       } else {
-        experimentItemsWidgets.add(_createTile(experimentItems[i], false));
+        experimentItemsWidgets.add(_createTile(formulations[i], false));
       }
     }
     _buildMainBottomSheet(experimentItemsWidgets);
@@ -488,7 +469,7 @@ class _TextPageState extends State<TextPage> {
     );
   }
 
-  Widget _createTile(ExperimentItem experimentItem, bool centerIcon) {
+  Widget _createTile(FormulationItem experimentItem, bool centerIcon) {
     return Material(
       child: InkWell(
         child: Container(
@@ -592,9 +573,5 @@ class _TextPageState extends State<TextPage> {
         ],
       ),
     );
-  }
-
-  void _searchSpecificNote(Note note) {
-    _noteDb.getNote(id: note.id);
   }
 }

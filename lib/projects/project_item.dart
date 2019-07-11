@@ -23,7 +23,7 @@ class ProjectItem extends StatelessWidget {
       onLongPress: onLongPress,
       child: Container(
         height: (screenHeight + topBarHeight) / 10,
-        padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 6.0),
+        padding: const EdgeInsets.symmetric(vertical: 6.0),
         child: RaisedButton(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -31,7 +31,7 @@ class ProjectItem extends StatelessWidget {
               Row(
                 children: <Widget>[
                   Container(
-                    width: (screenWidth - 8.0) / 1.5,
+                    width: (screenWidth - 8.0) / 2.0,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,

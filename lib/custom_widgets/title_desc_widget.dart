@@ -1,9 +1,11 @@
 import 'dart:async';
 
+import 'package:citizen_lab/bloc/custom_expansion_tile.dart';
 import 'package:citizen_lab/database/database_provider.dart';
 import 'package:citizen_lab/entries/note.dart';
 import 'package:citizen_lab/themes/theme.dart';
 import 'package:citizen_lab/utils/date_formater.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../title_change_provider.dart';
@@ -93,25 +95,57 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
         child: ListView(
           padding: EdgeInsets.only(top: 8.0, bottom: 88.0),
           children: <Widget>[
-            Container(
+            CustomExpansionTile(
+              title: Text(''),
+              leading: Padding(
+                padding: EdgeInsets.only(left: (screenWith / 2) - 40.0),
+                child: Icon(Icons.access_time),
+              ),
+              children: <Widget>[_getTimeWidget()],
+            ),
+            _getTextWidget(),
+            /*Card(
+              margin: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 0.0),
               color: _checkIfDarkModeEnabled() ? Colors.black12 : Colors.white,
-              child: ExpansionTile(
+              child: Container(),
+            ),*/
+            CustomExpansionTile(
+              title: Text(''),
+              leading: Padding(
+                padding: EdgeInsets.only(left: (screenWith / 2) - 40.0),
+                child: Icon(IconData(0xe92d, fontFamily: 'comparison')),
+              ),
+              children: <Widget>[_getComparisonWidget()],
+            ),
+            /*Card(
+              margin: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 0.0),
+              color: _checkIfDarkModeEnabled() ? Colors.black12 : Colors.white,
+              child: CustomExpansionTile(
                 title: Text(''),
                 leading: Padding(
-                  padding: EdgeInsets.only(left: (screenWith / 2) - 24.0),
-                  child: Icon(Icons.access_time),
+                  padding: EdgeInsets.only(left: (screenWith / 2) - 80.0),
+                  child: Row(
+                    children: <Widget>[
+                      Icon(Icons.description),
+                      SizedBox(width: 8.0),
+                      Icon(Icons.compare_arrows),
+                      SizedBox(width: 8.0),
+                      Icon(Icons.description),
+                    ],
+                  ),
                 ),
-                children: <Widget>[_topWidget()],
+                children: <Widget>[
+                  _getComparisonWidget(),
+                ],
               ),
-            ),
-            _bottomWidget(),
+            ),*/
           ],
         ),
       ),
     );
   }
 
-  Widget _topWidget() {
+  Widget _getTimeWidget() {
     final created = 'Erstellt am';
     return Container(
       margin: EdgeInsets.all(16.0),
@@ -150,13 +184,13 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
     );
   }
 
-  Widget _bottomWidget() {
+  Widget _getTextWidget() {
     final String titleHere = 'Titel hier';
     final String contentHere = 'Inhalt hier';
     return Column(
       children: <Widget>[
         Card(
-          margin: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0.0),
+          margin: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 8.0),
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -202,85 +236,80 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
             ),
           ),
         ),
-        Container(
-          width: double.infinity,
-          child: Card(
-            margin: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0.0),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  DropdownButton<Note>(
-                    items: notelist
-                        .map((note) => DropdownMenuItem(
-                              child: Container(
-                                padding: const EdgeInsets.only(bottom: 8.0),
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(
-                                      width: 1.0,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                ),
-                                child: Text(
-                                  note.title,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              value: note,
-                            ))
-                        .toList(),
-                    onChanged: (Note note) {
-                      setState(() {
-                        noteTitle = note.title;
-                        noteDesc = note.description;
-                      });
-                    },
-                    isExpanded: true,
-                    hint: Text(
-                      'Notiz zum Vergleich abrufen.',
-                      style: TextStyle(
-                        color: _checkIfDarkModeEnabled()
-                            ? Colors.white
-                            : Colors.black,
+      ],
+    );
+  }
+
+  Widget _getComparisonWidget() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          DropdownButton<Note>(
+            items: notelist
+                .map((note) => DropdownMenuItem(
+                      child: Container(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                              width: 1.0,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ),
+                        child: Text(
+                          note.title,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
-                    ),
-                  ),
-                  SizedBox(height: 20.0),
-                  Text(
-                    'Titel:',
-                    style: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 8.0),
-                  Text(
-                    noteTitle,
-                    style: TextStyle(fontSize: 16.0),
-                  ),
-                  SizedBox(height: 24.0),
-                  Text(
-                    'Beschreibung:',
-                    style: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 8.0),
-                  Text(
-                    noteDesc,
-                    style: TextStyle(fontSize: 16.0),
-                  ),
-                ],
+                      value: note,
+                    ))
+                .toList(),
+            onChanged: (Note note) {
+              setState(() {
+                noteTitle = note.title;
+                noteDesc = note.description;
+              });
+            },
+            isExpanded: true,
+            hint: Text(
+              'Notiz zum Vergleich abrufen.',
+              style: TextStyle(
+                color: _checkIfDarkModeEnabled() ? Colors.white : Colors.black,
               ),
             ),
           ),
-        ),
-      ],
+          SizedBox(height: 20.0),
+          Text(
+            'Titel:',
+            style: TextStyle(
+              fontSize: 16.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: 8.0),
+          Text(
+            noteTitle,
+            style: TextStyle(fontSize: 16.0),
+          ),
+          SizedBox(height: 24.0),
+          Text(
+            'Beschreibung:',
+            style: TextStyle(
+              fontSize: 16.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: 8.0),
+          Text(
+            noteDesc,
+            style: TextStyle(fontSize: 16.0),
+          ),
+        ],
+      ),
     );
   }
 

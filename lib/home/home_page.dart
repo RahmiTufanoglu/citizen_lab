@@ -457,7 +457,7 @@ class _HomePageState extends State<HomePage>
           opacity: _animation,
           child: _projectList.isNotEmpty
               ? ListView.builder(
-                  padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 88.0),
+                  padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 88.0),
                   reverse: false,
                   itemCount: _projectList.length,
                   itemBuilder: (context, index) {

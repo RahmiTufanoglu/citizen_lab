@@ -19,7 +19,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../entry_fab_data.dart';
 import '../note_search_page.dart';
-import 'experiment_item.dart';
+import 'formulation_item.dart';
 
 class EntryPage extends StatefulWidget {
   final bool isFromProjectPage;
@@ -207,7 +207,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
         child: _noteList.isNotEmpty
             ? ListView.builder(
                 itemCount: _noteList.length,
-                padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 88.0),
+                padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 88.0),
                 itemBuilder: (context, index) {
                   final _note = _noteList[index];
                   final key = Key('${_note.hashCode}');
@@ -393,7 +393,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
         children: <Widget>[
           FloatingActionButton(
             heroTag: null,
-            child: Icon(Icons.description),
+            child: Icon(Icons.assignment),
             tooltip: darkModus,
             onPressed: () => _showEditDialog(),
           ),
@@ -437,11 +437,11 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   }
 
   void _openModalBottomSheet() {
-    List<ExperimentItem> experimentItems = [
-      ExperimentItem('', Icons.keyboard_arrow_down),
-      ExperimentItem('Rechner', Icons.straighten),
-      ExperimentItem('Stoppuhr', Icons.timer),
-      ExperimentItem('Ortsbestimmung', Icons.location_on),
+    List<FormulationItem> experimentItems = [
+      FormulationItem('', Icons.keyboard_arrow_down),
+      FormulationItem('Rechner', Icons.straighten),
+      FormulationItem('Stoppuhr', Icons.timer),
+      FormulationItem('Ortsbestimmung', Icons.location_on),
     ];
 
     List<Widget> experimentItemsWidgets = [];
@@ -466,7 +466,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
     );
   }
 
-  Widget _createTile(ExperimentItem experimentItem, bool centerIcon) {
+  Widget _createTile(FormulationItem experimentItem, bool centerIcon) {
     final double screenHeight = MediaQuery.of(context).size.height;
     final double tileHeight = screenHeight / 12;
 
