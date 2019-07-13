@@ -40,7 +40,6 @@ class _TablePageState extends State<TablePage> {
   final _rowTextEditingController = TextEditingController();
   final _columnTextEditingController = TextEditingController();
   final _pageController = PageController(initialPage: _initialPage);
-  final _noteDb = DatabaseProvider.db;
   final _listTextEditingController = <TextEditingController>[];
 
   ThemeChangerProvider _themeChanger;
@@ -50,18 +49,8 @@ class _TablePageState extends State<TablePage> {
   String _title;
   String _createdAt;
 
-  //List<String> _data;
-  //List<List<dynamic>> _list = [];
-  //TitleProvider _titleProvider;
-
-  //Timer _timer;
-  //String _timeString;
-
   @override
   void initState() {
-    //_timeString = dateFormatted();
-    //_timer = Timer.periodic(Duration(seconds: 1), (_) => _getTime());
-
     if (widget.note != null) {
       _titleEditingController.text = widget.note.title;
       _title = _titleEditingController.text;
@@ -103,13 +92,6 @@ class _TablePageState extends State<TablePage> {
     }
     super.dispose();
   }
-
-  /*void _getTime() {
-    final String formattedDateTime = dateFormatted();
-    setState(() {
-      _timeString = formattedDateTime;
-    });
-  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -312,88 +294,7 @@ class _TablePageState extends State<TablePage> {
         ),
       );
 
-  Widget _buildFabsTable() {
-    return Padding(
-      padding: const EdgeInsets.only(left: 32.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          /*FloatingActionButton(
-            heroTag: null,
-            tooltip: 'Beschreibung editieren.',
-            elevation: 4.0,
-            highlightElevation: 16.0,
-            child: Icon(Icons.description),
-            onPressed: () => _showDialogEditImage(),
-          ),*/
-          FloatingActionButton(
-            heroTag: null,
-            tooltip: 'Tabelle leeren.',
-            elevation: 4.0,
-            highlightElevation: 16.0,
-            child: Icon(Icons.remove),
-            onPressed: () => _clearTableContent(),
-          ),
-          FloatingActionButton(
-            heroTag: null,
-            tooltip: 'Tabelle erstellen.',
-            elevation: 4.0,
-            highlightElevation: 16.0,
-            child: Icon(Icons.add),
-            onPressed: () => _buildTableCreate(),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _copyContent() {
-    final String copyContent = 'Inhalt kopiert';
-    final String copyNotPossible = 'Kein Inhalt zum kopieren';
-
-    if (_titleEditingController.text.isNotEmpty &&
-        _descriptionEditingController.text.isNotEmpty) {
-      String fullContent = _titleEditingController.text +
-          '\n' +
-          _descriptionEditingController.text;
-      _setClipboard(fullContent, '$copyContent.');
-    } else {
-      _scaffoldKey.currentState.showSnackBar(
-        _buildSnackBar(text: '$copyNotPossible.'),
-      );
-    }
-  }
-
-  void _setClipboard(String text, String snackText) {
-    Clipboard.setData(ClipboardData(text: text));
-    _scaffoldKey.currentState.showSnackBar(_buildSnackBar(text: snackText));
-  }
-
-  void _refreshTextFormFields() {
-    final String textDeleted = 'Text gelöscht';
-
-    if (_titleEditingController.text.isNotEmpty) {
-      _titleEditingController.clear();
-    }
-
-    if (_descriptionEditingController.text.isNotEmpty) {
-      _descriptionEditingController.clear();
-    }
-
-    _scaffoldKey.currentState.showSnackBar(
-      _buildSnackBar(text: '$textDeleted.'),
-    );
-  }
-
   void _clearTableContent() {
-    int i = 0;
-    /*for (int x = 0; x < _row; x++) {
-      for (int y = 0; y < _column; y++) {
-        if (_listTextEditingController[i].text.isNotEmpty) {
-          _listTextEditingController[i++].clear();
-        }
-      }
-    }*/
     for (int i = 0; i < _listTextEditingController.length; i++) {
       if (_listTextEditingController[i].text.isNotEmpty) {
         _listTextEditingController[i].clear();
@@ -438,15 +339,12 @@ class _TablePageState extends State<TablePage> {
           0xFFFFFFFF,
           0xFF000000,
         );
-        //await _noteDb.insertNote(note: newNote);
         Navigator.pop(context, note);
       } else {
         _csv.delete();
-        //String path = await _createCsv(_title);
         String path = _csv.path;
         _updateNote(widget.note, path);
       }
-      //Navigator.pop(context, true);
     } else {
       _scaffoldKey.currentState.showSnackBar(
         _buildSnackBarWithButton(
@@ -460,7 +358,6 @@ class _TablePageState extends State<TablePage> {
   Future<void> _updateNote(Note note, String path) async {
     Note newNote = Note.fromMap({
       DatabaseProvider.columnNoteId: note.id,
-      //ProjectDatabaseHelper.columnProjectId: note.projectId,
       DatabaseProvider.columnProjectRandom: note.projectRandom,
       DatabaseProvider.columnNoteType: note.type,
       DatabaseProvider.columnNoteTitle: _titleEditingController.text,
@@ -473,7 +370,6 @@ class _TablePageState extends State<TablePage> {
       DatabaseProvider.columnNoteCardColor: note.cardColor,
       DatabaseProvider.columnNoteCardTextColor: note.cardTextColor,
     });
-    //await _noteDb.updateNote(newNote: newNote);
     Navigator.pop(context, newNote);
   }
 
@@ -522,8 +418,6 @@ class _TablePageState extends State<TablePage> {
       context: context,
       builder: (context) {
         return SimpleTimerDialog(
-          //titleProvider: _titleProvider,
-          //title: _titleEditingController.text,
           createdAt: _createdAt,
           textEditingController: _titleEditingController,
           descEditingController: _descriptionEditingController,
@@ -537,7 +431,6 @@ class _TablePageState extends State<TablePage> {
             _descriptionEditingController.clear();
           },
           onPressedUpdate: () {
-            //_title = _titleEditingController.text;
             Navigator.pop(context);
           },
         );
@@ -549,7 +442,6 @@ class _TablePageState extends State<TablePage> {
     final String enterTableSize = 'Titel und Tabellengröße festlegen.';
     showDialog(
       context: context,
-      //builder: (context) {
       builder: (_) {
         return ColumnRowEditingWidget(
           title: enterTableSize,
@@ -563,7 +455,6 @@ class _TablePageState extends State<TablePage> {
     );
   }
 
-  //Future<String> _createCsv(String title) async {
   void _createCsv(String title) async {
     List<List<String>> graphArray = List.generate(
       _row,
@@ -583,8 +474,6 @@ class _TablePageState extends State<TablePage> {
 
     String path = _listToCsv(graphArray);
     _csv.writeAsString(path);
-
-    //return _csv.path;
   }
 
   void _clearAllFields() {

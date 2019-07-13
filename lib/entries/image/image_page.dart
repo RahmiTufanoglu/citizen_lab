@@ -249,101 +249,6 @@ class _ImagePageState extends State<ImagePage> {
     );
   }
 
-  Widget _buildForm() {
-    final created = 'Erstellt am';
-    final title = 'Titel';
-    final titleHere = 'Titel hier';
-    final content = 'Inhalt';
-    final contentHere = 'Inhalt hier';
-    final String plsEnterATitle = 'Bitte einen Titel eingeben';
-
-    return SingleChildScrollView(
-      padding: EdgeInsets.only(top: 8.0, bottom: 88.0),
-      child: Column(
-        children: <Widget>[
-          Container(
-            margin: EdgeInsets.all(8.0),
-            decoration: ShapeDecoration(
-              shape: OutlineInputBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(8.0),
-                ),
-                borderSide: BorderSide(color: Colors.grey),
-              ),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Text(
-                    //_timeString,
-                    '',
-                    style: TextStyle(
-                      fontSize: 14.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 8.0),
-                  Text(
-                    '$created: $_createdAt',
-                    style: TextStyle(
-                      fontSize: 14.0,
-                      fontStyle: FontStyle.italic,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          SizedBox(height: 8.0),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                TextField(
-                  controller: _titleEditingController,
-                  keyboardType: TextInputType.text,
-                  maxLines: 2,
-                  style: TextStyle(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  decoration: InputDecoration(
-                    hintText: '$titleHere.',
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.transparent),
-                    ),
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.transparent),
-                    ),
-                    //errorText: _titleValidate ? plsEnterATitle : null,
-                  ),
-                  onChanged: (String changed) => _title = changed,
-                  //validator: (text) => text.isEmpty ? plsEnterATitle : null,
-                ),
-                SizedBox(height: 42.0),
-                TextField(
-                  controller: _descEditingController,
-                  keyboardType: TextInputType.text,
-                  maxLines: 20,
-                  style: TextStyle(fontSize: 16.0),
-                  decoration: InputDecoration(
-                    hintText: '$contentHere.',
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.transparent),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Future<void> _createImage() async {
     if (_image == null) {
       showDialog(
@@ -383,9 +288,7 @@ class _ImagePageState extends State<ImagePage> {
       //_test(image);
       // if image created ...
 
-      setState(() {
-        _image = image;
-      });
+      setState(() => _image = image);
 
       _createCachedImage();
     }

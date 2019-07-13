@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:citizen_lab/bloc/title_bloc.dart';
@@ -16,6 +15,7 @@ import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../../formulations.dart';
@@ -101,10 +101,12 @@ class _TextPageState extends State<TextPage> {
   // TODO
   PdfCreator _pdfCreator;
 
-  void _createPdf() {
+  void _createPdf() async {
     _pdfCreator = PdfCreator(
       title: _titleEditingController.text,
       content: _descEditingController.text,
+      dateCreated: dateFormatted(),
+      filePath: await _localPath(_title),
     );
 
     _pdfCreator.createPdf();
@@ -177,6 +179,7 @@ class _TextPageState extends State<TextPage> {
             _createPdf();
             Future.delayed(
                 Duration(milliseconds: 500), () => {_shareContent()});
+            //_shareContent();
           },
         ),
         IconButton(
@@ -198,10 +201,15 @@ class _TextPageState extends State<TextPage> {
     if (_titleEditingController.text.isNotEmpty &&
         _descEditingController.text.isNotEmpty) {
       //Share.share(fullContent);
+      //final file = File('/sdcard/$_title.pdf');
+      //final ByteData bytes = await rootBundle.load(file.path);
+      //final File file = await _localFile;
 
-      final file = File('/sdcard/$_title.pdf');
+      //final directory = await getApplicationDocumentsDirectory();
+      //final path = '${directory.path}/$_title.pdf';
 
-      final ByteData bytes = await rootBundle.load(file.path);
+      final String path = await _localPath(_title);
+      final ByteData bytes = await rootBundle.load(path);
       final Uint8List uint8List = bytes.buffer.asUint8List();
 
       await Share.file(
@@ -216,6 +224,12 @@ class _TextPageState extends State<TextPage> {
         _buildSnackBar(text: noTitle),
       );
     }
+  }
+
+  Future<String> _localPath(String title) async {
+    final directory = await getApplicationDocumentsDirectory();
+    final path = '${directory.path}/$title.pdf';
+    return path;
   }
 
   Future<void> _backToHomePage() async {
@@ -247,108 +261,6 @@ class _TextPageState extends State<TextPage> {
         'tabs': textTabList,
         'tabChildren': textSingleChildScrollViewList,
       },
-    );
-  }
-
-  Widget _buildBody2() {
-    final created = 'Erstellt am';
-    final title = 'Titel';
-    final titleHere = 'Titel hier';
-    final content = 'Inhalt';
-    final contentHere = 'Inhalt hier';
-    final String plsEnterATitle = 'Bitte einen Titel eingeben';
-
-    return SafeArea(
-      child: WillPopScope(
-        onWillPop: () => _saveNote(),
-        child: SingleChildScrollView(
-          padding: EdgeInsets.only(top: 8.0, bottom: 88.0),
-          child: Column(
-            children: <Widget>[
-              Container(
-                margin: EdgeInsets.all(8.0),
-                decoration: ShapeDecoration(
-                  shape: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                    borderSide: BorderSide(color: Colors.grey),
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      Text(
-                        _timeString,
-                        //_timerProvider.getTime,
-                        style: TextStyle(
-                          fontSize: 14.0,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 8.0),
-                      Text(
-                        '$created: $_createdAt',
-                        style: TextStyle(
-                          fontSize: 14.0,
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              SizedBox(height: 8.0),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    TextField(
-                      controller: _titleEditingController,
-                      keyboardType: TextInputType.text,
-                      maxLines: 2,
-                      style: TextStyle(
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      onChanged: (value) {
-                        _title = value;
-                      },
-                      decoration: InputDecoration(
-                        hintText: '$titleHere.',
-                        errorText: _getErrorText(),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.transparent),
-                        ),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.transparent),
-                        ),
-                        //errorText: _titleValidate ? plsEnterATitle : null,
-                      ),
-                      //onChanged: (String changed) => _title = changed,
-                      //validator: (text) => text.isEmpty ? plsEnterATitle : null,
-                    ),
-                    SizedBox(height: 42.0),
-                    TextField(
-                      controller: _descEditingController,
-                      keyboardType: TextInputType.text,
-                      maxLines: 20,
-                      style: TextStyle(fontSize: 16.0),
-                      decoration: InputDecoration(
-                        hintText: '$contentHere.',
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.transparent),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 
@@ -391,7 +303,6 @@ class _TextPageState extends State<TextPage> {
     Note newNote = Note.fromMap({
       DatabaseProvider.columnNoteId: note.id,
       DatabaseProvider.columnProjectRandom: note.projectRandom,
-      //ProjectDatabaseHelper.columnNoteProject: note.project,
       DatabaseProvider.columnNoteType: note.type,
       DatabaseProvider.columnNoteTitle: _titleEditingController.text,
       DatabaseProvider.columnNoteDescription: _descEditingController.text,
@@ -402,7 +313,6 @@ class _TextPageState extends State<TextPage> {
       DatabaseProvider.columnNoteCardColor: note.cardColor,
       DatabaseProvider.columnNoteCardTextColor: note.cardTextColor,
     });
-    //await _noteDb.updateNote(newNote: newNote);
     Navigator.pop(context, newNote);
   }
 

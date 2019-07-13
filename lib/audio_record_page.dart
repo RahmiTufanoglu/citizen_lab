@@ -9,6 +9,7 @@ import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_sound/flutter_sound.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 import 'custom_widgets/no_yes_dialog.dart';
@@ -65,18 +66,24 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
     _setPlatformPath();
 
     _titleEditingController.addListener(() {
-      setState(() {
-        _title = _titleEditingController.text;
-      });
+      setState(() => _title = _titleEditingController.text);
     });
   }
 
-  void _setPlatformPath() {
-    if (Platform.isAndroid) {
+  void _setPlatformPath() async {
+    /*if (Platform.isAndroid) {
       _audioPath = '/sdcard/$_title.mp3';
     } else if (Platform.isIOS) {
       _audioPath = '$_title.mp3';
-    }
+    }*/
+
+    _audioPath = await _localPath(_title);
+  }
+
+  Future<String> _localPath(String title) async {
+    final directory = await getApplicationDocumentsDirectory();
+    final path = '${directory.path}/$title.mp3';
+    return path;
   }
 
   @override
