@@ -300,18 +300,18 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   Widget _buildItem(int index) {
     final double screenHeight =
         MediaQuery.of(context).size.height - kToolbarHeight;
-    final _note = _noteList[index];
+    final note = _noteList[index];
 
     return Container(
       height: MediaQuery.of(context).orientation == Orientation.portrait
           ? screenHeight / 8
           : screenHeight / 4,
       child: NoteItem(
-        note: _note,
+        note: note,
         isFromNoteSearchPage: false,
         close: null,
-        noteFunction: () => _openNotePage(_note.type, _note),
-        onLongPress: () => _setCardColor(_note),
+        noteFunction: () => _openNotePage(note.type, note),
+        onLongPress: () => _setCardColor(note),
       ),
     );
   }
@@ -534,24 +534,24 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   void _openNotePage(String type, [Note note]) async {
     switch (type) {
       case 'Text':
-        _updateList(note, RouteGenerator.textPage);
+        _setList(note, RouteGenerator.textPage);
         break;
       case 'Tabelle':
-        _updateList(note, RouteGenerator.tablePage);
+        _setList(note, RouteGenerator.tablePage);
         break;
       case 'Bild':
-        _updateList(note, RouteGenerator.imagePage);
+        _setList(note, RouteGenerator.imagePage);
         break;
       case 'Verlinkung':
-        _updateList(note, RouteGenerator.linkingPage);
+        _setList(note, RouteGenerator.linkingPage);
         break;
       case 'Audio':
-        _updateList(note, RouteGenerator.audioRecordPage);
+        _setList(note, RouteGenerator.audioRecordPage);
         break;
     }
   }
 
-  void _updateList(Note note, String route) async {
+  void _setList(Note note, String route) async {
     final result = await Navigator.pushNamed(
       context,
       route,
@@ -665,11 +665,11 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
     });
   }
 
-  Future<bool> _deleteAllNotes(BuildContext contextSnackBar) async {
+  void _deleteAllNotes(BuildContext contextSnackBar) {
     final String doYouWantToDeleteAllNotes =
         'Wollen sie alle Einträge löschen?';
 
-    return await showDialog(
+    showDialog(
       context: context,
       builder: (context) => AlarmDialog(
             text: doYouWantToDeleteAllNotes,
@@ -699,6 +699,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
                 );
               }
 
+              _loadNoteList();
               Navigator.pop(context);
             },
           ),

@@ -7,7 +7,12 @@ import 'package:flutter/material.dart';
 import 'database/database_provider.dart';
 import 'entries/note.dart';
 
-class ProjectTemplatePage extends StatelessWidget {
+class ProjectTemplatePage extends StatefulWidget {
+  @override
+  _ProjectTemplatePageState createState() => _ProjectTemplatePageState();
+}
+
+class _ProjectTemplatePageState extends State<ProjectTemplatePage> {
   final _projectDb = DatabaseProvider.db;
   final List<String> _templateList = ['A', 'B', 'C', 'D', 'E'];
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -33,7 +38,7 @@ class ProjectTemplatePage extends StatelessWidget {
 
   Widget _buildBody(BuildContext context) {
     return WillPopScope(
-      onWillPop: _onWillPop,
+      onWillPop: () => _onBackPressed(),
       child: ListView.builder(
         itemCount: _templateList.length,
         itemBuilder: (context, index) {
@@ -106,5 +111,7 @@ class ProjectTemplatePage extends StatelessWidget {
     }
   }
 
-  Future<bool> _onWillPop() async => true;
+  //Future<bool> _onWillPop() async => true;
+
+  Future<void> _onBackPressed() async => Navigator.pop(context, true);
 }

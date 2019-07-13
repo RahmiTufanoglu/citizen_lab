@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/utils/date_formater.dart';
@@ -37,13 +39,12 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
   ThemeChangerProvider _themeChanger;
 
   String _audioPath = '';
-  String _title;
-  String _createdAt;
+  String _title = '';
+  String _createdAt = '';
 
-  Icon _icon = Icon(Icons.mic, size: 56.0);
-  Icon _icon2 = Icon(Icons.play_arrow);
+  Icon _iconBody = Icon(Icons.mic, size: 56.0);
+  Icon _iconFab = Icon(Icons.play_arrow);
   bool _isRecording = false;
-  bool _recordFinished = false;
   bool _recordPlaying = false;
 
   @override
@@ -56,12 +57,26 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
       _audioPath = widget.note.content;
       _createdAt = widget.note.dateCreated;
     } else {
+      _titleEditingController.text = 'Audioaufzeichnung';
+      _title = _titleEditingController.text;
       _createdAt = dateFormatted();
     }
 
+    _setPlatformPath();
+
     _titleEditingController.addListener(() {
-      setState(() => _title = _titleEditingController.text);
+      setState(() {
+        _title = _titleEditingController.text;
+      });
     });
+  }
+
+  void _setPlatformPath() {
+    if (Platform.isAndroid) {
+      _audioPath = '/sdcard/$_title.mp3';
+    } else if (Platform.isIOS) {
+      _audioPath = '$_title.mp3';
+    }
   }
 
   @override
@@ -122,18 +137,15 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
 
   void _shareContent() async {
     if (_audioPath.isNotEmpty) {
-      String title = _titleEditingController.text.isEmpty
-          ? 'Audioaufzeichnung'
-          : _titleEditingController.text;
-
       final ByteData bytes = await rootBundle.load(_audioPath);
+      final Uint8List uint8List = bytes.buffer.asUint8List();
 
       await Share.file(
         'audio',
-        '$title.mp3',
-        bytes.buffer.asUint8List(),
+        '$_title.mp3',
+        uint8List,
         'audio/mp3',
-        text: title,
+        text: _title,
       );
     } else {
       _scaffoldKey.currentState.showSnackBar(
@@ -189,7 +201,7 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
           FloatingActionButton(
             heroTag: null,
             tooltip: '',
-            child: _icon2,
+            child: _iconFab,
             onPressed: () {
               _buildStartStopAudioButton();
             },
@@ -217,7 +229,10 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
             _titleEditingController.clear();
             _descEditingController.clear();
           },
-          onPressedUpdate: () => Navigator.pop(context),
+          onPressedUpdate: () {
+            _setPlatformPath();
+            Navigator.pop(context);
+          },
         );
       },
     );
@@ -227,7 +242,6 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
     return Center(
       child: Padding(
         padding: EdgeInsets.all(16.0),
-        //child: _setInfoWidgets(),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -235,49 +249,40 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
               height: 96.0,
               width: 96.0,
               child: FloatingActionButton(
-                child: _icon,
+                child: _iconBody,
                 onPressed: _buildRecordButton,
               ),
             ),
-            SizedBox(height: 42.0),
-            _audioPath.isNotEmpty
-                ? Text(
-                    'Audioaufzeichnungsort:\n$_audioPath',
-                    style: TextStyle(fontSize: 16.0),
-                  )
-                : Container(),
+            SizedBox(height: 24.0),
+            RichText(
+              textAlign: TextAlign.center,
+              text: TextSpan(
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 16.0,
+                ),
+                children: [
+                  TextSpan(
+                    text: 'Audioaufzeichnungsort:\n',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  TextSpan(text: _audioPath),
+                ],
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _setInfoWidgets() {
-    if (_recordFinished) {
-      return Text('Aufzeichnungsort: $_audioPath');
-    } else {
-      return Container(
-        height: 100.0,
-        width: 100.0,
-        child: FloatingActionButton(
-          child: _icon,
-          onPressed: _buildRecordButton,
-        ),
-      );
-    }
-  }
-
   void _buildStartStopAudioButton() {
     if (_audioPath.isNotEmpty) {
       if (_recordPlaying) {
-        setState(() {
-          _icon2 = Icon(Icons.play_arrow);
-        });
+        setState(() => _iconFab = Icon(Icons.play_arrow));
         _stopAudio();
       } else {
-        setState(() {
-          _icon2 = Icon(Icons.pause);
-        });
+        setState(() => _iconFab = Icon(Icons.pause));
         _playAudio();
       }
       setState(() => _recordPlaying = !_recordPlaying);
@@ -290,39 +295,69 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
 
   void _playAudio() async => await flutterSound.startPlayer(_audioPath);
 
-  void _stopAudio() async => await flutterSound.stopPlayer();
+  void _stopAudio() async {
+    try {
+      await flutterSound.stopPlayer();
+    } catch (e) {
+      print(e);
+    }
+  }
 
-  void _buildRecordButton() {
+  void _buildRecordButton() async {
+    //if (!await _checkIfFileExists()) {
     if (_isRecording) {
       setState(() {
-        _icon = Icon(Icons.mic, size: 56.0);
+        _iconBody = Icon(Icons.mic, size: 56.0);
       });
       _stopRecord();
-      _recordFinished = true;
     } else {
       setState(() {
-        _icon = Icon(Icons.mic_none, size: 56.0);
+        _iconBody = Icon(Icons.mic_none, size: 56.0);
       });
       _startRecord();
     }
     setState(() => _isRecording = !_isRecording);
+    /*} else {
+      _scaffoldKey.currentState.showSnackBar(
+        _buildSnackBar(
+          text:
+              'Datei mit aktuellen Titel ist vergeben.\nBitte einen anderen Titel wählen.',
+        ),
+      );
+    }*/
   }
 
-  void _startRecord() async {
-    final String title = _titleEditingController.text.isEmpty
-        ? 'Audioaufnahme'
-        : _titleEditingController.text;
-
-    if (Platform.isAndroid) {
-      _audioPath = '/sdcard/$title.mp3';
-    } else if (Platform.isIOS) {
-      _audioPath = '$title.mp3';
+  Future<bool> _checkIfFileExists() async {
+    File file = File(_audioPath);
+    if (await file.exists()) {
+      return true;
+    } else {
+      return false;
     }
-    await flutterSound.startRecorder(_audioPath);
   }
+
+  void _checkIfTitleIsAlreadyTaken2() async {
+    //FileSystemEntity.typeSync(_audioPath) != FileSystemEntityType.notFound;
+    File file = File(_audioPath);
+    int i = 2;
+    while (await file.exists()) {
+      _title = _title + ' ' + '${i++}'.toString();
+      if (!await file.exists()) break;
+    }
+  }
+
+  Random random = Random();
+
+  int next(int min, int max) => min + random.nextInt(max - min);
+
+  void _startRecord() async => await flutterSound.startRecorder(_audioPath);
 
   void _stopRecord() async {
-    await flutterSound.stopRecorder();
+    try {
+      await flutterSound.stopRecorder();
+    } catch (e) {
+      print(e);
+    }
   }
 
   Future<void> _saveNote() async {
@@ -331,9 +366,7 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
         Note note = Note(
           widget.projectRandom,
           'Audio',
-          _titleEditingController.text.isEmpty
-              ? 'Audioaufnahme'
-              : _titleEditingController.text,
+          _titleEditingController.text,
           _descEditingController.text,
           _audioPath,
           _createdAt,
