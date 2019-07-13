@@ -21,6 +21,7 @@ class PdfCreator {
         pageFormat: PdfPageFormat.a4,
         build: (Context context) {
           return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(title),
               Text(content),
@@ -32,7 +33,8 @@ class PdfCreator {
   }
 
   void savePdf() async {
-    final file = File('$title.pdf');
+    //final file = File('$title.pdf');
+    final file = File('/sdcard/$title.pdf');
     await file.writeAsBytes(pdf.save());
   }
 }

@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:citizen_lab/bloc/title_bloc.dart';
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
@@ -11,10 +13,10 @@ import 'package:citizen_lab/pdf_creator.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/utils/date_formater.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
+import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:share/share.dart';
 
 import '../../formulations.dart';
 import '../../title_change_provider.dart';
@@ -112,8 +114,6 @@ class _TextPageState extends State<TextPage> {
   @override
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
-    //_themeChanger.checkIfDarkModeEnabled(context);
-
     screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
@@ -173,7 +173,11 @@ class _TextPageState extends State<TextPage> {
       actions: <Widget>[
         IconButton(
           icon: Icon(Icons.share),
-          onPressed: () => _shareContent(),
+          onPressed: () {
+            _createPdf();
+            Future.delayed(
+                Duration(milliseconds: 500), () => {_shareContent()});
+          },
         ),
         IconButton(
           icon: Icon(Icons.info_outline),
@@ -187,13 +191,26 @@ class _TextPageState extends State<TextPage> {
     );
   }
 
-  void _shareContent() {
+  void _shareContent() async {
     final String fullContent =
         _titleEditingController.text + '\n' + _descEditingController.text;
     final String noTitle = 'Bitte einen Titel und eine Beschreibung eingeben';
     if (_titleEditingController.text.isNotEmpty &&
         _descEditingController.text.isNotEmpty) {
-      Share.share(fullContent);
+      //Share.share(fullContent);
+
+      final file = File('/sdcard/$_title.pdf');
+
+      final ByteData bytes = await rootBundle.load(file.path);
+      final Uint8List uint8List = bytes.buffer.asUint8List();
+
+      await Share.file(
+        'text',
+        '$_title.pdf',
+        uint8List,
+        'text/pdf',
+        text: _title,
+      );
     } else {
       _scaffoldKey.currentState.showSnackBar(
         _buildSnackBar(text: noTitle),
