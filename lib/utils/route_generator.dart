@@ -1,3 +1,4 @@
+import 'package:citizen_lab/SpeechRecognitionPage.dart';
 import 'package:citizen_lab/citizen_science/about_page.dart';
 import 'package:citizen_lab/citizen_science/citizen_science_page.dart';
 import 'package:citizen_lab/citizen_science/citizen_science_web.dart';
@@ -17,6 +18,7 @@ import 'package:citizen_lab/projects/create_project_page.dart';
 import 'package:citizen_lab/splash_page.dart';
 import 'package:flutter/material.dart';
 
+import '../audio_record_page.dart';
 import '../project_template_page.dart';
 
 class RouteGenerator {
@@ -38,10 +40,11 @@ class RouteGenerator {
   static const String onboardingPage = '/onboarding_page';
   static const String calculatorPage = '/calculator_page';
   static const String stopwatchPage = '/stopwatch_page';
-  static const String audioRecordPage = '/audio_record_page';
   static const String linkingPage = '/linking_page';
   static const String citizenScienceWebPage = '/citizen_science_web_page';
   static const String projectTemplatePage = '/project_template_page';
+  static const String speechRecognitionPage = '/speech_recognition_page';
+  static const String audioRecordPage = '/audio_record_page';
 
   static const String routeHomePage = 'home';
   static const String routeSplashPage = 'splash_page';
@@ -61,10 +64,11 @@ class RouteGenerator {
   static const String routeOnboardingPage = 'onboarding_page';
   static const String routeCalculatorPage = 'calculator_page';
   static const String routeStopwatchPage = 'stopwatch_page';
-  static const String routeAudioRecordPage = 'audio_record_page';
   static const String routeLinkingRecordPage = 'linking_page';
   static const String routeCitizenScienceWebPage = 'citizen_science_web_page';
   static const String routeProjectTemplatePage = 'project_template_page';
+  static const String routeSpeechRecognitionPage = 'speech_recognition_page';
+  static const String routeAudioRecordPage = 'audio_record_page';
 
   static RouteFactory routes() {
     return (settings) {
@@ -194,6 +198,17 @@ class RouteGenerator {
         case projectTemplatePage:
           page = ProjectTemplatePage();
           route = routeProjectTemplatePage;
+          break;
+        case speechRecognitionPage:
+          page = SpeechRecognitionPage();
+          route = routeSpeechRecognitionPage;
+          break;
+        case audioRecordPage:
+          page = AudioRecordPage(
+            projectRandom: args['projectRandom'],
+            note: args['note'],
+          );
+          route = routeAudioRecordPage;
           break;
       }
       return MaterialPageRoute(

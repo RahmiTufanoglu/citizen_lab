@@ -163,7 +163,6 @@ class _ColumnRowEditingWidgetState extends State<ColumnRowEditingWidget> {
                   elevation: 4.0,
                   highlightElevation: 16.0,
                   child: Icon(Icons.check),
-                  //onPressed: widget.onPressedCheck,
                   onPressed: () {
                     if (_formKey.currentState.validate()) {
                       widget.onPressedCheck();

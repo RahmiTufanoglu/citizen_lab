@@ -95,27 +95,30 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
         child: ListView(
           padding: EdgeInsets.only(top: 8.0, bottom: 88.0),
           children: <Widget>[
-            CustomExpansionTile(
-              title: Text(''),
-              leading: Padding(
-                padding: EdgeInsets.only(left: (screenWith / 2) - 40.0),
-                child: Icon(Icons.access_time),
-              ),
-              children: <Widget>[_getTimeWidget()],
-            ),
-            _getTextWidget(),
-            /*Card(
+            Card(
               margin: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 0.0),
               color: _checkIfDarkModeEnabled() ? Colors.black12 : Colors.white,
-              child: Container(),
-            ),*/
-            CustomExpansionTile(
-              title: Text(''),
-              leading: Padding(
-                padding: EdgeInsets.only(left: (screenWith / 2) - 40.0),
-                child: Icon(IconData(0xe92d, fontFamily: 'comparison')),
+              child: CustomExpansionTile(
+                title: Text(''),
+                leading: Padding(
+                  padding: EdgeInsets.only(left: (screenWith / 2) - 40.0),
+                  child: Icon(Icons.access_time),
+                ),
+                children: <Widget>[_getTimeWidget()],
               ),
-              children: <Widget>[_getComparisonWidget()],
+            ),
+            _getTextWidget(),
+            Card(
+              margin: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 0.0),
+              color: _checkIfDarkModeEnabled() ? Colors.black12 : Colors.white,
+              child: CustomExpansionTile(
+                title: Text(''),
+                leading: Padding(
+                  padding: EdgeInsets.only(left: (screenWith / 2) - 40.0),
+                  child: Icon(IconData(0xe92d, fontFamily: 'comparison')),
+                ),
+                children: <Widget>[_getComparisonWidget()],
+              ),
             ),
             /*Card(
               margin: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 0.0),

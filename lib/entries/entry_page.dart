@@ -545,6 +545,9 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
       case 'Verlinkung':
         _updateList(note, RouteGenerator.linkingPage);
         break;
+      case 'Audio':
+        _updateList(note, RouteGenerator.audioRecordPage);
+        break;
     }
   }
 
@@ -569,9 +572,11 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
       if (result != null) _projectDb.updateNote(newNote: result);
     }
 
-    _scaffoldKey.currentState.showSnackBar(
-      _buildSnackBar(text: 'Neues ${result.title} hinzugefügt.'),
-    );
+    if (result != null) {
+      _scaffoldKey.currentState.showSnackBar(
+        _buildSnackBar(text: 'Neues ${result.title} hinzugefügt.'),
+      );
+    }
 
     _loadNoteList();
   }

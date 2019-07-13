@@ -48,15 +48,16 @@ class NoteItem extends StatelessWidget {
                   ),
                   SizedBox(width: 16.0),
                   Container(
-                    width: (screenWidth - 8.0) / 2.0,
+                    width:
+                        (screenWidth - 24.0 - 16.0 - 2.0 - 16.0 - 16.0) / 1.5,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
                           note.title,
-                          style: TextStyle(color: Color(note.cardTextColor)),
                           overflow: TextOverflow.ellipsis,
+                          style: TextStyle(color: Color(note.cardTextColor)),
                         ),
                         SizedBox(height: 8.0),
                         Text(
@@ -106,6 +107,12 @@ class NoteItem extends StatelessWidget {
       case 'Bild':
         return Icon(
           Icons.camera_alt,
+          color: Color(note.cardTextColor),
+        );
+        break;
+      case 'Audio':
+        return Icon(
+          Icons.mic,
           color: Color(note.cardTextColor),
         );
         break;

@@ -6,12 +6,12 @@ import 'dart:ui';
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/custom_widgets/set_title_widget.dart';
 import 'package:citizen_lab/custom_widgets/simple_timer_dialog.dart';
-import 'package:citizen_lab/custom_widgets/title_desc_widget.dart';
 import 'package:citizen_lab/database/database_provider.dart';
 import 'package:citizen_lab/entries/note.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/utils/date_formater.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
+import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -35,27 +35,18 @@ class ImagePage extends StatefulWidget {
 }
 
 class _ImagePageState extends State<ImagePage> {
-  static int _initialPage = 1;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
   final _titleEditingController = TextEditingController();
   final _descEditingController = TextEditingController();
-  final _pageController = PageController(initialPage: _initialPage);
-  final _noteDb = DatabaseProvider.db;
 
   ThemeChangerProvider _themeChanger;
   File _image;
   String _title;
   String _createdAt;
 
-  //Timer _timer;
-  //String _timeString;
-
   @override
   void initState() {
-    //_timeString = dateFormatted();
-    //_timer = Timer.periodic(Duration(seconds: 1), (_) => _getTime());
-
     if (widget.note != null) {
       _titleEditingController.text = widget.note.title;
       _title = _titleEditingController.text;
@@ -67,11 +58,7 @@ class _ImagePageState extends State<ImagePage> {
     }
 
     _titleEditingController.addListener(() {
-      setState(() {
-        if (_titleEditingController.text.isNotEmpty) {
-          _title = _titleEditingController.text;
-        }
-      });
+      setState(() => _title = _titleEditingController.text);
     });
 
     super.initState();
@@ -81,8 +68,6 @@ class _ImagePageState extends State<ImagePage> {
   void dispose() {
     _titleEditingController.dispose();
     _descEditingController.dispose();
-    _pageController.dispose();
-    //_timer.cancel();
     super.dispose();
   }
 
@@ -94,44 +79,7 @@ class _ImagePageState extends State<ImagePage> {
       key: _scaffoldKey,
       appBar: _buildAppBar(),
       body: _buildBody(),
-      //floatingActionButton: _setFabs(),
       floatingActionButton: _buildFabs(),
-    );
-  }
-
-  Widget _buildFabs() {
-    final String editTitleAndDesc = 'Titel und Beschreibung editieren';
-    final String createImage = 'Foto erstellen';
-
-    return Padding(
-      padding: const EdgeInsets.only(left: 32.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          FloatingActionButton(
-            heroTag: null,
-            tooltip: '$editTitleAndDesc.',
-            child: Icon(Icons.description),
-            onPressed: () => _showEditDialog(),
-          ),
-          FloatingActionButton(
-            heroTag: null,
-            tooltip: 'aadfjksdhflkfb',
-            elevation: 4.0,
-            highlightElevation: 16.0,
-            child: Icon(Icons.folder),
-            onPressed: () async {
-              await _getImage(false);
-            },
-          ),
-          FloatingActionButton(
-            heroTag: null,
-            tooltip: '$createImage.',
-            child: Icon(Icons.camera_alt),
-            onPressed: () => _createImage(),
-          ),
-        ],
-      ),
     );
   }
 
@@ -173,9 +121,9 @@ class _ImagePageState extends State<ImagePage> {
   }
 
   // TODO: Fehler wird nicht angezeigt
-  void _shareContent() {
+  void _shareContent() async {
     if (_image != null) {
-      try {
+      /*try {
         final channelName = 'rahmitufanoglu.citizenlab';
         final channel = MethodChannel('channel:$channelName.share/share');
         channel.invokeMethod('shareImage', '$_title');
@@ -184,7 +132,16 @@ class _ImagePageState extends State<ImagePage> {
         final String sharingNotPossible = 'Teilvorgang nicht möglich';
         _scaffoldKey.currentState
             .showSnackBar(_buildSnackBar(text: '$sharingNotPossible.'));
-      }
+      }*/
+      final ByteData bytes = await rootBundle.load(_image.path);
+      final Uint8List uint8List = bytes.buffer.asUint8List();
+      await Share.file(
+        'image',
+        '$_title.png',
+        uint8List,
+        'image/png',
+        text: _title,
+      );
     } else {
       _scaffoldKey.currentState.showSnackBar(
         _buildSnackBarWithButton(
@@ -227,6 +184,42 @@ class _ImagePageState extends State<ImagePage> {
     );
   }
 
+  Widget _buildFabs() {
+    final String editTitleAndDesc = 'Titel und Beschreibung editieren';
+    final String createImage = 'Foto erstellen';
+
+    return Padding(
+      padding: const EdgeInsets.only(left: 32.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          FloatingActionButton(
+            heroTag: null,
+            tooltip: '$editTitleAndDesc.',
+            child: Icon(Icons.description),
+            onPressed: () => _showEditDialog(),
+          ),
+          FloatingActionButton(
+            heroTag: null,
+            tooltip: '',
+            elevation: 4.0,
+            highlightElevation: 16.0,
+            child: Icon(Icons.folder),
+            onPressed: () async {
+              await _getImage(false);
+            },
+          ),
+          FloatingActionButton(
+            heroTag: null,
+            tooltip: '$createImage.',
+            child: Icon(Icons.camera_alt),
+            onPressed: () => _createImage(),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildBody() {
     final double screenWidth = MediaQuery.of(context).size.width;
 
@@ -250,75 +243,6 @@ class _ImagePageState extends State<ImagePage> {
                       size: 100.0,
                     ),
                   ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBody2() {
-    final double screenWidth = MediaQuery.of(context).size.width;
-
-    return SafeArea(
-      child: Form(
-        key: _formKey,
-        autovalidate: true,
-        child: WillPopScope(
-          onWillPop: _saveNote,
-          child: Stack(
-            children: <Widget>[
-              (_initialPage == 1)
-                  ? Positioned(
-                      top: 0.0,
-                      right: 0.0,
-                      child: Container(
-                        width: screenWidth / 2,
-                        height: 2.0,
-                        color: Colors.grey,
-                      ),
-                    )
-                  : Positioned(
-                      top: 0.0,
-                      left: 0.0,
-                      child: Container(
-                        width: screenWidth / 2,
-                        height: 2.0,
-                        color: Colors.grey,
-                      ),
-                    ),
-              PageView(
-                controller: _pageController,
-                onPageChanged: (int page) {
-                  setState(() {
-                    _initialPage = page;
-                  });
-                },
-                children: <Widget>[
-                  //_buildForm(),
-                  TitleDescWidget(
-                    title: _title,
-                    createdAt: _createdAt,
-                    titleEditingController: _titleEditingController,
-                    descEditingController: _descEditingController,
-                  ),
-                  Center(
-                    child: (_image != null && _image.path.isNotEmpty)
-                        ? PhotoView(
-                            backgroundDecoration: BoxDecoration(),
-                            minScale: PhotoViewComputedScale.contained * 0.5,
-                            imageProvider: FileImage(_image),
-                          )
-                        : Center(
-                            child: Icon(
-                              Icons.image,
-                              color: Colors.grey,
-                              size: 100.0,
-                            ),
-                          ),
-                  ),
-                ],
-              ),
-            ],
           ),
         ),
       ),
@@ -485,12 +409,10 @@ class _ImagePageState extends State<ImagePage> {
     if (_titleEditingController.text.isNotEmpty && (_image != null)) {
       if (widget.note == null) {
         Note note = Note(
-          //widget.projectTitle,
           widget.projectRandom,
           'Bild',
           _titleEditingController.text,
           _descEditingController.text,
-          //(_image != null) ? _image.path : '',
           _image.path,
           _createdAt,
           dateFormatted(),
@@ -498,15 +420,10 @@ class _ImagePageState extends State<ImagePage> {
           0xFFFFFFFF,
           0xFF000000,
         );
-        //operation = 'save';
-        //await _noteDb.insertNote(note: newNote);
         Navigator.pop(context, note);
       } else {
         _updateNote(widget.note);
-        //operation = 'update';
       }
-      //Navigator.pop(context, true);
-      //Navigator.pop(context, operation);
     } else {
       _scaffoldKey.currentState.showSnackBar(
         _buildSnackBarWithButton(

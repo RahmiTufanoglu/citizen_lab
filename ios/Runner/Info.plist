@@ -46,13 +46,21 @@
     <string>This app needs access to location when open.</string>
     <key>NSCameraUsageDescription</key>
     <string></string>
-    <key>NSMicrophoneUsageDescription</key>
-    <string></string>
     <key>NSLocationAlwaysUsageDescription</key>
     <string></string>
 
     <key>io.flutter.embedded_views_preview</key>
     <string>YES</string>
+
+    <key>NSSpeechRecognitionUsageDescription</key>
+    <string>This application needs the speech recognition permission</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>This application needs to access your microphone</string>
+
+    <key>UIBackgroundModes</key>
+    <array>
+    	<string>audio</string>
+    </array>
 
     <key>NSPhotoLibraryUsageDescription</key>
     <key>NSCameraUsageDescription</key>

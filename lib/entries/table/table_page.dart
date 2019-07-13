@@ -3,7 +3,6 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:citizen_lab/custom_widgets/column_row_edit_widget.dart';
-import 'package:citizen_lab/custom_widgets/main_table_widget.dart';
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/custom_widgets/simple_timer_dialog.dart';
 import 'package:citizen_lab/custom_widgets/table_widget.dart';
@@ -14,6 +13,7 @@ import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/utils/date_formater.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:csv/csv.dart';
+import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
@@ -49,6 +49,7 @@ class _TablePageState extends State<TablePage> {
   int _row;
   String _title;
   String _createdAt;
+
   //List<String> _data;
   //List<List<dynamic>> _list = [];
   //TitleProvider _titleProvider;
@@ -169,7 +170,11 @@ class _TablePageState extends State<TablePage> {
           onPressed: () => _shareCsv(),
         ),
       );*/
-      _shareCsv();
+
+      Future.delayed(const Duration(milliseconds: 500), () => _shareCsv());
+      /*_scaffoldKey.currentState.showSnackBar(
+        _buildSnackBar(text: 'Tabelle kann nicht geteilt werden.'),
+      );*/
     } else {
       _scaffoldKey.currentState.showSnackBar(
         _buildSnackBar(text: 'Bitte einen Titel eingeben.'),
@@ -190,10 +195,9 @@ class _TablePageState extends State<TablePage> {
     );
   }
 
-  void _backToHomePage() async {
+  void _backToHomePage() {
     final String cancel = 'Notiz abbrechen und zur Hauptseite zurückkehren?';
-
-    await showDialog(
+    showDialog(
       context: context,
       builder: (_) => NoYesDialog(
             text: cancel,
@@ -204,16 +208,6 @@ class _TablePageState extends State<TablePage> {
               );
             },
           ),
-    );
-  }
-
-  Widget _buildBody2() {
-    return MainTableWidet(
-      onWillPop: _saveNote,
-      column: _column,
-      row: _row,
-      textEditingController: _listTextEditingController,
-      generateTable: () => _generateTable(),
     );
   }
 
@@ -407,29 +401,6 @@ class _TablePageState extends State<TablePage> {
     }
   }
 
-  Future<String> _createCsv(String title) async {
-    List<List<String>> graphArray = List.generate(
-      _row,
-      (i) => List<String>(_column),
-    );
-
-    int i = 0;
-    for (int x = 0; x < _row; x++) {
-      for (int y = 0; y < _column; y++) {
-        debugPrint('$x/$y = ${_listTextEditingController[i].text}');
-        graphArray[x][y] = _listTextEditingController[i++].text;
-      }
-    }
-
-    String dir = (await getTemporaryDirectory()).absolute.path + '/';
-    _csv = File('$dir$title.csv');
-
-    String path = _listToCsv(graphArray);
-    _csv.writeAsString(path);
-
-    return _csv.path;
-  }
-
   bool _checkIfTableIsEmpty() {
     bool empty = false;
     int count = 0;
@@ -451,7 +422,8 @@ class _TablePageState extends State<TablePage> {
       if (widget.note == null) {
         String path = '';
         if (_column != null && _row != null) {
-          path = await _createCsv(_title);
+          //path = await _createCsv(_title);
+          path = _csv.path;
         }
         Note note = Note(
           //widget.projectTitle,
@@ -470,7 +442,8 @@ class _TablePageState extends State<TablePage> {
         Navigator.pop(context, note);
       } else {
         _csv.delete();
-        String path = await _createCsv(_title);
+        //String path = await _createCsv(_title);
+        String path = _csv.path;
         _updateNote(widget.note, path);
       }
       //Navigator.pop(context, true);
@@ -504,33 +477,48 @@ class _TablePageState extends State<TablePage> {
     Navigator.pop(context, newNote);
   }
 
-  Future<void> _shareCsv() async {
-    try {
-      if (_csv.path != null) {
-        final ByteData bytes = await rootBundle.load(_csv.path);
-        final Uint8List uint8List = bytes.buffer.asUint8List();
+  void _shareCsv() async {
+    //try {
+    /*final ByteData bytes = await rootBundle.load(_csv.path);
+      final Uint8List uint8List = bytes.buffer.asUint8List();
+      await Share.file(
+        'table',
+        '$_title.csv',
+        uint8List,
+        'table/csv',
+        text: _title,
+      );*/
 
-        final tempDir = await getTemporaryDirectory();
-        final file = await File('${tempDir.path}/$_title.csv').create();
-        file.writeAsBytesSync(uint8List);
+    if (Platform.isAndroid) {
+      final ByteData bytes = await rootBundle.load(_csv.path);
+      final Uint8List uint8List = bytes.buffer.asUint8List();
 
-        const channelName = 'rahmitufanoglu.citizenlab';
-        final channel = const MethodChannel('channel:$channelName.share/share');
-        channel.invokeMethod('shareTable', '$_title.csv');
-      } else {
-        _scaffoldKey.currentState.showSnackBar(
-          _buildSnackBar(text: 'Tabelle kann nicht geteilt werden.'),
-        );
-      }
-    } catch (error) {
-      debugPrint('Share $error');
+      final tempDir = await getTemporaryDirectory();
+      final file = await File('${tempDir.path}/$_title.csv').create();
+      file.writeAsBytesSync(uint8List);
+
+      const channelName = 'rahmitufanoglu.citizenlab';
+      final channel = const MethodChannel('channel:$channelName.share/share');
+      channel.invokeMethod('shareTable', '$_title.csv');
+    } else if (Platform.isIOS) {
+      final ByteData bytes = await rootBundle.load(_csv.path);
+      await Share.file(
+        'table',
+        '$_title.csv',
+        bytes.buffer.asUint8List(),
+        'table/csv',
+        text: _title,
+      );
     }
+    /*} catch (error) {
+      debugPrint('Share $error');
+    }*/
   }
 
-  Future<void> _showDialogEditImage() async {
+  void _showDialogEditImage() {
     final String oldTitle = _title;
 
-    await showDialog(
+    showDialog(
       context: context,
       builder: (context) {
         return SimpleTimerDialog(
@@ -557,12 +545,12 @@ class _TablePageState extends State<TablePage> {
     );
   }
 
-  Future<void> _buildTableCreate() async {
+  void _buildTableCreate() {
     final String enterTableSize = 'Titel und Tabellengröße festlegen.';
-
-    return await showDialog(
+    showDialog(
       context: context,
-      builder: (context) {
+      //builder: (context) {
+      builder: (_) {
         return ColumnRowEditingWidget(
           title: enterTableSize,
           titleEditingController: _titleEditingController,
@@ -573,6 +561,30 @@ class _TablePageState extends State<TablePage> {
         );
       },
     );
+  }
+
+  //Future<String> _createCsv(String title) async {
+  void _createCsv(String title) async {
+    List<List<String>> graphArray = List.generate(
+      _row,
+      (i) => List<String>(_column),
+    );
+
+    int i = 0;
+    for (int x = 0; x < _row; x++) {
+      for (int y = 0; y < _column; y++) {
+        debugPrint('$x/$y = ${_listTextEditingController[i].text}');
+        graphArray[x][y] = _listTextEditingController[i++].text;
+      }
+    }
+
+    String dir = (await getTemporaryDirectory()).absolute.path + '/';
+    _csv = File('$dir$title.csv');
+
+    String path = _listToCsv(graphArray);
+    _csv.writeAsString(path);
+
+    //return _csv.path;
   }
 
   void _clearAllFields() {

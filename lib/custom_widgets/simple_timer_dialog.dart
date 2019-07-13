@@ -94,7 +94,7 @@ class _SimpleTimerDialogState extends State<SimpleTimerDialog> {
                   ),
                   SizedBox(height: 8.0),
                   Container(
-                    width: screenWidth / 2,
+                    width: screenWidth / 1.8,
                     child: Text(
                       'Erstellt am: ${widget.createdAt}',
                       overflow: TextOverflow.ellipsis,

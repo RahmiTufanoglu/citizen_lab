@@ -31,13 +31,14 @@ class ProjectItem extends StatelessWidget {
               Row(
                 children: <Widget>[
                   Container(
-                    width: (screenWidth - 8.0) / 2.0,
+                    width: screenWidth / 1.5,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
                           project.title,
+                          overflow: TextOverflow.ellipsis,
                           style: TextStyle(color: Color(project.cardTextColor)),
                         ),
                         SizedBox(height: 8.0),
