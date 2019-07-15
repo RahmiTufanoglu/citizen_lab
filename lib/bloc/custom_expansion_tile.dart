@@ -90,6 +90,7 @@ class _CustomExpansionTileState extends State<CustomExpansionTile>
   AnimationController _controller;
   Animation<double> _iconTurns;
   Animation<double> _heightFactor;
+
   //Animation<Color> _borderColor;
   Animation<Color> _headerColor;
   Animation<Color> _iconColor;
@@ -149,6 +150,9 @@ class _CustomExpansionTileState extends State<CustomExpansionTile>
           top: BorderSide(color: borderSideColor),
           bottom: BorderSide(color: borderSideColor),
         ),*/
+        borderRadius: BorderRadius.all(
+          Radius.circular(16.0),
+        ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -195,10 +199,17 @@ class _CustomExpansionTileState extends State<CustomExpansionTile>
   @override
   Widget build(BuildContext context) {
     final bool closed = !_isExpanded && _controller.isDismissed;
-    return AnimatedBuilder(
-      animation: _controller.view,
-      builder: _buildChildren,
-      child: closed ? null : Column(children: widget.children),
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.all(
+          Radius.circular(8.0),
+        ),
+      ),
+      child: AnimatedBuilder(
+        animation: _controller.view,
+        builder: _buildChildren,
+        child: closed ? null : Column(children: widget.children),
+      ),
     );
   }
 }

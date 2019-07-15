@@ -255,14 +255,6 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
                       child: Container(
                         padding: const EdgeInsets.only(bottom: 8.0),
                         width: double.infinity,
-                        decoration: BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                              width: 1.0,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ),
                         child: Text(
                           note.title,
                           overflow: TextOverflow.ellipsis,

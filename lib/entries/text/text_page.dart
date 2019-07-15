@@ -50,7 +50,6 @@ class _TextPageState extends State<TextPage> {
   String _savedTitle;
   String _createdAt;
   String _timeString;
-
   double screenHeight;
 
   @override
@@ -232,10 +231,9 @@ class _TextPageState extends State<TextPage> {
     return path;
   }
 
-  Future<void> _backToHomePage() async {
+  void _backToHomePage() {
     final String cancel = 'Notiz abbrechen und zur Hauptseite zurückkehren?';
-
-    await showDialog(
+    showDialog(
       context: context,
       builder: (_) {
         return NoYesDialog(
@@ -309,12 +307,22 @@ class _TextPageState extends State<TextPage> {
       DatabaseProvider.columnNoteContent: '',
       DatabaseProvider.columnNoteCreatedAt: note.dateCreated,
       DatabaseProvider.columnNoteUpdatedAt: dateFormatted(),
+      // TODO columnNoteEdited => columnNoteFirstTime
       DatabaseProvider.columnNoteEdited: 1,
       DatabaseProvider.columnNoteCardColor: note.cardColor,
       DatabaseProvider.columnNoteCardTextColor: note.cardTextColor,
     });
     Navigator.pop(context, newNote);
   }
+
+  // TODO
+  bool _checkIfContentEdited() => _checkContent(
+              _titleEditingController.text, widget.note.title) ||
+          _checkContent(_descEditingController.text, widget.note.description)
+      ? true
+      : false;
+
+  bool _checkContent(String a, String b) => a == b ? true : false;
 
   Widget _buildFabs() {
     return Padding(
@@ -345,13 +353,8 @@ class _TextPageState extends State<TextPage> {
   void _refreshTextFormFields() {
     final String textDeleted = 'Text gelöscht';
 
-    if (_titleEditingController.text.isNotEmpty) {
-      _titleEditingController.clear();
-    }
-
-    if (_descEditingController.text.isNotEmpty) {
-      _descEditingController.clear();
-    }
+    _titleEditingController.clear();
+    _descEditingController.clear();
 
     _scaffoldKey.currentState.showSnackBar(
       _buildSnackBar(text: '$textDeleted.'),
@@ -448,7 +451,10 @@ class _TextPageState extends State<TextPage> {
       duration: Duration(milliseconds: 500),
       content: Text(
         text,
-        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        style: TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }

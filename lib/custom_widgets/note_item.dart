@@ -60,11 +60,16 @@ class NoteItem extends StatelessWidget {
                           style: TextStyle(color: Color(note.cardTextColor)),
                         ),
                         SizedBox(height: 8.0),
+                        // TODO: last date
                         Text(
-                          'Erstellt am: ${note.dateCreated}',
+                          // TODO check if note edited
+                          note.edited == 0
+                              ? 'Erstellt: ${note.dateCreated}'
+                              : 'Zuletzt besucht: ${note.dateEdited}',
                           style: TextStyle(
                             color: Color(note.cardTextColor),
                             fontStyle: FontStyle.italic,
+                            fontSize: 12.0,
                           ),
                         ),
                       ],
@@ -121,9 +126,6 @@ class NoteItem extends StatelessWidget {
           Icons.link,
           color: Color(note.cardTextColor),
         );
-        break;
-      default:
-        return null;
         break;
     }
   }

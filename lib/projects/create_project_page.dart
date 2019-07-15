@@ -281,7 +281,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
       Utils.getRandomNumber(),
       _descEditingController.text,
       dateFormatted(),
-      '',
+      dateFormatted(),
       0xFFFFFFFF,
       0xFF000000,
     );

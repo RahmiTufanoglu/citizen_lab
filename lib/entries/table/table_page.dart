@@ -33,13 +33,11 @@ class TablePage extends StatefulWidget {
 }
 
 class _TablePageState extends State<TablePage> {
-  static int _initialPage = 1;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _titleEditingController = TextEditingController();
   final _descriptionEditingController = TextEditingController();
   final _rowTextEditingController = TextEditingController();
   final _columnTextEditingController = TextEditingController();
-  final _pageController = PageController(initialPage: _initialPage);
   final _listTextEditingController = <TextEditingController>[];
 
   ThemeChangerProvider _themeChanger;
@@ -51,6 +49,8 @@ class _TablePageState extends State<TablePage> {
 
   @override
   void initState() {
+    super.initState();
+
     if (widget.note != null) {
       _titleEditingController.text = widget.note.title;
       _title = _titleEditingController.text;
@@ -76,8 +76,6 @@ class _TablePageState extends State<TablePage> {
         }
       });
     });
-
-    super.initState();
   }
 
   @override
@@ -86,7 +84,6 @@ class _TablePageState extends State<TablePage> {
     _descriptionEditingController.dispose();
     _rowTextEditingController.dispose();
     _columnTextEditingController.dispose();
-    _pageController.dispose();
     for (int i = 0; i < _listTextEditingController.length; i++) {
       _listTextEditingController[i].dispose();
     }
@@ -145,7 +142,9 @@ class _TablePageState extends State<TablePage> {
 
   void _shareContent() {
     if (_title != null && !_checkIfTableIsEmpty()) {
-      _createCsv(_title);
+      // TODO: Check if File exists
+      if (_csv == null) _createCsv(_title);
+
       /*_scaffoldKey.currentState.showSnackBar(
         _buildSnackBarWithButton(
           text: 'Tabelle erstellt. Teilen?',
@@ -323,11 +322,10 @@ class _TablePageState extends State<TablePage> {
       if (widget.note == null) {
         String path = '';
         if (_column != null && _row != null) {
-          //path = await _createCsv(_title);
-          path = _csv.path;
+          path = await _createCsv(_title);
+          //path = _csv.path;
         }
         Note note = Note(
-          //widget.projectTitle,
           widget.projectRandom,
           'Tabelle',
           _titleEditingController.text,
@@ -342,7 +340,9 @@ class _TablePageState extends State<TablePage> {
         Navigator.pop(context, note);
       } else {
         _csv.delete();
-        String path = _csv.path;
+        //String path = _csv.path;
+        // TODO: Do not create CSV if exists
+        String path = await _createCsv(_title);
         _updateNote(widget.note, path);
       }
     } else {
@@ -455,7 +455,7 @@ class _TablePageState extends State<TablePage> {
     );
   }
 
-  void _createCsv(String title) async {
+  Future<String> _createCsv(String title) async {
     List<List<String>> graphArray = List.generate(
       _row,
       (i) => List<String>(_column),
@@ -469,11 +469,21 @@ class _TablePageState extends State<TablePage> {
       }
     }
 
-    String dir = (await getTemporaryDirectory()).absolute.path + '/';
-    _csv = File('$dir$title.csv');
+    //String dir = (await getTemporaryDirectory()).absolute.path + '/';
+    //_csv = File('$dir$title.csv');
+
+    _csv = File(await _localPath(title));
 
     String path = _listToCsv(graphArray);
     _csv.writeAsString(path);
+
+    return _csv.path;
+  }
+
+  Future<String> _localPath(String title) async {
+    final directory = await getApplicationDocumentsDirectory();
+    final path = '${directory.path}/$title.csv';
+    return path;
   }
 
   void _clearAllFields() {
