@@ -90,10 +90,10 @@ class _StopwatchPageState extends State<StopwatchPage>
     }
   }
 
-  void _backToHomePage() async {
+  void _backToHomePage() {
     final String cancel = 'Notiz abbrechen und zur Hauptseite zurückkehren?';
 
-    await showDialog(
+    showDialog(
       context: context,
       builder: (_) {
         return NoYesDialog(
@@ -127,17 +127,21 @@ class _StopwatchPageState extends State<StopwatchPage>
               ),
               SizedBox(height: 56.0),
               Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  IconButton(
-                    icon: _icon,
-                    iconSize: 56.0,
+                  FloatingActionButton(
+                    heroTag: null,
+                    child: Icon(Icons.timer),
+                    onPressed: _running,
+                  ),
+                  FloatingActionButton(
+                    heroTag: null,
+                    child: _icon,
                     onPressed: _startStopButtonPressed,
                   ),
-                  SizedBox(width: 42.0),
-                  IconButton(
-                    icon: Icon(Icons.stop),
-                    iconSize: 56.0,
+                  FloatingActionButton(
+                    heroTag: null,
+                    child: Icon(Icons.stop),
                     onPressed: _resetButtonPressed,
                   ),
                 ],
@@ -200,6 +204,18 @@ class _StopwatchPageState extends State<StopwatchPage>
     );
   }
 
+  void _running() {
+    setState(() {
+      if (_stopWatch.isRunning) {
+        _setElapsedTime();
+      } else {
+        _icon = Icon(Icons.pause);
+        _stopWatch.start();
+        _startTimeout();
+      }
+    });
+  }
+
   void _startStopButtonPressed() {
     setState(() {
       if (_stopWatch.isRunning) {
@@ -218,20 +234,19 @@ class _StopwatchPageState extends State<StopwatchPage>
 
   void _handleTimeout() {
     if (_stopWatch.isRunning) _startTimeout();
-    setState(() {
-      _setStopwatchText();
-    });
+    setState(() => _setStopwatchText());
   }
 
   void _resetButtonPressed() {
     if (_stopWatch.isRunning) {
-      _setElapsedTime();
+      //_setElapsedTime();
       _startStopButtonPressed();
     }
-    setState(() {
+    _stopWatch.reset();
+    /*setState(() {
       _stopWatch.reset();
-      _setStopwatchText();
-    });
+      //_setStopwatchText();
+    });*/
   }
 
   void _setElapsedTime() {
@@ -255,16 +270,37 @@ class _StopwatchPageState extends State<StopwatchPage>
   }
 
   Widget _buildFabs() {
-    return FloatingActionButton(
-      child: Icon(Icons.content_copy),
-      onPressed: () {
-        String content = '';
-        for (int i = 0; i < _elapsedTimeList.length; i++) {
-          content += _elapsedTimeList[i] + '\n';
-        }
-        _copyContent(content);
-      },
+    return Padding(
+      padding: EdgeInsets.only(left: 32.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          FloatingActionButton(
+            heroTag: null,
+            child: Icon(Icons.remove),
+            tooltip: '',
+            onPressed: () => _clearList(),
+          ),
+          FloatingActionButton(
+            heroTag: null,
+            child: Icon(Icons.content_copy),
+            onPressed: () {
+              String content = '';
+              for (int i = 0; i < _elapsedTimeList.length; i++) {
+                content += _elapsedTimeList[i] + '\n';
+              }
+              _copyContent(content);
+            },
+          ),
+        ],
+      ),
     );
+  }
+
+  void _clearList() {
+    setState(() {
+      _elapsedTimeList.clear();
+    });
   }
 
   void _copyContent(String content) {
@@ -296,5 +332,8 @@ class _StopwatchPageState extends State<StopwatchPage>
     );
   }
 
-  void _onBackPressed() => Navigator.pop(context, true);
+  void _onBackPressed() {
+    _stopWatch.stop();
+    Navigator.pop(context, true);
+  }
 }

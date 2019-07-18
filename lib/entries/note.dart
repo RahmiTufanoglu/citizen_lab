@@ -10,6 +10,7 @@ class Note extends Entry {
   String content;
   String dateCreated;
   String dateEdited;
+  int firstTime;
   int edited;
   int cardColor;
   int cardTextColor;
@@ -22,6 +23,7 @@ class Note extends Entry {
     this.content,
     this.dateCreated,
     this.dateEdited,
+    this.firstTime,
     this.edited,
     this.cardColor,
     this.cardTextColor,
@@ -36,6 +38,7 @@ class Note extends Entry {
     this.content,
     this.dateCreated,
     this.dateEdited,
+    this.firstTime,
     this.edited,
     this.cardColor,
     this.cardTextColor,
@@ -50,6 +53,8 @@ class Note extends Entry {
     this.content = obj[DatabaseProvider.columnNoteContent];
     this.dateCreated = obj[DatabaseProvider.columnNoteCreatedAt];
     this.dateEdited = obj[DatabaseProvider.columnNoteUpdatedAt];
+    this.firstTime = obj[DatabaseProvider.columnNoteFirstTime];
+    this.edited = obj[DatabaseProvider.columnNoteEdited];
     this.cardColor = obj[DatabaseProvider.columnNoteCardColor];
     this.cardTextColor = obj[DatabaseProvider.columnNoteCardTextColor];
   }
@@ -67,6 +72,7 @@ class Note extends Entry {
     map[DatabaseProvider.columnNoteContent] = content;
     map[DatabaseProvider.columnNoteCreatedAt] = dateCreated;
     map[DatabaseProvider.columnNoteUpdatedAt] = dateEdited;
+    map[DatabaseProvider.columnNoteFirstTime] = firstTime;
     map[DatabaseProvider.columnNoteEdited] = edited;
     map[DatabaseProvider.columnNoteCardColor] = cardColor;
     map[DatabaseProvider.columnNoteCardTextColor] = cardTextColor;
@@ -83,6 +89,7 @@ class Note extends Entry {
     this.content = map[DatabaseProvider.columnNoteContent];
     this.dateCreated = map[DatabaseProvider.columnNoteCreatedAt];
     this.dateEdited = map[DatabaseProvider.columnNoteUpdatedAt];
+    this.firstTime = map[DatabaseProvider.columnNoteFirstTime];
     this.edited = map[DatabaseProvider.columnNoteEdited];
     this.cardColor = map[DatabaseProvider.columnNoteCardColor];
     this.cardTextColor = map[DatabaseProvider.columnNoteCardTextColor];

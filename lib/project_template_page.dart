@@ -102,6 +102,7 @@ class _ProjectTemplatePageState extends State<ProjectTemplatePage> {
       dateFormatted(),
       dateFormatted(),
       0,
+      0,
       0xFFFFFFFF,
       0xFF000000,
     );

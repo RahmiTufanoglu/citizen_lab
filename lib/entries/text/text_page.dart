@@ -49,6 +49,7 @@ class _TextPageState extends State<TextPage> {
   String _title;
   String _savedTitle;
   String _createdAt;
+  String _editedAt;
   String _timeString;
   double screenHeight;
 
@@ -63,8 +64,10 @@ class _TextPageState extends State<TextPage> {
       _savedTitle = _titleEditingController.text;
       _title = _savedTitle;
       _descEditingController.text = widget.note.description;
+      _editedAt = widget.note.dateEdited;
       _createdAt = widget.note.dateCreated;
     } else {
+      _editedAt = dateFormatted();
       _createdAt = dateFormatted();
     }
 
@@ -276,7 +279,8 @@ class _TextPageState extends State<TextPage> {
           _descEditingController.text,
           '',
           _createdAt,
-          dateFormatted(),
+          _editedAt,
+          0,
           0,
           0xFFFFFFFF,
           0xFF000000,
@@ -307,22 +311,32 @@ class _TextPageState extends State<TextPage> {
       DatabaseProvider.columnNoteContent: '',
       DatabaseProvider.columnNoteCreatedAt: note.dateCreated,
       DatabaseProvider.columnNoteUpdatedAt: dateFormatted(),
+      DatabaseProvider.columnNoteFirstTime: 1,
       // TODO columnNoteEdited => columnNoteFirstTime
-      DatabaseProvider.columnNoteEdited: 1,
+      DatabaseProvider.columnNoteEdited: _checkIfContentEdited(),
       DatabaseProvider.columnNoteCardColor: note.cardColor,
       DatabaseProvider.columnNoteCardTextColor: note.cardTextColor,
     });
     Navigator.pop(context, newNote);
   }
 
-  // TODO
-  bool _checkIfContentEdited() => _checkContent(
-              _titleEditingController.text, widget.note.title) ||
-          _checkContent(_descEditingController.text, widget.note.description)
-      ? true
-      : false;
+  int _checkIfContentEdited() {
+    print(
+        'TITLE: ${(_titleEditingController.text == widget.note.title).toString()}');
+    print(
+        'EDITED: ${(_descEditingController.text == widget.note.description).toString()}');
 
-  bool _checkContent(String a, String b) => a == b ? true : false;
+    /*return _titleEditingController.text == widget.note.title ||
+            _descEditingController.text == widget.note.description
+        ? 0
+        : 1;*/
+
+    if (_titleEditingController.text == widget.note.title) {
+      return _descEditingController.text == widget.note.description ? 0 : 1;
+    } else {
+      return 1;
+    }
+  }
 
   Widget _buildFabs() {
     return Padding(

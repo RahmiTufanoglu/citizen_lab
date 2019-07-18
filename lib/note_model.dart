@@ -26,7 +26,7 @@ class NoteModel with ChangeNotifier implements NoteBase {
     this.content = note.content;
     this.dateCreated = note.dateCreated;
     this.dateEdited = note.dateEdited;
-    this.edited = note.edited;
+    this.edited = note.firstTime;
   }
 
   @override
@@ -39,7 +39,7 @@ class NoteModel with ChangeNotifier implements NoteBase {
     this.content = note.content;
     this.dateCreated = note.dateCreated;
     this.dateEdited = note.dateEdited;
-    this.edited = note.edited;
+    this.edited = note.firstTime;
   }
 
   @override
@@ -52,7 +52,7 @@ class NoteModel with ChangeNotifier implements NoteBase {
     this.content = note.content;
     this.dateCreated = note.dateCreated;
     this.dateEdited = note.dateEdited;
-    this.edited = note.edited;
+    this.edited = note.firstTime;
   }
 }
 

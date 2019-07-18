@@ -357,7 +357,8 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
 
   int next(int min, int max) => min + random.nextInt(max - min);
 
-  void _startRecord() async => await flutterSound.startRecorder(_audioPath);
+  void _startRecord() async =>
+      await flutterSound.startRecorder(_audioPath, bitRate: 192);
 
   void _stopRecord() async {
     try {
@@ -378,6 +379,7 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
           _audioPath,
           _createdAt,
           dateFormatted(),
+          0,
           0,
           0xFFFFFFFF,
           0xFF000000,
@@ -406,6 +408,7 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
       DatabaseProvider.columnNoteContent: _audioPath,
       DatabaseProvider.columnNoteCreatedAt: note.dateCreated,
       DatabaseProvider.columnNoteUpdatedAt: dateFormatted(),
+      DatabaseProvider.columnNoteFirstTime: 1,
       DatabaseProvider.columnNoteEdited: 1,
       DatabaseProvider.columnNoteCardColor: note.cardColor,
       DatabaseProvider.columnNoteCardTextColor: note.cardTextColor,

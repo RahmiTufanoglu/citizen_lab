@@ -607,7 +607,7 @@ class _HomePageState extends State<HomePage>
       },
     );
 
-    if (result) _loadProjectList(false);
+    if (result != null && result) _loadProjectList(false);
   }
 
   void _showContent(int index) {

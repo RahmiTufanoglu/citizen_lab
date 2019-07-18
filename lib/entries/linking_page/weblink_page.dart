@@ -323,6 +323,7 @@ class _WeblinkPageState extends State<WeblinkPage> {
           _createdAt,
           dateFormatted(),
           0,
+          0,
           0xFFFFFFFF,
           0xFF000000,
         );
@@ -353,7 +354,8 @@ class _WeblinkPageState extends State<WeblinkPage> {
       DatabaseProvider.columnNoteContent: _url,
       DatabaseProvider.columnNoteCreatedAt: note.dateCreated,
       DatabaseProvider.columnNoteUpdatedAt: dateFormatted(),
-      DatabaseProvider.columnNoteEdited: 1,
+      DatabaseProvider.columnNoteFirstTime: 1,
+      DatabaseProvider.columnNoteEdited: 0,
       DatabaseProvider.columnNoteCardColor: note.cardColor,
       DatabaseProvider.columnNoteCardTextColor: note.cardTextColor,
     });

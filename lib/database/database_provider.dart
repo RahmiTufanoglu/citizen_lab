@@ -39,6 +39,7 @@ class DatabaseProvider {
   static final String columnNoteTableRow = 'table_row';
   static final String columnNoteCreatedAt = 'created_at';
   static final String columnNoteUpdatedAt = 'updated_at';
+  static final String columnNoteFirstTime = 'first_time';
   static final String columnNoteEdited = 'edited';
   static final String columnNoteCardColor = 'card_color';
   static final String columnNoteCardTextColor = 'card_text_color';
@@ -65,6 +66,7 @@ class DatabaseProvider {
       '$columnNoteContent TEXT NOT NULL, '
       '$columnNoteCreatedAt TEXT NOT NULL, '
       '$columnNoteUpdatedAt TEXT NOT NULL, '
+      '$columnNoteFirstTime INTEGER NOT NULL, '
       '$columnNoteEdited INTEGER NOT NULL, '
       '$columnNoteCardColor INTEGER NOT NULL, '
       '$columnNoteCardTextColor INTEGER NOT NULL)';

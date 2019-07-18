@@ -371,8 +371,9 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
       DatabaseProvider.columnNoteDescription: note.description,
       DatabaseProvider.columnNoteContent: note.content,
       DatabaseProvider.columnNoteCreatedAt: note.dateCreated,
-      DatabaseProvider.columnNoteUpdatedAt: dateFormatted(),
-      DatabaseProvider.columnNoteEdited: 1,
+      DatabaseProvider.columnNoteUpdatedAt: note.dateEdited,
+      DatabaseProvider.columnNoteFirstTime: 1,
+      DatabaseProvider.columnNoteEdited: note.edited,
       DatabaseProvider.columnNoteCardColor: cardColor,
       DatabaseProvider.columnNoteCardTextColor: cardTextColor,
     });
@@ -563,7 +564,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
     ) as Note;
 
     bool exists;
-    result != null && result.edited == 0 ? exists = false : exists = true;
+    result != null && result.firstTime == 0 ? exists = false : exists = true;
 
     //!exists ? _notesBloc.add(result) : _notesBloc.update(result);
     if (!exists) {
@@ -581,12 +582,12 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
     _loadNoteList();
   }
 
-  final String _kSortingOrderPrefs = 'sortNotes';
+  final String _sortingOrderPrefs = 'sortNotes';
 
   Future<String> _getSortingOrder() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     //return prefs.getString(_kSortingOrderPrefs) ?? sort_by_release_date_desc;
-    final order = prefs.getString(_kSortingOrderPrefs);
+    final order = prefs.getString(_sortingOrderPrefs);
     if (order == null) {
       return sort_by_release_date_desc;
     }
@@ -595,7 +596,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
 
   Future<void> setSortingOrder(String value) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString(_kSortingOrderPrefs, value);
+    prefs.setString(_sortingOrderPrefs, value);
   }
 
   void _loadNoteList() async {
@@ -653,6 +654,11 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
       //if (snapshot.data[index].type == 'Bild') {
       File file = File(_noteList[index].content);
       //File file = File(snapshot.data[index].content);
+      file.delete();
+    }
+
+    if (_noteList[index].type == 'Audio') {
+      File file = File(_noteList[index].content);
       file.delete();
     }
 

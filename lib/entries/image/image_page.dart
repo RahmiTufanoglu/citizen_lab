@@ -320,6 +320,7 @@ class _ImagePageState extends State<ImagePage> {
           _createdAt,
           dateFormatted(),
           0,
+          0,
           0xFFFFFFFF,
           0xFF000000,
         );
@@ -348,7 +349,8 @@ class _ImagePageState extends State<ImagePage> {
       DatabaseProvider.columnNoteContent: _image.path,
       DatabaseProvider.columnNoteCreatedAt: note.dateCreated,
       DatabaseProvider.columnNoteUpdatedAt: dateFormatted(),
-      DatabaseProvider.columnNoteEdited: 1,
+      DatabaseProvider.columnNoteEdited: 0,
+      DatabaseProvider.columnNoteFirstTime: 1,
       DatabaseProvider.columnNoteCardColor: note.cardColor,
       DatabaseProvider.columnNoteCardTextColor: note.cardTextColor,
     });

@@ -62,10 +62,10 @@ class NoteItem extends StatelessWidget {
                         SizedBox(height: 8.0),
                         // TODO: last date
                         Text(
-                          // TODO check if note edited
+                          // TODO check if note edited ...
                           note.edited == 0
-                              ? 'Erstellt: ${note.dateCreated}'
-                              : 'Zuletzt besucht: ${note.dateEdited}',
+                              ? 'Erstellt am: ${note.dateCreated}'
+                              : 'Editiert am: ${note.dateEdited}',
                           style: TextStyle(
                             color: Color(note.cardTextColor),
                             fontStyle: FontStyle.italic,
