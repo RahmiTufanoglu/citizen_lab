@@ -25,7 +25,13 @@ class SimpleTimerDialog extends StatefulWidget {
     @required this.descExists,
     //@required this.titleProvider,
     //@required this.title,
-  });
+  })  : assert(createdAt != null),
+        assert(textEditingController != null),
+        assert(descEditingController != null),
+        assert(onPressedClear != null),
+        assert(onPressedUpdate != null),
+        assert(onPressedClose != null),
+        assert(descExists != null);
 
   @override
   _SimpleTimerDialogState createState() => _SimpleTimerDialogState();

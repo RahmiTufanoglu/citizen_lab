@@ -13,7 +13,9 @@ class AlarmDialog extends StatefulWidget {
     @required this.icon,
     @required this.text,
     @required this.onTap,
-  });
+  })  : assert(icon != null),
+        assert(text != null),
+        assert(onTap != null);
 
   @override
   _AlarmDialogState createState() => _AlarmDialogState();

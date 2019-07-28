@@ -1,73 +1,73 @@
-import 'package:citizen_lab/bloc/entry.dart';
 import 'package:citizen_lab/database/database_provider.dart';
+import 'package:citizen_lab/entry.dart';
 
-class Project extends Entry {
+class Project implements Entry {
   int id;
-  int random;
+  String uuid;
   String title;
   String description;
-  String dateCreated;
-  String dateEdited;
+  String createdAt;
+  String updatedAt;
   int cardColor;
   int cardTextColor;
 
   Project(
     this.title,
-    this.random,
+    this.uuid,
     this.description,
-    this.dateCreated,
-    this.dateEdited,
+    this.createdAt,
+    this.updatedAt,
     this.cardColor,
     this.cardTextColor,
   );
 
   Project.withId(
     this.id,
-    this.random,
+    this.uuid,
     this.title,
     this.description,
-    this.dateCreated,
-    this.dateEdited,
+    this.createdAt,
+    this.updatedAt,
     this.cardColor,
     this.cardTextColor,
   );
 
   Project.map(dynamic obj) {
-    this.id = obj[DatabaseProvider.columnProjectId];
-    this.random = obj[DatabaseProvider.columnProjectRandom];
-    this.title = obj[DatabaseProvider.columnProjectTitle];
-    this.description = obj[DatabaseProvider.columnProjectDesc];
-    this.dateCreated = obj[DatabaseProvider.columnProjectCreatedAt];
-    this.dateEdited = obj[DatabaseProvider.columnProjectUpdatedAt];
-    this.cardColor = obj[DatabaseProvider.columnProjectCardColor];
-    this.cardTextColor = obj[DatabaseProvider.columnProjectCardTextColor];
+    this.id = obj[DatabaseHelper.columnProjectId];
+    this.uuid = obj[DatabaseHelper.columnProjectUuid];
+    this.title = obj[DatabaseHelper.columnProjectTitle];
+    this.description = obj[DatabaseHelper.columnProjectDesc];
+    this.createdAt = obj[DatabaseHelper.columnProjectCreatedAt];
+    this.updatedAt = obj[DatabaseHelper.columnProjectUpdatedAt];
+    this.cardColor = obj[DatabaseHelper.columnProjectCardColor];
+    this.cardTextColor = obj[DatabaseHelper.columnProjectCardTextColor];
   }
 
   Map<String, dynamic> toMap() {
     var map = Map<String, dynamic>();
 
     if (id != null) {
-      map[DatabaseProvider.columnProjectId] = id;
+      map[DatabaseHelper.columnProjectId] = id;
     }
-    map[DatabaseProvider.columnProjectTitle] = title;
-    map[DatabaseProvider.columnProjectRandom] = random;
-    map[DatabaseProvider.columnProjectDesc] = description;
-    map[DatabaseProvider.columnProjectCreatedAt] = dateCreated;
-    map[DatabaseProvider.columnProjectUpdatedAt] = dateEdited;
-    map[DatabaseProvider.columnProjectCardColor] = cardColor;
-    map[DatabaseProvider.columnProjectCardTextColor] = cardTextColor;
+    map[DatabaseHelper.columnProjectTitle] = title;
+    map[DatabaseHelper.columnProjectUuid] = uuid;
+    map[DatabaseHelper.columnProjectDesc] = description;
+    map[DatabaseHelper.columnProjectCreatedAt] = createdAt;
+    map[DatabaseHelper.columnProjectUpdatedAt] = updatedAt;
+    map[DatabaseHelper.columnProjectCardColor] = cardColor;
+    map[DatabaseHelper.columnProjectCardTextColor] = cardTextColor;
 
     return map;
   }
 
   Project.fromMap(Map<String, dynamic> map) {
-    this.id = map[DatabaseProvider.columnProjectId];
-    this.title = map[DatabaseProvider.columnProjectTitle];
-    this.random = map[DatabaseProvider.columnProjectRandom];
-    this.description = map[DatabaseProvider.columnProjectDesc];
-    this.dateCreated = map[DatabaseProvider.columnProjectCreatedAt];
-    this.dateEdited = map[DatabaseProvider.columnProjectUpdatedAt];
-    this.cardColor = map[DatabaseProvider.columnProjectCardColor];
-    this.cardTextColor = map[DatabaseProvider.columnProjectCardTextColor];
+    this.id = map[DatabaseHelper.columnProjectId];
+    this.title = map[DatabaseHelper.columnProjectTitle];
+    this.uuid = map[DatabaseHelper.columnProjectUuid];
+    this.description = map[DatabaseHelper.columnProjectDesc];
+    this.createdAt = map[DatabaseHelper.columnProjectCreatedAt];
+    this.updatedAt = map[DatabaseHelper.columnProjectUpdatedAt];
+    this.cardColor = map[DatabaseHelper.columnProjectCardColor];
+    this.cardTextColor = map[DatabaseHelper.columnProjectCardTextColor];
   }
 }

@@ -6,6 +6,7 @@ class DialFloatingActionButton extends StatefulWidget {
   final IconData firstIcon;
   final IconData secondIcon;
   final List<Icon> iconList;
+
   //final List<Color> colorList;
   final List<String> stringList;
   final Function function;
@@ -17,7 +18,9 @@ class DialFloatingActionButton extends StatefulWidget {
     //@required this.colorList,
     @required this.stringList,
     @required this.function,
-  });
+  })  : assert(iconList != null),
+        assert(stringList != null),
+        assert(function != null);
 
   @override
   _DialFloatingActionButtonState createState() =>

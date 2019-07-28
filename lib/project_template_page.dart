@@ -13,7 +13,7 @@ class ProjectTemplatePage extends StatefulWidget {
 }
 
 class _ProjectTemplatePageState extends State<ProjectTemplatePage> {
-  final _projectDb = DatabaseProvider.db;
+  final _projectDb = DatabaseHelper.db;
   final List<String> _templateList = ['A', 'B', 'C', 'D', 'E'];
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -84,7 +84,8 @@ class _ProjectTemplatePageState extends State<ProjectTemplatePage> {
   void _createTemplateContent(String title, String desc) async {
     Project project = Project(
       title,
-      Utils.getRandomNumber(),
+      //Utils.getRandomNumber(),
+      Utils.generateRandomUuid(),
       desc,
       dateFormatted(),
       '',
@@ -94,7 +95,7 @@ class _ProjectTemplatePageState extends State<ProjectTemplatePage> {
     await _projectDb.insertProject(project: project);
 
     Note note = Note(
-      project.random,
+      project.uuid,
       'Text',
       'Vorlage Titel',
       'Vorlage Beschreibung',

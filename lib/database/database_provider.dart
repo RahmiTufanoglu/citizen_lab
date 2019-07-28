@@ -1,15 +1,18 @@
+import 'package:citizen_lab/database/project_dao.dart';
 import 'package:citizen_lab/entries/note.dart';
 import 'package:citizen_lab/projects/project.dart';
 import 'package:meta/meta.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
-class DatabaseProvider {
-  static final DatabaseProvider db = DatabaseProvider._();
+import 'note_dao.dart';
+
+class DatabaseHelper implements ProjectDao, NoteDao {
+  static final DatabaseHelper db = DatabaseHelper._();
 
   //factory DatabaseProvider() => _instance;
 
-  DatabaseProvider._();
+  DatabaseHelper._();
 
   Database _db;
 
@@ -19,7 +22,7 @@ class DatabaseProvider {
   static final String projectTable = 'projects';
   static final String columnProjectId = 'id';
 
-  static final String columnProjectRandom = 'random';
+  static final String columnProjectUuid = 'random';
   static final String columnProjectNoteId = 'note_id';
   static final String columnProjectTitle = 'title';
   static final String columnProjectDesc = 'description';
@@ -39,15 +42,15 @@ class DatabaseProvider {
   static final String columnNoteTableRow = 'table_row';
   static final String columnNoteCreatedAt = 'created_at';
   static final String columnNoteUpdatedAt = 'updated_at';
-  static final String columnNoteFirstTime = 'first_time';
-  static final String columnNoteEdited = 'edited';
+  static final String columnNoteIsFirstTime = 'first_time';
+  static final String columnNoteIsEdited = 'edited';
   static final String columnNoteCardColor = 'card_color';
   static final String columnNoteCardTextColor = 'card_text_color';
 
   static final String createProjectTable = 'CREATE TABLE $projectTable('
       '$columnProjectId INTEGER PRIMARY KEY AUTOINCREMENT,'
       '$columnProjectNoteId INTEGER REFERENCES $noteTable($columnNoteId),'
-      '$columnProjectRandom INTEGER NOT NULL, '
+      '$columnProjectUuid TEXT NOT NULL, '
       '$columnProjectTitle TEXT NOT NULL, '
       '$columnProjectDesc TEXT NOT NULL, '
       '$columnProjectCreatedAt TEXT NOT NULL, '
@@ -58,7 +61,7 @@ class DatabaseProvider {
   static final String createNoteTable = 'CREATE TABLE $noteTable('
       '$columnNoteId INTEGER PRIMARY KEY AUTOINCREMENT,'
       //'$columnNoteProject TEXT NOT NULL, '
-      '$columnProjectRandom INTEGER NOT NULL, '
+      '$columnProjectUuid TEXT NOT NULL, '
       //'$columnProjectId TEXT NOT NULL, '
       '$columnNoteType TEXT NOT NULL, '
       '$columnNoteTitle TEXT NOT NULL, '
@@ -66,8 +69,8 @@ class DatabaseProvider {
       '$columnNoteContent TEXT NOT NULL, '
       '$columnNoteCreatedAt TEXT NOT NULL, '
       '$columnNoteUpdatedAt TEXT NOT NULL, '
-      '$columnNoteFirstTime INTEGER NOT NULL, '
-      '$columnNoteEdited INTEGER NOT NULL, '
+      '$columnNoteIsFirstTime INTEGER NOT NULL, '
+      '$columnNoteIsEdited INTEGER NOT NULL, '
       '$columnNoteCardColor INTEGER NOT NULL, '
       '$columnNoteCardTextColor INTEGER NOT NULL)';
 
@@ -91,6 +94,7 @@ class DatabaseProvider {
     await db.execute(createNoteTable);
   }
 
+  @override
   Future<int> insertProject({@required Project project}) async {
     final Database db = await this.database;
     final int result = await db.insert(
@@ -100,6 +104,7 @@ class DatabaseProvider {
     return result;
   }
 
+  @override
   Future<Project> getProject({@required int id}) async {
     final Database db = await this.database;
     final List<Map> maps = await db.query(
@@ -111,6 +116,7 @@ class DatabaseProvider {
     return maps.isNotEmpty ? Project.fromMap(maps.first) : null;
   }
 
+  @override
   Future<List> getAllProjects() async {
     final Database db = await this.database;
     final List<Map<String, dynamic>> result = await db.query(
@@ -120,6 +126,7 @@ class DatabaseProvider {
     return result.toList();
   }
 
+  @override
   Future<int> deleteProject({@required int id}) async {
     final Database db = await this.database;
     return await db.delete(
@@ -129,11 +136,13 @@ class DatabaseProvider {
     );
   }
 
+  @override
   Future<int> deleteAllProjects() async {
     final Database db = await this.database;
     return await db.delete(projectTable);
   }
 
+  @override
   Future<int> updateProject({@required Project newProject}) async {
     final Database db = await this.database;
     final int result = await db.update(
@@ -146,6 +155,7 @@ class DatabaseProvider {
     return result;
   }
 
+  @override
   Future<int> getProjectCount() async {
     final Database db = await this.database;
     return Sqflite.firstIntValue(
@@ -153,16 +163,17 @@ class DatabaseProvider {
     );
   }
 
+  @override
   //Future<List> getNotesOfProject({@required String id}) async {
-  Future<List<Note>> getNotesOfProject({@required int random}) async {
+  Future<List<Note>> getNotesOfProject({@required String uuid}) async {
     final db = await this.database;
     //final List<Map<String, dynamic>> maps = await db.query(
     var res = await db.query(
       noteTable,
       //where: '$columnNoteProject = ?',
-      where: '$columnProjectRandom = ?',
+      where: '$columnProjectUuid = ?',
       //whereArgs: [id],
-      whereArgs: [random],
+      whereArgs: [uuid],
       //orderBy: order == null ? '$columnNoteCreatedAt DESC' : order,
       orderBy: '$columnNoteCreatedAt DESC',
       //orderBy: order,
@@ -173,6 +184,7 @@ class DatabaseProvider {
     return list;
   }
 
+  @override
   Future<List<Note>> getAllNotes() async {
     final db = await this.database;
     var res = await db.query(noteTable);
@@ -181,6 +193,7 @@ class DatabaseProvider {
     return list;
   }
 
+  @override
   Future<int> insertNote({@required Note note}) async {
     final Database db = await this.database;
     final int result = await db.insert(
@@ -192,6 +205,7 @@ class DatabaseProvider {
     return result;
   }
 
+  @override
   Future<Note> getNote({@required int id}) async {
     final Database db = await this.database;
     final List<Map> maps = await db.query(
@@ -212,6 +226,7 @@ class DatabaseProvider {
     return result.toList();
   }*/
 
+  @override
   Future<int> deleteNote({@required int id}) async {
     final Database db = await this.database;
     print('DELETE: $id');
@@ -222,22 +237,25 @@ class DatabaseProvider {
     );
   }
 
+  @override
   Future<int> deleteAllNotes() async {
     final Database db = await this.database;
     return await db.delete(noteTable);
   }
 
-  Future<int> deleteAllNotesFromProject({@required int random}) async {
+  @override
+  Future<int> deleteAllNotesFromProject({@required String uuid}) async {
     print('deleteAllNotesFromProject');
     final Database db = await this.database;
     return await db.delete(
       noteTable,
-      where: '$columnProjectRandom= ?',
+      where: '$columnProjectUuid= ?',
       //where: '$columnNoteId = ?',
-      whereArgs: [random],
+      whereArgs: [uuid],
     );
   }
 
+  @override
   Future<int> updateNote({@required Note newNote}) async {
     final Database db = await this.database;
     final int result = await db.update(
@@ -249,6 +267,7 @@ class DatabaseProvider {
     return result;
   }
 
+  @override
   Future<int> getCount() async {
     final Database db = await this.database;
     return Sqflite.firstIntValue(

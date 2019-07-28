@@ -1,98 +1,98 @@
-import 'package:citizen_lab/bloc/entry.dart';
 import 'package:citizen_lab/database/database_provider.dart';
+import 'package:citizen_lab/entry.dart';
 
-class Note extends Entry {
+class Note implements Entry {
   int id;
-  int projectRandom;
+  String uuid;
   String type;
   String title;
   String description;
-  String content;
-  String dateCreated;
-  String dateEdited;
-  int firstTime;
-  int edited;
+  String filePath;
+  String createdAt;
+  String updatedAt;
+  int isFirstTime;
+  int isEdited;
   int cardColor;
   int cardTextColor;
 
   Note(
-    this.projectRandom,
+    this.uuid,
     this.type,
     this.title,
     this.description,
-    this.content,
-    this.dateCreated,
-    this.dateEdited,
-    this.firstTime,
-    this.edited,
+    this.filePath,
+    this.createdAt,
+    this.updatedAt,
+    this.isFirstTime,
+    this.isEdited,
     this.cardColor,
     this.cardTextColor,
   );
 
   Note.withId(
     this.id,
-    this.projectRandom,
+    this.uuid,
     this.type,
     this.title,
     this.description,
-    this.content,
-    this.dateCreated,
-    this.dateEdited,
-    this.firstTime,
-    this.edited,
+    this.filePath,
+    this.createdAt,
+    this.updatedAt,
+    this.isFirstTime,
+    this.isEdited,
     this.cardColor,
     this.cardTextColor,
   );
 
   Note.map(dynamic obj) {
-    this.id = obj[DatabaseProvider.columnNoteId];
-    this.projectRandom = obj[DatabaseProvider.columnProjectRandom];
-    this.type = obj[DatabaseProvider.columnNoteType];
-    this.title = obj[DatabaseProvider.columnNoteTitle];
-    this.description = obj[DatabaseProvider.columnNoteDescription];
-    this.content = obj[DatabaseProvider.columnNoteContent];
-    this.dateCreated = obj[DatabaseProvider.columnNoteCreatedAt];
-    this.dateEdited = obj[DatabaseProvider.columnNoteUpdatedAt];
-    this.firstTime = obj[DatabaseProvider.columnNoteFirstTime];
-    this.edited = obj[DatabaseProvider.columnNoteEdited];
-    this.cardColor = obj[DatabaseProvider.columnNoteCardColor];
-    this.cardTextColor = obj[DatabaseProvider.columnNoteCardTextColor];
+    this.id = obj[DatabaseHelper.columnNoteId];
+    this.uuid = obj[DatabaseHelper.columnProjectUuid];
+    this.type = obj[DatabaseHelper.columnNoteType];
+    this.title = obj[DatabaseHelper.columnNoteTitle];
+    this.description = obj[DatabaseHelper.columnNoteDescription];
+    this.filePath = obj[DatabaseHelper.columnNoteContent];
+    this.createdAt = obj[DatabaseHelper.columnNoteCreatedAt];
+    this.updatedAt = obj[DatabaseHelper.columnNoteUpdatedAt];
+    this.isFirstTime = obj[DatabaseHelper.columnNoteIsFirstTime];
+    this.isEdited = obj[DatabaseHelper.columnNoteIsEdited];
+    this.cardColor = obj[DatabaseHelper.columnNoteCardColor];
+    this.cardTextColor = obj[DatabaseHelper.columnNoteCardTextColor];
   }
 
   Map<String, dynamic> toMap() {
     var map = Map<String, dynamic>();
 
     if (id != null) {
-      map[DatabaseProvider.columnNoteId] = id;
+      map[DatabaseHelper.columnNoteId] = id;
     }
-    map[DatabaseProvider.columnProjectRandom] = projectRandom;
-    map[DatabaseProvider.columnNoteType] = type;
-    map[DatabaseProvider.columnNoteTitle] = title;
-    map[DatabaseProvider.columnNoteDescription] = description;
-    map[DatabaseProvider.columnNoteContent] = content;
-    map[DatabaseProvider.columnNoteCreatedAt] = dateCreated;
-    map[DatabaseProvider.columnNoteUpdatedAt] = dateEdited;
-    map[DatabaseProvider.columnNoteFirstTime] = firstTime;
-    map[DatabaseProvider.columnNoteEdited] = edited;
-    map[DatabaseProvider.columnNoteCardColor] = cardColor;
-    map[DatabaseProvider.columnNoteCardTextColor] = cardTextColor;
+    map[DatabaseHelper.columnProjectUuid] = uuid;
+    map[DatabaseHelper.columnNoteType] = type;
+    map[DatabaseHelper.columnNoteTitle] = title;
+    map[DatabaseHelper.columnNoteDescription] = description;
+    map[DatabaseHelper.columnNoteContent] = filePath;
+    map[DatabaseHelper.columnNoteCreatedAt] = createdAt;
+    map[DatabaseHelper.columnNoteUpdatedAt] = updatedAt;
+    map[DatabaseHelper.columnNoteIsFirstTime] = isFirstTime;
+    map[DatabaseHelper.columnNoteIsEdited] = isEdited;
+    map[DatabaseHelper.columnNoteCardColor] = cardColor;
+    map[DatabaseHelper.columnNoteCardTextColor] = cardTextColor;
 
     return map;
   }
 
   Note.fromMap(Map<String, dynamic> map) {
-    this.id = map[DatabaseProvider.columnNoteId];
-    this.projectRandom = map[DatabaseProvider.columnProjectRandom];
-    this.type = map[DatabaseProvider.columnNoteType];
-    this.title = map[DatabaseProvider.columnNoteTitle];
-    this.description = map[DatabaseProvider.columnNoteDescription];
-    this.content = map[DatabaseProvider.columnNoteContent];
-    this.dateCreated = map[DatabaseProvider.columnNoteCreatedAt];
-    this.dateEdited = map[DatabaseProvider.columnNoteUpdatedAt];
-    this.firstTime = map[DatabaseProvider.columnNoteFirstTime];
-    this.edited = map[DatabaseProvider.columnNoteEdited];
-    this.cardColor = map[DatabaseProvider.columnNoteCardColor];
-    this.cardTextColor = map[DatabaseProvider.columnNoteCardTextColor];
+    this.id = map[DatabaseHelper.columnNoteId];
+    this.uuid = map[DatabaseHelper.columnProjectUuid];
+    this.type = map[DatabaseHelper.columnNoteType];
+    this.title = map[DatabaseHelper.columnNoteTitle];
+    this.description = map[DatabaseHelper.columnNoteDescription];
+    this.filePath = map[DatabaseHelper.columnNoteContent];
+    this.createdAt = map[DatabaseHelper.columnNoteCreatedAt];
+    this.updatedAt = map[DatabaseHelper.columnNoteUpdatedAt];
+    this.isFirstTime = map[DatabaseHelper.columnNoteIsFirstTime];
+    this.isEdited = map[DatabaseHelper.columnNoteIsEdited];
+    this.cardColor = map[DatabaseHelper.columnNoteCardColor];
+    this.cardTextColor = map[DatabaseHelper.columnNoteCardTextColor];
   }
 
 /*factory Note.fromMap(Map<String, dynamic> map) => Note.withId(

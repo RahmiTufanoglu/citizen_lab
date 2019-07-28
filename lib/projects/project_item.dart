@@ -44,7 +44,7 @@ class ProjectItem extends StatelessWidget {
                         SizedBox(height: 8.0),
                         Text(
                           //TODO add edited attribute to project
-                          'Erstellt am: ${project.dateCreated}',
+                          'Erstellt am: ${project.createdAt}',
                           style: TextStyle(
                             color: Color(project.cardTextColor),
                             fontStyle: FontStyle.italic,

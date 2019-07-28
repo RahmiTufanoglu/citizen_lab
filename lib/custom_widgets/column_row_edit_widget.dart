@@ -16,7 +16,12 @@ class ColumnRowEditingWidget extends StatefulWidget {
     @required this.rowEditingController,
     @required this.onPressedClear,
     @required this.onPressedCheck,
-  });
+  })  : assert(title != null),
+        assert(titleEditingController != null),
+        assert(columnEditingController != null),
+        assert(rowEditingController != null),
+        assert(onPressedClear != null),
+        assert(onPressedClear != null);
 
   @override
   _ColumnRowEditingWidgetState createState() => _ColumnRowEditingWidgetState();

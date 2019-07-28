@@ -15,7 +15,10 @@ class NoteItem extends StatelessWidget {
     @required this.noteFunction,
     @required this.close,
     @required this.onLongPress,
-  });
+  })  : assert(note != null),
+        assert(isFromNoteSearchPage != null),
+        assert(noteFunction != null),
+        assert(onLongPress != null);
 
   @override
   Widget build(BuildContext context) {
@@ -60,12 +63,10 @@ class NoteItem extends StatelessWidget {
                           style: TextStyle(color: Color(note.cardTextColor)),
                         ),
                         SizedBox(height: 8.0),
-                        // TODO: last date
                         Text(
-                          // TODO check if note edited ...
-                          note.edited == 0
-                              ? 'Erstellt am: ${note.dateCreated}'
-                              : 'Editiert am: ${note.dateEdited}',
+                          note.isEdited == 0
+                              ? 'Erstellt am: ${note.createdAt}'
+                              : 'Editiert am: ${note.updatedAt}',
                           style: TextStyle(
                             color: Color(note.cardTextColor),
                             fontStyle: FontStyle.italic,

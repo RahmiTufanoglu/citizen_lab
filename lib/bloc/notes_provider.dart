@@ -12,24 +12,24 @@ class NotesProvider with ChangeNotifier {
   setNote(Note note) => _note = note;
 
   void add(Note note) {
-    DatabaseProvider.db.insertNote(note: note);
+    DatabaseHelper.db.insertNote(note: note);
     notifyListeners();
   }
 
   void update(Note note) {
     if (note != null) {
-      DatabaseProvider.db.updateNote(newNote: note);
+      DatabaseHelper.db.updateNote(newNote: note);
     }
     notifyListeners();
   }
 
   void delete(Note note) {
-    DatabaseProvider.db.deleteNote(id: note.id);
+    DatabaseHelper.db.deleteNote(id: note.id);
     notifyListeners();
   }
 
-  void deleteAllNotesFromProject(List<Note> notes, int random) {
-    DatabaseProvider.db.deleteAllNotesFromProject(random: random);
+  void deleteAllNotesFromProject(List<Note> notes, String uuid) {
+    DatabaseHelper.db.deleteAllNotesFromProject(uuid: uuid);
     for (int i = 0; i < notes.length; i++) {}
     notifyListeners();
   }

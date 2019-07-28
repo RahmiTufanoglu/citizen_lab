@@ -9,7 +9,9 @@ import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_sound/flutter_sound.dart';
+import 'package:flutter_sound/ios_quality.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission/permission.dart';
 import 'package:provider/provider.dart';
 
 import 'custom_widgets/no_yes_dialog.dart';
@@ -20,11 +22,11 @@ import 'entries/note.dart';
 
 class AudioRecordPage extends StatefulWidget {
   final Note note;
-  final int projectRandom;
+  final String uuid;
 
   AudioRecordPage({
     this.note,
-    this.projectRandom,
+    this.uuid,
   });
 
   @override
@@ -35,7 +37,8 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _titleEditingController = TextEditingController();
   final _descEditingController = TextEditingController();
-  final flutterSound = FlutterSound();
+
+  FlutterSound flutterSound;
 
   ThemeChangerProvider _themeChanger;
 
@@ -51,12 +54,17 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
   @override
   void initState() {
     super.initState();
+    //_setPermission();
+    //Permission.openSettings();
+
+    flutterSound = FlutterSound();
+
     if (widget.note != null) {
       _titleEditingController.text = widget.note.title;
       _title = _titleEditingController.text;
       _descEditingController.text = widget.note.description;
-      _audioPath = widget.note.content;
-      _createdAt = widget.note.dateCreated;
+      _audioPath = widget.note.filePath;
+      _createdAt = widget.note.createdAt;
     } else {
       _titleEditingController.text = 'Audioaufzeichnung';
       _title = _titleEditingController.text;
@@ -310,8 +318,21 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
     }
   }
 
+  List<Permissions> _permissions;
+
+  void _setPermission() async {
+    _permissions = await Permission.getPermissionsStatus(
+        [PermissionName.Microphone, PermissionName.Storage]);
+    await Permission.requestPermissions(
+        [PermissionName.Microphone, PermissionName.Storage]);
+  }
+
   void _buildRecordButton() async {
     //if (!await _checkIfFileExists()) {
+    /*for (int i = 0; i < _permissions.length; i++) {
+      print('====>>>>>>>>>>>> ${_permissions[i].toString()}');
+    }*/
+    //_setPermission();
     if (_isRecording) {
       setState(() {
         _iconBody = Icon(Icons.mic, size: 56.0);
@@ -321,6 +342,7 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
       setState(() {
         _iconBody = Icon(Icons.mic_none, size: 56.0);
       });
+      //_startRecord().then(null, onError: (e) {}).catchError(_setPermission);
       _startRecord();
     }
     setState(() => _isRecording = !_isRecording);
@@ -357,8 +379,26 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
 
   int next(int min, int max) => min + random.nextInt(max - min);
 
-  void _startRecord() async =>
-      await flutterSound.startRecorder(_audioPath, bitRate: 192);
+  Future _startRecord() async {
+    // TODO: catchError
+    await flutterSound.startRecorder(
+      _audioPath,
+      bitRate: 320,
+      iosQuality: IosQuality.HIGH,
+    );
+
+    /*Future.delayed(Duration(milliseconds: 500), () {
+      flutterSound.startRecorder(
+        _audioPath,
+        bitRate: 320,
+        iosQuality: IosQuality.HIGH,
+      );
+    }).then((value) {
+      //
+    }).catchError((error) {
+      //
+    });*/
+  }
 
   void _stopRecord() async {
     try {
@@ -372,7 +412,7 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
     if (_audioPath.isNotEmpty) {
       if (widget.note == null) {
         Note note = Note(
-          widget.projectRandom,
+          widget.uuid,
           'Audio',
           _titleEditingController.text,
           _descEditingController.text,
@@ -400,18 +440,18 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
 
   void _updateNote(Note note) {
     Note newNote = Note.fromMap({
-      DatabaseProvider.columnNoteId: note.id,
-      DatabaseProvider.columnProjectRandom: note.projectRandom,
-      DatabaseProvider.columnNoteType: note.type,
-      DatabaseProvider.columnNoteTitle: _titleEditingController.text,
-      DatabaseProvider.columnNoteDescription: _descEditingController.text,
-      DatabaseProvider.columnNoteContent: _audioPath,
-      DatabaseProvider.columnNoteCreatedAt: note.dateCreated,
-      DatabaseProvider.columnNoteUpdatedAt: dateFormatted(),
-      DatabaseProvider.columnNoteFirstTime: 1,
-      DatabaseProvider.columnNoteEdited: 1,
-      DatabaseProvider.columnNoteCardColor: note.cardColor,
-      DatabaseProvider.columnNoteCardTextColor: note.cardTextColor,
+      DatabaseHelper.columnNoteId: note.id,
+      DatabaseHelper.columnProjectUuid: note.uuid,
+      DatabaseHelper.columnNoteType: note.type,
+      DatabaseHelper.columnNoteTitle: _titleEditingController.text,
+      DatabaseHelper.columnNoteDescription: _descEditingController.text,
+      DatabaseHelper.columnNoteContent: _audioPath,
+      DatabaseHelper.columnNoteCreatedAt: note.createdAt,
+      DatabaseHelper.columnNoteUpdatedAt: dateFormatted(),
+      DatabaseHelper.columnNoteIsFirstTime: 1,
+      DatabaseHelper.columnNoteIsEdited: 1,
+      DatabaseHelper.columnNoteCardColor: note.cardColor,
+      DatabaseHelper.columnNoteCardTextColor: note.cardTextColor,
     });
     Navigator.pop(context, newNote);
   }
@@ -478,3 +518,5 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
     );
   }
 }
+
+enum PermissionStatus { allow, deny, notDecided, notAgain, whenInUse, always }

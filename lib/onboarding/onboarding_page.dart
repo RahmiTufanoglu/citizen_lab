@@ -83,7 +83,7 @@ class _OnboardingPageState extends State<OnboardingPage>
                           Expanded(
                             flex: 4,
                             child: Container(
-                              color: mainLightColor,
+                              //color: mainLightColor,
                               child: ListView(
                                 padding:
                                     EdgeInsets.fromLTRB(36.0, 36.0, 36.0, 80.0),
@@ -115,7 +115,7 @@ class _OnboardingPageState extends State<OnboardingPage>
             },
           ),
           Padding(
-            padding: const EdgeInsets.only(bottom: 8.0),
+            padding: const EdgeInsets.only(bottom: 24.0),
             child: Align(
               alignment: Alignment.bottomCenter,
               child: Container(

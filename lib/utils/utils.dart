@@ -1,7 +1,7 @@
-import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 
 class Utils {
   static Offset localPosition(BuildContext context, Offset globalPosition) {
@@ -19,10 +19,19 @@ class Utils {
     return double.tryParse(s) != null;
   }
 
-  static int getRandomNumber() {
+  /*static int getRandomNumber() {
     Random random = Random();
     // Integer between 0 and 100 (0 can be 100 not)
     int num = random.nextInt(1000);
     return num;
+  }*/
+
+  static String generateRandomUuid() {
+    var uuid = Uuid();
+    return uuid.v4();
+  }
+
+  static String removeWhiteSpace(String text) {
+    return text.split(' ').join('');
   }
 }

@@ -13,7 +13,7 @@ import 'package:citizen_lab/entries/tools/calculator_page.dart';
 import 'package:citizen_lab/entries/tools/geolocation_page.dart';
 import 'package:citizen_lab/entries/tools/stopwatch/stopwatch_page.dart';
 import 'package:citizen_lab/home/home_page.dart';
-import 'package:citizen_lab/onboarding/onboarding.dart';
+import 'package:citizen_lab/onboarding/onboarding_page.dart';
 import 'package:citizen_lab/projects/create_project_page.dart';
 import 'package:citizen_lab/splash_page.dart';
 import 'package:flutter/material.dart';
@@ -105,7 +105,7 @@ class RouteGenerator {
           break;*/
         case textPage:
           page = TextPage(
-            projectRandom: args['projectRandom'],
+            uuid: args['projectRandom'],
             //projectId: args['projectId'],
             //projectTitle: args['projectTitle'],
             note: args['note'],
@@ -114,7 +114,7 @@ class RouteGenerator {
           break;
         case imagePage:
           page = ImagePage(
-            projectRandom: args['projectRandom'],
+            uuid: args['projectRandom'],
             //projectId: args['projectId'],
             //projectTitle: args['projectTitle'],
             note: args['note'],
@@ -123,7 +123,7 @@ class RouteGenerator {
           break;
         case tablePage:
           page = TablePage(
-            projectRandom: args['projectRandom'],
+            uuid: args['projectRandom'],
             //projectId: args['projectId'],
             //projectTitle: args['projectTitle'],
             note: args['note'],
@@ -181,7 +181,7 @@ class RouteGenerator {
           break;
         case linkingPage:
           page = WeblinkPage(
-            projectRandom: args['projectRandom'],
+            uuid: args['projectRandom'],
             //projectId: args['projectId'],
             //projectTitle: args['projectTitle'],
             note: args['note'],
@@ -205,7 +205,7 @@ class RouteGenerator {
           break;
         case audioRecordPage:
           page = AudioRecordPage(
-            projectRandom: args['projectRandom'],
+            uuid: args['projectRandom'],
             note: args['note'],
           );
           route = routeAudioRecordPage;

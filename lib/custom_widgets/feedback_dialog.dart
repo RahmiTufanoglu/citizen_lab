@@ -21,7 +21,7 @@ class FeedbackDialog extends StatefulWidget {
     this.iconButtonLeft = Icons.email,
     this.iconButtonRight = Icons.public,
     @required this.url,
-  });
+  }) : assert(url != null);
 
   @override
   _FeedbackDialogState createState() => _FeedbackDialogState();

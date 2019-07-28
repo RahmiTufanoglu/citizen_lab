@@ -21,7 +21,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
   final _formKey = GlobalKey<FormState>();
   final _titleEditingController = TextEditingController();
   final _descEditingController = TextEditingController();
-  final _projectDb = DatabaseProvider.db;
+  final _projectDb = DatabaseHelper.db;
 
   ThemeChangerProvider _themeChanger;
   List<Project> _projectList = [];
@@ -78,13 +78,15 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
 
   @override
   void dispose() {
-    super.dispose();
     _titleEditingController.dispose();
     _descEditingController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    _themeChanger = Provider.of<ThemeChangerProvider>(context);
+
     return Scaffold(
       key: _snackBarKey,
       appBar: _buildAppBar(),
@@ -94,10 +96,12 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
   }
 
   Widget _buildAppBar() {
-    _themeChanger = Provider.of<ThemeChangerProvider>(context);
+    final String back = 'Zurück';
+    final String createExperiment = 'Experiment erstellen';
+
     return AppBar(
       leading: IconButton(
-        tooltip: 'Zurück',
+        tooltip: back,
         icon: Icon(Icons.arrow_back),
         onPressed: () => Navigator.pop(context),
       ),
@@ -107,7 +111,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
           width: double.infinity,
           child: Tooltip(
             message: create_project,
-            child: Text('Experiment erstellen'),
+            child: Text(createExperiment),
           ),
         ),
       ),
@@ -278,7 +282,8 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
 
     Project project = Project(
       _titleEditingController.text,
-      Utils.getRandomNumber(),
+      //Utils.getRandomNumber(),
+      Utils.generateRandomUuid(),
       _descEditingController.text,
       dateFormatted(),
       dateFormatted(),

@@ -20,7 +20,7 @@ class ProjectPage extends StatefulWidget {
 
 class _ProjectPageState extends State<ProjectPage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  final _projectDb = DatabaseProvider.db;
+  final _projectDb = DatabaseHelper.db;
   final List<Project> _projectList = [];
 
   ThemeChangerProvider _themeChanger;
@@ -138,27 +138,27 @@ class _ProjectPageState extends State<ProjectPage> {
     return await showDialog(
       context: context,
       builder: (context) => AlarmDialog(
-            text: 'Alle Projekte löschen?',
-            icon: Icons.warning,
-            onTap: () {
-              if (_projectList.isNotEmpty) {
-                _projectDb.deleteAllProjects();
-                _scaffoldKey.currentState.showSnackBar(
-                  _buildSnackBar(text: 'Projekte gelöscht.'),
-                );
-              } else {
-                _scaffoldKey.currentState.showSnackBar(
-                  _buildSnackBar(text: 'Nichts gelöscht.'),
-                );
-              }
+        text: 'Alle Projekte löschen?',
+        icon: Icons.warning,
+        onTap: () {
+          if (_projectList.isNotEmpty) {
+            _projectDb.deleteAllProjects();
+            _scaffoldKey.currentState.showSnackBar(
+              _buildSnackBar(text: 'Projekte gelöscht.'),
+            );
+          } else {
+            _scaffoldKey.currentState.showSnackBar(
+              _buildSnackBar(text: 'Nichts gelöscht.'),
+            );
+          }
 
-              setState(() {
-                _projectList.clear();
-              });
+          setState(() {
+            _projectList.clear();
+          });
 
-              Navigator.pop(context);
-            },
-          ),
+          Navigator.pop(context);
+        },
+      ),
     );
   }
 
@@ -183,14 +183,14 @@ class _ProjectPageState extends State<ProjectPage> {
       case sort_by_release_date_asc:
         setState(() {
           _projectList.sort(
-            (Project a, Project b) => a.dateCreated.compareTo(b.dateCreated),
+            (Project a, Project b) => a.createdAt.compareTo(b.createdAt),
           );
         });
         break;
       case sort_by_release_date_desc:
         setState(() {
           _projectList.sort(
-            (Project a, Project b) => b.dateCreated.compareTo(a.dateCreated),
+            (Project a, Project b) => b.createdAt.compareTo(a.createdAt),
           );
         });
         break;
@@ -279,53 +279,52 @@ class _ProjectPageState extends State<ProjectPage> {
     showDialog(
       context: context,
       builder: (context) => SimpleDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(8.0)),
-            ),
-            contentPadding: EdgeInsets.all(16.0),
-            titlePadding: EdgeInsets.only(left: 16.0),
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+        ),
+        contentPadding: EdgeInsets.all(16.0),
+        titlePadding: EdgeInsets.only(left: 16.0),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    SizedBox(height: 16.0),
-                    Text(
-                      '$createdAt: '
-                      '${_projectList[index].dateCreated}',
-                      style: TextStyle(
-                          fontSize: 14.0, fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(height: 16.0),
-                  ],
+                SizedBox(height: 16.0),
+                Text(
+                  '$createdAt: '
+                  '${_projectList[index].createdAt}',
+                  style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold),
                 ),
-                IconButton(
-                  icon: Icon(Icons.close),
-                  onPressed: () => Navigator.pop(context),
-                ),
+                SizedBox(height: 16.0),
               ],
             ),
-            children: <Widget>[
-              Text(
-                '$title:',
-                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 8.0),
-              Text(_projectList[index].title, style: TextStyle(fontSize: 16.0)),
-              SizedBox(height: 32.0),
-              Text(
-                '$desc:',
-                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 8.0),
-              Text(
-                _projectList[index].description,
-                style: TextStyle(fontSize: 16.0),
-              ),
-              SizedBox(height: 8.0),
-            ],
+            IconButton(
+              icon: Icon(Icons.close),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ],
+        ),
+        children: <Widget>[
+          Text(
+            '$title:',
+            style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
           ),
+          SizedBox(height: 8.0),
+          Text(_projectList[index].title, style: TextStyle(fontSize: 16.0)),
+          SizedBox(height: 32.0),
+          Text(
+            '$desc:',
+            style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 8.0),
+          Text(
+            _projectList[index].description,
+            style: TextStyle(fontSize: 16.0),
+          ),
+          SizedBox(height: 8.0),
+        ],
+      ),
     );
   }
 

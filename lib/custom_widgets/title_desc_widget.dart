@@ -18,7 +18,7 @@ class TitleDescWidget extends StatefulWidget {
   final titleEditingController;
   final descEditingController;
   final Function onWillPop;
-  final DatabaseProvider db;
+  final DatabaseHelper db;
 
   TitleDescWidget({
     @required this.titleBloc,
@@ -29,7 +29,11 @@ class TitleDescWidget extends StatefulWidget {
     @required this.descEditingController,
     @required this.onWillPop,
     @required this.db,
-  });
+  })  : assert(titleBloc != null),
+        assert(createdAt != null),
+        assert(titleEditingController != null),
+        assert(descEditingController != null),
+        assert(onWillPop != null);
 
   @override
   _TitleDescWidgetState createState() => _TitleDescWidgetState();
@@ -210,13 +214,13 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
                   stream: widget.titleBloc.title,
                   builder: (BuildContext context, AsyncSnapshot snapshot) =>
                       _buildTextField(
-                        controller: widget.titleEditingController,
-                        maxLength: 100,
-                        maxLines: 1,
-                        hintText: titleHere,
-                        onChanged: widget.titleBloc.changeTitle,
-                        snapshot: snapshot,
-                      ),
+                    controller: widget.titleEditingController,
+                    maxLength: 100,
+                    maxLines: 1,
+                    hintText: titleHere,
+                    onChanged: widget.titleBloc.changeTitle,
+                    snapshot: snapshot,
+                  ),
                 ),
                 Divider(color: Colors.black),
                 Text(

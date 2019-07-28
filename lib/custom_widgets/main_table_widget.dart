@@ -14,7 +14,11 @@ class MainTableWidet extends StatefulWidget {
     @required this.row,
     @required this.textEditingController,
     @required this.generateTable,
-  });
+  })  : assert(onWillPop != null),
+        assert(column != null),
+        assert(row != null),
+        assert(textEditingController != null),
+        assert(generateTable != null);
 
   @override
   _MainTableWidetState createState() => _MainTableWidetState();

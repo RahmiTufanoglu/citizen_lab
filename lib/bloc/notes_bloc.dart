@@ -17,48 +17,48 @@ class NotesBloc implements BaseBloc {
     _notesController.close();
   }
 
-  void getNotes({@required int random, String order}) async {
+  void getNotes({@required String uuid, String order}) async {
     //_notesController.sink.add(await DatabaseProvider().getAllNotes());
     _notesController.sink.add(
-      await DatabaseProvider.db.getNotesOfProject(random: random),
+      await DatabaseHelper.db.getNotesOfProject(uuid: uuid),
     );
   }
 
   NotesBloc({
-    @required int random,
+    @required String uuid,
     String order,
   }) {
-    getNotes(random: random, order: order);
+    getNotes(uuid: uuid, order: order);
   }
 
   void blockUnblock(Note note) {
     //DatabaseProvider().blockOrUnblock(note);
-    getNotes(random: note.projectRandom);
+    getNotes(uuid: note.uuid);
   }
 
   void add(Note note) {
     if (note != null) {
-      DatabaseProvider.db.insertNote(note: note);
-      getNotes(random: note.projectRandom);
+      DatabaseHelper.db.insertNote(note: note);
+      getNotes(uuid: note.uuid);
     }
   }
 
   void update(Note note) {
     if (note != null) {
-      DatabaseProvider.db.updateNote(newNote: note);
-      getNotes(random: note.projectRandom);
+      DatabaseHelper.db.updateNote(newNote: note);
+      getNotes(uuid: note.uuid);
     }
   }
 
   void delete(Note note) {
-    DatabaseProvider.db.deleteNote(id: note.id);
-    getNotes(random: note.projectRandom);
+    DatabaseHelper.db.deleteNote(id: note.id);
+    getNotes(uuid: note.uuid);
   }
 
-  void deleteAllNotesFromProject(List<Note> notes, int random) {
-    DatabaseProvider.db.deleteAllNotesFromProject(random: random);
+  void deleteAllNotesFromProject(List<Note> notes, String uuid) {
+    DatabaseHelper.db.deleteAllNotesFromProject(uuid: uuid);
     for (int i = 0; i < notes.length; i++) {
-      getNotes(random: notes[i].projectRandom);
+      getNotes(uuid: notes[i].uuid);
     }
   }
 
@@ -71,7 +71,7 @@ class NotesBloc implements BaseBloc {
       (Note a, Note b) =>
           a.title.toLowerCase().compareTo(b.title.toLowerCase()),
     );
-    getNotes(random: null);
+    getNotes(uuid: null);
   }
 
   void sortByTitleDesc(List<Note> notes) {
@@ -83,13 +83,13 @@ class NotesBloc implements BaseBloc {
 
   void sortByReleaseDateArc(List<Note> notes) {
     notes.toList().sort(
-          (Note a, Note b) => a.dateCreated.compareTo(b.dateCreated),
+          (Note a, Note b) => a.createdAt.compareTo(b.createdAt),
         );
   }
 
   void sortByReleaseDateDesc(List<Note> notes) {
     notes.toList().sort(
-          (Note a, Note b) => b.dateCreated.compareTo(a.dateCreated),
+          (Note a, Note b) => b.createdAt.compareTo(a.createdAt),
         );
   }
 }

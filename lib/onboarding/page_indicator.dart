@@ -15,13 +15,9 @@ class PageIndicator extends StatelessWidget {
       width: 100.0,
       height: 25.0,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(
-          Radius.circular(16.0),
-        ),
+        borderRadius: BorderRadius.all(Radius.circular(16.0)),
       ),
-      child: Row(
-        children: _buildPageIndicators(),
-      ),
+      child: Row(children: _buildPageIndicators()),
     );
   }
 
@@ -33,11 +29,9 @@ class PageIndicator extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Container(
-          height: 8.0,
+          height: 12.0,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(
-              Radius.circular(16.0),
-            ),
+            borderRadius: BorderRadius.all(Radius.circular(16.0)),
             color: isActive ? softBlue : lightGreen,
           ),
         ),

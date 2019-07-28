@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 
 class NoYesDialog extends StatelessWidget {
-  final Key key;
   final String text;
 
   final GestureTapCallback onPressed;
 
   NoYesDialog({
-    this.key,
     @required this.text,
     @required this.onPressed,
-  }) : super(key: key);
+  })  : assert(text != null),
+        assert(onPressed != null);
 
   @override
   Widget build(BuildContext context) {

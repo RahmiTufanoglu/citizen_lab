@@ -1,10 +1,9 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:citizen_lab/utils/date_formater.dart';
+import 'package:flutter/material.dart';
 
 class SimpleTimerPage extends StatefulWidget {
-  final Key key;
   final String createdAt;
   final TextEditingController textEditingController;
   final TextEditingController descEditingController;
@@ -14,7 +13,6 @@ class SimpleTimerPage extends StatefulWidget {
   final bool descExists;
 
   SimpleTimerPage({
-    this.key,
     @required this.createdAt,
     @required this.textEditingController,
     @required this.descEditingController,
@@ -22,7 +20,13 @@ class SimpleTimerPage extends StatefulWidget {
     @required this.onPressedUpdate,
     @required this.onPressedClose,
     @required this.descExists,
-  }) : super(key: key);
+  })  : assert(createdAt != null),
+        assert(textEditingController != null),
+        assert(descEditingController != null),
+        assert(onPressedClear != null),
+        assert(onPressedUpdate != null),
+        assert(onPressedClose != null),
+        assert(descExists != null);
 
   @override
   _SimpleTimerPageState createState() => _SimpleTimerPageState();

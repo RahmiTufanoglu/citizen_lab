@@ -2,6 +2,7 @@ import 'package:citizen_lab/custom_widgets/alarm_dialog.dart';
 import 'package:citizen_lab/custom_widgets/dial_floating_action_button.dart';
 import 'package:citizen_lab/custom_widgets/feedback_dialog.dart';
 import 'package:citizen_lab/database/database_provider.dart';
+import 'package:citizen_lab/entries/formulation_item.dart';
 import 'package:citizen_lab/home/main_drawer.dart';
 import 'package:citizen_lab/projects/project.dart';
 import 'package:citizen_lab/projects/project_item.dart';
@@ -33,7 +34,7 @@ class _HomePageState extends State<HomePage>
   bool _valueSwitch = false;
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  final _projectDb = DatabaseProvider.db;
+  final _projectDb = DatabaseHelper.db;
   final List<Project> _projectList = [];
 
   @override
@@ -58,8 +59,6 @@ class _HomePageState extends State<HomePage>
     Theme.of(context).brightness == appDarkTheme().brightness
         ? _valueSwitch = true
         : _valueSwitch = false;
-
-    print(_valueSwitch.toString());
   }
 
   @override
@@ -72,7 +71,7 @@ class _HomePageState extends State<HomePage>
       appBar: _buildAppBar(),
       drawer: _buildDrawer(),
       body: _buildBody(),
-      floatingActionButton: _buildFab(),
+      floatingActionButton: _buildFabs(),
     );
   }
 
@@ -132,21 +131,27 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  Widget _buildFab() {
-    /*return FloatingActionButton(
-      child: Icon(Icons.add),
-      onPressed: () {
-        Navigator.pushNamed(
-          context,
-          RouteGenerator.createProject,
-        );
-      },
-    );*/
-    return DialFloatingActionButton(
-      iconList: projectIconList,
-      //colorList: projectColorList,
-      stringList: projectStringList,
-      function: _createProject,
+  Widget _buildFabs() {
+    return Padding(
+      padding: EdgeInsets.only(left: 32.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: <Widget>[
+          FloatingActionButton(
+            heroTag: null,
+            child: Icon(Icons.keyboard_arrow_up),
+            tooltip: '',
+            onPressed: () => _openModalBottomSheet(),
+          ),
+          DialFloatingActionButton(
+            iconList: projectIconList,
+            //colorList: projectColorList,
+            stringList: projectStringList,
+            function: _createProject,
+          ),
+        ],
+      ),
     );
   }
 
@@ -187,31 +192,31 @@ class _HomePageState extends State<HomePage>
     }
   }
 
-  Future<bool> _deleteAllProjects(BuildContext context) async {
-    return await showDialog(
+  void _deleteAllProjects(BuildContext context) {
+    showDialog(
       context: context,
       builder: (context) => AlarmDialog(
-            text: 'Alle Projekte löschen?',
-            icon: Icons.warning,
-            onTap: () {
-              if (_projectList.isNotEmpty) {
-                _projectDb.deleteAllProjects();
-                _scaffoldKey.currentState.showSnackBar(
-                  _buildSnackBar(text: 'Projekte gelöscht.'),
-                );
-              } else {
-                _scaffoldKey.currentState.showSnackBar(
-                  _buildSnackBar(text: 'Nichts gelöscht.'),
-                );
-              }
+        text: 'Alle Projekte löschen?',
+        icon: Icons.warning,
+        onTap: () {
+          if (_projectList.isNotEmpty) {
+            _projectDb.deleteAllProjects();
+            _scaffoldKey.currentState.showSnackBar(
+              _buildSnackBar(text: 'Projekte gelöscht.'),
+            );
+          } else {
+            _scaffoldKey.currentState.showSnackBar(
+              _buildSnackBar(text: 'Nichts gelöscht.'),
+            );
+          }
 
-              setState(() {
-                _projectList.clear();
-              });
+          setState(() {
+            _projectList.clear();
+          });
 
-              Navigator.pop(context);
-            },
-          ),
+          Navigator.pop(context);
+        },
+      ),
     );
   }
 
@@ -238,7 +243,7 @@ class _HomePageState extends State<HomePage>
       case sort_by_release_date_asc:
         setState(() {
           _projectList.sort(
-            (Project a, Project b) => a.dateCreated.compareTo(b.dateCreated),
+            (Project a, Project b) => a.createdAt.compareTo(b.createdAt),
           );
         });
         setSortingOrder(sort_by_release_date_asc);
@@ -246,7 +251,7 @@ class _HomePageState extends State<HomePage>
       case sort_by_release_date_desc:
         setState(() {
           _projectList.sort(
-            (Project a, Project b) => b.dateCreated.compareTo(a.dateCreated),
+            (Project a, Project b) => b.createdAt.compareTo(a.createdAt),
           );
         });
         setSortingOrder(sort_by_release_date_desc);
@@ -283,7 +288,10 @@ class _HomePageState extends State<HomePage>
             child: Align(
               alignment: Alignment.bottomLeft,
               child: Padding(
-                padding: const EdgeInsets.only(left: 16.0, bottom: 8.0),
+                padding: const EdgeInsets.only(
+                  left: 16.0,
+                  bottom: 8.0,
+                ),
                 child: Row(
                   children: <Widget>[
                     Text(
@@ -337,8 +345,7 @@ class _HomePageState extends State<HomePage>
         Builder(
           builder: (BuildContext context) {
             return ExpansionTile(
-              title: null,
-              //leading: Icon(Icons.settings),
+              title: Text(''),
               leading: Icon(
                 Icons.settings,
                 color: Theme.of(context).brightness == appDarkTheme().brightness
@@ -379,6 +386,12 @@ class _HomePageState extends State<HomePage>
                 map['content'] = lorem;
                 _setNavigation(RouteGenerator.aboutPage, map);
               },
+            ),
+            _buildDrawerItem(
+              context: context,
+              icon: Icons.info_outline,
+              title: 'Onboarding',
+              onTap: () => _setNavigation(RouteGenerator.onboardingPage),
             ),
           ],
         ),
@@ -540,55 +553,55 @@ class _HomePageState extends State<HomePage>
     showDialog(
       context: context,
       builder: (context) => SimpleDialog(
-            contentPadding: const EdgeInsets.all(0.0),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(8.0)),
-            ),
-            children: <Widget>[
-              Scrollbar(
-                child: Container(
-                  height: screenHeight / 2,
-                  width: screenWidth / 2,
-                  child: GridView.builder(
-                    padding: const EdgeInsets.all(8.0),
-                    itemCount: cardColors.length,
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 4,
-                    ),
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: FloatingActionButton(
-                          backgroundColor:
-                              Color(cardColors[index].cardBackgroundColor),
-                          onPressed: () {
-                            _updateProject(
-                              project,
-                              cardColors[index].cardBackgroundColor,
-                              cardColors[index].cardItemColor,
-                            );
-                          },
-                        ),
-                      );
-                    },
-                  ),
+        contentPadding: const EdgeInsets.all(0.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+        ),
+        children: <Widget>[
+          Scrollbar(
+            child: Container(
+              height: screenHeight / 2,
+              width: screenWidth / 2,
+              child: GridView.builder(
+                padding: const EdgeInsets.all(8.0),
+                itemCount: cardColors.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 4,
                 ),
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: FloatingActionButton(
+                      backgroundColor:
+                          Color(cardColors[index].cardBackgroundColor),
+                      onPressed: () {
+                        _updateProject(
+                          project,
+                          cardColors[index].cardBackgroundColor,
+                          cardColors[index].cardItemColor,
+                        );
+                      },
+                    ),
+                  );
+                },
               ),
-            ],
+            ),
           ),
+        ],
+      ),
     );
   }
 
   void _updateProject(Project project, int cardColor, int cardTextColor) async {
     Project updatedProject = Project.fromMap({
-      DatabaseProvider.columnProjectId: project.id,
-      DatabaseProvider.columnProjectRandom: project.random,
-      DatabaseProvider.columnProjectTitle: project.title,
-      DatabaseProvider.columnProjectDesc: project.description,
-      DatabaseProvider.columnProjectCreatedAt: project.dateCreated,
-      DatabaseProvider.columnProjectUpdatedAt: dateFormatted(),
-      DatabaseProvider.columnProjectCardColor: cardColor,
-      DatabaseProvider.columnProjectCardTextColor: cardTextColor,
+      DatabaseHelper.columnProjectId: project.id,
+      DatabaseHelper.columnProjectUuid: project.uuid,
+      DatabaseHelper.columnProjectTitle: project.title,
+      DatabaseHelper.columnProjectDesc: project.description,
+      DatabaseHelper.columnProjectCreatedAt: project.createdAt,
+      DatabaseHelper.columnProjectUpdatedAt: dateFormatted(),
+      DatabaseHelper.columnProjectCardColor: cardColor,
+      DatabaseHelper.columnProjectCardTextColor: cardTextColor,
     });
     await _projectDb.updateProject(newProject: updatedProject);
     _loadProjectList(true);
@@ -616,53 +629,52 @@ class _HomePageState extends State<HomePage>
     showDialog(
       context: context,
       builder: (context) => SimpleDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(8.0)),
-            ),
-            contentPadding: EdgeInsets.all(16.0),
-            titlePadding: EdgeInsets.only(left: 16.0),
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+        ),
+        contentPadding: EdgeInsets.all(16.0),
+        titlePadding: EdgeInsets.only(left: 16.0),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    SizedBox(height: 16.0),
-                    Text(
-                      '$createdAt: '
-                      '${_projectList[index].dateCreated}',
-                      style: TextStyle(
-                          fontSize: 14.0, fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(height: 16.0),
-                  ],
+                SizedBox(height: 16.0),
+                Text(
+                  '$createdAt: '
+                  '${_projectList[index].createdAt}',
+                  style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold),
                 ),
-                IconButton(
-                  icon: Icon(Icons.close),
-                  onPressed: () => Navigator.pop(context),
-                ),
+                SizedBox(height: 16.0),
               ],
             ),
-            children: <Widget>[
-              Text(
-                '$title:',
-                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 8.0),
-              Text(_projectList[index].title, style: TextStyle(fontSize: 16.0)),
-              SizedBox(height: 32.0),
-              Text(
-                '$desc:',
-                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 8.0),
-              Text(
-                _projectList[index].description,
-                style: TextStyle(fontSize: 16.0),
-              ),
-              SizedBox(height: 8.0),
-            ],
+            IconButton(
+              icon: Icon(Icons.close),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ],
+        ),
+        children: <Widget>[
+          Text(
+            '$title:',
+            style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
           ),
+          SizedBox(height: 8.0),
+          Text(_projectList[index].title, style: TextStyle(fontSize: 16.0)),
+          SizedBox(height: 32.0),
+          Text(
+            '$desc:',
+            style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 8.0),
+          Text(
+            _projectList[index].description,
+            style: TextStyle(fontSize: 16.0),
+          ),
+          SizedBox(height: 8.0),
+        ],
+      ),
     );
   }
 
@@ -719,6 +731,87 @@ class _HomePageState extends State<HomePage>
     // Add new projects on top of the list without sorting the list
     //if (!newProject) _choiceSortOption(await _getSortingOrder());
     _choiceSortOption(await _getSortingOrder());
+  }
+
+  void _openModalBottomSheet() {
+    List<FormulationItem> experimentItems = [
+      FormulationItem('', Icons.keyboard_arrow_down),
+      FormulationItem('Rechner', Icons.straighten),
+      FormulationItem('Stoppuhr', Icons.timer),
+      FormulationItem('Ortsbestimmung', Icons.location_on),
+    ];
+
+    List<Widget> experimentItemsWidgets = [];
+    for (int i = 0; i < experimentItems.length; i++) {
+      if (i == 0) {
+        experimentItemsWidgets.add(_createTile(experimentItems[i], true));
+      } else {
+        experimentItemsWidgets.add(_createTile(experimentItems[i], false));
+      }
+    }
+
+    _buildMainBottomSheet(experimentItemsWidgets);
+  }
+
+  void _buildMainBottomSheet(List<Widget> experimentItemsWidgets) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) => ListView(
+        shrinkWrap: true,
+        children: experimentItemsWidgets,
+      ),
+    );
+  }
+
+  Widget _createTile(FormulationItem experimentItem, bool centerIcon) {
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final double tileHeight = screenHeight / 12;
+
+    return Material(
+      child: InkWell(
+        child: Container(
+          height: tileHeight,
+          child: Stack(
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Center(
+                  child: (!centerIcon)
+                      ? Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: Text(
+                                experimentItem.name,
+                                style: TextStyle(fontSize: 16.0),
+                              ),
+                            ),
+                            Expanded(
+                              child: Icon(experimentItem.icon, size: 24.0),
+                            ),
+                          ],
+                        )
+                      : Center(
+                          child: Icon(experimentItem.icon, size: 24.0),
+                        ),
+                ),
+              ),
+              Divider(height: 1.0, color: Colors.black),
+            ],
+          ),
+        ),
+        onTap: () {
+          if (experimentItem.name.isEmpty) {
+            Navigator.pop(context);
+          } else if (experimentItem.name == 'Rechner') {
+            Navigator.popAndPushNamed(context, RouteGenerator.calculatorPage);
+          } else if (experimentItem.name == 'Stoppuhr') {
+            Navigator.popAndPushNamed(context, RouteGenerator.stopwatchPage);
+          } else if (experimentItem.name == 'Ortsbestimmung') {
+            Navigator.popAndPushNamed(context, RouteGenerator.sensorPage);
+          }
+        },
+      ),
+    );
   }
 
   Future<void> _deleteProject(int index) async {

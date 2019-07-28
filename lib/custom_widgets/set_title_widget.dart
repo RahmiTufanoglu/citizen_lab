@@ -7,7 +7,8 @@ class SetTitleWidget extends StatefulWidget {
   SetTitleWidget({
     @required this.titleTextEditingController,
     @required this.onPressed,
-  });
+  })  : assert(titleTextEditingController != null),
+        assert(onPressed != null);
 
   @override
   _SetTitleWidgetState createState() => _SetTitleWidgetState();

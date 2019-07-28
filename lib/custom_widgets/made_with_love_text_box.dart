@@ -15,7 +15,7 @@ class MadeWithLoveTextBox extends StatelessWidget {
     this.iconSize = 16.0,
     this.iconRightPadding = 4.0,
     this.iconLeftPadding = 4.0,
-  });
+  }) : assert(place != null);
 
   @override
   Widget build(BuildContext context) {

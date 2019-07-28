@@ -4,7 +4,7 @@ import 'entries/note.dart';
 
 class NoteModel with ChangeNotifier implements NoteBase {
   int id;
-  int projectRandom;
+  String uuid;
   String type;
   String title;
   String description;
@@ -19,40 +19,40 @@ class NoteModel with ChangeNotifier implements NoteBase {
   @override
   void saveNote(Note note) {
     this.id = note.id;
-    this.projectRandom = note.projectRandom;
+    this.uuid = note.uuid;
     this.type = note.type;
     this.title = note.title;
     this.description = note.description;
-    this.content = note.content;
-    this.dateCreated = note.dateCreated;
-    this.dateEdited = note.dateEdited;
-    this.edited = note.firstTime;
+    this.content = note.filePath;
+    this.dateCreated = note.createdAt;
+    this.dateEdited = note.updatedAt;
+    this.edited = note.isFirstTime;
   }
 
   @override
   void updateNote(Note note) {
     this.id = note.id;
-    this.projectRandom = note.projectRandom;
+    this.uuid = note.uuid;
     this.type = note.type;
     this.title = note.title;
     this.description = note.description;
-    this.content = note.content;
-    this.dateCreated = note.dateCreated;
-    this.dateEdited = note.dateEdited;
-    this.edited = note.firstTime;
+    this.content = note.filePath;
+    this.dateCreated = note.createdAt;
+    this.dateEdited = note.updatedAt;
+    this.edited = note.isFirstTime;
   }
 
   @override
   void deleteNote(Note note) {
     this.id = note.id;
-    this.projectRandom = note.projectRandom;
+    this.uuid = note.uuid;
     this.type = note.type;
     this.title = note.title;
     this.description = note.description;
-    this.content = note.content;
-    this.dateCreated = note.dateCreated;
-    this.dateEdited = note.dateEdited;
-    this.edited = note.firstTime;
+    this.content = note.filePath;
+    this.dateCreated = note.createdAt;
+    this.dateEdited = note.updatedAt;
+    this.edited = note.isFirstTime;
   }
 }
 

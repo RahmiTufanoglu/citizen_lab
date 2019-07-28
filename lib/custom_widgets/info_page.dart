@@ -13,7 +13,10 @@ class InfoPage extends StatefulWidget {
     @required this.tabLength,
     @required this.tabs,
     @required this.tabChildren,
-  });
+  })  : assert(title != null),
+        assert(tabLength != null),
+        assert(tabs != null),
+        assert(tabChildren != null);
 
   @override
   _InfoPageState createState() => _InfoPageState();

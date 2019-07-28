@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/custom_widgets/simple_timer_dialog.dart';
-import 'package:citizen_lab/custom_widgets/title_desc_widget.dart';
 import 'package:citizen_lab/database/database_provider.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/utils/date_formater.dart';
@@ -16,68 +15,62 @@ import 'package:webview_flutter/webview_flutter.dart';
 import '../note.dart';
 
 class WeblinkPage extends StatefulWidget {
+  final Key key;
   final Note note;
-  final int projectRandom;
+  final String uuid;
 
   WeblinkPage({
+    this.key,
     @required this.note,
-    @required this.projectRandom,
-  });
+    @required this.uuid,
+  }) : super(key: key);
 
   @override
   _WeblinkPageState createState() => _WeblinkPageState();
 }
 
 class _WeblinkPageState extends State<WeblinkPage> {
-  static int _initialPage = 1;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _titleEditingController = TextEditingController();
   final _descEditingController = TextEditingController();
-  final _pageController = PageController(initialPage: _initialPage);
   final _webViewController = Completer<WebViewController>();
-  final _key = UniqueKey();
-  final _noteDb = DatabaseProvider.db;
+  final _uniqueKey = UniqueKey();
 
   ThemeChangerProvider _themeChanger;
-  String _url = 'https://www.google.de';
-  String _title;
-  String _createdAt;
+  String _url = '';
+  String _title = '';
+  String _createdAt = '';
 
   @override
   void initState() {
+    super.initState();
+
     if (widget.note != null) {
       _titleEditingController.text = widget.note.title;
       _title = _titleEditingController.text;
       _descEditingController.text = widget.note.description;
-      _url = widget.note.content;
-      _createdAt = widget.note.dateCreated;
+      _url = widget.note.filePath;
+      _createdAt = widget.note.createdAt;
     } else {
+      _url = 'https://www.google.de';
       _createdAt = dateFormatted();
     }
 
     _titleEditingController.addListener(() {
-      setState(() {
-        if (_titleEditingController.text.isNotEmpty) {
-          _title = _titleEditingController.text;
-        }
-      });
+      setState(() => _title = _titleEditingController.text);
     });
-
-    super.initState();
   }
 
   @override
   void dispose() {
     _titleEditingController.dispose();
     _descEditingController.dispose();
-    _pageController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
-    //_themeChanger.checkIfDarkModeEnabled(context);
 
     return Scaffold(
       key: _scaffoldKey,
@@ -89,7 +82,7 @@ class _WeblinkPageState extends State<WeblinkPage> {
 
   Widget _buildAppBar() {
     final String back = 'Zurück';
-    final String linking = 'Verlinking';
+    final String linking = 'Weblink';
 
     return AppBar(
       leading: IconButton(
@@ -120,10 +113,10 @@ class _WeblinkPageState extends State<WeblinkPage> {
     );
   }
 
-  Future<void> _backToHomePage() async {
+  void _backToHomePage() {
     final String cancel = 'Notiz abbrechen und zur Hauptseite zurückkehren?';
 
-    await showDialog(
+    showDialog(
       context: context,
       builder: (_) {
         return NoYesDialog(
@@ -140,78 +133,19 @@ class _WeblinkPageState extends State<WeblinkPage> {
   }
 
   Widget _buildBody() {
-    final double screenWidth = MediaQuery.of(context).size.width;
-
     return SafeArea(
       child: WillPopScope(
         onWillPop: () => _saveNote(),
         child: WebView(
-          key: _key,
+          key: _uniqueKey,
           javascriptMode: JavascriptMode.unrestricted,
           initialUrl: _url,
           onWebViewCreated: (WebViewController webViewController) {
             _webViewController.complete(webViewController);
           },
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBody2() {
-    final double screenWidth = MediaQuery.of(context).size.width;
-
-    return SafeArea(
-      child: WillPopScope(
-        onWillPop: () => _saveNote(),
-        child: Stack(
-          children: <Widget>[
-            (_initialPage == 1)
-                ? Positioned(
-                    top: 0.0,
-                    right: 0.0,
-                    child: Container(
-                      width: screenWidth / 2,
-                      height: 2.0,
-                      color: Colors.grey,
-                    ),
-                  )
-                : Positioned(
-                    top: 0.0,
-                    left: 0.0,
-                    child: Container(
-                      width: screenWidth / 2,
-                      height: 2.0,
-                      color: Colors.grey,
-                    ),
-                  ),
-            PageView(
-              controller: _pageController,
-              onPageChanged: (int page) {
-                setState(() {
-                  _initialPage = page;
-                });
-              },
-              children: <Widget>[
-                TitleDescWidget(
-                  title: _title,
-                  createdAt: _createdAt,
-                  titleEditingController: _titleEditingController,
-                  descEditingController: _descEditingController,
-                  onWillPop: () {},
-                  titleChanger: null,
-                  titleBloc: null,
-                ),
-                WebView(
-                  key: _key,
-                  javascriptMode: JavascriptMode.unrestricted,
-                  initialUrl: _url,
-                  onWebViewCreated: (WebViewController webViewController) {
-                    _webViewController.complete(webViewController);
-                  },
-                ),
-              ],
-            ),
-          ],
+          onPageFinished: (String url) {
+            debugPrint('$url finished loading.');
+          },
         ),
       ),
     );
@@ -228,18 +162,13 @@ class _WeblinkPageState extends State<WeblinkPage> {
             child: Icon(Icons.description),
             onPressed: () => _showEditDialog(),
           ),
-          /*FloatingActionButton(
-            heroTag: null,
-            child: Icon(Icons.content_copy),
-            onPressed: () => _copyContent(),
-          ),*/
-          _buildWebView(),
+          _buildCopyCurrentLinkFab(),
         ],
       ),
     );
   }
 
-  Widget _buildWebView() {
+  Widget _buildCopyCurrentLinkFab() {
     return FutureBuilder<WebViewController>(
       future: _webViewController.future,
       builder: (
@@ -251,11 +180,12 @@ class _WeblinkPageState extends State<WeblinkPage> {
             heroTag: null,
             child: Icon(Icons.content_copy),
             onPressed: () async {
-              //var url = await _webViewController.data.currentUrl;
               _url = await snapshot.data.currentUrl();
               _copyContent();
             },
           );
+        } else {
+          return Container();
         }
       },
     );
@@ -282,42 +212,39 @@ class _WeblinkPageState extends State<WeblinkPage> {
     );
   }
 
-  Future<void> _showEditDialog() async {
+  Future _showEditDialog() async {
     final String oldTitle = _title;
 
-    await showDialog(
+    showDialog(
       context: context,
       builder: (context) => SimpleTimerDialog(
-            createdAt: _createdAt,
-            textEditingController: _titleEditingController,
-            descEditingController: _descEditingController,
-            descExists: true,
-            onPressedClose: () {
-              _titleEditingController.text = oldTitle;
-              Navigator.pop(context);
-            },
-            onPressedClear: () {
-              if (_titleEditingController.text.isNotEmpty) {
-                _titleEditingController.clear();
-              }
-
-              if (_descEditingController.text.isNotEmpty) {
-                _descEditingController.clear();
-              }
-            },
-            onPressedUpdate: () => Navigator.pop(context),
-          ),
+        createdAt: _createdAt,
+        textEditingController: _titleEditingController,
+        descEditingController: _descEditingController,
+        descExists: true,
+        onPressedClose: () {
+          _titleEditingController.text = oldTitle;
+          Navigator.pop(context);
+        },
+        onPressedClear: () {
+          _titleEditingController.clear();
+          _descEditingController.clear();
+        },
+        onPressedUpdate: () => Navigator.pop(context),
+      ),
     );
   }
 
-  Future<void> _saveNote() async {
-    if (_titleEditingController.text.isNotEmpty && _url.isNotEmpty) {
+  Future _saveNote() async {
+    //if (_titleEditingController.text.isNotEmpty && _url.isNotEmpty) {
+    if (_url.isNotEmpty) {
       if (widget.note == null) {
         Note note = Note(
-          //widget.projectTitle,
-          widget.projectRandom,
+          widget.uuid,
           'Verlinkung',
-          _titleEditingController.text,
+          _titleEditingController.text.isEmpty
+              ? 'Weblink'
+              : _titleEditingController.text,
           _descEditingController.text,
           _url,
           _createdAt,
@@ -334,30 +261,29 @@ class _WeblinkPageState extends State<WeblinkPage> {
       }
       //Navigator.pop(context, true);
     } else {
-      _scaffoldKey.currentState.showSnackBar(
+      /*_scaffoldKey.currentState.showSnackBar(
         _buildSnackBarWithButton(
           text: 'Bitte einen Titel eingeben\nNotiz abbrechen?',
           onPressed: () => Navigator.pop(context),
         ),
-      );
+      );*/
     }
   }
 
-  Future<void> _updateNote(Note note) async {
+  Future _updateNote(Note note) async {
     Note newNote = Note.fromMap({
-      DatabaseProvider.columnNoteId: note.id,
-      //ProjectDatabaseHelper.columnProjectId: note.projectId,
-      DatabaseProvider.columnProjectRandom: note.projectRandom,
-      DatabaseProvider.columnNoteType: note.type,
-      DatabaseProvider.columnNoteTitle: _titleEditingController.text,
-      DatabaseProvider.columnNoteDescription: _descEditingController.text,
-      DatabaseProvider.columnNoteContent: _url,
-      DatabaseProvider.columnNoteCreatedAt: note.dateCreated,
-      DatabaseProvider.columnNoteUpdatedAt: dateFormatted(),
-      DatabaseProvider.columnNoteFirstTime: 1,
-      DatabaseProvider.columnNoteEdited: 0,
-      DatabaseProvider.columnNoteCardColor: note.cardColor,
-      DatabaseProvider.columnNoteCardTextColor: note.cardTextColor,
+      DatabaseHelper.columnNoteId: note.id,
+      DatabaseHelper.columnProjectUuid: note.uuid,
+      DatabaseHelper.columnNoteType: note.type,
+      DatabaseHelper.columnNoteTitle: _titleEditingController.text,
+      DatabaseHelper.columnNoteDescription: _descEditingController.text,
+      DatabaseHelper.columnNoteContent: _url,
+      DatabaseHelper.columnNoteCreatedAt: note.createdAt,
+      DatabaseHelper.columnNoteUpdatedAt: dateFormatted(),
+      DatabaseHelper.columnNoteIsFirstTime: 1,
+      DatabaseHelper.columnNoteIsEdited: 0,
+      DatabaseHelper.columnNoteCardColor: note.cardColor,
+      DatabaseHelper.columnNoteCardTextColor: note.cardTextColor,
     });
     //await _noteDb.updateNote(newNote: newNote);
     Navigator.pop(context, newNote);
@@ -377,7 +303,7 @@ class _WeblinkPageState extends State<WeblinkPage> {
     );
   }
 
-  Widget _buildSnackBarWithButton({
+/*Widget _buildSnackBarWithButton({
     @required String text,
     @required GestureTapCallback onPressed,
   }) {
@@ -430,5 +356,5 @@ class _WeblinkPageState extends State<WeblinkPage> {
         ],
       ),
     );
-  }
+  }*/
 }

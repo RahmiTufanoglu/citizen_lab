@@ -78,7 +78,7 @@ class CustomLocalizationDelegate
   bool shouldReload(CustomLocalizationDelegate old) => false;
 
   @override
-  String toString() => 'CustomLocalization.delegate(en_US)';
+  String toString() => 'CustomLocalization.delegate(de_DE)';
 }
 
 class CustomLocalization extends DefaultMaterialLocalizations {

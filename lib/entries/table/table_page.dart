@@ -21,11 +21,11 @@ import 'package:provider/provider.dart';
 
 class TablePage extends StatefulWidget {
   final Note note;
-  final int projectRandom;
+  final String uuid;
 
   TablePage({
     @required this.note,
-    @required this.projectRandom,
+    @required this.uuid,
   });
 
   @override
@@ -55,8 +55,8 @@ class _TablePageState extends State<TablePage> {
       _titleEditingController.text = widget.note.title;
       _title = _titleEditingController.text;
       _descriptionEditingController.text = widget.note.description;
-      _csv = File(widget.note.content);
-      _createdAt = widget.note.dateCreated;
+      _csv = File(widget.note.filePath);
+      _createdAt = widget.note.createdAt;
 
       if (_column != null && _row != null) {
         List<List<dynamic>> csvList = _csvToList(_csv);
@@ -181,14 +181,14 @@ class _TablePageState extends State<TablePage> {
     showDialog(
       context: context,
       builder: (_) => NoYesDialog(
-            text: cancel,
-            onPressed: () {
-              Navigator.popUntil(
-                context,
-                ModalRoute.withName(RouteGenerator.routeHomePage),
-              );
-            },
-          ),
+        text: cancel,
+        onPressed: () {
+          Navigator.popUntil(
+            context,
+            ModalRoute.withName(RouteGenerator.routeHomePage),
+          );
+        },
+      ),
     );
   }
 
@@ -326,7 +326,7 @@ class _TablePageState extends State<TablePage> {
           //path = _csv.path;
         }
         Note note = Note(
-          widget.projectRandom,
+          widget.uuid,
           'Tabelle',
           _titleEditingController.text,
           _descriptionEditingController.text,
@@ -358,19 +358,18 @@ class _TablePageState extends State<TablePage> {
 
   Future<void> _updateNote(Note note, String path) async {
     Note newNote = Note.fromMap({
-      DatabaseProvider.columnNoteId: note.id,
-      DatabaseProvider.columnProjectRandom: note.projectRandom,
-      DatabaseProvider.columnNoteType: note.type,
-      DatabaseProvider.columnNoteTitle: _titleEditingController.text,
-      DatabaseProvider.columnNoteDescription:
-          _descriptionEditingController.text,
-      DatabaseProvider.columnNoteContent: path,
-      DatabaseProvider.columnNoteCreatedAt: note.dateCreated,
-      DatabaseProvider.columnNoteUpdatedAt: dateFormatted(),
-      DatabaseProvider.columnNoteFirstTime: 1,
-      DatabaseProvider.columnNoteEdited: 0,
-      DatabaseProvider.columnNoteCardColor: note.cardColor,
-      DatabaseProvider.columnNoteCardTextColor: note.cardTextColor,
+      DatabaseHelper.columnNoteId: note.id,
+      DatabaseHelper.columnProjectUuid: note.uuid,
+      DatabaseHelper.columnNoteType: note.type,
+      DatabaseHelper.columnNoteTitle: _titleEditingController.text,
+      DatabaseHelper.columnNoteDescription: _descriptionEditingController.text,
+      DatabaseHelper.columnNoteContent: path,
+      DatabaseHelper.columnNoteCreatedAt: note.createdAt,
+      DatabaseHelper.columnNoteUpdatedAt: dateFormatted(),
+      DatabaseHelper.columnNoteIsFirstTime: 1,
+      DatabaseHelper.columnNoteIsEdited: 0,
+      DatabaseHelper.columnNoteCardColor: note.cardColor,
+      DatabaseHelper.columnNoteCardTextColor: note.cardTextColor,
     });
     Navigator.pop(context, newNote);
   }

@@ -9,7 +9,9 @@ class TableWidget extends StatefulWidget {
     @required this.listTextEditingController,
     @required this.column,
     @required this.row,
-  });
+  })  : assert(listTextEditingController != null),
+        assert(column != null),
+        assert(row != null);
 
   @override
   _TableWidgetState createState() => _TableWidgetState();
@@ -35,22 +37,22 @@ class _TableWidgetState extends State<TableWidget> {
       ),
       itemCount: size == null ? widget.column * widget.row : size,
       itemBuilder: (BuildContext context, int index) => Container(
-            decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
-            child: TextFormField(
-              maxLines: 4,
-              controller: widget.listTextEditingController[index],
-              decoration: InputDecoration(
-                hintText: index.toString(),
-                contentPadding: EdgeInsets.all(8.0),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.transparent),
-                ),
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.transparent),
-                ),
-              ),
+        decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
+        child: TextFormField(
+          maxLines: 4,
+          controller: widget.listTextEditingController[index],
+          decoration: InputDecoration(
+            hintText: index.toString(),
+            contentPadding: EdgeInsets.all(8.0),
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.transparent),
+            ),
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.transparent),
             ),
           ),
+        ),
+      ),
     );
   }
 }

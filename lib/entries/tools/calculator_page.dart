@@ -62,47 +62,50 @@ class _CalculatorPageState extends State<CalculatorPage> {
               ),
             ),
             Divider(),
-            Column(
-              children: [
-                Row(
-                  children: [
-                    _buildButton('7'),
-                    _buildButton('8'),
-                    _buildButton('9'),
-                    _buildButton('/')
-                  ],
-                ),
-                Row(
-                  children: [
-                    _buildButton('4'),
-                    _buildButton('5'),
-                    _buildButton('6'),
-                    _buildButton('X')
-                  ],
-                ),
-                Row(
-                  children: [
-                    _buildButton('1'),
-                    _buildButton('2'),
-                    _buildButton('3'),
-                    _buildButton('-')
-                  ],
-                ),
-                Row(
-                  children: [
-                    _buildButton('.'),
-                    _buildButton('0'),
-                    _buildButton('00'),
-                    _buildButton('+')
-                  ],
-                ),
-                Row(
-                  children: [
-                    _buildButton('CLEAR'),
-                    _buildButton('='),
-                  ],
-                )
-              ],
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      _buildButton('7'),
+                      _buildButton('8'),
+                      _buildButton('9'),
+                      _buildButton('/')
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      _buildButton('4'),
+                      _buildButton('5'),
+                      _buildButton('6'),
+                      _buildButton('X')
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      _buildButton('1'),
+                      _buildButton('2'),
+                      _buildButton('3'),
+                      _buildButton('-')
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      _buildButton('.'),
+                      _buildButton('0'),
+                      _buildButton('00'),
+                      _buildButton('+')
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      _buildButton('CLEAR'),
+                      _buildButton('='),
+                    ],
+                  )
+                ],
+              ),
             ),
           ],
         ),

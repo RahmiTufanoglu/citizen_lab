@@ -23,11 +23,11 @@ import 'image_info_page_data.dart';
 
 class ImagePage extends StatefulWidget {
   final Note note;
-  final int projectRandom;
+  final String uuid;
 
   ImagePage({
     this.note,
-    this.projectRandom,
+    this.uuid,
   });
 
   @override
@@ -51,8 +51,8 @@ class _ImagePageState extends State<ImagePage> {
       _titleEditingController.text = widget.note.title;
       _title = _titleEditingController.text;
       _descEditingController.text = widget.note.description;
-      _image = File(widget.note.content);
-      _createdAt = widget.note.dateCreated;
+      _image = File(widget.note.filePath);
+      _createdAt = widget.note.createdAt;
     } else {
       _createdAt = dateFormatted();
     }
@@ -312,7 +312,7 @@ class _ImagePageState extends State<ImagePage> {
     if (_titleEditingController.text.isNotEmpty && (_image != null)) {
       if (widget.note == null) {
         Note note = Note(
-          widget.projectRandom,
+          widget.uuid,
           'Bild',
           _titleEditingController.text,
           _descEditingController.text,
@@ -340,19 +340,19 @@ class _ImagePageState extends State<ImagePage> {
 
   void _updateNote(Note note) {
     Note newNote = Note.fromMap({
-      DatabaseProvider.columnNoteId: note.id,
-      DatabaseProvider.columnProjectRandom: note.projectRandom,
+      DatabaseHelper.columnNoteId: note.id,
+      DatabaseHelper.columnProjectUuid: note.uuid,
       //ProjectDatabaseHelper.columnNoteProject: note.project,
-      DatabaseProvider.columnNoteType: note.type,
-      DatabaseProvider.columnNoteTitle: _titleEditingController.text,
-      DatabaseProvider.columnNoteDescription: _descEditingController.text,
-      DatabaseProvider.columnNoteContent: _image.path,
-      DatabaseProvider.columnNoteCreatedAt: note.dateCreated,
-      DatabaseProvider.columnNoteUpdatedAt: dateFormatted(),
-      DatabaseProvider.columnNoteEdited: 0,
-      DatabaseProvider.columnNoteFirstTime: 1,
-      DatabaseProvider.columnNoteCardColor: note.cardColor,
-      DatabaseProvider.columnNoteCardTextColor: note.cardTextColor,
+      DatabaseHelper.columnNoteType: note.type,
+      DatabaseHelper.columnNoteTitle: _titleEditingController.text,
+      DatabaseHelper.columnNoteDescription: _descEditingController.text,
+      DatabaseHelper.columnNoteContent: _image.path,
+      DatabaseHelper.columnNoteCreatedAt: note.createdAt,
+      DatabaseHelper.columnNoteUpdatedAt: dateFormatted(),
+      DatabaseHelper.columnNoteIsEdited: 0,
+      DatabaseHelper.columnNoteIsFirstTime: 1,
+      DatabaseHelper.columnNoteCardColor: note.cardColor,
+      DatabaseHelper.columnNoteCardTextColor: note.cardTextColor,
     });
     //await _noteDb.updateNote(newNote: newNote);
     Navigator.pop(context, newNote);

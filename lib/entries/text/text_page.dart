@@ -12,6 +12,7 @@ import 'package:citizen_lab/pdf_creator.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/utils/date_formater.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
+import 'package:citizen_lab/utils/utils.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -22,50 +23,53 @@ import '../../formulations.dart';
 import '../../title_change_provider.dart';
 
 class TextPage extends StatefulWidget {
+  final Key key;
   final Note note;
-  final int projectRandom;
+  final String uuid;
 
   TextPage({
+    this.key,
     @required this.note,
-    @required this.projectRandom,
-  });
+    @required this.uuid,
+  }) : super(key: key);
 
   @override
   _TextPageState createState() => _TextPageState();
 }
 
 class _TextPageState extends State<TextPage> {
-  final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _titleEditingController = TextEditingController();
   final _descEditingController = TextEditingController();
-  final _noteDb = DatabaseProvider.db;
+  final _noteDb = DatabaseHelper.db;
 
   final _titleBloc = TitleBloc();
 
   ThemeChangerProvider _themeChanger;
   TitleChangerProvider _titleChanger;
   Timer _timer;
-  String _title;
-  String _savedTitle;
-  String _createdAt;
-  String _editedAt;
-  String _timeString;
-  double screenHeight;
+  String _title = '';
+  String _savedTitle = '';
+  String _createdAt = '';
+  String _editedAt = '';
+  String _timeString = '';
+
+  PdfCreator _pdfCreator;
 
   @override
   void initState() {
+    super.initState();
+
     _timeString = dateFormatted();
     _timer = Timer.periodic(Duration(seconds: 1), (_) => _getTime());
 
     if (widget.note != null) {
       _titleEditingController.text = widget.note.title;
-      //_title = _titleEditingController.text;
       _savedTitle = _titleEditingController.text;
       _title = _savedTitle;
       _descEditingController.text = widget.note.description;
-      _editedAt = widget.note.dateEdited;
-      _createdAt = widget.note.dateCreated;
+      _editedAt = widget.note.updatedAt;
+      _createdAt = widget.note.createdAt;
     } else {
       _editedAt = dateFormatted();
       _createdAt = dateFormatted();
@@ -77,11 +81,8 @@ class _TextPageState extends State<TextPage> {
         if (_titleEditingController.text.isEmpty) {
           _title = _savedTitle;
         }
-        print('Textlänge: ${_titleEditingController.text.length}');
       });
     });
-
-    super.initState();
   }
 
   @override
@@ -95,13 +96,8 @@ class _TextPageState extends State<TextPage> {
 
   void _getTime() {
     final String formattedDateTime = dateFormatted();
-    setState(() {
-      _timeString = formattedDateTime;
-    });
+    setState(() => _timeString = formattedDateTime);
   }
-
-  // TODO
-  PdfCreator _pdfCreator;
 
   void _createPdf() async {
     _pdfCreator = PdfCreator(
@@ -118,7 +114,6 @@ class _TextPageState extends State<TextPage> {
   @override
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
-    screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
       key: _scaffoldKey,
@@ -210,7 +205,9 @@ class _TextPageState extends State<TextPage> {
       //final directory = await getApplicationDocumentsDirectory();
       //final path = '${directory.path}/$_title.pdf';
 
-      final String path = await _localPath(_title);
+      String title = Utils.removeWhiteSpace(_title);
+
+      final String path = await _localPath(title);
       final ByteData bytes = await rootBundle.load(path);
       final Uint8List uint8List = bytes.buffer.asUint8List();
 
@@ -236,6 +233,7 @@ class _TextPageState extends State<TextPage> {
 
   void _backToHomePage() {
     final String cancel = 'Notiz abbrechen und zur Hauptseite zurückkehren?';
+
     showDialog(
       context: context,
       builder: (_) {
@@ -269,11 +267,11 @@ class _TextPageState extends State<TextPage> {
     return _titleChanger.getErrorMessage();
   }
 
-  Future<void> _saveNote() async {
+  Future _saveNote() async {
     if (_titleEditingController.text.isNotEmpty) {
       if (widget.note == null) {
         Note note = Note(
-          widget.projectRandom,
+          widget.uuid,
           'Text',
           _titleEditingController.text,
           _descEditingController.text,
@@ -289,7 +287,9 @@ class _TextPageState extends State<TextPage> {
         Navigator.pop(context, note);
         //_noteBloc.add(newNote);
       } else {
-        _updateNote(widget.note);
+        _checkIfContentEdited() == 1
+            ? _updateNote(widget.note)
+            : Navigator.pop(context);
       }
     } else {
       _scaffoldKey.currentState.showSnackBar(
@@ -301,41 +301,28 @@ class _TextPageState extends State<TextPage> {
     }
   }
 
-  Future<void> _updateNote(Note note) async {
+  Future _updateNote(Note note) async {
     Note newNote = Note.fromMap({
-      DatabaseProvider.columnNoteId: note.id,
-      DatabaseProvider.columnProjectRandom: note.projectRandom,
-      DatabaseProvider.columnNoteType: note.type,
-      DatabaseProvider.columnNoteTitle: _titleEditingController.text,
-      DatabaseProvider.columnNoteDescription: _descEditingController.text,
-      DatabaseProvider.columnNoteContent: '',
-      DatabaseProvider.columnNoteCreatedAt: note.dateCreated,
-      DatabaseProvider.columnNoteUpdatedAt: dateFormatted(),
-      DatabaseProvider.columnNoteFirstTime: 1,
-      // TODO columnNoteEdited => columnNoteFirstTime
-      DatabaseProvider.columnNoteEdited: _checkIfContentEdited(),
-      DatabaseProvider.columnNoteCardColor: note.cardColor,
-      DatabaseProvider.columnNoteCardTextColor: note.cardTextColor,
+      DatabaseHelper.columnNoteId: note.id,
+      DatabaseHelper.columnProjectUuid: note.uuid,
+      DatabaseHelper.columnNoteType: note.type,
+      DatabaseHelper.columnNoteTitle: _titleEditingController.text,
+      DatabaseHelper.columnNoteDescription: _descEditingController.text,
+      DatabaseHelper.columnNoteContent: '',
+      DatabaseHelper.columnNoteCreatedAt: note.createdAt,
+      DatabaseHelper.columnNoteUpdatedAt: dateFormatted(),
+      DatabaseHelper.columnNoteIsFirstTime: 1,
+      DatabaseHelper.columnNoteIsEdited: _checkIfContentEdited(),
+      DatabaseHelper.columnNoteCardColor: note.cardColor,
+      DatabaseHelper.columnNoteCardTextColor: note.cardTextColor,
     });
     Navigator.pop(context, newNote);
   }
 
   int _checkIfContentEdited() {
-    print(
-        'TITLE: ${(_titleEditingController.text == widget.note.title).toString()}');
-    print(
-        'EDITED: ${(_descEditingController.text == widget.note.description).toString()}');
-
-    /*return _titleEditingController.text == widget.note.title ||
-            _descEditingController.text == widget.note.description
-        ? 0
-        : 1;*/
-
-    if (_titleEditingController.text == widget.note.title) {
-      return _descEditingController.text == widget.note.description ? 0 : 1;
-    } else {
-      return 1;
-    }
+    return _titleEditingController.text == widget.note.title
+        ? _descEditingController.text == widget.note.description ? 0 : 1
+        : 1;
   }
 
   Widget _buildFabs() {
@@ -394,11 +381,9 @@ class _TextPageState extends State<TextPage> {
   void _openModalBottomSheet() {
     List<Widget> experimentItemsWidgets = [];
     for (int i = 0; i < formulations.length; i++) {
-      if (i == 0) {
-        experimentItemsWidgets.add(_createTile(formulations[i], true));
-      } else {
-        experimentItemsWidgets.add(_createTile(formulations[i], false));
-      }
+      i == 0
+          ? experimentItemsWidgets.add(_createTile(formulations[i], true))
+          : experimentItemsWidgets.add(_createTile(formulations[i], false));
     }
     _buildMainBottomSheet(experimentItemsWidgets);
   }
@@ -407,13 +392,18 @@ class _TextPageState extends State<TextPage> {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) => ListView(
-            shrinkWrap: true,
-            children: experimentItemsWidgets,
-          ),
+        shrinkWrap: true,
+        children: experimentItemsWidgets,
+      ),
     );
   }
 
-  Widget _createTile(FormulationItem experimentItem, bool centerIcon) {
+  Widget _createTile(
+    FormulationItem experimentItem,
+    bool centerIcon,
+  ) {
+    final double screenHeight = MediaQuery.of(context).size.height;
+
     return Material(
       child: InkWell(
         child: Container(
