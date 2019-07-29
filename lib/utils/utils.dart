@@ -27,7 +27,7 @@ class Utils {
   }*/
 
   static String generateRandomUuid() {
-    var uuid = Uuid();
+    Uuid uuid = Uuid();
     return uuid.v4();
   }
 

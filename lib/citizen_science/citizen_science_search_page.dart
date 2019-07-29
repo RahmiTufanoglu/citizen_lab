@@ -78,7 +78,7 @@ class CitizenScienceSearchPage extends SearchDelegate<String> {
               close(context, null);
               Navigator.pushNamed(
                 context,
-                RouteGenerator.detailPage,
+                RouteGenerator.DETAIL_PAGE,
                 arguments: {
                   'title': suggestionList[index].title,
                   'image': suggestionList[index].image,

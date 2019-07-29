@@ -10,7 +10,7 @@ import 'package:citizen_lab/entries/note.dart';
 import 'package:citizen_lab/entries/text/text_info_page_data.dart';
 import 'package:citizen_lab/pdf_creator.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
-import 'package:citizen_lab/utils/date_formater.dart';
+import 'package:citizen_lab/utils/date_formatter.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:citizen_lab/utils/utils.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
@@ -47,21 +47,16 @@ class _TextPageState extends State<TextPage> {
 
   ThemeChangerProvider _themeChanger;
   TitleChangerProvider _titleChanger;
-  Timer _timer;
   String _title = '';
   String _savedTitle = '';
   String _createdAt = '';
   String _editedAt = '';
-  String _timeString = '';
 
   PdfCreator _pdfCreator;
 
   @override
   void initState() {
     super.initState();
-
-    _timeString = dateFormatted();
-    _timer = Timer.periodic(Duration(seconds: 1), (_) => _getTime());
 
     if (widget.note != null) {
       _titleEditingController.text = widget.note.title;
@@ -90,13 +85,7 @@ class _TextPageState extends State<TextPage> {
     _titleEditingController.dispose();
     _descEditingController.dispose();
     _titleBloc.dispose();
-    _timer.cancel();
     super.dispose();
-  }
-
-  void _getTime() {
-    final String formattedDateTime = dateFormatted();
-    setState(() => _timeString = formattedDateTime);
   }
 
   void _createPdf() async {
@@ -192,19 +181,10 @@ class _TextPageState extends State<TextPage> {
   }
 
   void _shareContent() async {
-    final String fullContent =
-        _titleEditingController.text + '\n' + _descEditingController.text;
     final String noTitle = 'Bitte einen Titel und eine Beschreibung eingeben';
+
     if (_titleEditingController.text.isNotEmpty &&
         _descEditingController.text.isNotEmpty) {
-      //Share.share(fullContent);
-      //final file = File('/sdcard/$_title.pdf');
-      //final ByteData bytes = await rootBundle.load(file.path);
-      //final File file = await _localFile;
-
-      //final directory = await getApplicationDocumentsDirectory();
-      //final path = '${directory.path}/$_title.pdf';
-
       String title = Utils.removeWhiteSpace(_title);
 
       final String path = await _localPath(title);
@@ -242,7 +222,7 @@ class _TextPageState extends State<TextPage> {
           onPressed: () {
             Navigator.popUntil(
               context,
-              ModalRoute.withName(RouteGenerator.routeHomePage),
+              ModalRoute.withName(RouteGenerator.ROUTE_HOME_PAGE),
             );
           },
         );
@@ -253,18 +233,14 @@ class _TextPageState extends State<TextPage> {
   void _setInfoPage() {
     Navigator.pushNamed(
       context,
-      RouteGenerator.infoPage,
+      RouteGenerator.INFO_PAGE,
       arguments: {
-        'title': 'Text-Info',
-        'tabLength': 3,
-        'tabs': textTabList,
-        'tabChildren': textSingleChildScrollViewList,
+        RouteGenerator.TITLE: 'Text-Info',
+        RouteGenerator.TAB_LENGTH: 3,
+        RouteGenerator.TABS: textTabList,
+        RouteGenerator.TAB_CHILDREN: textSingleChildScrollViewList,
       },
     );
-  }
-
-  String _getErrorText() {
-    return _titleChanger.getErrorMessage();
   }
 
   Future _saveNote() async {

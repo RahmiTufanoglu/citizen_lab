@@ -39,11 +39,7 @@ class _OnboardingPageState extends State<OnboardingPage>
 
   @override
   Widget build(BuildContext context) {
-    final double screenHeight = MediaQuery.of(context).size.height;
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final double appBarHeight = AppBar().preferredSize.height;
     final double statusBarHeight = MediaQuery.of(context).padding.top;
-    final Color mainLightColor = Color(0xFFEDEDED);
 
     return Scaffold(
       body: Stack(
@@ -160,7 +156,7 @@ class _OnboardingPageState extends State<OnboardingPage>
   void _setNavigation() {
     Navigator.pushNamed(
       context,
-      RouteGenerator.homePage,
+      RouteGenerator.HOMEPAGE,
     );
   }
 }

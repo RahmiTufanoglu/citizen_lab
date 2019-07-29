@@ -25,19 +25,15 @@ class _ProjectPageState extends State<ProjectPage> {
 
   ThemeChangerProvider _themeChanger;
 
-  //bool _darkModeEnabled = false;
-
   @override
   void initState() {
-    _loadProjectList();
     super.initState();
+    _loadProjectList();
   }
 
   @override
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
-    //_themeChanger.checkIfDarkModeEnabled(context);
-    //_checkIfDarkModeEnabled();
 
     return Scaffold(
       key: _scaffoldKey,
@@ -52,7 +48,6 @@ class _ProjectPageState extends State<ProjectPage> {
       leading: IconButton(
         tooltip: back,
         icon: Icon(Icons.arrow_back),
-        //onPressed: () => Navigator.pop(context),
         onPressed: () => _onBackPressed(),
       ),
       title: GestureDetector(
@@ -109,52 +104,41 @@ class _ProjectPageState extends State<ProjectPage> {
     );
   }
 
-  /*void _checkIfDarkModeEnabled() {
-    final ThemeData theme = Theme.of(context);
-    theme.brightness == appDarkTheme().brightness
-        ? _darkModeEnabled = true
-        : _darkModeEnabled = false;
-  }
-
-  void _enableDarkMode() {
-    _darkModeEnabled
-        ? _themeChanger.setTheme(appLightTheme())
-        : _themeChanger.setTheme(appDarkTheme());
-  }*/
-
   Widget _buildFab() {
     return FloatingActionButton(
       child: Icon(Icons.add),
       onPressed: () {
         Navigator.pushNamed(
           context,
-          RouteGenerator.createProject,
+          RouteGenerator.CREATE_PROJECT,
         );
       },
     );
   }
 
-  Future<bool> _deleteAllProjects(BuildContext contextSnackBar) async {
-    return await showDialog(
+  void _deleteAllProjects(BuildContext contextSnackBar) {
+    final String deleteAllProjects = 'Alle Projekte löschen?';
+    final String projectDeleted = 'Projekte gelöscht.';
+    final String nothingDeleted = 'Nichts gelöscht.';
+
+    showDialog(
       context: context,
       builder: (context) => AlarmDialog(
-        text: 'Alle Projekte löschen?',
+        text: deleteAllProjects,
         icon: Icons.warning,
         onTap: () {
           if (_projectList.isNotEmpty) {
             _projectDb.deleteAllProjects();
             _scaffoldKey.currentState.showSnackBar(
-              _buildSnackBar(text: 'Projekte gelöscht.'),
+              _buildSnackBar(text: projectDeleted),
             );
           } else {
             _scaffoldKey.currentState.showSnackBar(
-              _buildSnackBar(text: 'Nichts gelöscht.'),
+              _buildSnackBar(text: nothingDeleted),
             );
           }
 
-          setState(() {
-            _projectList.clear();
-          });
+          setState(() => _projectList.clear());
 
           Navigator.pop(context);
         },
@@ -194,8 +178,6 @@ class _ProjectPageState extends State<ProjectPage> {
           );
         });
         break;
-      default:
-        break;
     }
   }
 
@@ -205,7 +187,12 @@ class _ProjectPageState extends State<ProjectPage> {
         onWillPop: _onBackPressed,
         child: _projectList.isNotEmpty
             ? ListView.builder(
-                padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 88.0),
+                padding: const EdgeInsets.fromLTRB(
+                  8.0,
+                  8.0,
+                  8.0,
+                  88.0,
+                ),
                 reverse: false,
                 itemCount: _projectList.length,
                 itemBuilder: (context, index) {
@@ -260,7 +247,7 @@ class _ProjectPageState extends State<ProjectPage> {
   Future<void> _navigateToEntry(int index) async {
     final result = await Navigator.pushNamed(
       context,
-      RouteGenerator.entry,
+      RouteGenerator.ENTRY,
       arguments: {
         'project': _projectList[index],
         'projectTitle': _projectList[index].title,
@@ -270,7 +257,7 @@ class _ProjectPageState extends State<ProjectPage> {
       },
     );
 
-    if (result) _loadProjectList();
+    if (result) await _loadProjectList();
   }
 
   void _showContent(int index) {
@@ -294,7 +281,10 @@ class _ProjectPageState extends State<ProjectPage> {
                 Text(
                   '$createdAt: '
                   '${_projectList[index].createdAt}',
-                  style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: 14.0,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 SizedBox(height: 16.0),
               ],
@@ -308,14 +298,23 @@ class _ProjectPageState extends State<ProjectPage> {
         children: <Widget>[
           Text(
             '$title:',
-            style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 16.0,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           SizedBox(height: 8.0),
-          Text(_projectList[index].title, style: TextStyle(fontSize: 16.0)),
+          Text(
+            _projectList[index].title,
+            style: TextStyle(fontSize: 16.0),
+          ),
           SizedBox(height: 32.0),
           Text(
             '$desc:',
-            style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 16.0,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           SizedBox(height: 8.0),
           Text(
@@ -343,18 +342,16 @@ class _ProjectPageState extends State<ProjectPage> {
     for (int i = 0; i < _projectList.length; i++) {
       _projectList.removeWhere((element) {
         _projectList[i].id = _projectList[i].id;
+        return true;
       });
     }
 
     List projects = await _projectDb.getAllProjects();
 
     projects.forEach((project) {
-      setState(() {
-        _projectList.add(Project.map(project));
-      });
+      setState(() => _projectList.add(Project.map(project)));
     });
 
-    // TODO: check this
     _choiceSortOption(sort_by_release_date_desc);
   }
 
@@ -362,9 +359,7 @@ class _ProjectPageState extends State<ProjectPage> {
     await _projectDb.deleteProject(id: _projectList[index].id);
 
     if (_projectList.contains(_projectList[index])) {
-      setState(() {
-        _projectList.removeAt(index);
-      });
+      setState(() => _projectList.removeAt(index));
     }
   }
 
@@ -372,7 +367,7 @@ class _ProjectPageState extends State<ProjectPage> {
     if (widget.isFromCreateProjectPage) {
       Navigator.popUntil(
         context,
-        ModalRoute.withName(RouteGenerator.routeHomePage),
+        ModalRoute.withName(RouteGenerator.ROUTE_HOME_PAGE),
       );
       /*} else if (widget.isFromProjectSearchPage) {
       Navigator.pop(context, 'fromEntry');*/

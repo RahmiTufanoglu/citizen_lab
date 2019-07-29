@@ -69,9 +69,9 @@ class NoteSearchPage extends SearchDelegate<String> {
             note: suggestionList[index],
             isFromNoteSearchPage: true,
             noteFunction: () => openNotePage(
-                  suggestionList[index].type,
-                  suggestionList[index],
-                ),
+              suggestionList[index].type,
+              suggestionList[index],
+            ),
             close: () => close(context, null),
             onLongPress: null,
           );
@@ -142,42 +142,6 @@ class NoteSearchPage extends SearchDelegate<String> {
         },
       ),
     );
-  }
-
-  Icon _getIcon(Note note) {
-    switch (note.type) {
-      case 'Text':
-        return Icon(
-          Icons.create,
-          //color: Colors.white,
-          color: Color(note.cardTextColor),
-        );
-        break;
-      case 'Tabelle':
-        return Icon(
-          Icons.table_chart,
-          //color: Colors.white,
-          color: Color(note.cardTextColor),
-        );
-        break;
-      case 'Bild':
-        return Icon(
-          Icons.camera_alt,
-          //color: Colors.white,
-          color: Color(note.cardTextColor),
-        );
-        break;
-      case 'Verlinkung':
-        return Icon(
-          Icons.link,
-          //color: Colors.white,
-          color: Color(note.cardTextColor),
-        );
-        break;
-      default:
-        return null;
-        break;
-    }
   }
 
   List<Note> _getNoteTitles(

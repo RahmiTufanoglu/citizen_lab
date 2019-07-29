@@ -1,10 +1,9 @@
 import 'dart:async';
 
+import 'package:citizen_lab/utils/constants.dart';
+import 'package:citizen_lab/utils/date_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-
-import 'package:citizen_lab/utils/constants.dart';
-import 'package:citizen_lab/utils/date_formater.dart';
 
 class EditProjectDialog extends StatefulWidget {
   final Key key;
@@ -30,7 +29,6 @@ class EditProjectDialog extends StatefulWidget {
 }
 
 class _EditProjectDialogState extends State<EditProjectDialog> {
-  String _title;
   String _timeString;
   Timer _timer;
 

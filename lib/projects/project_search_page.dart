@@ -7,9 +7,9 @@ import 'package:flutter/material.dart';
 class ProjectSearchPage extends SearchDelegate<String> {
   List<Project> projectList = [];
   bool isFromProjectSearchPage;
+  bool _darkModeEnabled = false;
 
   final Function reloadProjectList;
-  bool _darkModeEnabled = false;
 
   ProjectSearchPage({
     @required this.projectList,
@@ -22,17 +22,6 @@ class ProjectSearchPage extends SearchDelegate<String> {
     _checkIfDarkModeEnabled(context);
     return _darkModeEnabled ? appDarkTheme() : appLightTheme();
   }
-
-  /*@override
-  ThemeData appBarTheme(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-    return theme.copyWith(
-      primaryColor: theme.primaryColor,
-      primaryIconTheme: theme.primaryIconTheme,
-      primaryColorBrightness: theme.primaryColorBrightness,
-      primaryTextTheme: theme.primaryTextTheme,
-    );
-  }*/
 
   void _checkIfDarkModeEnabled(BuildContext context) {
     final ThemeData theme = Theme.of(context);
@@ -79,28 +68,33 @@ class ProjectSearchPage extends SearchDelegate<String> {
         itemBuilder: (context, index) {
           return ProjectItem(
             project: suggestionList[index],
-            onTap: () async {
-              close(context, null);
-              final result = await Navigator.pushNamed(
-                context,
-                RouteGenerator.entry,
-                arguments: {
-                  'project': suggestionList[index],
-                  'projectTitle': suggestionList[index].title,
-                  'isFromCreateProjectPage': false,
-                  'isFromProjectPage': true,
-                  'isFromProjectSearchPage': true,
-                },
-              );
-
-              //if (result == 'ok') close(context, result);
-              //print('RES' + result);
-              if (result) reloadProjectList();
-            },
+            onLongPress: () {},
+            onTap: () => _setNavigation(context, suggestionList, index),
           );
         },
       ),
     );
+  }
+
+  Future<void> _setNavigation(
+    BuildContext context,
+    List list,
+    int index,
+  ) async {
+    close(context, null);
+    final result = await Navigator.pushNamed(
+      context,
+      RouteGenerator.ENTRY,
+      arguments: {
+        'project': list[index],
+        'projectTitle': list[index].title,
+        'isFromCreateProjectPage': false,
+        'isFromProjectPage': true,
+        'isFromProjectSearchPage': true,
+      },
+    );
+
+    if (result) reloadProjectList();
   }
 
   List<Project> _getProjectTitles(

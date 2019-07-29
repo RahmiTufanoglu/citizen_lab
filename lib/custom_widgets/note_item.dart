@@ -128,6 +128,9 @@ class NoteItem extends StatelessWidget {
           color: Color(note.cardTextColor),
         );
         break;
+      default:
+        return Icon(Icons.android);
+        break;
     }
   }
 }

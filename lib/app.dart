@@ -18,10 +18,6 @@ class App extends StatefulWidget {
 class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
-    /*return ChangeNotifierProvider<ThemeChangerProvider>(
-      builder: (BuildContext context) => ThemeChangerProvider(appLightTheme()),
-      child: MaterialAppWithTheme(),
-    );*/
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<ThemeChangerProvider>(

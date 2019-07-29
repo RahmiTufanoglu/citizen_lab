@@ -145,7 +145,7 @@ class _GeolocationPageState extends State<GeolocationPage>
           onPressed: () {
             Navigator.popUntil(
               context,
-              ModalRoute.withName(RouteGenerator.routeHomePage),
+              ModalRoute.withName(RouteGenerator.ROUTE_HOME_PAGE),
             );
           },
         );
@@ -159,9 +159,7 @@ class _GeolocationPageState extends State<GeolocationPage>
 
     return SafeArea(
       child: WillPopScope(
-        onWillPop: () {
-          Navigator.pop(context, false);
-        },
+        onWillPop: () async => Navigator.pop(context, false),
         child: Stack(
           children: <Widget>[
             (_position != null)

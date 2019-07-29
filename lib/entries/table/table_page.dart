@@ -10,7 +10,7 @@ import 'package:citizen_lab/database/database_provider.dart';
 import 'package:citizen_lab/entries/note.dart';
 import 'package:citizen_lab/entries/table/table_info_page_data.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
-import 'package:citizen_lab/utils/date_formater.dart';
+import 'package:citizen_lab/utils/date_formatter.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:csv/csv.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
@@ -166,12 +166,12 @@ class _TablePageState extends State<TablePage> {
   void _setInfoPage() {
     Navigator.pushNamed(
       context,
-      RouteGenerator.infoPage,
+      RouteGenerator.INFO_PAGE,
       arguments: {
-        'title': 'Tabellen-Info',
-        'tabLength': 2,
-        'tabs': tableTabList,
-        'tabChildren': tableSingleChildScrollViewList,
+        RouteGenerator.TITLE: 'Tabellen-Info',
+        RouteGenerator.TAB_LENGTH: 2,
+        RouteGenerator.TABS: tableTabList,
+        RouteGenerator.TAB_CHILDREN: tableSingleChildScrollViewList,
       },
     );
   }
@@ -185,7 +185,7 @@ class _TablePageState extends State<TablePage> {
         onPressed: () {
           Navigator.popUntil(
             context,
-            ModalRoute.withName(RouteGenerator.routeHomePage),
+            ModalRoute.withName(RouteGenerator.ROUTE_HOME_PAGE),
           );
         },
       ),
@@ -340,11 +340,11 @@ class _TablePageState extends State<TablePage> {
         );
         Navigator.pop(context, note);
       } else {
-        _csv.delete();
+        await _csv.delete();
         //String path = _csv.path;
         // TODO: Do not create CSV if exists
         String path = await _createCsv(_title);
-        _updateNote(widget.note, path);
+        await _updateNote(widget.note, path);
       }
     } else {
       _scaffoldKey.currentState.showSnackBar(
@@ -396,7 +396,7 @@ class _TablePageState extends State<TablePage> {
 
       const channelName = 'rahmitufanoglu.citizenlab';
       final channel = const MethodChannel('channel:$channelName.share/share');
-      channel.invokeMethod('shareTable', '$_title.csv');
+      await channel.invokeMethod('shareTable', '$_title.csv');
     } else if (Platform.isIOS) {
       final ByteData bytes = await rootBundle.load(_csv.path);
       await Share.file(
@@ -476,7 +476,7 @@ class _TablePageState extends State<TablePage> {
     _csv = File(await _localPath(title));
 
     String path = _listToCsv(graphArray);
-    _csv.writeAsString(path);
+    await _csv.writeAsString(path);
 
     return _csv.path;
   }

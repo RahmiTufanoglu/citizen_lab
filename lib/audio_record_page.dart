@@ -3,7 +3,7 @@ import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
-import 'package:citizen_lab/utils/date_formater.dart';
+import 'package:citizen_lab/utils/date_formatter.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
@@ -172,7 +172,7 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
   void _setInfoPage() {
     Navigator.pushNamed(
       context,
-      RouteGenerator.infoPage,
+      RouteGenerator.INFO_PAGE,
       arguments: {
         'title': 'Audio-Info',
         'tabLength': 2,
@@ -192,7 +192,7 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
           onPressed: () {
             Navigator.popUntil(
               context,
-              ModalRoute.withName(RouteGenerator.routeHomePage),
+              ModalRoute.withName(RouteGenerator.ROUTE_HOME_PAGE),
             );
           },
         );
@@ -343,7 +343,7 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
         _iconBody = Icon(Icons.mic_none, size: 56.0);
       });
       //_startRecord().then(null, onError: (e) {}).catchError(_setPermission);
-      _startRecord();
+      await _startRecord();
     }
     setState(() => _isRecording = !_isRecording);
     /*} else {

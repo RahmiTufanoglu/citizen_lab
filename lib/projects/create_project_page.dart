@@ -4,7 +4,7 @@ import 'package:citizen_lab/database/database_provider.dart';
 import 'package:citizen_lab/projects/project.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/utils/constants.dart';
-import 'package:citizen_lab/utils/date_formater.dart';
+import 'package:citizen_lab/utils/date_formatter.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:citizen_lab/utils/utils.dart';
 import 'package:flutter/material.dart';
@@ -27,15 +27,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
   List<Project> _projectList = [];
 
   Color _buttonColor = Colors.white;
-
-  //double _fabHeight = 16.0;
-  //double _fabWidth = 16.0;
-  double _iconSize = 0.0;
-
-  IconData _fabIcon = Icons.close;
   Color _iconColor = Colors.black;
-
-  //String _animationChecked = '';
 
   _CreateProjectPageState() {
     _titleEditingController.addListener(() => _checkTextsAreNotEmpty());
@@ -46,18 +38,10 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
     setState(() {
       if (_titleEditingController.text.isNotEmpty &&
           _descEditingController.text.isNotEmpty) {
-        //_fabHeight = 56.0;
-        //_fabWidth = 56.0;
-        //_iconSize = 24.0;
         _buttonColor = Colors.green;
-        //_animationChecked = 'ok';
         _iconColor = Colors.white;
       } else {
-        //_fabHeight = 16.0;
-        //_fabWidth = 16.0;
-        //_iconSize = 0.0;
         _buttonColor = Colors.white;
-        //_animationChecked = '';
         _iconColor = Colors.black;
       }
     });
@@ -135,7 +119,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
         'tabChildren': createProjectSingleChildScrollViewList,
       },
     );*/
-    Navigator.pushNamed(context, RouteGenerator.aboutPage, arguments: {
+    Navigator.pushNamed(context, RouteGenerator.ABOUT_PAGE, arguments: {
       'title': 'Das Labornotizbuch',
       'content': lab_notebook,
     });
@@ -302,20 +286,6 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
         RouteGenerator.homePage,
       );*/
     }
-  }
-
-  void _navigateToEntry(Project project) {
-    Navigator.pushNamed(
-      context,
-      RouteGenerator.entry,
-      arguments: {
-        'project': project,
-        'projectTitle': project.title,
-        'isFromCreateProjectPage': true,
-        'isFromProjectPage': false,
-        'isFromProjectSearchPage': false,
-      },
-    );
   }
 
   Widget _buildSnackBar(String text) {

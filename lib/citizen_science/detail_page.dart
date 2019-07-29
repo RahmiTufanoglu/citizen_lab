@@ -106,7 +106,7 @@ class _DetailPageState extends State<DetailPage> {
   Future<void> _launchWeb() async {
     return await Navigator.pushNamed(
       context,
-      RouteGenerator.citizenScienceWebPage,
+      RouteGenerator.CITIZEN_SCIENCE_WEB_PAGE,
       arguments: {
         'url': widget.url,
       },

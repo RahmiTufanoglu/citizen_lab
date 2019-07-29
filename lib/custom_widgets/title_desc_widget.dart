@@ -4,7 +4,7 @@ import 'package:citizen_lab/bloc/custom_expansion_tile.dart';
 import 'package:citizen_lab/database/database_provider.dart';
 import 'package:citizen_lab/entries/note.dart';
 import 'package:citizen_lab/themes/theme.dart';
-import 'package:citizen_lab/utils/date_formater.dart';
+import 'package:citizen_lab/utils/date_formatter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -84,13 +84,6 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
   }
 
   Widget _buildWidget() {
-    final title = 'Titel';
-    final titleHere = 'Titel hier';
-    final content = 'Inhalt';
-    final contentHere = 'Inhalt hier';
-    final String plsEnterATitle = 'Bitte einen Titel eingeben';
-    String pageTitle = widget.title;
-
     final double screenWith = MediaQuery.of(context).size.width;
 
     return SafeArea(
@@ -100,7 +93,12 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
           padding: EdgeInsets.only(top: 8.0, bottom: 88.0),
           children: <Widget>[
             Card(
-              margin: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 0.0),
+              margin: const EdgeInsets.fromLTRB(
+                16.0,
+                8.0,
+                16.0,
+                0.0,
+              ),
               color: _checkIfDarkModeEnabled() ? Colors.black12 : Colors.white,
               child: CustomExpansionTile(
                 title: Text(''),
@@ -113,13 +111,23 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
             ),
             _getTextWidget(),
             Card(
-              margin: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 0.0),
+              margin: const EdgeInsets.fromLTRB(
+                16.0,
+                8.0,
+                16.0,
+                0.0,
+              ),
               color: _checkIfDarkModeEnabled() ? Colors.black12 : Colors.white,
               child: CustomExpansionTile(
                 title: Text(''),
                 leading: Padding(
                   padding: EdgeInsets.only(left: (screenWith / 2) - 40.0),
-                  child: Icon(IconData(0xe92d, fontFamily: 'comparison')),
+                  child: Icon(
+                    IconData(
+                      0xe92d,
+                      fontFamily: 'comparison',
+                    ),
+                  ),
                 ),
                 children: <Widget>[_getComparisonWidget()],
               ),

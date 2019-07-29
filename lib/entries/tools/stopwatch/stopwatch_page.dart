@@ -101,7 +101,7 @@ class _StopwatchPageState extends State<StopwatchPage>
           onPressed: () {
             Navigator.popUntil(
               context,
-              ModalRoute.withName(RouteGenerator.routeHomePage),
+              ModalRoute.withName(RouteGenerator.ROUTE_HOME_PAGE),
             );
           },
         );

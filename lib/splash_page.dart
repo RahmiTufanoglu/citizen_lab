@@ -35,15 +35,15 @@ class _SplashPageState extends State<SplashPage> {
     bool _seen = (prefs.getBool('seen') ?? false);
 
     if (_seen) {
-      Navigator.pushNamed(
+      await Navigator.pushNamed(
         context,
-        RouteGenerator.homePage,
+        RouteGenerator.HOMEPAGE,
       );
     } else {
-      prefs.setBool('seen', true);
-      Navigator.pushNamed(
+      await prefs.setBool('seen', true);
+      await Navigator.pushNamed(
         context,
-        RouteGenerator.onboardingPage,
+        RouteGenerator.ONBOARDING_PAGE,
       );
     }
   }

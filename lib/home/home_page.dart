@@ -11,7 +11,7 @@ import 'package:citizen_lab/themes/theme.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/utils/colors.dart';
 import 'package:citizen_lab/utils/constants.dart';
-import 'package:citizen_lab/utils/date_formater.dart';
+import 'package:citizen_lab/utils/date_formatter.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -30,12 +30,13 @@ class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   AnimationController _animationController;
   Animation<double> _animation;
-  ThemeChangerProvider _themeChanger;
+
   bool _valueSwitch = false;
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _projectDb = DatabaseHelper.db;
   final List<Project> _projectList = [];
+  final String _sortOrder = 'sortOrder';
 
   @override
   void initState() {
@@ -55,30 +56,23 @@ class _HomePageState extends State<HomePage>
     _animationController.forward();
   }
 
-  void _checkIfDarkModeEnabled() {
-    Theme.of(context).brightness == appDarkTheme().brightness
-        ? _valueSwitch = true
-        : _valueSwitch = false;
-  }
-
   @override
   Widget build(BuildContext context) {
-    _themeChanger = Provider.of<ThemeChangerProvider>(context);
-    _checkIfDarkModeEnabled();
-
-    return Scaffold(
-      key: _scaffoldKey,
-      appBar: _buildAppBar(),
-      drawer: _buildDrawer(),
-      body: _buildBody(),
-      floatingActionButton: _buildFabs(),
+    return Consumer<ThemeChangerProvider>(
+      builder: (context, themeChanger, child) => Scaffold(
+        key: _scaffoldKey,
+        appBar: _buildAppBar(themeChanger),
+        drawer: _buildDrawer(themeChanger),
+        body: _buildBody(),
+        floatingActionButton: _buildFabs(),
+      ),
     );
   }
 
-  Widget _buildAppBar() {
+  Widget _buildAppBar(ThemeChangerProvider themeData) {
     return AppBar(
       title: GestureDetector(
-        onPanStart: (_) => _themeChanger.setTheme(),
+        onPanStart: (_) => themeData.setTheme(),
         child: Container(
           width: double.infinity,
           child: Tooltip(
@@ -90,16 +84,7 @@ class _HomePageState extends State<HomePage>
       actions: <Widget>[
         IconButton(
           icon: Icon(Icons.search),
-          onPressed: () {
-            showSearch(
-              context: context,
-              delegate: ProjectSearchPage(
-                projectList: _projectList,
-                isFromProjectSearchPage: false,
-                reloadProjectList: () => _loadProjectList(false),
-              ),
-            );
-          },
+          onPressed: () => _setSearch(),
         ),
         PopupMenuButton(
           icon: Icon(Icons.sort),
@@ -117,17 +102,18 @@ class _HomePageState extends State<HomePage>
             ).toList();
           },
         ),
-        /*Builder(
-          builder: (contextSnackBar) {
-            return IconButton(
-              highlightColor: Colors.red.withOpacity(0.2),
-              splashColor: Colors.red.withOpacity(0.8),
-              icon: Icon(Icons.delete),
-              onPressed: () => _deleteAllProjects(contextSnackBar),
-            );
-          },
-        ),*/
       ],
+    );
+  }
+
+  void _setSearch() {
+    showSearch(
+      context: context,
+      delegate: ProjectSearchPage(
+        projectList: _projectList,
+        isFromProjectSearchPage: false,
+        reloadProjectList: () => _loadProjectList(false),
+      ),
     );
   }
 
@@ -146,7 +132,6 @@ class _HomePageState extends State<HomePage>
           ),
           DialFloatingActionButton(
             iconList: projectIconList,
-            //colorList: projectColorList,
             stringList: projectStringList,
             function: _createProject,
           ),
@@ -155,64 +140,62 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  void _createProject(String type, [Project project]) async {
+  Future<void> _createProject(String type, [Project project]) async {
     switch (type) {
       case 'Neues Projekt':
-        //bool result = await Navigator.pushNamed(
         Project result = await Navigator.pushNamed(
           context,
-          RouteGenerator.createProject,
-          //) as bool;
+          RouteGenerator.CREATE_PROJECT,
         ) as Project;
 
-        //if (result != null && result) {
         if (result != null) {
           _scaffoldKey.currentState.showSnackBar(
-            //_buildSnackBar(text: 'Neues Projekt hinzugefügt.'),
             _buildSnackBar(text: 'Neues ${result.title} hinzugefügt.'),
           );
-
-          _loadProjectList(true);
+          await _loadProjectList(true);
         }
+
         break;
       case 'Vorlagen':
         bool result = await Navigator.pushNamed(
           context,
-          RouteGenerator.projectTemplatePage,
+          RouteGenerator.PROJECT_TEMPLATE_PAGE,
         ) as bool;
 
         if (result != null && result) {
           _scaffoldKey.currentState.showSnackBar(
             _buildSnackBar(text: 'Neues Projekt hinzugefügt.'),
           );
-
-          _loadProjectList(true);
+          await _loadProjectList(true);
         }
+
         break;
     }
   }
 
   void _deleteAllProjects(BuildContext context) {
+    final String deleteAllProjects = 'Alle Projekte löschen?';
+    final String deleteProjects = 'Projekte gelöscht.';
+    final String nothingDeleted = 'Nichts gelöscht.';
+
     showDialog(
       context: context,
       builder: (context) => AlarmDialog(
-        text: 'Alle Projekte löschen?',
+        text: deleteAllProjects,
         icon: Icons.warning,
         onTap: () {
           if (_projectList.isNotEmpty) {
             _projectDb.deleteAllProjects();
             _scaffoldKey.currentState.showSnackBar(
-              _buildSnackBar(text: 'Projekte gelöscht.'),
+              _buildSnackBar(text: deleteProjects),
             );
           } else {
             _scaffoldKey.currentState.showSnackBar(
-              _buildSnackBar(text: 'Nichts gelöscht.'),
+              _buildSnackBar(text: nothingDeleted),
             );
           }
 
-          setState(() {
-            _projectList.clear();
-          });
+          setState(() => _projectList.clear());
 
           Navigator.pop(context);
         },
@@ -256,12 +239,10 @@ class _HomePageState extends State<HomePage>
         });
         setSortingOrder(sort_by_release_date_desc);
         break;
-      default:
-        break;
     }
   }
 
-  Widget _buildDrawer() {
+  Widget _buildDrawer(ThemeChangerProvider theme) {
     final double screenHeight = MediaQuery.of(context).size.height;
     final double statusBarHeight = MediaQuery.of(context).padding.top;
     final double drawerHeaderHeight =
@@ -270,6 +251,10 @@ class _HomePageState extends State<HomePage>
     final double drawerWidth = screenWidth / 1.5;
     final String about = 'Über';
     final String location = 'Dortmund';
+    final String deleteAll = 'Alles löschen';
+    final String appLogoPath = 'assets/app_logo.png';
+
+    _checkIfDarkModeEnabled();
 
     return MainDrawer(
       drawerWidth: drawerWidth,
@@ -300,7 +285,7 @@ class _HomePageState extends State<HomePage>
                     ),
                     Spacer(),
                     Image(
-                      image: AssetImage('assets/app_logo.png'),
+                      image: AssetImage(appLogoPath),
                       height: 42.0,
                       width: 42.0,
                     ),
@@ -314,27 +299,11 @@ class _HomePageState extends State<HomePage>
         Column(
           children: <Widget>[
             SizedBox(height: 16.0),
-            /*_buildDrawerItem(
-              context: context,
-              icon: Icons.border_color,
-              title: createExperiment,
-              onTap: () => _setNavigation(RouteGenerator.createProject),
-            ),*/
-            /*_buildDrawerItem(
-              context: context,
-              icon: Icons.assignment,
-              title: openExperiment,
-              onTap: () {
-                Map map = Map<String, bool>();
-                map['isFromCreateProjectPage'] = false;
-                _setNavigation(RouteGenerator.projectPage, map);
-              },
-            ),*/
             _buildDrawerItem(
               context: context,
               icon: Icons.public,
-              title: 'Citizen Science',
-              onTap: () => _setNavigation(RouteGenerator.citizenSciencePage),
+              title: APP_TITLE,
+              onTap: () => _setNavigation(RouteGenerator.CITIZEN_SCIENCE_PAGE),
             ),
           ],
         ),
@@ -356,7 +325,7 @@ class _HomePageState extends State<HomePage>
                 _buildDrawerItem(
                   context: context,
                   icon: Icons.delete_forever,
-                  title: 'Alles löschen',
+                  title: deleteAll,
                   onTap: () => _deleteAllProjects(context),
                 ),
               ],
@@ -384,14 +353,14 @@ class _HomePageState extends State<HomePage>
                 Map map = Map<String, String>();
                 map['title'] = 'Über';
                 map['content'] = lorem;
-                _setNavigation(RouteGenerator.aboutPage, map);
+                _setNavigation(RouteGenerator.ABOUT_PAGE, map);
               },
             ),
             _buildDrawerItem(
               context: context,
               icon: Icons.info_outline,
-              title: 'Onboarding',
-              onTap: () => _setNavigation(RouteGenerator.onboardingPage),
+              title: onboarding,
+              onTap: () => _setNavigation(RouteGenerator.ONBOARDING_PAGE),
             ),
           ],
         ),
@@ -411,7 +380,7 @@ class _HomePageState extends State<HomePage>
                 inactiveThumbColor: Colors.white,
                 activeColor: Color(0xFF191919),
                 value: _valueSwitch,
-                onChanged: (bool value) => _onChangedSwitch(value),
+                onChanged: (bool value) => _onChangedSwitch(value, theme),
               ),
             ],
           ),
@@ -419,6 +388,12 @@ class _HomePageState extends State<HomePage>
         SizedBox(height: 32.0),
       ],
     );
+  }
+
+  void _checkIfDarkModeEnabled() {
+    Theme.of(context).brightness == appDarkTheme().brightness
+        ? _valueSwitch = true
+        : _valueSwitch = false;
   }
 
   void _setNavigation(String route, [Object arguments]) {
@@ -429,8 +404,8 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  void _onChangedSwitch(bool value) {
-    _themeChanger.setTheme();
+  void _onChangedSwitch(bool value, ThemeChangerProvider themeChanger) {
+    themeChanger.setTheme();
     _valueSwitch = value;
   }
 
@@ -470,56 +445,47 @@ class _HomePageState extends State<HomePage>
           opacity: _animation,
           child: _projectList.isNotEmpty
               ? ListView.builder(
-                  padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 88.0),
+                  padding: const EdgeInsets.fromLTRB(
+                    16.0,
+                    8.0,
+                    16.0,
+                    88.0,
+                  ),
                   reverse: false,
                   itemCount: _projectList.length,
                   itemBuilder: (context, index) {
                     final project = _projectList[index];
                     final key = Key('${project.hashCode}');
-                    return Dismissible(
-                      key: key,
-                      direction: DismissDirection.startToEnd,
-                      background: Container(
-                        alignment: Alignment.centerLeft,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                        ),
-                        child: Row(
-                          children: <Widget>[
-                            Icon(Icons.arrow_forward, size: 28.0),
-                            SizedBox(width: 8.0),
-                            Icon(Icons.delete, size: 28.0),
-                          ],
-                        ),
-                      ),
-                      onDismissed: (direction) => _deleteProject(index),
-                      child: Container(
-                        width: double.infinity,
-                        child: _buildItem(project, index),
-                        /*child: NoteItem(
-                          note: _projectList[index],
-                          isNote: false,
-                          isFromNoteSearchPage: false,
-                          close: null,
-                          noteFunction: () => _navigateToEntry(index),
-                          onLongPress: () => _setCardColor(_project),
-                        ),*/
-                      ),
-                    );
+                    return _buildDismissible(key, project, index);
                   },
                 )
-              : /*Center(
-                  child: Opacity(
-                    opacity: 0.5,
-                    child: Image(
-                      image: AssetImage('assets/app_logo.png'),
-                      width: 150.0,
-                      height: 150.0,
-                    ),
-                  ),
-                ),*/
-              Container(),
+              : Container(),
         ),
+      ),
+    );
+  }
+
+  Widget _buildDismissible(Key key, Project project, int index) {
+    return Dismissible(
+      key: key,
+      direction: DismissDirection.startToEnd,
+      background: Container(
+        alignment: Alignment.centerLeft,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+        ),
+        child: Row(
+          children: <Widget>[
+            Icon(Icons.arrow_forward, size: 28.0),
+            SizedBox(width: 8.0),
+            Icon(Icons.delete, size: 28.0),
+          ],
+        ),
+      ),
+      onDismissed: (direction) => _deleteProject(index),
+      child: Container(
+        width: double.infinity,
+        child: _buildItem(project, index),
       ),
     );
   }
@@ -527,7 +493,6 @@ class _HomePageState extends State<HomePage>
   Widget _buildItem(Project project, int index) {
     final double screenHeight =
         MediaQuery.of(context).size.height - kToolbarHeight;
-    final _note = _projectList[index];
 
     return Container(
       height: MediaQuery.of(context).orientation == Orientation.portrait
@@ -538,11 +503,6 @@ class _HomePageState extends State<HomePage>
         onTap: () => _navigateToEntry(index),
         onLongPress: () => _setCardColor(project),
       ),
-    );
-    return ProjectItem(
-      project: _projectList[index],
-      onTap: () => _navigateToEntry(index),
-      onLongPress: () => _setCardColor(project),
     );
   }
 
@@ -555,7 +515,9 @@ class _HomePageState extends State<HomePage>
       builder: (context) => SimpleDialog(
         contentPadding: const EdgeInsets.all(0.0),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+          borderRadius: BorderRadius.all(
+            Radius.circular(8.0),
+          ),
         ),
         children: <Widget>[
           Scrollbar(
@@ -604,14 +566,14 @@ class _HomePageState extends State<HomePage>
       DatabaseHelper.columnProjectCardTextColor: cardTextColor,
     });
     await _projectDb.updateProject(newProject: updatedProject);
-    _loadProjectList(true);
+    await _loadProjectList(true);
     Navigator.pop(context, updatedProject);
   }
 
   void _navigateToEntry(int index) async {
     final result = await Navigator.pushNamed(
       context,
-      RouteGenerator.entry,
+      RouteGenerator.ENTRY,
       arguments: {
         'project': _projectList[index],
         'projectTitle': _projectList[index].title,
@@ -620,62 +582,7 @@ class _HomePageState extends State<HomePage>
       },
     );
 
-    if (result != null && result) _loadProjectList(false);
-  }
-
-  void _showContent(int index) {
-    final String createdAt = 'Erstellt am';
-
-    showDialog(
-      context: context,
-      builder: (context) => SimpleDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(8.0)),
-        ),
-        contentPadding: EdgeInsets.all(16.0),
-        titlePadding: EdgeInsets.only(left: 16.0),
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                SizedBox(height: 16.0),
-                Text(
-                  '$createdAt: '
-                  '${_projectList[index].createdAt}',
-                  style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 16.0),
-              ],
-            ),
-            IconButton(
-              icon: Icon(Icons.close),
-              onPressed: () => Navigator.pop(context),
-            ),
-          ],
-        ),
-        children: <Widget>[
-          Text(
-            '$title:',
-            style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 8.0),
-          Text(_projectList[index].title, style: TextStyle(fontSize: 16.0)),
-          SizedBox(height: 32.0),
-          Text(
-            '$desc:',
-            style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 8.0),
-          Text(
-            _projectList[index].description,
-            style: TextStyle(fontSize: 16.0),
-          ),
-          SizedBox(height: 8.0),
-        ],
-      ),
-    );
+    if (result != null && result) await _loadProjectList(false);
   }
 
   Widget _buildSnackBar({@required String text}) {
@@ -689,12 +596,9 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  final String _kSortingOrderPrefs = 'sortOrder';
-
   Future<String> _getSortingOrder() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    //return prefs.getString(_kSortingOrderPrefs) ?? sort_by_release_date_desc;
-    final order = prefs.getString(_kSortingOrderPrefs);
+    final order = prefs.getString(_sortOrder);
     if (order == null) {
       return sort_by_release_date_desc;
     }
@@ -703,33 +607,23 @@ class _HomePageState extends State<HomePage>
 
   Future<void> setSortingOrder(String value) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString(_kSortingOrderPrefs, value);
+    await prefs.setString(_sortOrder, value);
   }
 
   Future<void> _loadProjectList(bool newProject) async {
     for (int i = 0; i < _projectList.length; i++) {
       _projectList.removeWhere((element) {
         _projectList[i].id = _projectList[i].id;
+        return true;
       });
     }
 
     List projects = await _projectDb.getAllProjects();
 
-    /*for (int i = 0; i < projects.length; i++) {
-      setState(() {
-        _projectList.insert(i, projects[i]);
-      });
-    }*/
-
     projects.forEach((project) {
-      setState(() {
-        //_projectList.add(Project.map(project));
-        _projectList.insert(0, Project.map(project));
-      });
+      setState(() => _projectList.insert(0, Project.map(project)));
     });
 
-    // Add new projects on top of the list without sorting the list
-    //if (!newProject) _choiceSortOption(await _getSortingOrder());
     _choiceSortOption(await _getSortingOrder());
   }
 
@@ -743,11 +637,9 @@ class _HomePageState extends State<HomePage>
 
     List<Widget> experimentItemsWidgets = [];
     for (int i = 0; i < experimentItems.length; i++) {
-      if (i == 0) {
-        experimentItemsWidgets.add(_createTile(experimentItems[i], true));
-      } else {
-        experimentItemsWidgets.add(_createTile(experimentItems[i], false));
-      }
+      i == 0
+          ? experimentItemsWidgets.add(_createTile(experimentItems[i], true))
+          : experimentItemsWidgets.add(_createTile(experimentItems[i], false));
     }
 
     _buildMainBottomSheet(experimentItemsWidgets);
@@ -756,10 +648,12 @@ class _HomePageState extends State<HomePage>
   void _buildMainBottomSheet(List<Widget> experimentItemsWidgets) {
     showModalBottomSheet(
       context: context,
-      builder: (BuildContext context) => ListView(
-        shrinkWrap: true,
-        children: experimentItemsWidgets,
-      ),
+      builder: (BuildContext context) {
+        return ListView(
+          shrinkWrap: true,
+          children: experimentItemsWidgets,
+        );
+      },
     );
   }
 
@@ -803,11 +697,11 @@ class _HomePageState extends State<HomePage>
           if (experimentItem.name.isEmpty) {
             Navigator.pop(context);
           } else if (experimentItem.name == 'Rechner') {
-            Navigator.popAndPushNamed(context, RouteGenerator.calculatorPage);
+            Navigator.popAndPushNamed(context, RouteGenerator.CALCULATOR_PAGE);
           } else if (experimentItem.name == 'Stoppuhr') {
-            Navigator.popAndPushNamed(context, RouteGenerator.stopwatchPage);
+            Navigator.popAndPushNamed(context, RouteGenerator.STOPWATCH_PAGE);
           } else if (experimentItem.name == 'Ortsbestimmung') {
-            Navigator.popAndPushNamed(context, RouteGenerator.sensorPage);
+            Navigator.popAndPushNamed(context, RouteGenerator.SENSOR_PAGE);
           }
         },
       ),
@@ -822,9 +716,7 @@ class _HomePageState extends State<HomePage>
     );
 
     if (_projectList.contains(_projectList[index])) {
-      setState(() {
-        _projectList.removeAt(index);
-      });
+      setState(() => _projectList.removeAt(index));
     }
   }
 }

@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:citizen_lab/custom_widgets/alarm_dialog.dart';
 import 'package:citizen_lab/custom_widgets/dial_floating_action_button.dart';
-import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/custom_widgets/note_item.dart';
 import 'package:citizen_lab/custom_widgets/simple_timer_dialog.dart';
 import 'package:citizen_lab/database/database_provider.dart';
@@ -11,7 +10,7 @@ import 'package:citizen_lab/projects/project.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/utils/colors.dart';
 import 'package:citizen_lab/utils/constants.dart';
-import 'package:citizen_lab/utils/date_formater.dart';
+import 'package:citizen_lab/utils/date_formatter.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:flutter/material.dart';
 import 'package:permission/permission.dart';
@@ -61,8 +60,6 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   String createdAtAsc = 'created_at ASC';
   String titleDesc = 'title DESC';
   String titleAsc = 'title ASC';
-  String _order = 'created_at DESC';
-  bool _listLoaded = false;
 
   @override
   void initState() {
@@ -181,30 +178,10 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
     );
   }
 
-  void _backToHomePage() {
-    final String cancel =
-        'Experiment abbrechen und zur Hauptseite zurückkehren?';
-
-    showDialog(
-      context: context,
-      builder: (_) => NoYesDialog(
-        text: cancel,
-        onPressed: () {
-          Navigator.popUntil(
-            context,
-            ModalRoute.withName(RouteGenerator.routeHomePage),
-          );
-        },
-      ),
-    );
-  }
-
   Widget _buildBody() {
     return SafeArea(
       child: WillPopScope(
-        onWillPop: () {
-          Navigator.pop(context, true);
-        },
+        onWillPop: () async => Navigator.pop(context, true),
         child: _noteList.isNotEmpty
             ? ListView.builder(
                 itemCount: _noteList.length,
@@ -508,11 +485,11 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
           if (experimentItem.name.isEmpty) {
             Navigator.pop(context);
           } else if (experimentItem.name == 'Rechner') {
-            Navigator.popAndPushNamed(context, RouteGenerator.calculatorPage);
+            Navigator.popAndPushNamed(context, RouteGenerator.CALCULATOR_PAGE);
           } else if (experimentItem.name == 'Stoppuhr') {
-            Navigator.popAndPushNamed(context, RouteGenerator.stopwatchPage);
+            Navigator.popAndPushNamed(context, RouteGenerator.STOPWATCH_PAGE);
           } else if (experimentItem.name == 'Ortsbestimmung') {
-            Navigator.popAndPushNamed(context, RouteGenerator.sensorPage);
+            Navigator.popAndPushNamed(context, RouteGenerator.SENSOR_PAGE);
           }
         },
       ),
@@ -536,20 +513,20 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   void _openNotePage(String type, [Note note]) async {
     switch (type) {
       case 'Text':
-        _setList(note, RouteGenerator.textPage);
+        _setList(note, RouteGenerator.TEXT_PAGE);
         break;
       case 'Tabelle':
-        _setList(note, RouteGenerator.tablePage);
+        _setList(note, RouteGenerator.TABLE_PAGE);
         break;
       case 'Bild':
-        _setList(note, RouteGenerator.imagePage);
+        _setList(note, RouteGenerator.IMAGE_PAGE);
         break;
       case 'Verlinkung':
-        _setList(note, RouteGenerator.linkingPage);
+        _setList(note, RouteGenerator.LINKING_PAGE);
         break;
       case 'Audio':
         _setPermission();
-        _setList(note, RouteGenerator.audioRecordPage);
+        _setList(note, RouteGenerator.AUDIO_RECORD_PAGE);
         break;
     }
   }
@@ -577,9 +554,9 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
 
     //!exists ? _notesBloc.add(result) : _notesBloc.update(result);
     if (!exists) {
-      _projectDb.insertNote(note: result);
+      await _projectDb.insertNote(note: result);
     } else {
-      if (result != null) _projectDb.updateNote(newNote: result);
+      if (result != null) await _projectDb.updateNote(newNote: result);
     }
 
     if (result != null) {
@@ -605,13 +582,14 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
 
   Future<void> setSortingOrder(String value) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString(_sortingOrderPrefs, value);
+    await prefs.setString(_sortingOrderPrefs, value);
   }
 
   void _loadNoteList() async {
     for (int i = 0; i < _noteList.length; i++) {
       _noteList.removeWhere((element) {
         _noteList[i].id = _noteList[i].id;
+        return true;
       });
     }
     //List notes = await _noteDb.getAllNotes();
@@ -655,19 +633,19 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
       //if (snapshot.data[index].type == 'Tabelle') {
       File file = File(_noteList[index].filePath);
       //File file = File(snapshot.data[index].content);
-      file.delete();
+      await file.delete();
     }
 
     if (_noteList[index].type == 'Bild') {
       //if (snapshot.data[index].type == 'Bild') {
       File file = File(_noteList[index].filePath);
       //File file = File(snapshot.data[index].content);
-      file.delete();
+      await file.delete();
     }
 
     if (_noteList[index].type == 'Audio') {
       File file = File(_noteList[index].filePath);
-      file.delete();
+      await file.delete();
     }
 
     _scaffoldKey.currentState.showSnackBar(
@@ -763,65 +741,6 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
           style: TextStyle(
             fontWeight: FontWeight.bold,
           )),
-    );
-  }
-
-  void _showContent(AsyncSnapshot snapshot, int index) {
-    final String createdAt = 'Erstellt am';
-
-    showDialog(
-      context: context,
-      builder: (context) => SimpleDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(8.0)),
-        ),
-        contentPadding: EdgeInsets.all(16.0),
-        titlePadding: EdgeInsets.only(left: 16.0),
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                SizedBox(height: 16.0),
-                Text(
-                  '$createdAt: '
-                  '${_noteList[index].createdAt}',
-                  //'${snapshot.data[index].dateCreated}',
-                  style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 16.0),
-              ],
-            ),
-            IconButton(
-              icon: Icon(Icons.close),
-              onPressed: () => Navigator.pop(context),
-            ),
-          ],
-        ),
-        children: <Widget>[
-          Text(
-            '$title:',
-            style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 8.0),
-          Text(_noteList[index].title,
-              //snapshot.data[index].title,
-              style: TextStyle(fontSize: 16.0)),
-          SizedBox(height: 32.0),
-          Text(
-            '$desc:',
-            style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 8.0),
-          Text(
-            _noteList[index].description,
-            //snapshot.data[index].description,
-            style: TextStyle(fontSize: 16.0),
-          ),
-          SizedBox(height: 8.0),
-        ],
-      ),
     );
   }
 

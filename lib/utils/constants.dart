@@ -2,6 +2,8 @@ const String APP_TITLE = 'Citizen Lab';
 
 const String feedback = 'Feedback';
 
+const String onboarding = 'Onboarding';
+
 const String fraunhofer_umsicht_url = 'https://www.umsicht.fraunhofer.de/';
 
 const String sort_by_title_arc = 'Nach Titel sortieren A-Z';

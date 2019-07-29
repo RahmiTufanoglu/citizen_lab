@@ -4,7 +4,7 @@ import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/custom_widgets/simple_timer_dialog.dart';
 import 'package:citizen_lab/database/database_provider.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
-import 'package:citizen_lab/utils/date_formater.dart';
+import 'package:citizen_lab/utils/date_formatter.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -124,7 +124,7 @@ class _WeblinkPageState extends State<WeblinkPage> {
           onPressed: () {
             Navigator.popUntil(
               context,
-              ModalRoute.withName(RouteGenerator.routeHomePage),
+              ModalRoute.withName(RouteGenerator.ROUTE_HOME_PAGE),
             );
           },
         );
@@ -215,7 +215,7 @@ class _WeblinkPageState extends State<WeblinkPage> {
   Future _showEditDialog() async {
     final String oldTitle = _title;
 
-    showDialog(
+    await showDialog(
       context: context,
       builder: (context) => SimpleTimerDialog(
         createdAt: _createdAt,
@@ -257,7 +257,7 @@ class _WeblinkPageState extends State<WeblinkPage> {
         //await _noteDb.insertNote(note: newNote);
         Navigator.pop(context, note);
       } else {
-        _updateNote(widget.note);
+        await _updateNote(widget.note);
       }
       //Navigator.pop(context, true);
     } else {
@@ -302,59 +302,4 @@ class _WeblinkPageState extends State<WeblinkPage> {
       ),
     );
   }
-
-/*Widget _buildSnackBarWithButton({
-    @required String text,
-    @required GestureTapCallback onPressed,
-  }) {
-    final String yes = 'Ja';
-    final String no = 'Nein';
-
-    return SnackBar(
-      backgroundColor: Colors.black87,
-      duration: Duration(seconds: 3),
-      content: Row(
-        children: <Widget>[
-          Expanded(
-            flex: 2,
-            child: Text(
-              text,
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          SizedBox(width: 8.0),
-          Expanded(
-            flex: 1,
-            child: RaisedButton(
-              color: Colors.green,
-              child: Text(no),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(8.0),
-                ),
-              ),
-              onPressed: () => _scaffoldKey.currentState.hideCurrentSnackBar(),
-            ),
-          ),
-          SizedBox(width: 8.0),
-          Expanded(
-            flex: 1,
-            child: RaisedButton(
-              color: Colors.red,
-              child: Text(yes),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(8.0),
-                ),
-              ),
-              onPressed: onPressed,
-            ),
-          ),
-        ],
-      ),
-    );
-  }*/
 }

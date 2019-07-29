@@ -62,10 +62,6 @@ class NotesBloc implements BaseBloc {
     }
   }
 
-  /**
-   *
-   */
-
   void sortByTitleArc(List<Note> notes) {
     notes.sort(
       (Note a, Note b) =>

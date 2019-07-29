@@ -1,6 +1,6 @@
 import 'package:citizen_lab/projects/project.dart';
 import 'package:citizen_lab/utils/constants.dart';
-import 'package:citizen_lab/utils/date_formater.dart';
+import 'package:citizen_lab/utils/date_formatter.dart';
 import 'package:citizen_lab/utils/utils.dart';
 import 'package:flutter/material.dart';
 
@@ -109,7 +109,7 @@ class _ProjectTemplatePageState extends State<ProjectTemplatePage> {
     );
 
     if (project != null) {
-      _projectDb.insertNote(note: note);
+      await _projectDb.insertNote(note: note);
     }
   }
 

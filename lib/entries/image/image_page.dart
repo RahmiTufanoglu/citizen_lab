@@ -9,7 +9,7 @@ import 'package:citizen_lab/custom_widgets/simple_timer_dialog.dart';
 import 'package:citizen_lab/database/database_provider.dart';
 import 'package:citizen_lab/entries/note.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
-import 'package:citizen_lab/utils/date_formater.dart';
+import 'package:citizen_lab/utils/date_formatter.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
@@ -155,12 +155,12 @@ class _ImagePageState extends State<ImagePage> {
   void _setInfoPage() {
     Navigator.pushNamed(
       context,
-      RouteGenerator.infoPage,
+      RouteGenerator.INFO_PAGE,
       arguments: {
-        'title': 'Bild-Info',
-        'tabLength': 2,
-        'tabs': imageTabList,
-        'tabChildren': imageSingleChildScrollViewList,
+        RouteGenerator.TITLE: 'Bild-Info',
+        RouteGenerator.TAB_LENGTH: 2,
+        RouteGenerator.TABS: imageTabList,
+        RouteGenerator.TAB_CHILDREN: imageSingleChildScrollViewList,
       },
     );
   }
@@ -176,7 +176,7 @@ class _ImagePageState extends State<ImagePage> {
           onPressed: () {
             Navigator.popUntil(
               context,
-              ModalRoute.withName(RouteGenerator.routeHomePage),
+              ModalRoute.withName(RouteGenerator.ROUTE_HOME_PAGE),
             );
           },
         );
@@ -221,8 +221,6 @@ class _ImagePageState extends State<ImagePage> {
   }
 
   Widget _buildBody() {
-    final double screenWidth = MediaQuery.of(context).size.width;
-
     return SafeArea(
       child: Form(
         key: _formKey,
@@ -251,7 +249,7 @@ class _ImagePageState extends State<ImagePage> {
 
   Future<void> _createImage() async {
     if (_image == null) {
-      showDialog(
+      await showDialog(
         context: context,
         builder: (_) {
           return SetTitleWidget(
@@ -290,7 +288,7 @@ class _ImagePageState extends State<ImagePage> {
 
       setState(() => _image = image);
 
-      _createCachedImage();
+      await _createCachedImage();
     }
   }
 
@@ -405,20 +403,6 @@ class _ImagePageState extends State<ImagePage> {
       ),
     );
   }*/
-
-  Widget _buildSnackBar({@required String text}) {
-    return SnackBar(
-      backgroundColor: Colors.black87,
-      duration: Duration(milliseconds: 500),
-      content: Text(
-        text,
-        style: TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
-  }
 
   Widget _buildSnackBarWithButton({
     @required String text,

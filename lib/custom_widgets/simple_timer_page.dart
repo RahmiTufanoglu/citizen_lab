@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:citizen_lab/utils/date_formater.dart';
+import 'package:citizen_lab/utils/date_formatter.dart';
 import 'package:flutter/material.dart';
 
 class SimpleTimerPage extends StatefulWidget {
