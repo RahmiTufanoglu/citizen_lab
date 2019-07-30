@@ -102,6 +102,7 @@ class _TextPageState extends State<TextPage> {
 
   Widget _buildBody() {
     return TitleDescWidget(
+      uuid: widget.uuid,
       titleBloc: _titleBloc,
       titleChanger: _titleChanger,
       title: _title,
@@ -212,10 +213,10 @@ class _TextPageState extends State<TextPage> {
     return path;
   }
 
-  void _backToHomePage() {
+  Future<void> _backToHomePage() async {
     final String cancel = 'Notiz abbrechen und zur Hauptseite zurückkehren?';
 
-    showDialog(
+    await showDialog(
       context: context,
       builder: (_) {
         return NoYesDialog(

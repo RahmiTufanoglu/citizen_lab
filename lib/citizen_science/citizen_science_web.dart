@@ -6,9 +6,13 @@ import 'package:provider/provider.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class CitizenScienceWebPage extends StatefulWidget {
+  final String title;
   final String url;
 
-  CitizenScienceWebPage({@required this.url});
+  CitizenScienceWebPage({
+    @required this.title,
+    @required this.url,
+  });
 
   @override
   _CitizenScienceWebPageState createState() => _CitizenScienceWebPageState();
@@ -24,14 +28,13 @@ class _CitizenScienceWebPageState extends State<CitizenScienceWebPage> {
 
   @override
   void initState() {
-    _isLoadingPage = true;
     super.initState();
+    _isLoadingPage = true;
   }
 
   @override
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
-    //_themeChanger.checkIfDarkModeEnabled(context);
 
     return Scaffold(
       appBar: _buildAppBar(),
@@ -41,7 +44,6 @@ class _CitizenScienceWebPageState extends State<CitizenScienceWebPage> {
 
   Widget _buildAppBar() {
     final String back = 'Zurück';
-    final String citizenScience = 'Citizen Science';
 
     return AppBar(
       leading: IconButton(
@@ -54,8 +56,8 @@ class _CitizenScienceWebPageState extends State<CitizenScienceWebPage> {
         child: Container(
           width: double.infinity,
           child: Tooltip(
-            message: citizenScience,
-            child: Text(citizenScience),
+            message: widget.title,
+            child: Text(widget.title),
           ),
         ),
       ),

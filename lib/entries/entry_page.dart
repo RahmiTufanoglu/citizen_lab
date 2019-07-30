@@ -187,27 +187,9 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
                 itemCount: _noteList.length,
                 padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 88.0),
                 itemBuilder: (context, index) {
-                  final _note = _noteList[index];
-                  final key = Key('${_note.hashCode}');
-                  return Dismissible(
-                    key: key,
-                    direction: DismissDirection.startToEnd,
-                    background: Container(
-                      alignment: Alignment.centerLeft,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                      ),
-                      child: Row(
-                        children: <Widget>[
-                          Icon(Icons.arrow_forward, size: 28.0),
-                          SizedBox(width: 8.0),
-                          Icon(Icons.delete, size: 28.0),
-                        ],
-                      ),
-                    ),
-                    onDismissed: (_) => _deleteNote(index),
-                    child: _buildItem(index),
-                  );
+                  final note = _noteList[index];
+                  final key = Key('${note.hashCode}');
+                  return _buildDismissible(key, note, index);
                 },
               )
             : Center(
@@ -217,6 +199,28 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
                 ),
               ),
       ),
+    );
+  }
+
+  Widget _buildDismissible(Key key, Note note, int index) {
+    return Dismissible(
+      key: key,
+      direction: DismissDirection.startToEnd,
+      background: Container(
+        alignment: Alignment.centerLeft,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+        ),
+        child: Row(
+          children: <Widget>[
+            Icon(Icons.arrow_forward, size: 28.0),
+            SizedBox(width: 8.0),
+            Icon(Icons.delete, size: 28.0),
+          ],
+        ),
+      ),
+      onDismissed: (_) => _deleteNote(index),
+      child: _buildItem(note, index),
     );
   }
 
@@ -275,10 +279,9 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
     );
   }*/
 
-  Widget _buildItem(int index) {
+  Widget _buildItem(Note note, int index) {
     final double screenHeight =
         MediaQuery.of(context).size.height - kToolbarHeight;
-    final note = _noteList[index];
 
     return Container(
       height: MediaQuery.of(context).orientation == Orientation.portrait

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:citizen_lab/bloc/custom_expansion_tile.dart';
 import 'package:citizen_lab/database/database_provider.dart';
 import 'package:citizen_lab/entries/note.dart';
+import 'package:citizen_lab/projects/project.dart';
 import 'package:citizen_lab/themes/theme.dart';
 import 'package:citizen_lab/utils/date_formatter.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,6 +12,7 @@ import 'package:flutter/material.dart';
 import '../title_change_provider.dart';
 
 class TitleDescWidget extends StatefulWidget {
+  final uuid;
   final titleBloc;
   final TitleChangerProvider titleChanger;
   final String title;
@@ -21,6 +23,7 @@ class TitleDescWidget extends StatefulWidget {
   final DatabaseHelper db;
 
   TitleDescWidget({
+    @required this.uuid,
     @required this.titleBloc,
     @required this.titleChanger,
     @required this.title,
@@ -40,9 +43,12 @@ class TitleDescWidget extends StatefulWidget {
 }
 
 class _TitleDescWidgetState extends State<TitleDescWidget> {
-  List<Note> notelist = [];
+  List<Note> noteList = [];
+  List<Project> projectList = [];
   String noteTitle = '';
   String noteDesc = '';
+  String projectTitle = '';
+  String projectDesc = '';
   Timer _timer;
   String _timeString;
 
@@ -51,6 +57,7 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
     _timeString = dateFormatted();
     _timer = Timer.periodic(Duration(seconds: 1), (_) => _getTime());
 
+    _getProjectsFromDb();
     _getNotesFromDb();
 
     super.initState();
@@ -64,9 +71,7 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
 
   void _getTime() {
     final String formattedDateTime = dateFormatted();
-    setState(() {
-      _timeString = formattedDateTime;
-    });
+    setState(() => _timeString = formattedDateTime);
   }
 
   @override
@@ -76,11 +81,7 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
 
   bool _checkIfDarkModeEnabled() {
     final ThemeData theme = Theme.of(context);
-    if (theme.brightness == appDarkTheme().brightness) {
-      return true;
-    } else {
-      return false;
-    }
+    return theme.brightness == appDarkTheme().brightness ? true : false;
   }
 
   Widget _buildWidget() {
@@ -205,7 +206,12 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
     return Column(
       children: <Widget>[
         Card(
-          margin: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 8.0),
+          margin: const EdgeInsets.fromLTRB(
+            16.0,
+            16.0,
+            16.0,
+            8.0,
+          ),
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -261,8 +267,37 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
+          DropdownButton<Project>(
+            items: projectList
+                .map((project) => DropdownMenuItem(
+                      child: Container(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        width: double.infinity,
+                        child: Text(
+                          project.title,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      value: project,
+                    ))
+                .toList(),
+            onChanged: (Project project) {
+              setState(() {
+                //projectTitle = project.title;
+                //projectDesc = project.description;
+              });
+            },
+            isExpanded: true,
+            hint: Text(
+              'Projekt auswählen.',
+              style: TextStyle(
+                color: _checkIfDarkModeEnabled() ? Colors.white : Colors.black,
+              ),
+            ),
+          ),
+          //
           DropdownButton<Note>(
-            items: notelist
+            items: noteList
                 .map((note) => DropdownMenuItem(
                       child: Container(
                         padding: const EdgeInsets.only(bottom: 8.0),
@@ -320,11 +355,19 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
     );
   }
 
-  Future<void> _getNotesFromDb() async {
-    notelist = await widget.db.getAllNotes();
+  Future<void> _getProjectsFromDb() async {
+    projectList = await widget.db.getAllProjects();
 
-    for (int i = 0; i < notelist.length; i++) {
-      print('$i: ${notelist[i].title}');
+    for (int i = 0; i < projectList.length; i++) {
+      print('$i: ${projectList[i].title}');
+    }
+  }
+
+  Future<void> _getNotesFromDb() async {
+    noteList = await widget.db.getNotesOfProject(uuid: widget.uuid);
+
+    for (int i = 0; i < noteList.length; i++) {
+      print('$i: ${noteList[i].title}');
     }
   }
 

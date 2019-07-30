@@ -5,6 +5,10 @@ const String feedback = 'Feedback';
 const String onboarding = 'Onboarding';
 
 const String fraunhoferUmsichtUrl = 'https://www.umsicht.fraunhofer.de/';
+const String fraunhoferUmsichtPrivacyStatement =
+    'https://www.umsicht.fraunhofer.de/de/datenschutzerklaerung.html';
+const String fraunhoferUmsichtImpressum =
+    'https://www.umsicht.fraunhofer.de/de/impressum.html';
 
 const String sortByTitleArc = 'Nach Titel sortieren A-Z';
 const String sortByTitleDesc = 'Nach Titel Sortieren Z-A';

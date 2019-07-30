@@ -250,6 +250,7 @@ class _HomePageState extends State<HomePage>
     final double screenWidth = MediaQuery.of(context).size.width;
     final double drawerWidth = screenWidth / 1.5;
     final String about = 'Über';
+    final String impressum = 'Impressum';
     final String location = 'Dortmund';
     final String deleteAll = 'Alles löschen';
     final String appLogoPath = 'assets/app_logo.png';
@@ -305,6 +306,12 @@ class _HomePageState extends State<HomePage>
               title: appTitle,
               onTap: () => _setNavigation(RouteGenerator.citizenSciencePage),
             ),
+            _buildDrawerItem(
+              context: context,
+              icon: Icons.category,
+              title: onboarding,
+              onTap: () => _setNavigation(RouteGenerator.onboardingPage),
+            ),
           ],
         ),
         Divider(
@@ -349,18 +356,13 @@ class _HomePageState extends State<HomePage>
               context: context,
               icon: Icons.info,
               title: about,
-              onTap: () {
-                Map map = Map<String, String>();
-                map['title'] = 'Über';
-                map['content'] = lorem;
-                _setNavigation(RouteGenerator.aboutPage, map);
-              },
+              onTap: () => _launchWeb(about, fraunhoferUmsichtPrivacyStatement),
             ),
             _buildDrawerItem(
               context: context,
               icon: Icons.info_outline,
-              title: onboarding,
-              onTap: () => _setNavigation(RouteGenerator.onboardingPage),
+              title: impressum,
+              onTap: () => _launchWeb(impressum, fraunhoferUmsichtImpressum),
             ),
           ],
         ),
@@ -387,6 +389,17 @@ class _HomePageState extends State<HomePage>
         ),
         SizedBox(height: 32.0),
       ],
+    );
+  }
+
+  Future<void> _launchWeb(String title, String url) async {
+    return await Navigator.pushNamed(
+      context,
+      RouteGenerator.webPage,
+      arguments: {
+        RouteGenerator.title: title,
+        RouteGenerator.url: url,
+      },
     );
   }
 
@@ -445,12 +458,7 @@ class _HomePageState extends State<HomePage>
           opacity: _animation,
           child: _projectList.isNotEmpty
               ? ListView.builder(
-                  padding: const EdgeInsets.fromLTRB(
-                    16.0,
-                    8.0,
-                    16.0,
-                    88.0,
-                  ),
+                  padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 88.0),
                   reverse: false,
                   itemCount: _projectList.length,
                   itemBuilder: (context, index) {
@@ -482,11 +490,8 @@ class _HomePageState extends State<HomePage>
           ],
         ),
       ),
-      onDismissed: (direction) => _deleteProject(index),
-      child: Container(
-        width: double.infinity,
-        child: _buildItem(project, index),
-      ),
+      onDismissed: (_) => _deleteProject(index),
+      child: _buildItem(project, index),
     );
   }
 
@@ -499,7 +504,7 @@ class _HomePageState extends State<HomePage>
           ? screenHeight / 8
           : screenHeight / 4,
       child: ProjectItem(
-        project: _projectList[index],
+        project: project,
         onTap: () => _navigateToEntry(index),
         onLongPress: () => _setCardColor(project),
       ),
@@ -623,6 +628,7 @@ class _HomePageState extends State<HomePage>
 
     projects.forEach((project) {
       setState(() => _projectList.insert(0, Project.map(project)));
+      //setState(() => _projectList.insert(0, project));
     });
 
     _choiceSortOption(await _getSortingOrder());

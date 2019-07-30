@@ -37,7 +37,6 @@ class _DetailPageState extends State<DetailPage> {
   @override
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
-    //_themeChanger.checkIfDarkModeEnabled(context);
 
     return Scaffold(
       body: _buildBody(),
@@ -106,9 +105,10 @@ class _DetailPageState extends State<DetailPage> {
   Future<void> _launchWeb() async {
     return await Navigator.pushNamed(
       context,
-      RouteGenerator.citizenScienceWebPage,
+      RouteGenerator.webPage,
       arguments: {
-        'url': widget.url,
+        RouteGenerator.title: widget.title,
+        RouteGenerator.url: widget.url,
       },
     );
   }

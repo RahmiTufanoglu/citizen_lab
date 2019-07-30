@@ -23,7 +23,6 @@ class _CitizenSciencePageState extends State<CitizenSciencePage> {
   @override
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
-    //_themeChanger.checkIfDarkModeEnabled(context);
 
     return Scaffold(
       appBar: _buildAppBar(),
@@ -188,7 +187,10 @@ class _CitizenSciencePageState extends State<CitizenSciencePage> {
   }
 
   Future<void> _showContent(
-      String title, String built, String contactPerson) async {
+    String title,
+    String built,
+    String contactPerson,
+  ) async {
     await showDialog(
       context: context,
       builder: (_) {

@@ -320,7 +320,7 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
 
   List<Permissions> _permissions;
 
-  void _setPermission() async {
+  Future<void> _setPermission() async {
     _permissions = await Permission.getPermissionsStatus(
         [PermissionName.Microphone, PermissionName.Storage]);
     await Permission.requestPermissions(

@@ -124,6 +124,18 @@ class DatabaseHelper implements ProjectDao, NoteDao {
     return result.toList();
   }
 
+  /*@override
+  Future<List<Project>> getAllProjects() async {
+    final Database db = await this.database;
+    var res = await db.query(noteTable);
+    List<Project> list = res.isNotEmpty
+        ? res.map((project) {
+            return Project.fromMap(project);
+          }).toList()
+        : [];
+    return list;
+  }*/
+
   @override
   Future<int> deleteProject({@required int id}) async {
     final Database db = await this.database;
