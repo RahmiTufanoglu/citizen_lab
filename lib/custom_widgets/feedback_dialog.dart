@@ -81,6 +81,11 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
                 child: RaisedButton(
                   elevation: 4.0,
                   highlightElevation: 16.0,
+                  onPressed: () {
+                    return _formKey.currentState.validate()
+                        ? Share.share(_feedbackMessage.text)
+                        : null;
+                  },
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
@@ -92,11 +97,6 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
                       ],
                     ),
                   ),
-                  onPressed: () {
-                    return _formKey.currentState.validate()
-                        ? Share.share(_feedbackMessage.text)
-                        : null;
-                  },
                 ),
               ),
               SizedBox(width: 16.0),
@@ -104,6 +104,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
                 child: RaisedButton(
                   elevation: 2.0,
                   highlightElevation: 16.0,
+                  onPressed: () => _launchUrl(),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
@@ -115,7 +116,6 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
                       ],
                     ),
                   ),
-                  onPressed: () => _launchUrl(),
                 ),
               ),
             ],

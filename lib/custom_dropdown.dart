@@ -157,14 +157,14 @@ class _CustomDropdownMenuState<T> extends State<_CustomDropdownMenu<T>> {
       children.add(FadeTransition(
         opacity: opacity,
         child: InkWell(
+          onTap: () => Navigator.pop(
+            context,
+            _DropdownRouteResult<T>(route.items[itemIndex].value),
+          ),
           child: Container(
             padding: widget.padding,
             child: route.items[itemIndex],
           ),
-          onTap: () => Navigator.pop(
-                context,
-                _DropdownRouteResult<T>(route.items[itemIndex].value),
-              ),
         ),
       ));
     }
@@ -872,8 +872,8 @@ class _DropdownButtonState<T> extends State<DropdownButton<T>>
       items.add(DefaultTextStyle(
         style: _textStyle.copyWith(color: Theme.of(context).hintColor),
         child: IgnorePointer(
-          child: emplacedHint,
           ignoringSemantics: false,
+          child: emplacedHint,
         ),
       ));
     }

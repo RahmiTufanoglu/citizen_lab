@@ -71,23 +71,23 @@ class _SetTitleWidgetState extends State<SetTitleWidget> {
             children: <Widget>[
               Expanded(
                 child: RaisedButton(
-                  child: Icon(Icons.remove),
                   onPressed: () {
                     if (widget.titleTextEditingController.text.isNotEmpty) {
                       widget.titleTextEditingController.clear();
                     }
                   },
+                  child: Icon(Icons.remove),
                 ),
               ),
               SizedBox(width: 16.0),
               Expanded(
                 child: RaisedButton(
-                  child: Icon(Icons.check),
                   onPressed: () async {
                     if (_formKey.currentState.validate()) {
                       widget.onPressed();
                     }
                   },
+                  child: Icon(Icons.check),
                 ),
               ),
             ],

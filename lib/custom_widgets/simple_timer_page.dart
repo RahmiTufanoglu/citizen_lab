@@ -145,8 +145,8 @@ class _SimpleTimerPageState extends State<SimpleTimerPage> {
                       elevation: 4.0,
                       highlightElevation: 16.0,
                       padding: const EdgeInsets.all(0.0),
-                      child: Icon(Icons.remove),
                       onPressed: widget.onPressedClear,
+                      child: Icon(Icons.remove),
                     ),
                   ),
                   SizedBox(width: 16.0),
@@ -155,12 +155,12 @@ class _SimpleTimerPageState extends State<SimpleTimerPage> {
                       elevation: 4.0,
                       highlightElevation: 16.0,
                       padding: const EdgeInsets.all(0.0),
-                      child: Icon(Icons.check),
                       onPressed: () {
                         if (_formKey.currentState.validate()) {
                           widget.onPressedUpdate();
                         }
                       },
+                      child: Icon(Icons.check),
                     ),
                   ),
                 ],

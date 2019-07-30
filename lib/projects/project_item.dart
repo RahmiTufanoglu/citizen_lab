@@ -25,6 +25,8 @@ class ProjectItem extends StatelessWidget {
         height: (screenHeight + topBarHeight) / 10,
         padding: const EdgeInsets.symmetric(vertical: 6.0),
         child: RaisedButton(
+          color: Color(project.cardColor),
+          onPressed: onTap,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
@@ -63,8 +65,6 @@ class ProjectItem extends StatelessWidget {
               ),
             ],
           ),
-          color: Color(project.cardColor),
-          onPressed: onTap,
         ),
       ),
     );

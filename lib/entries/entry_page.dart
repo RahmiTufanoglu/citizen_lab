@@ -181,7 +181,10 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   Widget _buildBody() {
     return SafeArea(
       child: WillPopScope(
-        onWillPop: () async => Navigator.pop(context, true),
+        //onWillPop: () async => Navigator.pop(context, true),
+        onWillPop: () {
+          Navigator.pop(context, true);
+        },
         child: _noteList.isNotEmpty
             ? ListView.builder(
                 itemCount: _noteList.length,
@@ -375,15 +378,15 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
         children: <Widget>[
           FloatingActionButton(
             heroTag: null,
-            child: Icon(Icons.assignment),
             tooltip: darkModus,
             onPressed: () => _showEditDialog(),
+            child: Icon(Icons.assignment),
           ),
           FloatingActionButton(
             heroTag: null,
-            child: Icon(Icons.keyboard_arrow_up),
             tooltip: edit,
             onPressed: () => _openModalBottomSheet(),
+            child: Icon(Icons.keyboard_arrow_up),
           ),
           DialFloatingActionButton(
             iconList: entryIconList,
@@ -454,6 +457,17 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
 
     return Material(
       child: InkWell(
+        onTap: () {
+          if (experimentItem.name.isEmpty) {
+            Navigator.pop(context);
+          } else if (experimentItem.name == 'Rechner') {
+            Navigator.popAndPushNamed(context, RouteGenerator.calculatorPage);
+          } else if (experimentItem.name == 'Stoppuhr') {
+            Navigator.popAndPushNamed(context, RouteGenerator.stopwatchPage);
+          } else if (experimentItem.name == 'Ortsbestimmung') {
+            Navigator.popAndPushNamed(context, RouteGenerator.sensorPage);
+          }
+        },
         child: Container(
           height: tileHeight,
           child: Stack(
@@ -484,17 +498,6 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
             ],
           ),
         ),
-        onTap: () {
-          if (experimentItem.name.isEmpty) {
-            Navigator.pop(context);
-          } else if (experimentItem.name == 'Rechner') {
-            Navigator.popAndPushNamed(context, RouteGenerator.calculatorPage);
-          } else if (experimentItem.name == 'Stoppuhr') {
-            Navigator.popAndPushNamed(context, RouteGenerator.stopwatchPage);
-          } else if (experimentItem.name == 'Ortsbestimmung') {
-            Navigator.popAndPushNamed(context, RouteGenerator.sensorPage);
-          }
-        },
       ),
     );
   }
@@ -595,35 +598,13 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
         return true;
       });
     }
-    //List notes = await _noteDb.getAllNotes();
 
     List notes = await _projectDb.getNotesOfProject(uuid: widget.project.uuid);
-    //List notes = await _noteDb.getAllNotes();
-    //List notes = await _noteDb.getNotesOfProject(id: widget.projectTitle);
-    //List notes = await _noteDb.getNotesOfProject(id: widget.project.id);
-
-    //List notes = await _noteDb.getNote(id: widget.projectTitle);
-    //List notes = await _noteDb.getNotesOfProject(id: widget.project.id);
-    //List notes = await _noteDb.getNotesOfProject(id: 0);
-    //List notes = await _noteDb.getAllNotes(title: widget.projectTitle);
-
-    //List notes = _notesBloc.getNotes(random: widget.project.random);
 
     for (int i = 0; i < notes.length; i++) {
-      setState(() {
-        //_noteList.insert(i, notes[i]);
-        _noteList.insert(0, notes[i]);
-      });
+      setState(() => _noteList.insert(0, notes[i]));
     }
 
-    /*notes.forEach((note) {
-      setState(() {
-        _noteList.insert(0, Note.map(note));
-      });
-    });*/
-
-    //_choiceSortOption(sort_by_release_date_desc);
-    //_choiceSortOption(sort_by_release_date_asc);
     _choiceSortOption(await _getSortingOrder());
   }
 

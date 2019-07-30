@@ -22,6 +22,23 @@ linter:
     - overridden_fields
     - prefer_contains
     - prefer_foreach
+    - prefer_function_declarations_over_variables
+    - prefer_if_null_operators
+    - prefer_initializing_formals
+    - prefer_inlined_adds
+    - prefer_is_empty
+    - unawaited_futures
+    - unnecessary_const
+    - unnecessary_getters_setters
+    - void_checks
+    - use_string_buffers
+    - unnecessary_this
+    - use_full_hex_values_for_flutter_colors
+    - unnecessary_parenthesis
+    - unnecessary_overrides
+    - unnecessary_null_aware_assignments
+    - sort_child_properties_last
+    - slash_for_doc_comments
 
 analyzer:
   errors:

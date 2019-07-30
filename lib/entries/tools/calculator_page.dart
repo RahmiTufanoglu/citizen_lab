@@ -157,11 +157,11 @@ class _CalculatorPageState extends State<CalculatorPage> {
       child: Padding(
         padding: EdgeInsets.all(4.0),
         child: RaisedButton(
+          onPressed: () => _buttonPressed(buttonText),
           child: Text(
             buttonText,
             style: TextStyle(fontSize: 18.0),
           ),
-          onPressed: () => _buttonPressed(buttonText),
         ),
       ),
     );
@@ -169,8 +169,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
   Widget _buildFabs() {
     return FloatingActionButton(
-      child: Icon(Icons.content_copy),
       onPressed: () => _copyContent(),
+      child: Icon(Icons.content_copy),
     );
   }
 

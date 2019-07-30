@@ -126,9 +126,9 @@ class _HomePageState extends State<HomePage>
         children: <Widget>[
           FloatingActionButton(
             heroTag: null,
-            child: Icon(Icons.keyboard_arrow_up),
             tooltip: '',
             onPressed: () => _openModalBottomSheet(),
+            child: Icon(Icons.keyboard_arrow_up),
           ),
           DialFloatingActionButton(
             iconList: projectIconList,
@@ -626,10 +626,13 @@ class _HomePageState extends State<HomePage>
 
     List projects = await _projectDb.getAllProjects();
 
-    projects.forEach((project) {
+    /*projects.forEach((project) {
       setState(() => _projectList.insert(0, Project.map(project)));
-      //setState(() => _projectList.insert(0, project));
-    });
+    });*/
+
+    for (int i = 0; i < projects.length; i++) {
+      setState(() => _projectList.insert(0, projects[i]));
+    }
 
     _choiceSortOption(await _getSortingOrder());
   }
@@ -670,6 +673,17 @@ class _HomePageState extends State<HomePage>
 
     return Material(
       child: InkWell(
+        onTap: () {
+          if (experimentItem.name.isEmpty) {
+            Navigator.pop(context);
+          } else if (experimentItem.name == 'Rechner') {
+            Navigator.popAndPushNamed(context, RouteGenerator.calculatorPage);
+          } else if (experimentItem.name == 'Stoppuhr') {
+            Navigator.popAndPushNamed(context, RouteGenerator.stopwatchPage);
+          } else if (experimentItem.name == 'Ortsbestimmung') {
+            Navigator.popAndPushNamed(context, RouteGenerator.sensorPage);
+          }
+        },
         child: Container(
           height: tileHeight,
           child: Stack(
@@ -700,17 +714,6 @@ class _HomePageState extends State<HomePage>
             ],
           ),
         ),
-        onTap: () {
-          if (experimentItem.name.isEmpty) {
-            Navigator.pop(context);
-          } else if (experimentItem.name == 'Rechner') {
-            Navigator.popAndPushNamed(context, RouteGenerator.calculatorPage);
-          } else if (experimentItem.name == 'Stoppuhr') {
-            Navigator.popAndPushNamed(context, RouteGenerator.stopwatchPage);
-          } else if (experimentItem.name == 'Ortsbestimmung') {
-            Navigator.popAndPushNamed(context, RouteGenerator.sensorPage);
-          }
-        },
       ),
     );
   }

@@ -99,7 +99,8 @@ class _ImagePageState extends State<ImagePage> {
           width: double.infinity,
           child: Tooltip(
             message: noteType,
-            child: Text(_title != null ? _title : noteType),
+            //child: Text(_title != null ? _title : noteType),
+            child: Text(_title ?? noteType),
           ),
         ),
       ),
@@ -196,24 +197,24 @@ class _ImagePageState extends State<ImagePage> {
           FloatingActionButton(
             heroTag: null,
             tooltip: '$editTitleAndDesc.',
-            child: Icon(Icons.description),
             onPressed: () => _showEditDialog(),
+            child: Icon(Icons.description),
           ),
           FloatingActionButton(
             heroTag: null,
             tooltip: '',
             elevation: 4.0,
             highlightElevation: 16.0,
-            child: Icon(Icons.folder),
             onPressed: () async {
               await _getImage(false);
             },
+            child: Icon(Icons.folder),
           ),
           FloatingActionButton(
             heroTag: null,
             tooltip: '$createImage.',
-            child: Icon(Icons.camera_alt),
             onPressed: () => _createImage(),
+            child: Icon(Icons.camera_alt),
           ),
         ],
       ),
@@ -427,24 +428,24 @@ class _ImagePageState extends State<ImagePage> {
           Expanded(
             flex: 1,
             child: RaisedButton(
-              child: Text('Nein'),
               color: Colors.green,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(8.0)),
               ),
               onPressed: () => _scaffoldKey.currentState.hideCurrentSnackBar(),
+              child: Text('Nein'),
             ),
           ),
           SizedBox(width: 8.0),
           Expanded(
             flex: 1,
             child: RaisedButton(
-              child: Text('Ja'),
               color: Colors.red,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(8.0)),
               ),
               onPressed: onPressed,
+              child: Text('Ja'),
             ),
           ),
         ],

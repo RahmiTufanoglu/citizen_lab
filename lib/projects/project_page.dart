@@ -106,13 +106,13 @@ class _ProjectPageState extends State<ProjectPage> {
 
   Widget _buildFab() {
     return FloatingActionButton(
-      child: Icon(Icons.add),
       onPressed: () {
         Navigator.pushNamed(
           context,
           RouteGenerator.createProject,
         );
       },
+      child: Icon(Icons.add),
     );
   }
 

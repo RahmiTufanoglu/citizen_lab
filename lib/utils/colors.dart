@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 
 import '../card_colors.dart';
 
-const Color backgroundGreyLight = const Color(0xFFEFEFEF);
-const Color backgroundGreyDark = const Color(0xFFE9E9E9);
-const Color backgroundWhite = const Color(0xFFFFFFFF);
+const Color backgroundGreyLight = Color(0xFFEFEFEF);
+const Color backgroundGreyDark = Color(0xFFE9E9E9);
+const Color backgroundWhite = Color(0xFFFFFFFF);
 
-const Color mainColor = const Color(0xFF009274);
+const Color mainColor = Color(0xFF009274);
 
 /*const Map<int, int> card_colors = {
   0xFF61BD6D: 0xFF000000,

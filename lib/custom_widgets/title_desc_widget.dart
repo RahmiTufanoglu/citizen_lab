@@ -270,6 +270,7 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
           DropdownButton<Project>(
             items: projectList
                 .map((project) => DropdownMenuItem(
+                      value: project,
                       child: Container(
                         padding: const EdgeInsets.only(bottom: 8.0),
                         width: double.infinity,
@@ -278,7 +279,6 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      value: project,
                     ))
                 .toList(),
             onChanged: (Project project) {
@@ -299,6 +299,7 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
           DropdownButton<Note>(
             items: noteList
                 .map((note) => DropdownMenuItem(
+                      value: note,
                       child: Container(
                         padding: const EdgeInsets.only(bottom: 8.0),
                         width: double.infinity,
@@ -307,7 +308,6 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      value: note,
                     ))
                 .toList(),
             onChanged: (Note note) {

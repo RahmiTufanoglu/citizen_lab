@@ -96,9 +96,9 @@ class _DetailPageState extends State<DetailPage> {
 
   Widget _buildFab() {
     return FloatingActionButton(
-      child: Icon(Icons.web),
       //onPressed: () => _launchUrl(),
       onPressed: () => _launchWeb(),
+      child: Icon(Icons.web),
     );
   }
 

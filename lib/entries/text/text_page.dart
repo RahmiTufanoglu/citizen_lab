@@ -311,18 +311,18 @@ class _TextPageState extends State<TextPage> {
         children: <Widget>[
           FloatingActionButton(
             heroTag: null,
-            child: Icon(Icons.keyboard_arrow_up),
             onPressed: () => _openModalBottomSheet(),
+            child: Icon(Icons.keyboard_arrow_up),
           ),
           FloatingActionButton(
             heroTag: null,
-            child: Icon(Icons.remove),
             onPressed: () => _refreshTextFormFields(),
+            child: Icon(Icons.remove),
           ),
           FloatingActionButton(
             heroTag: null,
-            child: Icon(Icons.content_copy),
             onPressed: () => _copyContent(),
+            child: Icon(Icons.content_copy),
           ),
         ],
       ),
@@ -384,6 +384,12 @@ class _TextPageState extends State<TextPage> {
 
     return Material(
       child: InkWell(
+        onTap: () {
+          if (experimentItem.name.isNotEmpty) {
+            _descEditingController.text += experimentItem.name;
+          }
+          Navigator.pop(context);
+        },
         child: Container(
           //height: 50.0,
           height: screenHeight / 16,
@@ -412,12 +418,6 @@ class _TextPageState extends State<TextPage> {
             ],
           ),
         ),
-        onTap: () {
-          if (experimentItem.name.isNotEmpty) {
-            _descEditingController.text += experimentItem.name;
-          }
-          Navigator.pop(context);
-        },
       ),
     );
   }
@@ -466,11 +466,11 @@ class _TextPageState extends State<TextPage> {
             flex: 1,
             child: RaisedButton(
               color: Colors.green,
-              child: Text(no),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(8.0)),
               ),
               onPressed: () => _scaffoldKey.currentState.hideCurrentSnackBar(),
+              child: Text(no),
             ),
           ),
           SizedBox(width: 8.0),
@@ -478,11 +478,11 @@ class _TextPageState extends State<TextPage> {
             flex: 1,
             child: RaisedButton(
               color: Colors.red,
-              child: Text(yes),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(8.0)),
               ),
               onPressed: onPressed,
+              child: Text(yes),
             ),
           ),
         ],

@@ -73,7 +73,8 @@ class DatabaseHelper implements ProjectDao, NoteDao {
       '$columnNoteCardTextColor INTEGER NOT NULL)';
 
   Future<Database> get database async {
-    return _db != null ? _db : _db = await initDb();
+    //return _db != null ? _db : _db = await initDb();
+    return _db ?? await initDb();
   }
 
   Future<Database> initDb() async {
@@ -94,17 +95,18 @@ class DatabaseHelper implements ProjectDao, NoteDao {
 
   @override
   Future<int> insertProject({@required Project project}) async {
-    final Database db = await this.database;
+    final Database db = await database;
     final int result = await db.insert(
       projectTable,
       project.toMap(),
+      //conflictAlgorithm: ConflictAlgorithm.replace,
     );
     return result;
   }
 
   @override
   Future<Project> getProject({@required int id}) async {
-    final Database db = await this.database;
+    final Database db = await database;
     final List<Map> maps = await db.query(
       projectTable,
       where: '$columnProjectId = ?',
@@ -114,7 +116,7 @@ class DatabaseHelper implements ProjectDao, NoteDao {
     return maps.isNotEmpty ? Project.fromMap(maps.first) : null;
   }
 
-  @override
+  /*@override
   Future<List> getAllProjects() async {
     final Database db = await this.database;
     final List<Map<String, dynamic>> result = await db.query(
@@ -122,6 +124,18 @@ class DatabaseHelper implements ProjectDao, NoteDao {
       orderBy: '$columnProjectCreatedAt ASC',
     );
     return result.toList();
+  }*/
+
+  @override
+  Future<List<Project>> getAllProjects() async {
+    final db = await database;
+    var res = await db.query(projectTable);
+    List<Project> list = res.isNotEmpty
+        ? res.map((map) {
+            return Project.fromMap(map);
+          }).toList()
+        : [];
+    return list;
   }
 
   /*@override
@@ -138,7 +152,7 @@ class DatabaseHelper implements ProjectDao, NoteDao {
 
   @override
   Future<int> deleteProject({@required int id}) async {
-    final Database db = await this.database;
+    final Database db = await database;
     return await db.delete(
       projectTable,
       where: '$columnProjectId = ?',
@@ -148,26 +162,25 @@ class DatabaseHelper implements ProjectDao, NoteDao {
 
   @override
   Future<int> deleteAllProjects() async {
-    final Database db = await this.database;
+    final Database db = await database;
     return await db.delete(projectTable);
   }
 
   @override
   Future<int> updateProject({@required Project newProject}) async {
-    final Database db = await this.database;
+    final Database db = await database;
     final int result = await db.update(
       projectTable,
       newProject.toMap(),
       where: '$columnProjectId = ?',
       whereArgs: [newProject.id],
     );
-    print('UPDATE');
     return result;
   }
 
   @override
   Future<int> getProjectCount() async {
-    final Database db = await this.database;
+    final Database db = await database;
     return Sqflite.firstIntValue(
       await db.rawQuery('SELECT COUNT (*) FROM $projectTable'),
     );
@@ -176,7 +189,7 @@ class DatabaseHelper implements ProjectDao, NoteDao {
   @override
   //Future<List> getNotesOfProject({@required String id}) async {
   Future<List<Note>> getNotesOfProject({@required String uuid}) async {
-    final db = await this.database;
+    final db = await database;
     //final List<Map<String, dynamic>> maps = await db.query(
     var res = await db.query(
       noteTable,
@@ -196,28 +209,30 @@ class DatabaseHelper implements ProjectDao, NoteDao {
 
   @override
   Future<List<Note>> getAllNotes() async {
-    final db = await this.database;
+    final db = await database;
     var res = await db.query(noteTable);
-    List<Note> list =
-        res.isNotEmpty ? res.map((c) => Note.fromMap(c)).toList() : [];
+    List<Note> list = res.isNotEmpty
+        ? res.map((map) {
+            return Note.fromMap(map);
+          }).toList()
+        : [];
     return list;
   }
 
   @override
   Future<int> insertNote({@required Note note}) async {
-    final Database db = await this.database;
+    final Database db = await database;
     final int result = await db.insert(
       noteTable,
       note.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
+      //conflictAlgorithm: ConflictAlgorithm.replace,
     );
-    print('SAVED');
     return result;
   }
 
   @override
   Future<Note> getNote({@required int id}) async {
-    final Database db = await this.database;
+    final Database db = await database;
     final List<Map> maps = await db.query(
       noteTable,
       where: '$columnNoteId = ?',
@@ -238,8 +253,7 @@ class DatabaseHelper implements ProjectDao, NoteDao {
 
   @override
   Future<int> deleteNote({@required int id}) async {
-    final Database db = await this.database;
-    print('DELETE: $id');
+    final Database db = await database;
     return await db.delete(
       noteTable,
       where: '$columnNoteId = ?',
@@ -249,14 +263,14 @@ class DatabaseHelper implements ProjectDao, NoteDao {
 
   @override
   Future<int> deleteAllNotes() async {
-    final Database db = await this.database;
+    final Database db = await database;
     return await db.delete(noteTable);
   }
 
   @override
   Future<int> deleteAllNotesFromProject({@required String uuid}) async {
     print('deleteAllNotesFromProject');
-    final Database db = await this.database;
+    final Database db = await database;
     return await db.delete(
       noteTable,
       where: '$columnProjectUuid= ?',
@@ -267,7 +281,7 @@ class DatabaseHelper implements ProjectDao, NoteDao {
 
   @override
   Future<int> updateNote({@required Note newNote}) async {
-    final Database db = await this.database;
+    final Database db = await database;
     final int result = await db.update(
       noteTable,
       newNote.toMap(),
@@ -279,14 +293,14 @@ class DatabaseHelper implements ProjectDao, NoteDao {
 
   @override
   Future<int> getCount() async {
-    final Database db = await this.database;
+    final Database db = await database;
     return Sqflite.firstIntValue(
       await db.rawQuery('SELECT COUNT (*) FROM $noteTable'),
     );
   }
 
   Future<void> close() async {
-    final Database db = await this.database;
+    final Database db = await database;
     return db.close();
   }
 }

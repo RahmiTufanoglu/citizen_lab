@@ -17,8 +17,7 @@ class NoteItem extends StatelessWidget {
     @required this.onLongPress,
   })  : assert(note != null),
         assert(isFromNoteSearchPage != null),
-        assert(noteFunction != null),
-        assert(onLongPress != null);
+        assert(noteFunction != null);
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +32,12 @@ class NoteItem extends StatelessWidget {
         height: (screenHeight + topBarHeight) / 10,
         padding: const EdgeInsets.symmetric(vertical: 6.0),
         child: RaisedButton(
+          color: Color(note.cardColor),
+          onPressed: () {
+            //close(context, null);
+            if (isFromNoteSearchPage) close();
+            noteFunction();
+          },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
@@ -85,12 +90,6 @@ class NoteItem extends StatelessWidget {
               ),
             ],
           ),
-          color: Color(note.cardColor),
-          onPressed: () {
-            //close(context, null);
-            if (isFromNoteSearchPage) close();
-            noteFunction();
-          },
         ),
       ),
     );

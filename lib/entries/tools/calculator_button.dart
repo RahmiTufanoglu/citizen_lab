@@ -21,13 +21,13 @@ class CalculatorButton extends StatelessWidget {
   Widget _buildWidget() {
     if (!isIcon) {
       return RaisedButton(
-        child: Text(title),
         onPressed: () => onPressed,
+        child: Text(title),
       );
     } else {
       return RaisedButton(
-        child: Icon(iconData),
         onPressed: () => onPressed,
+        child: Icon(iconData),
       );
     }
   }

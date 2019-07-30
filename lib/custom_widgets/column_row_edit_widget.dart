@@ -158,8 +158,8 @@ class _ColumnRowEditingWidgetState extends State<ColumnRowEditingWidget> {
                 child: RaisedButton(
                   elevation: 4.0,
                   highlightElevation: 16.0,
-                  child: Icon(Icons.remove),
                   onPressed: widget.onPressedClear,
+                  child: Icon(Icons.remove),
                 ),
               ),
               SizedBox(width: 8.0),
@@ -167,12 +167,12 @@ class _ColumnRowEditingWidgetState extends State<ColumnRowEditingWidget> {
                 child: RaisedButton(
                   elevation: 4.0,
                   highlightElevation: 16.0,
-                  child: Icon(Icons.check),
                   onPressed: () {
                     if (_formKey.currentState.validate()) {
                       widget.onPressedCheck();
                     }
                   },
+                  child: Icon(Icons.check),
                 ),
               ),
             ],

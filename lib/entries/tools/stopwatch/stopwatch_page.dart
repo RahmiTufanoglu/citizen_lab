@@ -63,11 +63,13 @@ class _StopwatchPageState extends State<StopwatchPage>
         IconButton(
           icon: Icon(Icons.share),
           onPressed: () {
-            String content = '';
+            //String content = '';
+            final StringBuffer content = StringBuffer();
             for (int i = 0; i < _elapsedTimeList.length; i++) {
-              content += _elapsedTimeList[i] + '\n';
+              //content += _elapsedTimeList[i] + '\n';
+              content.write(_elapsedTimeList[i] + '\n');
             }
-            _shareContent(content);
+            _shareContent(content.toString());
           },
         ),
         IconButton(
@@ -131,18 +133,18 @@ class _StopwatchPageState extends State<StopwatchPage>
                 children: <Widget>[
                   FloatingActionButton(
                     heroTag: null,
-                    child: Icon(Icons.timer),
                     onPressed: _running,
+                    child: Icon(Icons.timer),
                   ),
                   FloatingActionButton(
                     heroTag: null,
-                    child: _icon,
                     onPressed: _startStopButtonPressed,
+                    child: _icon,
                   ),
                   FloatingActionButton(
                     heroTag: null,
+                    onPressed: () => _resetButtonPressed(),
                     child: Icon(Icons.stop),
-                    onPressed: _resetButtonPressed,
                   ),
                 ],
               ),
@@ -242,11 +244,11 @@ class _StopwatchPageState extends State<StopwatchPage>
       //_setElapsedTime();
       _startStopButtonPressed();
     }
-    _stopWatch.reset();
-    /*setState(() {
+    //_stopWatch.reset();
+    setState(() {
       _stopWatch.reset();
-      //_setStopwatchText();
-    });*/
+      _setStopwatchText();
+    });
   }
 
   void _setElapsedTime() {
@@ -277,20 +279,22 @@ class _StopwatchPageState extends State<StopwatchPage>
         children: <Widget>[
           FloatingActionButton(
             heroTag: null,
-            child: Icon(Icons.remove),
             tooltip: '',
             onPressed: () => _clearList(),
+            child: Icon(Icons.remove),
           ),
           FloatingActionButton(
             heroTag: null,
-            child: Icon(Icons.content_copy),
             onPressed: () {
-              String content = '';
+              //String content = '';
+              final StringBuffer content = StringBuffer();
               for (int i = 0; i < _elapsedTimeList.length; i++) {
-                content += _elapsedTimeList[i] + '\n';
+                //content += _elapsedTimeList[i] + '\n';
+                content.write(_elapsedTimeList[i] + '\n');
               }
-              _copyContent(content);
+              _copyContent(content.toString());
             },
+            child: Icon(Icons.content_copy),
           ),
         ],
       ),

@@ -1,11 +1,11 @@
 class CardColors {
-  int _cardBackgroundColor;
-  int _cardItemColor;
-
   CardColors(
     this._cardBackgroundColor,
     this._cardItemColor,
   );
+
+  int _cardBackgroundColor;
+  int _cardItemColor;
 
   int get cardBackgroundColor => _cardBackgroundColor;
 

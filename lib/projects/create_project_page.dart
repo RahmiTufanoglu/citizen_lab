@@ -56,7 +56,8 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
   Future<void> _loadProjectList() async {
     List projects = await _projectDb.getAllProjects();
     projects.forEach((project) {
-      _projectList.add(Project.map(project));
+      //_projectList.add(Project.map(project));
+      _projectList.add(project);
     });
   }
 
@@ -213,11 +214,11 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
         children: <Widget>[
           FloatingActionButton(
             heroTag: null,
-            child: Icon(Icons.remove),
             onPressed: () {
               _titleEditingController.clear();
               _descEditingController.clear();
             },
+            child: Icon(Icons.remove),
           ),
           AnimatedContainer(
             curve: ElasticOutCurve(),
@@ -227,24 +228,25 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
             width: 56.0,
             duration: Duration(seconds: 1),
             child: FloatingActionButton(
-                heroTag: null,
-                backgroundColor: _buttonColor,
-                child: Icon(
-                  Icons.check,
-                  //size: _iconSize,
-                  color: _iconColor,
-                ),
-                /*child: FlareActor(
+              heroTag: null,
+              backgroundColor: _buttonColor,
+              /*child: FlareActor(
                 'assets/ok.flr',
                 fit: BoxFit.fill,
                 animation: _animationChecked,
               ),*/
-                onPressed: () {
-                  if (_titleEditingController.text.isNotEmpty &&
-                      _descEditingController.text.isNotEmpty) {
-                    _createProject(context);
-                  }
-                }),
+              onPressed: () {
+                if (_titleEditingController.text.isNotEmpty &&
+                    _descEditingController.text.isNotEmpty) {
+                  _createProject(context);
+                }
+              },
+              child: Icon(
+                Icons.check,
+                //size: _iconSize,
+                color: _iconColor,
+              ),
+            ),
           ),
         ],
       ),

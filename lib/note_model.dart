@@ -18,41 +18,41 @@ class NoteModel with ChangeNotifier implements NoteBase {
 
   @override
   void saveNote(Note note) {
-    this.id = note.id;
-    this.uuid = note.uuid;
-    this.type = note.type;
-    this.title = note.title;
-    this.description = note.description;
-    this.content = note.filePath;
-    this.dateCreated = note.createdAt;
-    this.dateEdited = note.updatedAt;
-    this.edited = note.isFirstTime;
+    id = note.id;
+    uuid = note.uuid;
+    type = note.type;
+    title = note.title;
+    description = note.description;
+    content = note.filePath;
+    dateCreated = note.createdAt;
+    dateEdited = note.updatedAt;
+    edited = note.isFirstTime;
   }
 
   @override
   void updateNote(Note note) {
-    this.id = note.id;
-    this.uuid = note.uuid;
-    this.type = note.type;
-    this.title = note.title;
-    this.description = note.description;
-    this.content = note.filePath;
-    this.dateCreated = note.createdAt;
-    this.dateEdited = note.updatedAt;
-    this.edited = note.isFirstTime;
+    id = note.id;
+    uuid = note.uuid;
+    type = note.type;
+    title = note.title;
+    description = note.description;
+    content = note.filePath;
+    dateCreated = note.createdAt;
+    dateEdited = note.updatedAt;
+    edited = note.isFirstTime;
   }
 
   @override
   void deleteNote(Note note) {
-    this.id = note.id;
-    this.uuid = note.uuid;
-    this.type = note.type;
-    this.title = note.title;
-    this.description = note.description;
-    this.content = note.filePath;
-    this.dateCreated = note.createdAt;
-    this.dateEdited = note.updatedAt;
-    this.edited = note.isFirstTime;
+    id = note.id;
+    uuid = note.uuid;
+    type = note.type;
+    title = note.title;
+    description = note.description;
+    content = note.filePath;
+    dateCreated = note.createdAt;
+    dateEdited = note.updatedAt;
+    edited = note.isFirstTime;
   }
 }
 

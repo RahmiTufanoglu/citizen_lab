@@ -33,14 +33,14 @@ class Project implements Entry {
   );
 
   Project.map(dynamic obj) {
-    this.id = obj[DatabaseHelper.columnProjectId];
-    this.uuid = obj[DatabaseHelper.columnProjectUuid];
-    this.title = obj[DatabaseHelper.columnProjectTitle];
-    this.description = obj[DatabaseHelper.columnProjectDesc];
-    this.createdAt = obj[DatabaseHelper.columnProjectCreatedAt];
-    this.updatedAt = obj[DatabaseHelper.columnProjectUpdatedAt];
-    this.cardColor = obj[DatabaseHelper.columnProjectCardColor];
-    this.cardTextColor = obj[DatabaseHelper.columnProjectCardTextColor];
+    id = obj[DatabaseHelper.columnProjectId];
+    uuid = obj[DatabaseHelper.columnProjectUuid];
+    title = obj[DatabaseHelper.columnProjectTitle];
+    description = obj[DatabaseHelper.columnProjectDesc];
+    createdAt = obj[DatabaseHelper.columnProjectCreatedAt];
+    updatedAt = obj[DatabaseHelper.columnProjectUpdatedAt];
+    cardColor = obj[DatabaseHelper.columnProjectCardColor];
+    cardTextColor = obj[DatabaseHelper.columnProjectCardTextColor];
   }
 
   Map<String, dynamic> toMap() {
@@ -61,13 +61,13 @@ class Project implements Entry {
   }
 
   Project.fromMap(Map<String, dynamic> map) {
-    this.id = map[DatabaseHelper.columnProjectId];
-    this.title = map[DatabaseHelper.columnProjectTitle];
-    this.uuid = map[DatabaseHelper.columnProjectUuid];
-    this.description = map[DatabaseHelper.columnProjectDesc];
-    this.createdAt = map[DatabaseHelper.columnProjectCreatedAt];
-    this.updatedAt = map[DatabaseHelper.columnProjectUpdatedAt];
-    this.cardColor = map[DatabaseHelper.columnProjectCardColor];
-    this.cardTextColor = map[DatabaseHelper.columnProjectCardTextColor];
+    id = map[DatabaseHelper.columnProjectId];
+    title = map[DatabaseHelper.columnProjectTitle];
+    uuid = map[DatabaseHelper.columnProjectUuid];
+    description = map[DatabaseHelper.columnProjectDesc];
+    createdAt = map[DatabaseHelper.columnProjectCreatedAt];
+    updatedAt = map[DatabaseHelper.columnProjectUpdatedAt];
+    cardColor = map[DatabaseHelper.columnProjectCardColor];
+    cardTextColor = map[DatabaseHelper.columnProjectCardTextColor];
   }
 }

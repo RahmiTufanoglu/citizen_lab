@@ -22,11 +22,11 @@ class MainDrawer extends StatelessWidget {
           children: <Widget>[
             Container(child: ListView(children: children)),
             Positioned(
+              width: drawerWidth,
+              bottom: 0.0,
               child: SafeArea(
                 child: MadeWithLoveTextBox(place: 'in $location'),
               ),
-              width: drawerWidth,
-              bottom: 0.0,
             ),
           ],
         ),

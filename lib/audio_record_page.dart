@@ -129,7 +129,8 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
           width: double.infinity,
           child: Tooltip(
             message: noteType,
-            child: Text(_title != null ? _title : noteType),
+            //child: Text(_title != null ? _title : noteType),
+            child: Text(_title ?? noteType),
           ),
         ),
       ),
@@ -210,16 +211,16 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
           FloatingActionButton(
             heroTag: null,
             tooltip: '$editTitleAndDesc.',
-            child: Icon(Icons.description),
             onPressed: () => _showEditDialog(),
+            child: Icon(Icons.description),
           ),
           FloatingActionButton(
             heroTag: null,
             tooltip: '',
-            child: _iconFab,
             onPressed: () {
               _buildStartStopAudioButton();
             },
+            child: _iconFab,
           ),
         ],
       ),
@@ -264,8 +265,8 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
               height: 96.0,
               width: 96.0,
               child: FloatingActionButton(
-                child: _iconBody,
                 onPressed: _buildRecordButton,
+                child: _iconBody,
               ),
             ),
             SizedBox(height: 24.0),
@@ -493,24 +494,24 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
           Expanded(
             flex: 1,
             child: RaisedButton(
-              child: Text('Nein'),
               color: Colors.green,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(8.0)),
               ),
               onPressed: () => _scaffoldKey.currentState.hideCurrentSnackBar(),
+              child: Text('Nein'),
             ),
           ),
           SizedBox(width: 8.0),
           Expanded(
             flex: 1,
             child: RaisedButton(
-              child: Text('Ja'),
               color: Colors.red,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(8.0)),
               ),
               onPressed: onPressed,
+              child: Text('Ja'),
             ),
           ),
         ],

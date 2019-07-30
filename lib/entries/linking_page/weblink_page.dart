@@ -159,8 +159,8 @@ class _WeblinkPageState extends State<WeblinkPage> {
         children: <Widget>[
           FloatingActionButton(
             heroTag: null,
-            child: Icon(Icons.description),
             onPressed: () => _showEditDialog(),
+            child: Icon(Icons.description),
           ),
           _buildCopyCurrentLinkFab(),
         ],
@@ -178,11 +178,11 @@ class _WeblinkPageState extends State<WeblinkPage> {
         if (snapshot.hasData) {
           return FloatingActionButton(
             heroTag: null,
-            child: Icon(Icons.content_copy),
             onPressed: () async {
               _url = await snapshot.data.currentUrl();
               _copyContent();
             },
+            child: Icon(Icons.content_copy),
           );
         } else {
           return Container();

@@ -142,8 +142,8 @@ class _OnboardingPageState extends State<OnboardingPage>
                   ? FloatingActionButton(
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.black,
-                      child: Icon(Icons.arrow_forward),
                       onPressed: () => _setNavigation(),
+                      child: Icon(Icons.arrow_forward),
                     )
                   : Container(),
             ),

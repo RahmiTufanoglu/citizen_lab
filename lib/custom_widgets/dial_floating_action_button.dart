@@ -75,11 +75,11 @@ class _DialFloatingActionButtonState extends State<DialFloatingActionButton>
               //mini: true,
               //backgroundColor: widget.colorList[index],
               tooltip: '${widget.stringList[index]}note erstellen.',
-              child: widget.iconList[index],
               onPressed: () {
                 _animationController.reverse();
                 widget.function(widget.stringList[index]);
               },
+              child: widget.iconList[index],
             ),
           ),
         );
@@ -90,6 +90,11 @@ class _DialFloatingActionButtonState extends State<DialFloatingActionButton>
             padding: EdgeInsets.only(top: 16.0),
             child: FloatingActionButton(
               heroTag: null,
+              onPressed: () {
+                _animationController.isDismissed
+                    ? _animationController.forward()
+                    : _animationController.reverse();
+              },
               child: AnimatedBuilder(
                 animation: _animationController,
                 builder: (BuildContext context, Widget child) {
@@ -105,11 +110,6 @@ class _DialFloatingActionButtonState extends State<DialFloatingActionButton>
                   );
                 },
               ),
-              onPressed: () {
-                _animationController.isDismissed
-                    ? _animationController.forward()
-                    : _animationController.reverse();
-              },
             ),
           ),
         ),

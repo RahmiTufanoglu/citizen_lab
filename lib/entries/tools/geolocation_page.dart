@@ -203,8 +203,8 @@ class _GeolocationPageState extends State<GeolocationPage>
       padding: const EdgeInsets.only(left: 32.0),
       child: FloatingActionButton(
         heroTag: null,
-        child: Icon(Icons.content_copy),
         onPressed: () => _copyContent(),
+        child: Icon(Icons.content_copy),
       ),
     );
   }

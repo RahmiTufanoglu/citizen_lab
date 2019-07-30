@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 class NoYesDialog extends StatelessWidget {
   final String text;
-
   final GestureTapCallback onPressed;
 
   NoYesDialog({
@@ -51,21 +50,21 @@ class NoYesDialog extends StatelessWidget {
           children: <Widget>[
             Expanded(
               child: RaisedButton(
+                onPressed: () => Navigator.pop(context),
                 child: Text(
                   no,
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                onPressed: () => Navigator.pop(context),
               ),
             ),
             SizedBox(width: 16.0),
             Expanded(
               child: RaisedButton(
+                onPressed: onPressed,
                 child: Text(
                   yes,
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                onPressed: onPressed,
               ),
             ),
           ],

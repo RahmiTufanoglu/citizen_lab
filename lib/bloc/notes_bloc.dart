@@ -7,6 +7,13 @@ import 'package:meta/meta.dart';
 import 'base_bloc.dart';
 
 class NotesBloc implements BaseBloc {
+  NotesBloc({
+    @required String uuid,
+    String order,
+  }) {
+    getNotes(uuid: uuid, order: order);
+  }
+
   //final _notesController = StreamController<List<Map<String, dynamic>>>.broadcast();
   final _notesController = StreamController<List<Note>>.broadcast();
 
@@ -22,13 +29,6 @@ class NotesBloc implements BaseBloc {
     _notesController.sink.add(
       await DatabaseHelper.db.getNotesOfProject(uuid: uuid),
     );
-  }
-
-  NotesBloc({
-    @required String uuid,
-    String order,
-  }) {
-    getNotes(uuid: uuid, order: order);
   }
 
   void blockUnblock(Note note) {
