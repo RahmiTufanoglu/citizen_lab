@@ -44,7 +44,7 @@ class Project implements Entry {
   }
 
   Map<String, dynamic> toMap() {
-    var map = Map<String, dynamic>();
+    final map = Map<String, dynamic>();
 
     if (id != null) {
       map[DatabaseHelper.columnProjectId] = id;

@@ -100,7 +100,7 @@ class CitizenScienceSearchPage extends SearchDelegate<String> {
     List<CitizenScienceModel> notes,
     String query,
   ) {
-    List<CitizenScienceModel> notesCopy = [];
+    final List<CitizenScienceModel> notesCopy = [];
 
     for (int i = 0; i < notes.length; i++) {
       if (notes[i].title.toLowerCase().contains(query)) {

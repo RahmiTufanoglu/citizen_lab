@@ -14,9 +14,9 @@ class TimerProvider with ChangeNotifier {
   }
 
   String _dateFormatted() {
-    DateTime now = DateTime.now();
-    DateFormat formatter = DateFormat('dd.MM.yyyy, hh:mm:ss');
-    String formatted = formatter.format(now);
+    final DateTime now = DateTime.now();
+    final DateFormat formatter = DateFormat('dd.MM.yyyy, hh:mm:ss');
+    final String formatted = formatter.format(now);
     return formatted;
   }
 }

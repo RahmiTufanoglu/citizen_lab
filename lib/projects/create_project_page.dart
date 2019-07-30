@@ -24,7 +24,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
   final _projectDb = DatabaseHelper.db;
 
   ThemeChangerProvider _themeChanger;
-  List<Project> _projectList = [];
+  final List<Project> _projectList = [];
 
   Color _buttonColor = Colors.white;
   Color _iconColor = Colors.black;
@@ -54,7 +54,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
   }
 
   Future<void> _loadProjectList() async {
-    List projects = await _projectDb.getAllProjects();
+    final List projects = await _projectDb.getAllProjects();
     projects.forEach((project) {
       //_projectList.add(Project.map(project));
       _projectList.add(project);
@@ -266,7 +266,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
       }
     }
 
-    Project project = Project(
+    final Project project = Project(
       _titleEditingController.text,
       //Utils.getRandomNumber(),
       Utils.generateRandomUuid(),

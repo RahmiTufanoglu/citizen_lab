@@ -170,7 +170,7 @@ class _TextPageState extends State<TextPage> {
   }
 
   Future<void> _createPdf() async {
-    String title = Utils.removeWhiteSpace(_title);
+    final String title = Utils.removeWhiteSpace(_title);
 
     _pdfCreator = PdfCreator(
       title: _titleEditingController.text,
@@ -188,7 +188,7 @@ class _TextPageState extends State<TextPage> {
 
     if (_titleEditingController.text.isNotEmpty &&
         _descEditingController.text.isNotEmpty) {
-      String title = Utils.removeWhiteSpace(_title);
+      final String title = Utils.removeWhiteSpace(_title);
       final String path = await _localPath(title);
       final ByteData bytes = await rootBundle.load(path);
       final Uint8List uint8List = bytes.buffer.asUint8List();
@@ -248,7 +248,7 @@ class _TextPageState extends State<TextPage> {
   Future _saveNote() async {
     if (_titleEditingController.text.isNotEmpty) {
       if (widget.note == null) {
-        Note note = Note(
+        final Note note = Note(
           widget.uuid,
           'Text',
           _titleEditingController.text,
@@ -280,7 +280,7 @@ class _TextPageState extends State<TextPage> {
   }
 
   Future<void> _updateNote(Note note) async {
-    Note newNote = Note.fromMap({
+    final Note newNote = Note.fromMap({
       DatabaseHelper.columnNoteId: note.id,
       DatabaseHelper.columnProjectUuid: note.uuid,
       DatabaseHelper.columnNoteType: note.type,
@@ -346,7 +346,7 @@ class _TextPageState extends State<TextPage> {
 
     if (_titleEditingController.text.isNotEmpty &&
         _descEditingController.text.isNotEmpty) {
-      String fullContent =
+      final String fullContent =
           _titleEditingController.text + '\n' + _descEditingController.text;
       _setClipboard(fullContent, '$copyContent.');
     } else {
@@ -357,7 +357,7 @@ class _TextPageState extends State<TextPage> {
   }
 
   void _openModalBottomSheet() {
-    List<Widget> experimentItemsWidgets = [];
+    final List<Widget> experimentItemsWidgets = [];
     for (int i = 0; i < formulations.length; i++) {
       i == 0
           ? experimentItemsWidgets.add(_createTile(formulations[i], true))

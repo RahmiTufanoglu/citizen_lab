@@ -32,7 +32,7 @@ class _SplashPageState extends State<SplashPage> {
 
   Future _checkFirstSeen() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool _seen = prefs.getBool('seen') ?? false;
+    final bool _seen = prefs.getBool('seen') ?? false;
 
     if (_seen) {
       await Navigator.pushNamed(

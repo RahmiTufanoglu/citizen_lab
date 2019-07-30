@@ -79,14 +79,14 @@ class _SpeechRecognitionPageState extends State<SpeechRecognitionPage> {
   Future _speak() async {
     if (_newVoiceText != null) {
       if (_newVoiceText.isNotEmpty) {
-        var result = await flutterTts.speak(_newVoiceText);
+        final result = await flutterTts.speak(_newVoiceText);
         if (result == 1) setState(() => ttsState = TtsState.playing);
       }
     }
   }
 
   Future _stop() async {
-    var result = await flutterTts.stop();
+    final result = await flutterTts.stop();
     if (result == 1) setState(() => ttsState = TtsState.stopped);
   }
 
@@ -97,17 +97,23 @@ class _SpeechRecognitionPageState extends State<SpeechRecognitionPage> {
   }
 
   List<DropdownMenuItem<String>> getLanguageDropDownMenuItems() {
-    var items = List<DropdownMenuItem<String>>();
-    for (String type in languages) {
-      items.add(DropdownMenuItem(value: type, child: Text(type)));
+    final items = List<DropdownMenuItem<String>>();
+    for (final String type in languages) {
+      items.add(DropdownMenuItem(
+        value: type,
+        child: Text(type),
+      ));
     }
     return items;
   }
 
   List<DropdownMenuItem<String>> getVoiceDropDownMenuItems() {
-    var items = List<DropdownMenuItem<String>>();
-    for (String type in voices) {
-      items.add(DropdownMenuItem(value: type, child: Text(type)));
+    final items = List<DropdownMenuItem<String>>();
+    for (final String type in voices) {
+      items.add(DropdownMenuItem(
+        value: type,
+        child: Text(type),
+      ));
     }
     return items;
   }

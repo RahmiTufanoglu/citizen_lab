@@ -346,7 +346,7 @@ class _ProjectPageState extends State<ProjectPage> {
       });
     }
 
-    List projects = await _projectDb.getAllProjects();
+    final List projects = await _projectDb.getAllProjects();
 
     projects.forEach((project) {
       setState(() => _projectList.add(Project.map(project)));

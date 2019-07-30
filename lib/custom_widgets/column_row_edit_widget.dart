@@ -102,7 +102,7 @@ class _ColumnRowEditingWidgetState extends State<ColumnRowEditingWidget> {
                       ),
                     ),
                     validator: (text) {
-                      bool _columnNumeric =
+                      final bool _columnNumeric =
                           Utils.isNumeric(widget.columnEditingController.text);
 
                       if (text.isEmpty || !_columnNumeric) {
@@ -137,7 +137,7 @@ class _ColumnRowEditingWidgetState extends State<ColumnRowEditingWidget> {
                       ),
                     ),
                     validator: (text) {
-                      bool _rowNumeric =
+                      final bool _rowNumeric =
                           Utils.isNumeric(widget.rowEditingController.text);
 
                       if (text.isEmpty || !_rowNumeric) {

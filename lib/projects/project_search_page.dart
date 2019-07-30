@@ -101,7 +101,7 @@ class ProjectSearchPage extends SearchDelegate<String> {
     List<Project> notes,
     String query,
   ) {
-    List<Project> notesCopy = [];
+    final List<Project> notesCopy = [];
 
     for (int i = 0; i < notes.length; i++) {
       if (notes[i].title.toLowerCase().contains(query)) {

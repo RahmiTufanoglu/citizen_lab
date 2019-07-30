@@ -1,8 +1,8 @@
 import 'package:intl/intl.dart';
 
 String dateFormatted() {
-  DateTime now = DateTime.now();
-  DateFormat formatter = DateFormat('dd.MM.yyyy, kk:mm:ss');
-  String formatted = formatter.format(now);
+  final DateTime now = DateTime.now();
+  final DateFormat formatter = DateFormat('dd.MM.yyyy, kk:mm:ss');
+  final String formatted = formatter.format(now);
   return formatted;
 }

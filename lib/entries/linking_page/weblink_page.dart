@@ -239,7 +239,7 @@ class _WeblinkPageState extends State<WeblinkPage> {
     //if (_titleEditingController.text.isNotEmpty && _url.isNotEmpty) {
     if (_url.isNotEmpty) {
       if (widget.note == null) {
-        Note note = Note(
+        final Note note = Note(
           widget.uuid,
           'Verlinkung',
           _titleEditingController.text.isEmpty
@@ -271,7 +271,7 @@ class _WeblinkPageState extends State<WeblinkPage> {
   }
 
   Future _updateNote(Note note) async {
-    Note newNote = Note.fromMap({
+    final Note newNote = Note.fromMap({
       DatabaseHelper.columnNoteId: note.id,
       DatabaseHelper.columnProjectUuid: note.uuid,
       DatabaseHelper.columnNoteType: note.type,

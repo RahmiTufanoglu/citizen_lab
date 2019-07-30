@@ -5,7 +5,7 @@ import 'package:uuid/uuid.dart';
 
 class Utils {
   static Offset localPosition(BuildContext context, Offset globalPosition) {
-    RenderBox box = context.findRenderObject();
+    final RenderBox box = context.findRenderObject();
     Offset localPosition = box.globalToLocal(globalPosition);
     localPosition =
         localPosition.translate(0.0, -AppBar().preferredSize.height - 24.0);
@@ -27,7 +27,7 @@ class Utils {
   }*/
 
   static String generateRandomUuid() {
-    Uuid uuid = Uuid();
+    final Uuid uuid = Uuid();
     return uuid.v4();
   }
 

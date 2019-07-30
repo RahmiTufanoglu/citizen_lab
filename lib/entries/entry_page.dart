@@ -54,7 +54,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   String _createdAt;
 
   //AsyncSnapshot _snapshot;
-  List<Note> _noteList = [];
+  final List<Note> _noteList = [];
 
   String createdAtDesc = 'created_at DESC';
   String createdAtAsc = 'created_at ASC';
@@ -347,7 +347,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   }
 
   Future<void> _updateNote(Note note, int cardColor, int cardTextColor) async {
-    Note newNote = Note.fromMap({
+    final Note newNote = Note.fromMap({
       DatabaseHelper.columnNoteId: note.id,
       DatabaseHelper.columnProjectUuid: note.uuid,
       DatabaseHelper.columnNoteType: note.type,
@@ -422,14 +422,14 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   }
 
   void _openModalBottomSheet() {
-    List<FormulationItem> experimentItems = [
+    final List<FormulationItem> experimentItems = [
       FormulationItem('', Icons.keyboard_arrow_down),
       FormulationItem('Rechner', Icons.straighten),
       FormulationItem('Stoppuhr', Icons.timer),
       FormulationItem('Ortsbestimmung', Icons.location_on),
     ];
 
-    List<Widget> experimentItemsWidgets = [];
+    final List<Widget> experimentItemsWidgets = [];
     for (int i = 0; i < experimentItems.length; i++) {
       if (i == 0) {
         experimentItemsWidgets.add(_createTile(experimentItems[i], true));
@@ -503,7 +503,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   }
 
   Future<void> _updateProject(Project project) async {
-    Project updatedProject = Project.fromMap({
+    final Project updatedProject = Project.fromMap({
       DatabaseHelper.columnProjectId: project.id,
       DatabaseHelper.columnProjectUuid: project.uuid,
       DatabaseHelper.columnProjectTitle: _titleProjectController.text,
@@ -599,7 +599,8 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
       });
     }
 
-    List notes = await _projectDb.getNotesOfProject(uuid: widget.project.uuid);
+    final List notes =
+        await _projectDb.getNotesOfProject(uuid: widget.project.uuid);
 
     for (int i = 0; i < notes.length; i++) {
       setState(() => _noteList.insert(0, notes[i]));
@@ -615,20 +616,20 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
 
     if (_noteList[index].type == 'Tabelle') {
       //if (snapshot.data[index].type == 'Tabelle') {
-      File file = File(_noteList[index].filePath);
+      final File file = File(_noteList[index].filePath);
       //File file = File(snapshot.data[index].content);
       await file.delete();
     }
 
     if (_noteList[index].type == 'Bild') {
       //if (snapshot.data[index].type == 'Bild') {
-      File file = File(_noteList[index].filePath);
+      final File file = File(_noteList[index].filePath);
       //File file = File(snapshot.data[index].content);
       await file.delete();
     }
 
     if (_noteList[index].type == 'Audio') {
-      File file = File(_noteList[index].filePath);
+      final File file = File(_noteList[index].filePath);
       await file.delete();
     }
 

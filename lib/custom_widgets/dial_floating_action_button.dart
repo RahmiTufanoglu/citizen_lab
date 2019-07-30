@@ -59,7 +59,7 @@ class _DialFloatingActionButtonState extends State<DialFloatingActionButton>
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: List.generate(widget.iconList.length, (int index) {
-        Widget child = ScaleTransition(
+        final Widget child = ScaleTransition(
           scale: CurvedAnimation(
             parent: _animationController,
             curve: Interval(

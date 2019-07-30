@@ -148,7 +148,7 @@ class NoteSearchPage extends SearchDelegate<String> {
     List<Note> notes,
     String query,
   ) {
-    List<Note> notesCopy = [];
+    final List<Note> notesCopy = [];
 
     for (int i = 0; i < notes.length; i++) {
       if (notes[i].title.toLowerCase().contains(query)) {

@@ -297,7 +297,7 @@ class _ImagePageState extends State<ImagePage> {
     final ByteData bytes = await rootBundle.load(_image.path);
     final Uint8List uint8List = bytes.buffer.asUint8List();
     final tempDir = await getTemporaryDirectory();
-    File file = File('${tempDir.path}/$_title.jpg');
+    final File file = File('${tempDir.path}/$_title.jpg');
     //TODO
     //final dir = await getApplicationDocumentsDirectory();
     //filo = await image.copy('${dir.path}/image1.png');
@@ -310,7 +310,7 @@ class _ImagePageState extends State<ImagePage> {
   Future<void> _saveNote() async {
     if (_titleEditingController.text.isNotEmpty && (_image != null)) {
       if (widget.note == null) {
-        Note note = Note(
+        final Note note = Note(
           widget.uuid,
           'Bild',
           _titleEditingController.text,
@@ -338,7 +338,7 @@ class _ImagePageState extends State<ImagePage> {
   }
 
   void _updateNote(Note note) {
-    Note newNote = Note.fromMap({
+    final Note newNote = Note.fromMap({
       DatabaseHelper.columnNoteId: note.id,
       DatabaseHelper.columnProjectUuid: note.uuid,
       //ProjectDatabaseHelper.columnNoteProject: note.project,

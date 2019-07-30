@@ -358,7 +358,7 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
   }
 
   Future<bool> _checkIfFileExists() async {
-    File file = File(_audioPath);
+    final File file = File(_audioPath);
     if (await file.exists()) {
       return true;
     } else {
@@ -368,7 +368,7 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
 
   Future<void> _checkIfTitleIsAlreadyTaken2() async {
     //FileSystemEntity.typeSync(_audioPath) != FileSystemEntityType.notFound;
-    File file = File(_audioPath);
+    final File file = File(_audioPath);
     int i = 2;
     while (await file.exists()) {
       _title = _title + ' ' + '${i++}'.toString();
@@ -412,7 +412,7 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
   Future<void> _saveNote() async {
     if (_audioPath.isNotEmpty) {
       if (widget.note == null) {
-        Note note = Note(
+        final Note note = Note(
           widget.uuid,
           'Audio',
           _titleEditingController.text,
@@ -440,7 +440,7 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
   }
 
   void _updateNote(Note note) {
-    Note newNote = Note.fromMap({
+    final Note newNote = Note.fromMap({
       DatabaseHelper.columnNoteId: note.id,
       DatabaseHelper.columnProjectUuid: note.uuid,
       DatabaseHelper.columnNoteType: note.type,

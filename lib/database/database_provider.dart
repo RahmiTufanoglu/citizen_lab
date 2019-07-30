@@ -129,8 +129,8 @@ class DatabaseHelper implements ProjectDao, NoteDao {
   @override
   Future<List<Project>> getAllProjects() async {
     final db = await database;
-    var res = await db.query(projectTable);
-    List<Project> list = res.isNotEmpty
+    final res = await db.query(projectTable);
+    final List<Project> list = res.isNotEmpty
         ? res.map((map) {
             return Project.fromMap(map);
           }).toList()
@@ -191,7 +191,7 @@ class DatabaseHelper implements ProjectDao, NoteDao {
   Future<List<Note>> getNotesOfProject({@required String uuid}) async {
     final db = await database;
     //final List<Map<String, dynamic>> maps = await db.query(
-    var res = await db.query(
+    final res = await db.query(
       noteTable,
       //where: '$columnNoteProject = ?',
       where: '$columnProjectUuid = ?',
@@ -202,7 +202,7 @@ class DatabaseHelper implements ProjectDao, NoteDao {
       //orderBy: order,
     );
     //return maps.toList();
-    List<Note> list =
+    final List<Note> list =
         res.isNotEmpty ? res.map((c) => Note.fromMap(c)).toList() : [];
     return list;
   }
@@ -210,8 +210,8 @@ class DatabaseHelper implements ProjectDao, NoteDao {
   @override
   Future<List<Note>> getAllNotes() async {
     final db = await database;
-    var res = await db.query(noteTable);
-    List<Note> list = res.isNotEmpty
+    final res = await db.query(noteTable);
+    final List<Note> list = res.isNotEmpty
         ? res.map((map) {
             return Note.fromMap(map);
           }).toList()

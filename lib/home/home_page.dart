@@ -143,7 +143,7 @@ class _HomePageState extends State<HomePage>
   Future<void> _createProject(String type, [Project project]) async {
     switch (type) {
       case 'Neues Projekt':
-        Project result = await Navigator.pushNamed(
+        final Project result = await Navigator.pushNamed(
           context,
           RouteGenerator.createProject,
         ) as Project;
@@ -157,7 +157,7 @@ class _HomePageState extends State<HomePage>
 
         break;
       case 'Vorlagen':
-        bool result = await Navigator.pushNamed(
+        final bool result = await Navigator.pushNamed(
           context,
           RouteGenerator.projectTemplatePage,
         ) as bool;
@@ -561,7 +561,7 @@ class _HomePageState extends State<HomePage>
 
   Future<void> _updateProject(
       Project project, int cardColor, int cardTextColor) async {
-    Project updatedProject = Project.fromMap({
+    final Project updatedProject = Project.fromMap({
       DatabaseHelper.columnProjectId: project.id,
       DatabaseHelper.columnProjectUuid: project.uuid,
       DatabaseHelper.columnProjectTitle: project.title,
@@ -624,7 +624,7 @@ class _HomePageState extends State<HomePage>
       });
     }
 
-    List projects = await _projectDb.getAllProjects();
+    final List projects = await _projectDb.getAllProjects();
 
     /*projects.forEach((project) {
       setState(() => _projectList.insert(0, Project.map(project)));
@@ -638,14 +638,14 @@ class _HomePageState extends State<HomePage>
   }
 
   void _openModalBottomSheet() {
-    List<FormulationItem> experimentItems = [
+    final List<FormulationItem> experimentItems = [
       FormulationItem('', Icons.keyboard_arrow_down),
       FormulationItem('Rechner', Icons.straighten),
       FormulationItem('Stoppuhr', Icons.timer),
       FormulationItem('Ortsbestimmung', Icons.location_on),
     ];
 
-    List<Widget> experimentItemsWidgets = [];
+    final List<Widget> experimentItemsWidgets = [];
     for (int i = 0; i < experimentItems.length; i++) {
       i == 0
           ? experimentItemsWidgets.add(_createTile(experimentItems[i], true))

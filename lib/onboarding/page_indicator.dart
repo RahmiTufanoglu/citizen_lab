@@ -40,7 +40,7 @@ class PageIndicator extends StatelessWidget {
   }
 
   List<Widget> _buildPageIndicators() {
-    List<Widget> indicatorList = [];
+    final List<Widget> indicatorList = [];
     for (int i = 0; i < pageCount; i++) {
       indicatorList.add(
         i == currentIndex ? _indicator(true) : _indicator(false),

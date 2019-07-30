@@ -82,7 +82,7 @@ class _ProjectTemplatePageState extends State<ProjectTemplatePage> {
   }
 
   Future<void> _createTemplateContent(String title, String desc) async {
-    Project project = Project(
+    final Project project = Project(
       title,
       //Utils.getRandomNumber(),
       Utils.generateRandomUuid(),
@@ -94,7 +94,7 @@ class _ProjectTemplatePageState extends State<ProjectTemplatePage> {
     );
     await _projectDb.insertProject(project: project);
 
-    Note note = Note(
+    final Note note = Note(
       project.uuid,
       'Text',
       'Vorlage Titel',

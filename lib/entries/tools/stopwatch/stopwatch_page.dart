@@ -25,7 +25,7 @@ class _StopwatchPageState extends State<StopwatchPage>
   String _stopWatchText = '00:00:000';
   String _elapsedTime = '00:00:000';
   Icon _icon = Icon(Icons.play_arrow);
-  List<String> _elapsedTimeList = [];
+  final List<String> _elapsedTimeList = [];
 
   @override
   Widget build(BuildContext context) {

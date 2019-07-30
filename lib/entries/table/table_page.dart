@@ -59,7 +59,7 @@ class _TablePageState extends State<TablePage> {
       _createdAt = widget.note.createdAt;
 
       if (_column != null && _row != null) {
-        List<List<dynamic>> csvList = _csvToList(_csv);
+        final List<List<dynamic>> csvList = _csvToList(_csv);
         _column = csvList[0].length;
         _row = csvList.length;
         _columnTextEditingController.text = _column.toString();
@@ -229,7 +229,7 @@ class _TablePageState extends State<TablePage> {
         }
       }
     } else {
-      List<List<dynamic>> csvList = _csvToList(_csv);
+      final List<List<dynamic>> csvList = _csvToList(_csv);
       _column = csvList[0].length;
       _row = csvList.length;
 
@@ -242,7 +242,7 @@ class _TablePageState extends State<TablePage> {
   }
 
   void _csvRead(List<List> list, int column, int row) {
-    List newCsvList = [];
+    final List newCsvList = [];
     int tmp = 0;
     for (int i = 0; i < row; i++) {
       for (int j = 0; j < column; j++) {
@@ -253,7 +253,7 @@ class _TablePageState extends State<TablePage> {
   }
 
   List<List> _csvToList(File myCsvFile) {
-    List<List<dynamic>> listCreated =
+    final List<List<dynamic>> listCreated =
         CsvToListConverter().convert(myCsvFile.readAsStringSync());
     return listCreated;
   }
@@ -326,7 +326,7 @@ class _TablePageState extends State<TablePage> {
           path = await _createCsv(_title);
           //path = _csv.path;
         }
-        Note note = Note(
+        final Note note = Note(
           widget.uuid,
           'Tabelle',
           _titleEditingController.text,
@@ -344,7 +344,7 @@ class _TablePageState extends State<TablePage> {
         await _csv.delete();
         //String path = _csv.path;
         // TODO: Do not create CSV if exists
-        String path = await _createCsv(_title);
+        final String path = await _createCsv(_title);
         await _updateNote(widget.note, path);
       }
     } else {
@@ -358,7 +358,7 @@ class _TablePageState extends State<TablePage> {
   }
 
   Future<void> _updateNote(Note note, String path) async {
-    Note newNote = Note.fromMap({
+    final Note newNote = Note.fromMap({
       DatabaseHelper.columnNoteId: note.id,
       DatabaseHelper.columnProjectUuid: note.uuid,
       DatabaseHelper.columnNoteType: note.type,
@@ -458,7 +458,7 @@ class _TablePageState extends State<TablePage> {
   }
 
   Future<String> _createCsv(String title) async {
-    List<List<String>> graphArray = List.generate(
+    final List<List<String>> graphArray = List.generate(
       _row,
       (i) => List<String>(_column),
     );
@@ -476,7 +476,7 @@ class _TablePageState extends State<TablePage> {
 
     _csv = File(await _localPath(title));
 
-    String path = _listToCsv(graphArray);
+    final String path = _listToCsv(graphArray);
     await _csv.writeAsString(path);
 
     return _csv.path;
