@@ -54,7 +54,7 @@ class PdfCreator {
     ); // Page
   }
 
-  void savePdf() async {
+  Future<void> savePdf() async {
     //final directory = await getApplicationDocumentsDirectory();
     //final path = '${directory.path}/$title.pdf';
     File file = File(filePath);

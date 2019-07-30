@@ -1,4 +1,3 @@
-import 'package:citizen_lab/SpeechRecognitionPage.dart';
 import 'package:citizen_lab/citizen_science/about_page.dart';
 import 'package:citizen_lab/citizen_science/citizen_science_page.dart';
 import 'package:citizen_lab/citizen_science/citizen_science_web.dart';
@@ -15,6 +14,7 @@ import 'package:citizen_lab/entries/tools/stopwatch/stopwatch_page.dart';
 import 'package:citizen_lab/home/home_page.dart';
 import 'package:citizen_lab/onboarding/onboarding_page.dart';
 import 'package:citizen_lab/projects/create_project_page.dart';
+import 'package:citizen_lab/speech_recognition_page.dart';
 import 'package:citizen_lab/splash_page.dart';
 import 'package:flutter/material.dart';
 
@@ -22,69 +22,68 @@ import '../audio_record_page.dart';
 import '../project_template_page.dart';
 
 class RouteGenerator {
-  static const String HOMEPAGE = '/home_page';
-  static const String SPLASHPAGE = '/splash_page';
-  static const String CREATE_PROJECT = '/create_project';
-  static const String ABOUT_PAGE = '/about';
-  static const String ENTRY = '/entry';
-  static const String TEXT_PAGE = '/text_page';
-  static const String IMAGE_PAGE = '/image_page';
-  static const String TABLE_PAGE = '/table_page';
-  static const String SKETCH_PAGE = '/sketch_page';
-  static const String INFO_PAGE = '/info_page';
-  static const String CITIZEN_SCIENCE_PAGE = '/citizen_science_page';
-  static const String DETAIL_PAGE = '/detail_page';
-  static const String SENSOR_PAGE = '/sensor_page';
-  static const String ONBOARDING_PAGE = '/onboarding_page';
-  static const String CALCULATOR_PAGE = '/calculator_page';
-  static const String STOPWATCH_PAGE = '/stopwatch_page';
-  static const String LINKING_PAGE = '/linking_page';
-  static const String CITIZEN_SCIENCE_WEB_PAGE = '/citizen_science_web_page';
-  static const String PROJECT_TEMPLATE_PAGE = '/project_template_page';
-  static const String SPEECH_RECOGNITION_PAGE = '/speech_recognition_page';
-  static const String AUDIO_RECORD_PAGE = '/audio_record_page';
+  static const String homepage = '/home_page';
+  static const String splashPage = '/splash_page';
+  static const String createProject = '/create_project';
+  static const String aboutPage = '/about';
+  static const String entry = '/entry';
+  static const String textPage = '/text_page';
+  static const String imagePage = '/image_page';
+  static const String tablePage = '/table_page';
+  static const String sketchPage = '/sketch_page';
+  static const String infoPage = '/info_page';
+  static const String citizenSciencePage = '/citizen_science_page';
+  static const String detailPage = '/detail_page';
+  static const String sensorPage = '/sensor_page';
+  static const String onboardingPage = '/onboarding_page';
+  static const String calculatorPage = '/calculator_page';
+  static const String stopwatchPage = '/stopwatch_page';
+  static const String linkingPage = '/linking_page';
+  static const String citizenScienceWebPage = '/citizen_science_web_page';
+  static const String projectTemplatePage = '/project_template_page';
+  static const String speechRecognitionPage = '/speech_recognition_page';
+  static const String audioRecordPage = '/audio_record_page';
 
-  static const String ROUTE_HOME_PAGE = 'home';
-  static const String ROUTE_SPLASH_PAGE = 'splash_page';
-  static const String ROUTE_CREATE_PROJECT = 'create_project';
-  static const String ROUTE_ABOUT_PAGE = 'about';
-  static const String ROUTE_ENTRY_PAGE = 'entry';
-  static const String ROUTE_TEXT_PAGE = 'text_page';
-  static const String ROUTE_IMAGE_PAGE = 'image_page';
-  static const String ROUTE_TABLE_PAGE = 'table_page';
-  static const String ROUTE_SKETCH_PAGE = 'sketch_page';
-  static const String ROUTE_INFO_PAGE = 'info_page';
-  static const String ROUTE_DETAIL_PAGE = 'detail_page';
-  static const String ROUTE_CITIZEN_SCIENCE_PAGE = 'citizen_science_page';
-  static const String ROUTE_SENSOR_PAGE = 'sensor_page';
-  static const String ROUTE_ONBOARDING_PAGE = 'onboarding_page';
-  static const String ROUTE_CALCULATOR_PAGE = 'calculator_page';
-  static const String ROUTE_STOPWATCH_PAGE = 'stopwatch_page';
-  static const String ROUTE_LINKING_RECORD_PAGE = 'linking_page';
-  static const String ROUTE_CITIZEN_SCIENCE_WEB_PAGE =
-      'citizen_science_web_page';
-  static const String ROUTE_PROJECT_TEMPLATE_PAGE = 'project_template_page';
-  static const String ROUTE_SPEECH_RECOGNITION_PAGE = 'speech_recognition_page';
-  static const String ROUTE_AUDIO_RECORDING_PAGE = 'audio_record_page';
+  static const String routeHomePage = 'home';
+  static const String routeSplashPage = 'splash_page';
+  static const String routeCreateProject = 'create_project';
+  static const String routeAboutPage = 'about';
+  static const String routeEntryPage = 'entry';
+  static const String routeTextPage = 'text_page';
+  static const String routeImagePage = 'image_page';
+  static const String routeTablePage = 'table_page';
+  static const String routeSketchPage = 'sketch_page';
+  static const String routeInfoPage = 'info_page';
+  static const String routeDetailPage = 'detail_page';
+  static const String routeCitizenSciencePage = 'citizen_science_page';
+  static const String routeSensorPage = 'sensor_page';
+  static const String routeOnboardingPage = 'onboarding_page';
+  static const String routeCalculatorPage = 'calculator_page';
+  static const String routeStopwatchPage = 'stopwatch_page';
+  static const String routeLinkingRecordPage = 'linking_page';
+  static const String routeCitizenScienceWebPage = 'citizen_science_web_page';
+  static const String rotueProjectTemplatePage = 'project_template_page';
+  static const String routeSpeechRecognitionPage = 'speech_recognition_page';
+  static const String routeAudioRecordingPage = 'audio_record_page';
 
-  static const String PROJECT = 'project';
-  static const String PROJECT_TITLE = 'projectTitle';
-  static const String PROJECT_UUID = 'projectUuid';
-  static const String IS_FROM_PROJECT_PAGE = 'isFromProjectPage';
-  static const String IS_FROM_PROJECT_SEARCH_PAGE = 'isFromProjectSearchPage';
-  static const String NOTE = 'note';
-  static const String URL = 'url';
-  static const String TITLE = 'title';
-  static const String TAB_LENGTH = 'tabLength';
-  static const String TABS = 'tabs';
-  static const String TAB_CHILDREN = 'tabChildren';
-  static const String IMAGE = 'image';
-  static const String LOCATION = 'location';
-  static const String RESEARCH_SUBJECT = 'research_subject';
-  static const String BUILT = 'built';
-  static const String EXTENDED = 'extended';
-  static const String CONTACT_PERSON = 'contact_person';
-  static const String CONTENT = 'content';
+  static const String project = 'project';
+  static const String projectTitle = 'projectTitle';
+  static const String projectUuid = 'projectUuid';
+  static const String isFromProjectPage = 'isFromProjectPage';
+  static const String isFromProjectSearchPage = 'isFromProjectSearchPage';
+  static const String note = 'note';
+  static const String url = 'url';
+  static const String title = 'title';
+  static const String tabLength = 'tabLength';
+  static const String tabs = 'tabs';
+  static const String tabChildren = 'tabChildren';
+  static const String image = 'image';
+  static const String location = 'location';
+  static const String researchSubject = 'research_subject';
+  static const String built = 'built';
+  static const String extended = 'extended';
+  static const String contactPerson = 'contact_person';
+  static const String content = 'content';
 
   static RouteFactory routes() {
     return (settings) {
@@ -92,124 +91,124 @@ class RouteGenerator {
       Widget page;
       String route;
       switch (settings.name) {
-        case HOMEPAGE:
+        case homepage:
           page = HomePage();
-          route = ROUTE_HOME_PAGE;
+          route = routeHomePage;
           break;
-        case SPLASHPAGE:
+        case splashPage:
           page = SplashPage();
-          route = ROUTE_SPLASH_PAGE;
+          route = routeSplashPage;
           break;
-        case CREATE_PROJECT:
+        case createProject:
           page = CreateProjectPage();
-          route = ROUTE_CREATE_PROJECT;
+          route = routeCreateProject;
           break;
-        case ENTRY:
+        case entry:
           page = EntryPage(
-            project: args[PROJECT],
-            projectTitle: args[PROJECT_TITLE],
-            isFromProjectPage: args[IS_FROM_PROJECT_PAGE],
-            isFromProjectSearchPage: args[IS_FROM_PROJECT_SEARCH_PAGE],
+            project: args[project],
+            projectTitle: args[projectTitle],
+            isFromProjectPage: args[isFromProjectPage],
+            isFromProjectSearchPage: args[isFromProjectSearchPage],
           );
-          route = ROUTE_ENTRY_PAGE;
+          route = routeEntryPage;
           break;
-        case TEXT_PAGE:
+        case textPage:
           page = TextPage(
-            uuid: args[PROJECT_UUID],
-            note: args[NOTE],
+            uuid: args[projectUuid],
+            note: args[note],
           );
-          route = ROUTE_TEXT_PAGE;
+          route = routeTextPage;
           break;
-        case IMAGE_PAGE:
+        case imagePage:
           page = ImagePage(
-            uuid: args[PROJECT_UUID],
-            note: args[NOTE],
+            uuid: args[projectUuid],
+            note: args[note],
           );
-          route = ROUTE_IMAGE_PAGE;
+          route = routeImagePage;
           break;
-        case TABLE_PAGE:
+        case tablePage:
           page = TablePage(
-            uuid: args[PROJECT_UUID],
-            note: args[NOTE],
+            uuid: args[projectUuid],
+            note: args[note],
           );
-          route = ROUTE_TABLE_PAGE;
+          route = routeTablePage;
           break;
-        case SENSOR_PAGE:
+        case sensorPage:
           page = GeolocationPage();
-          route = ROUTE_SENSOR_PAGE;
+          route = routeSensorPage;
           break;
-        case INFO_PAGE:
+        case infoPage:
           page = InfoPage(
-            title: args[TITLE],
-            tabLength: args[TAB_LENGTH],
-            tabs: args[TABS],
-            tabChildren: args[TAB_CHILDREN],
+            title: args[title],
+            tabLength: args[tabLength],
+            tabs: args[tabs],
+            tabChildren: args[tabChildren],
           );
-          route = ROUTE_INFO_PAGE;
+          route = routeInfoPage;
           break;
-        case CITIZEN_SCIENCE_PAGE:
+        case citizenSciencePage:
           page = CitizenSciencePage();
-          route = ROUTE_CITIZEN_SCIENCE_PAGE;
+          route = routeCitizenSciencePage;
           break;
-        case DETAIL_PAGE:
+        case detailPage:
           page = DetailPage(
-            title: args[TITLE],
-            image: args[IMAGE],
-            location: args[LOCATION],
-            researchSubject: args[RESEARCH_SUBJECT],
-            built: args[BUILT],
-            extended: args[EXTENDED],
-            contactPerson: args[CONTACT_PERSON],
-            url: args[URL],
+            title: args[title],
+            image: args[image],
+            location: args[location],
+            researchSubject: args[researchSubject],
+            built: args[built],
+            extended: args[extended],
+            contactPerson: args[contactPerson],
+            url: args[url],
           );
-          route = ROUTE_DETAIL_PAGE;
+          route = routeDetailPage;
           break;
-        case ONBOARDING_PAGE:
+        case onboardingPage:
           page = OnboardingPage();
-          route = ROUTE_ONBOARDING_PAGE;
+          route = routeOnboardingPage;
           break;
-        case ABOUT_PAGE:
+        case aboutPage:
           page = SimpleInfoPage(
-            title: args[TITLE],
-            content: args[CONTENT],
+            title: args[title],
+            content: args[content],
           );
-          route = ROUTE_ABOUT_PAGE;
+          route = routeAboutPage;
           break;
-        case CALCULATOR_PAGE:
+        case calculatorPage:
           page = CalculatorPage();
-          route = ROUTE_CALCULATOR_PAGE;
+          route = routeCalculatorPage;
           break;
-        case STOPWATCH_PAGE:
+        case stopwatchPage:
           page = StopwatchPage();
-          route = ROUTE_STOPWATCH_PAGE;
+          route = routeStopwatchPage;
           break;
-        case LINKING_PAGE:
+        case linkingPage:
           page = WeblinkPage(
-            uuid: args[PROJECT_UUID],
-            note: args[NOTE],
+            uuid: args[projectUuid],
+            note: args[note],
           );
-          route = ROUTE_LINKING_RECORD_PAGE;
+          route = routeLinkingRecordPage;
           break;
-        case CITIZEN_SCIENCE_WEB_PAGE:
+        case citizenScienceWebPage:
           page = CitizenScienceWebPage(
-            url: args[URL],
+            url: args[url],
           );
-          route = ROUTE_CITIZEN_SCIENCE_WEB_PAGE;
+          route = routeCitizenScienceWebPage;
           break;
-        case PROJECT_TEMPLATE_PAGE:
+        case projectTemplatePage:
           page = ProjectTemplatePage();
-          route = ROUTE_PROJECT_TEMPLATE_PAGE;
+          route = rotueProjectTemplatePage;
           break;
-        case SPEECH_RECOGNITION_PAGE:
+        case speechRecognitionPage:
           page = SpeechRecognitionPage();
-          route = ROUTE_SPEECH_RECOGNITION_PAGE;
+          route = routeSpeechRecognitionPage;
           break;
-        case AUDIO_RECORD_PAGE:
+        case audioRecordPage:
           page = AudioRecordPage(
-            uuid: args[PROJECT_UUID],
-            note: args[NOTE],
+            uuid: args[projectUuid],
+            note: args[note],
           );
-          route = ROUTE_AUDIO_RECORDING_PAGE;
+          route = routeAudioRecordingPage;
           break;
       }
 

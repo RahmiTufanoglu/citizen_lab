@@ -76,8 +76,8 @@ class _HomePageState extends State<HomePage>
         child: Container(
           width: double.infinity,
           child: Tooltip(
-            message: APP_TITLE,
-            child: Text(APP_TITLE),
+            message: appTitle,
+            child: Text(appTitle),
           ),
         ),
       ),
@@ -89,7 +89,7 @@ class _HomePageState extends State<HomePage>
         PopupMenuButton(
           icon: Icon(Icons.sort),
           elevation: 2.0,
-          tooltip: sort_options,
+          tooltip: sortOptions,
           onSelected: _choiceSortOption,
           itemBuilder: (BuildContext context) {
             return choices.map(
@@ -145,7 +145,7 @@ class _HomePageState extends State<HomePage>
       case 'Neues Projekt':
         Project result = await Navigator.pushNamed(
           context,
-          RouteGenerator.CREATE_PROJECT,
+          RouteGenerator.createProject,
         ) as Project;
 
         if (result != null) {
@@ -159,7 +159,7 @@ class _HomePageState extends State<HomePage>
       case 'Vorlagen':
         bool result = await Navigator.pushNamed(
           context,
-          RouteGenerator.PROJECT_TEMPLATE_PAGE,
+          RouteGenerator.projectTemplatePage,
         ) as bool;
 
         if (result != null && result) {
@@ -205,39 +205,39 @@ class _HomePageState extends State<HomePage>
 
   void _choiceSortOption(String choice) {
     switch (choice) {
-      case sort_by_title_arc:
+      case sortByTitleArc:
         setState(() {
           _projectList.sort(
             (Project a, Project b) =>
                 a.title.toLowerCase().compareTo(b.title.toLowerCase()),
           );
         });
-        setSortingOrder(sort_by_title_arc);
+        setSortingOrder(sortByTitleArc);
         break;
-      case sort_by_title_desc:
+      case sortByTitleDesc:
         setState(() {
           _projectList.sort(
             (Project a, Project b) =>
                 b.title.toLowerCase().compareTo(a.title.toLowerCase()),
           );
         });
-        setSortingOrder(sort_by_title_desc);
+        setSortingOrder(sortByTitleDesc);
         break;
-      case sort_by_release_date_asc:
+      case sortByReleaseDateAsc:
         setState(() {
           _projectList.sort(
             (Project a, Project b) => a.createdAt.compareTo(b.createdAt),
           );
         });
-        setSortingOrder(sort_by_release_date_asc);
+        setSortingOrder(sortByReleaseDateAsc);
         break;
-      case sort_by_release_date_desc:
+      case sortByReleaseDateDesc:
         setState(() {
           _projectList.sort(
             (Project a, Project b) => b.createdAt.compareTo(a.createdAt),
           );
         });
-        setSortingOrder(sort_by_release_date_desc);
+        setSortingOrder(sortByReleaseDateDesc);
         break;
     }
   }
@@ -280,7 +280,7 @@ class _HomePageState extends State<HomePage>
                 child: Row(
                   children: <Widget>[
                     Text(
-                      APP_TITLE,
+                      appTitle,
                       style: TextStyle(fontSize: 24.0),
                     ),
                     Spacer(),
@@ -302,8 +302,8 @@ class _HomePageState extends State<HomePage>
             _buildDrawerItem(
               context: context,
               icon: Icons.public,
-              title: APP_TITLE,
-              onTap: () => _setNavigation(RouteGenerator.CITIZEN_SCIENCE_PAGE),
+              title: appTitle,
+              onTap: () => _setNavigation(RouteGenerator.citizenSciencePage),
             ),
           ],
         ),
@@ -341,7 +341,7 @@ class _HomePageState extends State<HomePage>
               onTap: () {
                 showDialog(
                   context: context,
-                  builder: (_) => FeedbackDialog(url: fraunhofer_umsicht_url),
+                  builder: (_) => FeedbackDialog(url: fraunhoferUmsichtUrl),
                 );
               },
             ),
@@ -353,14 +353,14 @@ class _HomePageState extends State<HomePage>
                 Map map = Map<String, String>();
                 map['title'] = 'Über';
                 map['content'] = lorem;
-                _setNavigation(RouteGenerator.ABOUT_PAGE, map);
+                _setNavigation(RouteGenerator.aboutPage, map);
               },
             ),
             _buildDrawerItem(
               context: context,
               icon: Icons.info_outline,
               title: onboarding,
-              onTap: () => _setNavigation(RouteGenerator.ONBOARDING_PAGE),
+              onTap: () => _setNavigation(RouteGenerator.onboardingPage),
             ),
           ],
         ),
@@ -554,7 +554,8 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  void _updateProject(Project project, int cardColor, int cardTextColor) async {
+  Future<void> _updateProject(
+      Project project, int cardColor, int cardTextColor) async {
     Project updatedProject = Project.fromMap({
       DatabaseHelper.columnProjectId: project.id,
       DatabaseHelper.columnProjectUuid: project.uuid,
@@ -570,10 +571,10 @@ class _HomePageState extends State<HomePage>
     Navigator.pop(context, updatedProject);
   }
 
-  void _navigateToEntry(int index) async {
+  Future<void> _navigateToEntry(int index) async {
     final result = await Navigator.pushNamed(
       context,
-      RouteGenerator.ENTRY,
+      RouteGenerator.entry,
       arguments: {
         'project': _projectList[index],
         'projectTitle': _projectList[index].title,
@@ -600,7 +601,7 @@ class _HomePageState extends State<HomePage>
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final order = prefs.getString(_sortOrder);
     if (order == null) {
-      return sort_by_release_date_desc;
+      return sortByReleaseDateDesc;
     }
     return order;
   }
@@ -697,11 +698,11 @@ class _HomePageState extends State<HomePage>
           if (experimentItem.name.isEmpty) {
             Navigator.pop(context);
           } else if (experimentItem.name == 'Rechner') {
-            Navigator.popAndPushNamed(context, RouteGenerator.CALCULATOR_PAGE);
+            Navigator.popAndPushNamed(context, RouteGenerator.calculatorPage);
           } else if (experimentItem.name == 'Stoppuhr') {
-            Navigator.popAndPushNamed(context, RouteGenerator.STOPWATCH_PAGE);
+            Navigator.popAndPushNamed(context, RouteGenerator.stopwatchPage);
           } else if (experimentItem.name == 'Ortsbestimmung') {
-            Navigator.popAndPushNamed(context, RouteGenerator.SENSOR_PAGE);
+            Navigator.popAndPushNamed(context, RouteGenerator.sensorPage);
           }
         },
       ),

@@ -50,7 +50,7 @@ class _MaterialAppWithThemeState extends State<MaterialAppWithTheme> {
         CustomLocalizationDelegate(),
       ],
       debugShowCheckedModeBanner: false,
-      title: APP_TITLE,
+      title: appTitle,
       home: SplashPage(),
       theme: theme.getTheme,
       //darkTheme: appDarkTheme(),

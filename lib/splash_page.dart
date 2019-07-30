@@ -37,13 +37,13 @@ class _SplashPageState extends State<SplashPage> {
     if (_seen) {
       await Navigator.pushNamed(
         context,
-        RouteGenerator.HOMEPAGE,
+        RouteGenerator.homepage,
       );
     } else {
       await prefs.setBool('seen', true);
       await Navigator.pushNamed(
         context,
-        RouteGenerator.ONBOARDING_PAGE,
+        RouteGenerator.onboardingPage,
       );
     }
   }

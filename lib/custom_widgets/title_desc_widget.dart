@@ -320,7 +320,7 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
     );
   }
 
-  void _getNotesFromDb() async {
+  Future<void> _getNotesFromDb() async {
     notelist = await widget.db.getAllNotes();
 
     for (int i = 0; i < notelist.length; i++) {

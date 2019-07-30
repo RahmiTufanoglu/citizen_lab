@@ -94,7 +94,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
         child: Container(
           width: double.infinity,
           child: Tooltip(
-            message: create_project,
+            message: createProject,
             child: Text(createExperiment),
           ),
         ),
@@ -119,9 +119,9 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
         'tabChildren': createProjectSingleChildScrollViewList,
       },
     );*/
-    Navigator.pushNamed(context, RouteGenerator.ABOUT_PAGE, arguments: {
+    Navigator.pushNamed(context, RouteGenerator.aboutPage, arguments: {
       'title': 'Das Labornotizbuch',
-      'content': lab_notebook,
+      'content': labNotebook,
     });
   }
 
@@ -194,7 +194,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
                     }) {
                       return null;
                     },*/
-                    validator: (text) => text.isEmpty ? enter_a_desc : null,
+                    validator: (text) => text.isEmpty ? enterADesc : null,
                   ),
                 ],
               ),
@@ -258,7 +258,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
       if (_projectList[i].title == _titleEditingController.text) {
         _projectExists = true;
         _snackBarKey.currentState.showSnackBar(
-          _buildSnackBar('$choose_another_title.'),
+          _buildSnackBar('$chooseAnotherTitle.'),
         );
         break;
       }

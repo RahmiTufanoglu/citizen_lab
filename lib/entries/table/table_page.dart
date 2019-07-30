@@ -166,12 +166,12 @@ class _TablePageState extends State<TablePage> {
   void _setInfoPage() {
     Navigator.pushNamed(
       context,
-      RouteGenerator.INFO_PAGE,
+      RouteGenerator.infoPage,
       arguments: {
-        RouteGenerator.TITLE: 'Tabellen-Info',
-        RouteGenerator.TAB_LENGTH: 2,
-        RouteGenerator.TABS: tableTabList,
-        RouteGenerator.TAB_CHILDREN: tableSingleChildScrollViewList,
+        RouteGenerator.title: 'Tabellen-Info',
+        RouteGenerator.tabLength: 2,
+        RouteGenerator.tabs: tableTabList,
+        RouteGenerator.tabChildren: tableSingleChildScrollViewList,
       },
     );
   }
@@ -185,7 +185,7 @@ class _TablePageState extends State<TablePage> {
         onPressed: () {
           Navigator.popUntil(
             context,
-            ModalRoute.withName(RouteGenerator.ROUTE_HOME_PAGE),
+            ModalRoute.withName(RouteGenerator.routeHomePage),
           );
         },
       ),
@@ -374,7 +374,7 @@ class _TablePageState extends State<TablePage> {
     Navigator.pop(context, newNote);
   }
 
-  void _shareCsv() async {
+  Future<void> _shareCsv() async {
     //try {
     /*final ByteData bytes = await rootBundle.load(_csv.path);
       final Uint8List uint8List = bytes.buffer.asUint8List();

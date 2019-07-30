@@ -49,7 +49,7 @@ class _ProjectTemplatePageState extends State<ProjectTemplatePage> {
                 padding: const EdgeInsets.only(left: 16.0),
                 child: Align(
                   alignment: Alignment.bottomLeft,
-                  child: Text('$lorem_shorter'),
+                  child: Text('$loremShorter'),
                 ),
               ),
               IconButton(
@@ -81,7 +81,7 @@ class _ProjectTemplatePageState extends State<ProjectTemplatePage> {
     );
   }
 
-  void _createTemplateContent(String title, String desc) async {
+  Future<void> _createTemplateContent(String title, String desc) async {
     Project project = Project(
       title,
       //Utils.getRandomNumber(),

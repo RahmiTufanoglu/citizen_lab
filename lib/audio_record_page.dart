@@ -78,7 +78,7 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
     });
   }
 
-  void _setPlatformPath() async {
+  Future<void> _setPlatformPath() async {
     /*if (Platform.isAndroid) {
       _audioPath = '/sdcard/$_title.mp3';
     } else if (Platform.isIOS) {
@@ -150,7 +150,7 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
     );
   }
 
-  void _shareContent() async {
+  Future<void> _shareContent() async {
     if (_audioPath.isNotEmpty) {
       final ByteData bytes = await rootBundle.load(_audioPath);
       final Uint8List uint8List = bytes.buffer.asUint8List();
@@ -172,7 +172,7 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
   void _setInfoPage() {
     Navigator.pushNamed(
       context,
-      RouteGenerator.INFO_PAGE,
+      RouteGenerator.infoPage,
       arguments: {
         'title': 'Audio-Info',
         'tabLength': 2,
@@ -192,7 +192,7 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
           onPressed: () {
             Navigator.popUntil(
               context,
-              ModalRoute.withName(RouteGenerator.ROUTE_HOME_PAGE),
+              ModalRoute.withName(RouteGenerator.routeHomePage),
             );
           },
         );
@@ -308,9 +308,9 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
     }
   }
 
-  void _playAudio() async => await flutterSound.startPlayer(_audioPath);
+  Future<void> _playAudio() async => await flutterSound.startPlayer(_audioPath);
 
-  void _stopAudio() async {
+  Future<void> _stopAudio() async {
     try {
       await flutterSound.stopPlayer();
     } catch (e) {
@@ -327,7 +327,7 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
         [PermissionName.Microphone, PermissionName.Storage]);
   }
 
-  void _buildRecordButton() async {
+  Future<void> _buildRecordButton() async {
     //if (!await _checkIfFileExists()) {
     /*for (int i = 0; i < _permissions.length; i++) {
       print('====>>>>>>>>>>>> ${_permissions[i].toString()}');
@@ -337,7 +337,7 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
       setState(() {
         _iconBody = Icon(Icons.mic, size: 56.0);
       });
-      _stopRecord();
+      await _stopRecord();
     } else {
       setState(() {
         _iconBody = Icon(Icons.mic_none, size: 56.0);
@@ -365,7 +365,7 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
     }
   }
 
-  void _checkIfTitleIsAlreadyTaken2() async {
+  Future<void> _checkIfTitleIsAlreadyTaken2() async {
     //FileSystemEntity.typeSync(_audioPath) != FileSystemEntityType.notFound;
     File file = File(_audioPath);
     int i = 2;
@@ -400,7 +400,7 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
     });*/
   }
 
-  void _stopRecord() async {
+  Future<void> _stopRecord() async {
     try {
       await flutterSound.stopRecorder();
     } catch (e) {

@@ -16,13 +16,13 @@ class DatabaseHelper implements ProjectDao, NoteDao {
 
   Database _db;
 
-  static const int DB_VERSION = 1;
+  static const int dbVersion = 1;
   static final String dbName = 'citizen_lab_projects2.db';
 
   static final String projectTable = 'projects';
   static final String columnProjectId = 'id';
 
-  static final String columnProjectUuid = 'random';
+  static final String columnProjectUuid = 'uuid';
   static final String columnProjectNoteId = 'note_id';
   static final String columnProjectTitle = 'title';
   static final String columnProjectDesc = 'description';
@@ -60,9 +60,7 @@ class DatabaseHelper implements ProjectDao, NoteDao {
 
   static final String createNoteTable = 'CREATE TABLE $noteTable('
       '$columnNoteId INTEGER PRIMARY KEY AUTOINCREMENT,'
-      //'$columnNoteProject TEXT NOT NULL, '
       '$columnProjectUuid TEXT NOT NULL, '
-      //'$columnProjectId TEXT NOT NULL, '
       '$columnNoteType TEXT NOT NULL, '
       '$columnNoteTitle TEXT NOT NULL, '
       '$columnNoteDescription TEXT NOT NULL, '
@@ -83,13 +81,13 @@ class DatabaseHelper implements ProjectDao, NoteDao {
     final String path = join(databasesPath, projectTable);
     final Database db = await openDatabase(
       path,
-      version: DB_VERSION,
+      version: dbVersion,
       onCreate: _onCreate,
     );
     return db;
   }
 
-  void _onCreate(Database db, int version) async {
+  Future<void> _onCreate(Database db, int version) async {
     await db.execute(createProjectTable);
     await db.execute(createNoteTable);
   }

@@ -123,7 +123,7 @@ class _EditProjectDialogState extends State<EditProjectDialog> {
           maxLength: 50,
           maxLines: 1,
           decoration: InputDecoration(
-            hintText: '$title_here.',
+            hintText: '$titleHere.',
             labelStyle: TextStyle(fontSize: 14.0),
           ),
         ),
@@ -141,7 +141,7 @@ class _EditProjectDialogState extends State<EditProjectDialog> {
           maxLength: 500,
           maxLines: 10,
           decoration: InputDecoration(
-            hintText: '$desc_here.',
+            hintText: '$descHere.',
             labelStyle: TextStyle(fontSize: 14.0),
           ),
         ),

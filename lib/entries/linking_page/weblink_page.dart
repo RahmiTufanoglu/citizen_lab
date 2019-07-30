@@ -124,7 +124,7 @@ class _WeblinkPageState extends State<WeblinkPage> {
           onPressed: () {
             Navigator.popUntil(
               context,
-              ModalRoute.withName(RouteGenerator.ROUTE_HOME_PAGE),
+              ModalRoute.withName(RouteGenerator.routeHomePage),
             );
           },
         );

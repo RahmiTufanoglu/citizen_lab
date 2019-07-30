@@ -155,7 +155,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
         PopupMenuButton(
           icon: Icon(Icons.sort),
           elevation: 2.0,
-          tooltip: sort_options,
+          tooltip: sortOptions,
           onSelected: _choiceSortOption,
           itemBuilder: (BuildContext context) => choices.map(
             (String choice) {
@@ -212,7 +212,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
               )
             : Center(
                 child: Text(
-                  empty_list,
+                  emptyList,
                   style: TextStyle(fontSize: 24.0),
                 ),
               ),
@@ -356,7 +356,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
       DatabaseHelper.columnNoteCardTextColor: cardTextColor,
     });
     await _projectDb.updateNote(newNote: newNote);
-    _loadNoteList();
+    await _loadNoteList();
     Navigator.pop(context, newNote);
   }
 
@@ -485,18 +485,18 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
           if (experimentItem.name.isEmpty) {
             Navigator.pop(context);
           } else if (experimentItem.name == 'Rechner') {
-            Navigator.popAndPushNamed(context, RouteGenerator.CALCULATOR_PAGE);
+            Navigator.popAndPushNamed(context, RouteGenerator.calculatorPage);
           } else if (experimentItem.name == 'Stoppuhr') {
-            Navigator.popAndPushNamed(context, RouteGenerator.STOPWATCH_PAGE);
+            Navigator.popAndPushNamed(context, RouteGenerator.stopwatchPage);
           } else if (experimentItem.name == 'Ortsbestimmung') {
-            Navigator.popAndPushNamed(context, RouteGenerator.SENSOR_PAGE);
+            Navigator.popAndPushNamed(context, RouteGenerator.sensorPage);
           }
         },
       ),
     );
   }
 
-  void _updateProject(Project project) async {
+  Future<void> _updateProject(Project project) async {
     Project updatedProject = Project.fromMap({
       DatabaseHelper.columnProjectId: project.id,
       DatabaseHelper.columnProjectUuid: project.uuid,
@@ -510,42 +510,42 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
     await _projectDb.updateProject(newProject: updatedProject);
   }
 
-  void _openNotePage(String type, [Note note]) async {
+  void _openNotePage(String type, [Note note]) {
     switch (type) {
       case 'Text':
-        _setList(note, RouteGenerator.TEXT_PAGE);
+        _setList(note, RouteGenerator.textPage);
         break;
       case 'Tabelle':
-        _setList(note, RouteGenerator.TABLE_PAGE);
+        _setList(note, RouteGenerator.tablePage);
         break;
       case 'Bild':
-        _setList(note, RouteGenerator.IMAGE_PAGE);
+        _setList(note, RouteGenerator.imagePage);
         break;
       case 'Verlinkung':
-        _setList(note, RouteGenerator.LINKING_PAGE);
+        _setList(note, RouteGenerator.linkingPage);
         break;
       case 'Audio':
-        _setPermission();
-        _setList(note, RouteGenerator.AUDIO_RECORD_PAGE);
+        //_setPermission();
+        _setList(note, RouteGenerator.audioRecordPage);
         break;
     }
   }
 
-  void _setPermission() async {
+  Future<void> _setPermission() async {
     var _permissions = await Permission.getPermissionsStatus(
         [PermissionName.Microphone, PermissionName.Storage]);
     await Permission.requestPermissions(
         [PermissionName.Microphone, PermissionName.Storage]);
   }
 
-  void _setList(Note note, String route) async {
+  Future<void> _setList(Note note, String route) async {
     final result = await Navigator.pushNamed(
       context,
       route,
       arguments: {
-        'projectRandom': widget.project.uuid,
-        'projectId': widget.project.id,
-        'note': note,
+        RouteGenerator.projectUuid: widget.project.uuid,
+        //RouteGenerator.project: widget.project.id,
+        RouteGenerator.note: note,
       },
     ) as Note;
 
@@ -565,7 +565,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
       );
     }
 
-    _loadNoteList();
+    await _loadNoteList();
   }
 
   final String _sortingOrderPrefs = 'sortNotes';
@@ -575,7 +575,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
     //return prefs.getString(_kSortingOrderPrefs) ?? sort_by_release_date_desc;
     final order = prefs.getString(_sortingOrderPrefs);
     if (order == null) {
-      return sort_by_release_date_desc;
+      return sortByReleaseDateDesc;
     }
     return order;
   }
@@ -585,7 +585,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
     await prefs.setString(_sortingOrderPrefs, value);
   }
 
-  void _loadNoteList() async {
+  Future<void> _loadNoteList() async {
     for (int i = 0; i < _noteList.length; i++) {
       _noteList.removeWhere((element) {
         _noteList[i].id = _noteList[i].id;
@@ -625,7 +625,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   }
 
   //void _deleteNote(AsyncSnapshot snapshot, int index) async {
-  void _deleteNote(int index) async {
+  Future<void> _deleteNote(int index) async {
     await _projectDb.deleteNote(id: _noteList[index].id);
     //await _noteDb.deleteNote(id: _noteList[index].id);
 
@@ -682,11 +682,11 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
                 );*/
 
             _scaffoldKey.currentState.showSnackBar(
-              _buildSnackBar(text: list_deleted),
+              _buildSnackBar(text: listDeleted),
             );
           } else {
             _scaffoldKey.currentState.showSnackBar(
-              _buildSnackBar(text: nothing_to_delete),
+              _buildSnackBar(text: nothingToDelete),
             );
           }
 
@@ -746,39 +746,39 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
 
   void _choiceSortOption(String choice) {
     switch (choice) {
-      case sort_by_title_arc:
+      case sortByTitleArc:
         setState(() {
           _noteList.sort(
             (Note a, Note b) =>
                 a.title.toLowerCase().compareTo(b.title.toLowerCase()),
           );
         });
-        setSortingOrder(sort_by_title_arc);
+        setSortingOrder(sortByTitleArc);
         break;
-      case sort_by_title_desc:
+      case sortByTitleDesc:
         setState(() {
           _noteList.sort(
             (Note a, Note b) =>
                 b.title.toLowerCase().compareTo(a.title.toLowerCase()),
           );
         });
-        setSortingOrder(sort_by_title_desc);
+        setSortingOrder(sortByTitleDesc);
         break;
-      case sort_by_release_date_asc:
+      case sortByReleaseDateAsc:
         setState(() {
           _noteList.sort(
             (Note a, Note b) => a.createdAt.compareTo(b.createdAt),
           );
         });
-        setSortingOrder(sort_by_release_date_asc);
+        setSortingOrder(sortByReleaseDateAsc);
         break;
-      case sort_by_release_date_desc:
+      case sortByReleaseDateDesc:
         setState(() {
           _noteList.sort(
             (Note a, Note b) => b.createdAt.compareTo(a.createdAt),
           );
         });
-        setSortingOrder(sort_by_release_date_desc);
+        setSortingOrder(sortByReleaseDateDesc);
         break;
     }
   }

@@ -17,7 +17,7 @@ class NotesBloc implements BaseBloc {
     _notesController.close();
   }
 
-  void getNotes({@required String uuid, String order}) async {
+  Future<void> getNotes({@required String uuid, String order}) async {
     //_notesController.sink.add(await DatabaseProvider().getAllNotes());
     _notesController.sink.add(
       await DatabaseHelper.db.getNotesOfProject(uuid: uuid),

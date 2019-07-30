@@ -72,7 +72,7 @@ class _CitizenSciencePageState extends State<CitizenSciencePage> {
   void _setInfoPage() {
     Navigator.pushNamed(
       context,
-      RouteGenerator.ABOUT_PAGE,
+      RouteGenerator.aboutPage,
       arguments: {
         'title': 'Info',
         'content': 'dfsafsdfsdfweqw111',
@@ -91,7 +91,7 @@ class _CitizenSciencePageState extends State<CitizenSciencePage> {
           onPressed: () {
             Navigator.popUntil(
               context,
-              ModalRoute.withName(RouteGenerator.ROUTE_HOME_PAGE),
+              ModalRoute.withName(RouteGenerator.routeHomePage),
             );
           },
         );
@@ -165,7 +165,7 @@ class _CitizenSciencePageState extends State<CitizenSciencePage> {
               onTapImage: () {
                 return Navigator.pushNamed(
                   context,
-                  RouteGenerator.DETAIL_PAGE,
+                  RouteGenerator.detailPage,
                   arguments: {
                     'title': citizenScienceModelList[index].title,
                     'image': citizenScienceModelList[index].image,

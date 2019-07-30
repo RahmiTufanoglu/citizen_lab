@@ -134,7 +134,7 @@ class _GeolocationPageState extends State<GeolocationPage>
     }
   }
 
-  void _backToHomePage() async {
+  Future<void> _backToHomePage() async {
     final String cancel = 'Notiz abbrechen und zur Hauptseite zurückkehren?';
 
     await showDialog(
@@ -145,7 +145,7 @@ class _GeolocationPageState extends State<GeolocationPage>
           onPressed: () {
             Navigator.popUntil(
               context,
-              ModalRoute.withName(RouteGenerator.ROUTE_HOME_PAGE),
+              ModalRoute.withName(RouteGenerator.routeHomePage),
             );
           },
         );

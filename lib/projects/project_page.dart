@@ -77,7 +77,7 @@ class _ProjectPageState extends State<ProjectPage> {
         PopupMenuButton(
           icon: Icon(Icons.sort),
           elevation: 2.0,
-          tooltip: sort_options,
+          tooltip: sortOptions,
           onSelected: _choiceSortOption,
           itemBuilder: (BuildContext context) {
             return choices.map(
@@ -110,7 +110,7 @@ class _ProjectPageState extends State<ProjectPage> {
       onPressed: () {
         Navigator.pushNamed(
           context,
-          RouteGenerator.CREATE_PROJECT,
+          RouteGenerator.createProject,
         );
       },
     );
@@ -148,7 +148,7 @@ class _ProjectPageState extends State<ProjectPage> {
 
   void _choiceSortOption(String choice) {
     switch (choice) {
-      case sort_by_title_arc:
+      case sortByTitleArc:
         setState(() {
           _projectList.sort(
             (Project a, Project b) =>
@@ -156,7 +156,7 @@ class _ProjectPageState extends State<ProjectPage> {
           );
         });
         break;
-      case sort_by_title_desc:
+      case sortByTitleDesc:
         setState(() {
           _projectList.sort(
             (Project a, Project b) =>
@@ -164,14 +164,14 @@ class _ProjectPageState extends State<ProjectPage> {
           );
         });
         break;
-      case sort_by_release_date_asc:
+      case sortByReleaseDateAsc:
         setState(() {
           _projectList.sort(
             (Project a, Project b) => a.createdAt.compareTo(b.createdAt),
           );
         });
         break;
-      case sort_by_release_date_desc:
+      case sortByReleaseDateDesc:
         setState(() {
           _projectList.sort(
             (Project a, Project b) => b.createdAt.compareTo(a.createdAt),
@@ -236,7 +236,7 @@ class _ProjectPageState extends State<ProjectPage> {
               )
             : Center(
                 child: Text(
-                  empty_list,
+                  emptyList,
                   style: TextStyle(fontSize: 24.0),
                 ),
               ),
@@ -247,7 +247,7 @@ class _ProjectPageState extends State<ProjectPage> {
   Future<void> _navigateToEntry(int index) async {
     final result = await Navigator.pushNamed(
       context,
-      RouteGenerator.ENTRY,
+      RouteGenerator.entry,
       arguments: {
         'project': _projectList[index],
         'projectTitle': _projectList[index].title,
@@ -352,7 +352,7 @@ class _ProjectPageState extends State<ProjectPage> {
       setState(() => _projectList.add(Project.map(project)));
     });
 
-    _choiceSortOption(sort_by_release_date_desc);
+    _choiceSortOption(sortByReleaseDateDesc);
   }
 
   Future<void> _deleteProject(int index) async {
@@ -367,7 +367,7 @@ class _ProjectPageState extends State<ProjectPage> {
     if (widget.isFromCreateProjectPage) {
       Navigator.popUntil(
         context,
-        ModalRoute.withName(RouteGenerator.ROUTE_HOME_PAGE),
+        ModalRoute.withName(RouteGenerator.routeHomePage),
       );
       /*} else if (widget.isFromProjectSearchPage) {
       Navigator.pop(context, 'fromEntry');*/

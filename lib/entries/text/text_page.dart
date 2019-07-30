@@ -88,18 +88,6 @@ class _TextPageState extends State<TextPage> {
     super.dispose();
   }
 
-  void _createPdf() async {
-    _pdfCreator = PdfCreator(
-      title: _titleEditingController.text,
-      content: _descEditingController.text,
-      dateCreated: dateFormatted(),
-      filePath: await _localPath(_title),
-    );
-
-    _pdfCreator.createPdf();
-    _pdfCreator.savePdf();
-  }
-
   @override
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
@@ -180,20 +168,33 @@ class _TextPageState extends State<TextPage> {
     );
   }
 
-  void _shareContent() async {
+  Future<void> _createPdf() async {
+    String title = Utils.removeWhiteSpace(_title);
+
+    _pdfCreator = PdfCreator(
+      title: _titleEditingController.text,
+      content: _descEditingController.text,
+      dateCreated: dateFormatted(),
+      filePath: await _localPath(title),
+    );
+
+    _pdfCreator.createPdf();
+    await _pdfCreator.savePdf();
+  }
+
+  Future<void> _shareContent() async {
     final String noTitle = 'Bitte einen Titel und eine Beschreibung eingeben';
 
     if (_titleEditingController.text.isNotEmpty &&
         _descEditingController.text.isNotEmpty) {
       String title = Utils.removeWhiteSpace(_title);
-
       final String path = await _localPath(title);
       final ByteData bytes = await rootBundle.load(path);
       final Uint8List uint8List = bytes.buffer.asUint8List();
 
       await Share.file(
         'text',
-        '$_title.pdf',
+        '$title.pdf',
         uint8List,
         'text/pdf',
         text: _title,
@@ -222,7 +223,7 @@ class _TextPageState extends State<TextPage> {
           onPressed: () {
             Navigator.popUntil(
               context,
-              ModalRoute.withName(RouteGenerator.ROUTE_HOME_PAGE),
+              ModalRoute.withName(RouteGenerator.routeHomePage),
             );
           },
         );
@@ -233,12 +234,12 @@ class _TextPageState extends State<TextPage> {
   void _setInfoPage() {
     Navigator.pushNamed(
       context,
-      RouteGenerator.INFO_PAGE,
+      RouteGenerator.infoPage,
       arguments: {
-        RouteGenerator.TITLE: 'Text-Info',
-        RouteGenerator.TAB_LENGTH: 3,
-        RouteGenerator.TABS: textTabList,
-        RouteGenerator.TAB_CHILDREN: textSingleChildScrollViewList,
+        RouteGenerator.title: 'Text-Info',
+        RouteGenerator.tabLength: 3,
+        RouteGenerator.tabs: textTabList,
+        RouteGenerator.tabChildren: textSingleChildScrollViewList,
       },
     );
   }
@@ -277,7 +278,7 @@ class _TextPageState extends State<TextPage> {
     }
   }
 
-  Future _updateNote(Note note) async {
+  Future<void> _updateNote(Note note) async {
     Note newNote = Note.fromMap({
       DatabaseHelper.columnNoteId: note.id,
       DatabaseHelper.columnProjectUuid: note.uuid,

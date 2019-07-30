@@ -121,7 +121,7 @@ class _ImagePageState extends State<ImagePage> {
   }
 
   // TODO: Fehler wird nicht angezeigt
-  void _shareContent() async {
+  Future<void> _shareContent() async {
     if (_image != null) {
       /*try {
         final channelName = 'rahmitufanoglu.citizenlab';
@@ -155,12 +155,12 @@ class _ImagePageState extends State<ImagePage> {
   void _setInfoPage() {
     Navigator.pushNamed(
       context,
-      RouteGenerator.INFO_PAGE,
+      RouteGenerator.infoPage,
       arguments: {
-        RouteGenerator.TITLE: 'Bild-Info',
-        RouteGenerator.TAB_LENGTH: 2,
-        RouteGenerator.TABS: imageTabList,
-        RouteGenerator.TAB_CHILDREN: imageSingleChildScrollViewList,
+        RouteGenerator.title: 'Bild-Info',
+        RouteGenerator.tabLength: 2,
+        RouteGenerator.tabs: imageTabList,
+        RouteGenerator.tabChildren: imageSingleChildScrollViewList,
       },
     );
   }
@@ -176,7 +176,7 @@ class _ImagePageState extends State<ImagePage> {
           onPressed: () {
             Navigator.popUntil(
               context,
-              ModalRoute.withName(RouteGenerator.ROUTE_HOME_PAGE),
+              ModalRoute.withName(RouteGenerator.routeHomePage),
             );
           },
         );

@@ -84,7 +84,7 @@ class ProjectSearchPage extends SearchDelegate<String> {
     close(context, null);
     final result = await Navigator.pushNamed(
       context,
-      RouteGenerator.ENTRY,
+      RouteGenerator.entry,
       arguments: {
         'project': list[index],
         'projectTitle': list[index].title,
