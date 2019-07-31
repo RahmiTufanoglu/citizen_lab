@@ -6,9 +6,12 @@ import 'package:uuid/uuid.dart';
 class Utils {
   static Offset localPosition(BuildContext context, Offset globalPosition) {
     final RenderBox box = context.findRenderObject();
-    Offset localPosition = box.globalToLocal(globalPosition);
+    /*Offset localPosition = box.globalToLocal(globalPosition);
     localPosition =
-        localPosition.translate(0.0, -AppBar().preferredSize.height - 24.0);
+        localPosition.translate(0.0, -AppBar().preferredSize.height - 24.0);*/
+    final Offset localPosition = box
+        .globalToLocal(globalPosition)
+        .translate(0.0, -AppBar().preferredSize.height - 24.0);
     return localPosition;
   }
 

@@ -45,7 +45,7 @@ class _HomePageState extends State<HomePage>
 
     _animationController = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 1),
+      duration: const Duration(seconds: 1),
     );
 
     _animation = Tween(
@@ -119,7 +119,7 @@ class _HomePageState extends State<HomePage>
 
   Widget _buildFabs() {
     return Padding(
-      padding: EdgeInsets.only(left: 32.0),
+      padding: const EdgeInsets.only(left: 32.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -174,9 +174,9 @@ class _HomePageState extends State<HomePage>
   }
 
   void _deleteAllProjects(BuildContext context) {
-    final String deleteAllProjects = 'Alle Projekte löschen?';
-    final String deleteProjects = 'Projekte gelöscht.';
-    final String nothingDeleted = 'Nichts gelöscht.';
+    const String deleteAllProjects = 'Alle Projekte löschen?';
+    const String deleteProjects = 'Projekte gelöscht.';
+    const String nothingDeleted = 'Nichts gelöscht.';
 
     showDialog(
       context: context,
@@ -249,11 +249,11 @@ class _HomePageState extends State<HomePage>
         (screenHeight / 3) - kToolbarHeight - statusBarHeight;
     final double screenWidth = MediaQuery.of(context).size.width;
     final double drawerWidth = screenWidth / 1.5;
-    final String about = 'Über';
-    final String impressum = 'Impressum';
-    final String location = 'Dortmund';
-    final String deleteAll = 'Alles löschen';
-    final String appLogoPath = 'assets/app_logo.png';
+    const String about = 'Über';
+    const String impressum = 'Impressum';
+    const String location = 'Dortmund';
+    const String deleteAll = 'Alles löschen';
+    const String appLogoPath = 'assets/app_logo.png';
 
     _checkIfDarkModeEnabled();
 
@@ -265,7 +265,7 @@ class _HomePageState extends State<HomePage>
           height: drawerHeaderHeight,
           child: Card(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
+              borderRadius: const BorderRadius.only(
                 bottomLeft: Radius.circular(8.0),
                 bottomRight: Radius.circular(8.0),
               ),
@@ -284,13 +284,13 @@ class _HomePageState extends State<HomePage>
                       appTitle,
                       style: TextStyle(fontSize: 24.0),
                     ),
-                    Spacer(),
+                    const Spacer(),
                     Image(
-                      image: AssetImage(appLogoPath),
+                      image: const AssetImage(appLogoPath),
                       height: 42.0,
                       width: 42.0,
                     ),
-                    SizedBox(width: 16.0),
+                    const SizedBox(width: 16.0),
                   ],
                 ),
               ),
@@ -299,7 +299,7 @@ class _HomePageState extends State<HomePage>
         ),
         Column(
           children: <Widget>[
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             _buildDrawerItem(
               context: context,
               icon: Icons.public,
@@ -314,19 +314,19 @@ class _HomePageState extends State<HomePage>
             ),
           ],
         ),
-        Divider(
+        const Divider(
           color: Colors.black,
           height: 0.5,
         ),
         Builder(
           builder: (BuildContext context) {
             return ExpansionTile(
-              title: Text(''),
+              title: const Text(''),
               leading: Icon(
                 Icons.settings,
                 color: Theme.of(context).brightness == appDarkTheme().brightness
                     ? Colors.white
-                    : Color(0xFF3B3B3B),
+                    : const Color(0xFF3B3B3B),
               ),
               children: <Widget>[
                 _buildDrawerItem(
@@ -366,7 +366,7 @@ class _HomePageState extends State<HomePage>
             ),
           ],
         ),
-        Divider(
+        const Divider(
           color: Colors.black,
           height: 0.5,
         ),
@@ -377,17 +377,17 @@ class _HomePageState extends State<HomePage>
             children: <Widget>[
               Icon(Icons.brightness_2),
               Switch(
-                inactiveTrackColor: Color(0xFF191919),
+                inactiveTrackColor: const Color(0xFF191919),
                 activeTrackColor: Colors.white,
                 inactiveThumbColor: Colors.white,
-                activeColor: Color(0xFF191919),
+                activeColor: const Color(0xFF191919),
                 value: _valueSwitch,
                 onChanged: (bool value) => _onChangedSwitch(value, theme),
               ),
             ],
           ),
         ),
-        SizedBox(height: 32.0),
+        const SizedBox(height: 32.0),
       ],
     );
   }
@@ -423,11 +423,11 @@ class _HomePageState extends State<HomePage>
   }
 
   Widget _buildDrawerItem({
+    @required GestureTapCallback onTap,
     BuildContext context,
     IconData icon,
     String title,
     Widget widget,
-    @required GestureTapCallback onTap,
   }) {
     return Container(
       height: 60.0,
@@ -479,13 +479,15 @@ class _HomePageState extends State<HomePage>
       direction: DismissDirection.startToEnd,
       background: Container(
         alignment: Alignment.centerLeft,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.all(
+            Radius.circular(8.0),
+          ),
         ),
         child: Row(
           children: <Widget>[
             Icon(Icons.arrow_forward, size: 28.0),
-            SizedBox(width: 8.0),
+            const SizedBox(width: 8.0),
             Icon(Icons.delete, size: 28.0),
           ],
         ),
@@ -520,7 +522,7 @@ class _HomePageState extends State<HomePage>
       builder: (context) => SimpleDialog(
         contentPadding: const EdgeInsets.all(0.0),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(
+          borderRadius: const BorderRadius.all(
             Radius.circular(8.0),
           ),
         ),
@@ -594,7 +596,7 @@ class _HomePageState extends State<HomePage>
   Widget _buildSnackBar({@required String text}) {
     return SnackBar(
       backgroundColor: Colors.black87,
-      duration: Duration(seconds: 1),
+      duration: const Duration(seconds: 1),
       content: Text(
         text,
         style: TextStyle(fontWeight: FontWeight.bold),
@@ -689,7 +691,7 @@ class _HomePageState extends State<HomePage>
           child: Stack(
             children: <Widget>[
               Padding(
-                padding: EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(8.0),
                 child: Center(
                   child: (!centerIcon)
                       ? Row(
@@ -710,7 +712,7 @@ class _HomePageState extends State<HomePage>
                         ),
                 ),
               ),
-              Divider(height: 1.0, color: Colors.black),
+              const Divider(height: 1.0, color: Colors.black),
             ],
           ),
         ),

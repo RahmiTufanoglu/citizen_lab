@@ -47,7 +47,7 @@ class _MaterialAppWithThemeState extends State<MaterialAppWithTheme> {
 
     return MaterialApp(
       localizationsDelegates: [
-        CustomLocalizationDelegate(),
+        const CustomLocalizationDelegate(),
       ],
       debugShowCheckedModeBanner: false,
       title: appTitle,

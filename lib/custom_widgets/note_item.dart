@@ -9,7 +9,7 @@ class NoteItem extends StatelessWidget {
   final Function close;
   final GestureTapCallback onLongPress;
 
-  NoteItem({
+  const NoteItem({
     @required this.note,
     @required this.isFromNoteSearchPage,
     @required this.noteFunction,
@@ -44,9 +44,9 @@ class NoteItem extends StatelessWidget {
               Row(
                 children: <Widget>[
                   _getIcon(note: note),
-                  SizedBox(width: 16.0),
+                  const SizedBox(width: 16.0),
                   Padding(
-                    padding: EdgeInsets.symmetric(vertical: 12.0),
+                    padding: const EdgeInsets.symmetric(vertical: 12.0),
                     child: Container(
                       alignment: Alignment.center,
                       color: Color(note.cardTextColor),
@@ -54,7 +54,7 @@ class NoteItem extends StatelessWidget {
                       width: 2.0,
                     ),
                   ),
-                  SizedBox(width: 16.0),
+                  const SizedBox(width: 16.0),
                   Container(
                     width:
                         (screenWidth - 24.0 - 16.0 - 2.0 - 16.0 - 16.0) / 1.5,
@@ -67,7 +67,7 @@ class NoteItem extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(color: Color(note.cardTextColor)),
                         ),
-                        SizedBox(height: 8.0),
+                        const SizedBox(height: 8.0),
                         Text(
                           note.isEdited == 0
                               ? 'Erstellt am: ${note.createdAt}'

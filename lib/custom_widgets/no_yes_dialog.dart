@@ -4,7 +4,7 @@ class NoYesDialog extends StatelessWidget {
   final String text;
   final GestureTapCallback onPressed;
 
-  NoYesDialog({
+  const NoYesDialog({
     @required this.text,
     @required this.onPressed,
   })  : assert(text != null),
@@ -16,13 +16,13 @@ class NoYesDialog extends StatelessWidget {
   }
 
   Widget _buildNoYesDialog(BuildContext context) {
-    final String no = 'Nein';
-    final String yes = 'Ja';
+    const String no = 'Nein';
+    const String yes = 'Ja';
 
     return SimpleDialog(
       elevation: 4.0,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+        borderRadius: const BorderRadius.all(Radius.circular(8.0)),
       ),
       contentPadding: const EdgeInsets.all(16.0),
       titlePadding: const EdgeInsets.only(
@@ -44,7 +44,7 @@ class NoYesDialog extends StatelessWidget {
           size: 50.0,
           color: Colors.redAccent,
         ),
-        SizedBox(height: 16.0),
+        const SizedBox(height: 16.0),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
@@ -57,7 +57,7 @@ class NoYesDialog extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(width: 16.0),
+            const SizedBox(width: 16.0),
             Expanded(
               child: RaisedButton(
                 onPressed: onPressed,

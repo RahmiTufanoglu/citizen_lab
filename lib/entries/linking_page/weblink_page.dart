@@ -19,10 +19,10 @@ class WeblinkPage extends StatefulWidget {
   final Note note;
   final String uuid;
 
-  WeblinkPage({
-    this.key,
+  const WeblinkPage({
     @required this.note,
     @required this.uuid,
+    this.key,
   }) : super(key: key);
 
   @override
@@ -81,8 +81,8 @@ class _WeblinkPageState extends State<WeblinkPage> {
   }
 
   Widget _buildAppBar() {
-    final String back = 'Zurück';
-    final String linking = 'Weblink';
+    const String back = 'Zurück';
+    const String linking = 'Weblink';
 
     return AppBar(
       leading: IconButton(
@@ -96,7 +96,7 @@ class _WeblinkPageState extends State<WeblinkPage> {
           width: double.infinity,
           child: Tooltip(
             message: linking,
-            child: Text(linking),
+            child: const Text(linking),
           ),
         ),
       ),
@@ -114,7 +114,7 @@ class _WeblinkPageState extends State<WeblinkPage> {
   }
 
   void _backToHomePage() {
-    final String cancel = 'Notiz abbrechen und zur Hauptseite zurückkehren?';
+    const String cancel = 'Notiz abbrechen und zur Hauptseite zurückkehren?';
 
     showDialog(
       context: context,
@@ -192,8 +192,8 @@ class _WeblinkPageState extends State<WeblinkPage> {
   }
 
   void _copyContent() {
-    final String copyContent = 'Inhalt kopiert';
-    final String copyNotPossible = 'Kein Inhalt zum kopieren';
+    const String copyContent = 'Inhalt kopiert';
+    const String copyNotPossible = 'Kein Inhalt zum kopieren';
 
     if (_url.isNotEmpty) {
       _setClipboard(_url, '$copyContent.');
@@ -292,7 +292,7 @@ class _WeblinkPageState extends State<WeblinkPage> {
   Widget _buildSnackBar({@required String text}) {
     return SnackBar(
       backgroundColor: Colors.black.withOpacity(0.5),
-      duration: Duration(seconds: 1),
+      duration: const Duration(seconds: 1),
       content: Text(
         text,
         style: TextStyle(

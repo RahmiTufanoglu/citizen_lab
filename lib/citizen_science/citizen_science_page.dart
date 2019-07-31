@@ -31,7 +31,7 @@ class _CitizenSciencePageState extends State<CitizenSciencePage> {
   }
 
   Widget _buildAppBar() {
-    final String citizenScience = 'Citizen Science';
+    const String citizenScience = 'Citizen Science';
 
     return AppBar(
       title: GestureDetector(
@@ -40,7 +40,7 @@ class _CitizenSciencePageState extends State<CitizenSciencePage> {
           width: double.infinity,
           child: Tooltip(
             message: citizenScience,
-            child: Text(citizenScience),
+            child: const Text(citizenScience),
           ),
         ),
       ),
@@ -80,7 +80,7 @@ class _CitizenSciencePageState extends State<CitizenSciencePage> {
   }
 
   Future<void> _backToHomePage() async {
-    final String cancel = 'Notiz abbrechen und zur Hauptseite zurückkehren?';
+    const String cancel = 'Notiz abbrechen und zur Hauptseite zurückkehren?';
 
     await showDialog(
       context: context,
@@ -145,7 +145,7 @@ class _CitizenSciencePageState extends State<CitizenSciencePage> {
           //childAspectRatio: screenWidth / (next(iMin, iMax)).toDouble(),
         ),
         itemCount: citizenScienceModelList.length,
-        padding: EdgeInsets.all(4.0),
+        padding: const EdgeInsets.all(4.0),
         itemBuilder: (context, index) {
           return Padding(
             padding: const EdgeInsets.all(4.0),
@@ -162,7 +162,7 @@ class _CitizenSciencePageState extends State<CitizenSciencePage> {
                 );
               },
               onTapImage: () {
-                return Navigator.pushNamed(
+                Navigator.pushNamed(
                   context,
                   RouteGenerator.detailPage,
                   arguments: {
@@ -197,7 +197,7 @@ class _CitizenSciencePageState extends State<CitizenSciencePage> {
         return SimpleDialog(
           contentPadding: const EdgeInsets.all(16.0),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(
+            borderRadius: const BorderRadius.all(
               Radius.circular(8.0),
             ),
           ),
@@ -206,9 +206,9 @@ class _CitizenSciencePageState extends State<CitizenSciencePage> {
               title,
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             Text('Erstellt am: $built'),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             Text(
               contactPerson,
               style: TextStyle(fontStyle: FontStyle.italic),

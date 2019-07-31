@@ -6,7 +6,7 @@ class CalculatorButton extends StatelessWidget {
   final IconData iconData;
   final GestureTapCallback onPressed;
 
-  CalculatorButton(
+  const CalculatorButton(
     this.isIcon,
     this.title,
     this.iconData,

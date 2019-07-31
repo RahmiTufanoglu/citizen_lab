@@ -14,14 +14,14 @@ class EditProjectDialog extends StatefulWidget {
   final GestureTapCallback onPressedAccept;
   final String createdAt;
 
-  EditProjectDialog({
-    this.key,
+  const EditProjectDialog({
     @required this.titleProjectController,
     @required this.descProjectController,
     @required this.onPressedClose,
     @required this.onPressedClean,
     @required this.onPressedAccept,
     @required this.createdAt,
+    this.key,
   }) : super(key: key);
 
   @override
@@ -36,7 +36,7 @@ class _EditProjectDialogState extends State<EditProjectDialog> {
   void initState() {
     _timeString = dateFormatted();
     _timer = Timer.periodic(
-      Duration(seconds: 1),
+      const Duration(seconds: 1),
       (Timer t) => _getTime(),
     );
 
@@ -69,7 +69,7 @@ class _EditProjectDialogState extends State<EditProjectDialog> {
     return SimpleDialog(
       elevation: 4.0,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(
+        borderRadius: const BorderRadius.all(
           Radius.circular(8.0),
         ),
       ),
@@ -83,7 +83,7 @@ class _EditProjectDialogState extends State<EditProjectDialog> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                SizedBox(height: 16.0),
+                const SizedBox(height: 16.0),
                 Text(
                   _timeString,
                   style: TextStyle(
@@ -91,7 +91,7 @@ class _EditProjectDialogState extends State<EditProjectDialog> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 8.0),
+                const SizedBox(height: 8.0),
                 Text(
                   'Erstellt am: ${widget.createdAt}',
                   style: TextStyle(
@@ -109,7 +109,7 @@ class _EditProjectDialogState extends State<EditProjectDialog> {
         ],
       ),
       children: <Widget>[
-        SizedBox(height: 16.0),
+        const SizedBox(height: 16.0),
         Text(
           'Titel:',
           style: TextStyle(
@@ -127,7 +127,7 @@ class _EditProjectDialogState extends State<EditProjectDialog> {
             labelStyle: TextStyle(fontSize: 14.0),
           ),
         ),
-        SizedBox(height: 42.0),
+        const SizedBox(height: 42.0),
         Text(
           '$desc:',
           style: TextStyle(
@@ -157,7 +157,7 @@ class _EditProjectDialogState extends State<EditProjectDialog> {
                 child: Icon(Icons.delete_outline),
               ),
             ),
-            SizedBox(width: 8.0),
+            const SizedBox(width: 8.0),
             Expanded(
               child: RaisedButton(
                 elevation: 4.0,

@@ -81,8 +81,8 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
   }
 
   Widget _buildAppBar() {
-    final String back = 'Zurück';
-    final String createExperiment = 'Experiment erstellen';
+    const String back = 'Zurück';
+    const String createExperiment = 'Experiment erstellen';
 
     return AppBar(
       leading: IconButton(
@@ -96,7 +96,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
           width: double.infinity,
           child: Tooltip(
             message: createProject,
-            child: Text(createExperiment),
+            child: const Text(createExperiment),
           ),
         ),
       ),
@@ -146,7 +146,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 8.0),
+                  const SizedBox(height: 8.0),
                   TextFormField(
                     controller: _titleEditingController,
                     keyboardType: TextInputType.text,
@@ -168,8 +168,8 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
                     validator: (text) =>
                         text.isEmpty ? 'Bitte einen Titel eingeben' : null,
                   ),
-                  Divider(color: Colors.black),
-                  SizedBox(height: 8.0),
+                  const Divider(color: Colors.black),
+                  const SizedBox(height: 8.0),
                   Text(
                     'Beschreibung:',
                     style: TextStyle(
@@ -177,7 +177,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 8.0),
+                  const SizedBox(height: 8.0),
                   TextFormField(
                     controller: _descEditingController,
                     keyboardType: TextInputType.text,
@@ -221,12 +221,12 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
             child: Icon(Icons.remove),
           ),
           AnimatedContainer(
-            curve: ElasticOutCurve(),
+            curve: const ElasticOutCurve(),
             //height: _fabHeight,
             height: 56.0,
             //width: _fabWidth,
             width: 56.0,
-            duration: Duration(seconds: 1),
+            duration: const Duration(seconds: 1),
             child: FloatingActionButton(
               heroTag: null,
               backgroundColor: _buttonColor,
@@ -293,7 +293,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
   Widget _buildSnackBar(String text) {
     return SnackBar(
       backgroundColor: Colors.black87,
-      duration: Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 500),
       content: Text(
         text,
         style: TextStyle(color: Colors.white),

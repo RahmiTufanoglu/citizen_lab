@@ -43,7 +43,20 @@ linter:
     - prefer_final_in_for_each
     - prefer_final_fields
     - prefer_for_elements_to_map_fromIterable
-    - prefer_typing_uninitialized_variables
+    - prefer_const_constructors
+    - prefer_const_constructors_in_immutables
+    - prefer_const_declarations
+    - unnecessary_await_in_return
+    - unnecessary_brace_in_string_interps
+    - use_to_and_as_if_applicable
+    - sort_pub_dependencies
+    - prefer_spread_collections
+    - join_return_with_assignment
+    - flutter_style_todos
+    - avoid_returning_null
+    - avoid_as
+    - always_require_non_null_named_parameters
+    - always_put_required_named_parameters_first
 
 analyzer:
   errors:

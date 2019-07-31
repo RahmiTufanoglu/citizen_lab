@@ -22,7 +22,7 @@ class TitleDescWidget extends StatefulWidget {
   final Function onWillPop;
   final DatabaseHelper db;
 
-  TitleDescWidget({
+  const TitleDescWidget({
     @required this.uuid,
     @required this.titleBloc,
     @required this.titleChanger,
@@ -55,7 +55,7 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
   @override
   void initState() {
     _timeString = dateFormatted();
-    _timer = Timer.periodic(Duration(seconds: 1), (_) => _getTime());
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) => _getTime());
 
     _getProjectsFromDb();
     _getNotesFromDb();
@@ -91,7 +91,7 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
       child: WillPopScope(
         onWillPop: () => widget.onWillPop(),
         child: ListView(
-          padding: EdgeInsets.only(top: 8.0, bottom: 88.0),
+          padding: const EdgeInsets.only(top: 8.0, bottom: 88.0),
           children: <Widget>[
             Card(
               margin: const EdgeInsets.fromLTRB(
@@ -102,7 +102,7 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
               ),
               color: _checkIfDarkModeEnabled() ? Colors.black12 : Colors.white,
               child: CustomExpansionTile(
-                title: Text(''),
+                title: const Text(''),
                 leading: Padding(
                   padding: EdgeInsets.only(left: (screenWith / 2) - 40.0),
                   child: Icon(Icons.access_time),
@@ -120,10 +120,10 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
               ),
               color: _checkIfDarkModeEnabled() ? Colors.black12 : Colors.white,
               child: CustomExpansionTile(
-                title: Text(''),
+                title: const Text(''),
                 leading: Padding(
                   padding: EdgeInsets.only(left: (screenWith / 2) - 40.0),
-                  child: Icon(
+                  child: const Icon(
                     IconData(
                       0xe92d,
                       fontFamily: 'comparison',
@@ -162,12 +162,12 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
   }
 
   Widget _getTimeWidget() {
-    final created = 'Erstellt am';
+    const created = 'Erstellt am';
     return Container(
-      margin: EdgeInsets.all(16.0),
+      margin: const EdgeInsets.all(16.0),
       decoration: ShapeDecoration(
         shape: OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+          borderRadius: const BorderRadius.all(Radius.circular(8.0)),
           borderSide: BorderSide(
             color: Colors.grey,
             width: 2.0,
@@ -186,7 +186,7 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             Text(
               '$created: ${widget.createdAt}',
               style: TextStyle(
@@ -201,8 +201,8 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
   }
 
   Widget _getTextWidget() {
-    final String titleHere = 'Titel hier';
-    final String contentHere = 'Inhalt hier';
+    const String titleHere = 'Titel hier';
+    const String contentHere = 'Inhalt hier';
     return Column(
       children: <Widget>[
         Card(
@@ -236,7 +236,7 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
                     snapshot: snapshot,
                   ),
                 ),
-                Divider(color: Colors.black),
+                const Divider(color: Colors.black),
                 Text(
                   'Beschreibung:',
                   style: TextStyle(
@@ -244,7 +244,7 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 8.0),
+                const SizedBox(height: 8.0),
                 _buildTextField(
                   controller: widget.descEditingController,
                   maxLength: 500,
@@ -324,7 +324,7 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
               ),
             ),
           ),
-          SizedBox(height: 20.0),
+          const SizedBox(height: 20.0),
           Text(
             'Titel:',
             style: TextStyle(
@@ -332,12 +332,12 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(height: 8.0),
+          const SizedBox(height: 8.0),
           Text(
             noteTitle,
             style: TextStyle(fontSize: 16.0),
           ),
-          SizedBox(height: 24.0),
+          const SizedBox(height: 24.0),
           Text(
             'Beschreibung:',
             style: TextStyle(
@@ -345,7 +345,7 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(height: 8.0),
+          const SizedBox(height: 8.0),
           Text(
             noteDesc,
             style: TextStyle(fontSize: 16.0),

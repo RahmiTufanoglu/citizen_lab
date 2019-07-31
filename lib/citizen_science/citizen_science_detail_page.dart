@@ -16,7 +16,7 @@ class DetailPage extends StatefulWidget {
   final String contactPerson;
   final String url;
 
-  DetailPage({
+  const DetailPage({
     @required this.title,
     @required this.image,
     @required this.location,
@@ -87,7 +87,7 @@ class _DetailPageState extends State<DetailPage> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(height: 8.0),
+          const SizedBox(height: 8.0),
           Text(content),
         ],
       ),

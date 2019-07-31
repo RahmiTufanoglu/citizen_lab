@@ -12,7 +12,7 @@ class SimpleTimerPage extends StatefulWidget {
   final GestureTapCallback onPressedClose;
   final bool descExists;
 
-  SimpleTimerPage({
+  const SimpleTimerPage({
     @required this.createdAt,
     @required this.textEditingController,
     @required this.descEditingController,
@@ -42,7 +42,7 @@ class _SimpleTimerPageState extends State<SimpleTimerPage> {
     super.initState();
     _timeString = dateFormatted();
     _timer = Timer.periodic(
-      Duration(seconds: 1),
+      const Duration(seconds: 1),
       (Timer t) => _getTime(),
     );
   }
@@ -84,7 +84,7 @@ class _SimpleTimerPageState extends State<SimpleTimerPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    SizedBox(height: 16.0),
+                    const SizedBox(height: 16.0),
                     Text(
                       _timeString,
                       style: TextStyle(
@@ -92,7 +92,7 @@ class _SimpleTimerPageState extends State<SimpleTimerPage> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 8.0),
+                    const SizedBox(height: 8.0),
                     Text(
                       'Erstellt am: ${widget.createdAt}',
                       style: TextStyle(
@@ -100,7 +100,7 @@ class _SimpleTimerPageState extends State<SimpleTimerPage> {
                         fontStyle: FontStyle.italic,
                       ),
                     ),
-                    SizedBox(height: 16.0),
+                    const SizedBox(height: 16.0),
                   ],
                 ),
               ),
@@ -135,7 +135,7 @@ class _SimpleTimerPageState extends State<SimpleTimerPage> {
               return text.isEmpty ? 'Bitte einen Titel eingeben' : null;
             },*/
               ),
-              SizedBox(height: 56.0),
+              const SizedBox(height: 56.0),
               _descWidget(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -149,7 +149,7 @@ class _SimpleTimerPageState extends State<SimpleTimerPage> {
                       child: Icon(Icons.remove),
                     ),
                   ),
-                  SizedBox(width: 16.0),
+                  const SizedBox(width: 16.0),
                   Expanded(
                     child: RaisedButton(
                       elevation: 4.0,
@@ -194,7 +194,7 @@ class _SimpleTimerPageState extends State<SimpleTimerPage> {
               labelStyle: TextStyle(fontSize: 14.0),
             ),
           ),
-          SizedBox(height: 42.0),
+          const SizedBox(height: 42.0),
         ],
       );
     } else {

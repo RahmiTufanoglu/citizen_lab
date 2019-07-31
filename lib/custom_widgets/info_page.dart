@@ -8,7 +8,7 @@ class InfoPage extends StatefulWidget {
   final List<Widget> tabs;
   final List<Widget> tabChildren;
 
-  InfoPage({
+  const InfoPage({
     @required this.title,
     @required this.tabLength,
     @required this.tabs,
@@ -40,7 +40,7 @@ class _InfoPageState extends State<InfoPage> {
   }
 
   Widget _buildAppBar(BuildContext context) {
-    final String back = 'Zurück';
+    const String back = 'Zurück';
 
     return AppBar(
       leading: IconButton(

@@ -11,7 +11,7 @@ class SimpleAlertDialogWithIcon extends StatelessWidget {
   final IconData icon;
   final List<Widget> actions;
 
-  SimpleAlertDialogWithIcon({
+  const SimpleAlertDialogWithIcon({
     @required this.text,
     @required this.icon,
     @required this.actions,

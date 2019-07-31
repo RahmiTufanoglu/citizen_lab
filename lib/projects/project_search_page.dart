@@ -37,7 +37,7 @@ class ProjectSearchPage extends SearchDelegate<String> {
         icon: Icon(Icons.clear),
         onPressed: () => query = '',
       ),
-      SizedBox(width: 8.0),
+      const SizedBox(width: 8.0),
     ];
   }
 
@@ -64,7 +64,7 @@ class ProjectSearchPage extends SearchDelegate<String> {
     return SafeArea(
       child: ListView.builder(
         itemCount: suggestionList == null ? 0 : suggestionList.length,
-        padding: EdgeInsets.all(4.0),
+        padding: const EdgeInsets.all(4.0),
         itemBuilder: (context, index) {
           return ProjectItem(
             project: suggestionList[index],

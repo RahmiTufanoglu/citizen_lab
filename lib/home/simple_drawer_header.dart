@@ -10,7 +10,7 @@ class SimpleDrawerHeader extends StatelessWidget {
   final double padding;
   final double fontSize;
 
-  SimpleDrawerHeader({
+  const SimpleDrawerHeader({
     @required this.title,
     this.titleColor = Colors.black,
     this.backgroundColor = Colors.white,

@@ -22,7 +22,7 @@ class _OnboardingPageState extends State<OnboardingPage>
     _pageController = PageController(initialPage: _currentPage);
 
     _animationController = AnimationController(
-      duration: Duration(milliseconds: 200),
+      duration: const Duration(milliseconds: 200),
       vsync: this,
     );
 
@@ -68,7 +68,7 @@ class _OnboardingPageState extends State<OnboardingPage>
                     children: <Widget>[
                       Column(
                         children: <Widget>[
-                          SizedBox(height: 16.0),
+                          const SizedBox(height: 16.0),
                           Expanded(
                             flex: 3,
                             child: Image.asset(
@@ -82,7 +82,7 @@ class _OnboardingPageState extends State<OnboardingPage>
                               //color: mainLightColor,
                               child: ListView(
                                 padding:
-                                    EdgeInsets.fromLTRB(36.0, 36.0, 36.0, 80.0),
+                                    const EdgeInsets.fromLTRB(36.0, 36.0, 36.0, 80.0),
                                 children: <Widget>[
                                   Text(
                                     page.title,
@@ -92,7 +92,7 @@ class _OnboardingPageState extends State<OnboardingPage>
                                     ),
                                     textAlign: TextAlign.left,
                                   ),
-                                  SizedBox(height: 36.0),
+                                  const SizedBox(height: 36.0),
                                   Text(
                                     page.content,
                                     style: TextStyle(fontSize: 16.0),

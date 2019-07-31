@@ -31,7 +31,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
   }
 
   Widget _buildAppBar() {
-    final String calculator = 'Rechner';
+    const String calculator = 'Rechner';
 
     return AppBar(
       title: GestureDetector(
@@ -40,7 +40,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
           width: double.infinity,
           child: Tooltip(
             message: calculator,
-            child: Text(calculator),
+            child: const Text(calculator),
           ),
         ),
       ),
@@ -50,18 +50,18 @@ class _CalculatorPageState extends State<CalculatorPage> {
   Widget _buildBody() {
     return SafeArea(
       child: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(vertical: 16.0),
+        padding: const EdgeInsets.symmetric(vertical: 16.0),
         child: Column(
           children: <Widget>[
             Container(
               alignment: Alignment.centerRight,
-              padding: EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16.0),
               child: Text(
                 output,
                 style: TextStyle(fontSize: 42.0),
               ),
             ),
-            Divider(),
+            const Divider(),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
@@ -135,10 +135,20 @@ class _CalculatorPageState extends State<CalculatorPage> {
     } else if (buttonText == '=') {
       num2 = double.parse(output);
 
-      if (operand == '+') _output = (num1 + num2).toString();
-      if (operand == '-') _output = (num1 - num2).toString();
-      if (operand == 'X') _output = (num1 * num2).toString();
-      if (operand == '/') _output = (num1 / num2).toString();
+      switch (operand) {
+        case '+':
+          _output = (num1 + num2).toString();
+          break;
+        case '-':
+          _output = (num1 - num2).toString();
+          break;
+        case 'X':
+          _output = (num1 - num2).toString();
+          break;
+        case '/':
+          _output = (num1 / num2).toString();
+          break;
+      }
 
       num1 = 0.0;
       num2 = 0.0;
@@ -147,15 +157,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
       _output = _output + buttonText;
     }
 
-    setState(() {
-      output = double.parse(_output).toStringAsFixed(2);
-    });
+    setState(() => output = double.parse(_output).toStringAsFixed(2));
   }
 
   Widget _buildButton(String buttonText) {
     return Expanded(
       child: Padding(
-        padding: EdgeInsets.all(4.0),
+        padding: const EdgeInsets.all(4.0),
         child: RaisedButton(
           onPressed: () => _buttonPressed(buttonText),
           child: Text(
@@ -175,8 +183,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
   }
 
   void _copyContent() {
-    final String copyContent = 'Inhalt kopiert';
-    final String copyNotPossible = 'Kein Inhalt zum kopieren';
+    const String copyContent = 'Inhalt kopiert';
+    const String copyNotPossible = 'Kein Inhalt zum kopieren';
 
     if (output.isNotEmpty) {
       _setClipboard(output, '$copyContent.');
@@ -200,7 +208,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
   Widget _buildSnackBar({@required String text}) {
     return SnackBar(
       backgroundColor: Colors.black87,
-      duration: Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 500),
       content: Text(
         text,
         style: TextStyle(

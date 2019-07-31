@@ -12,7 +12,8 @@ class FeedbackDialog extends StatefulWidget {
   final IconData iconButtonLeft;
   final IconData iconButtonRight;
 
-  FeedbackDialog({
+  const FeedbackDialog({
+    @required this.url,
     this.title = 'Feedback',
     this.titleButtonLeft = 'Email',
     this.titleButtonRight = 'Webseite',
@@ -20,7 +21,6 @@ class FeedbackDialog extends StatefulWidget {
     this.isEmptyText = 'Bitte etwas eingeben',
     this.iconButtonLeft = Icons.email,
     this.iconButtonRight = Icons.public,
-    @required this.url,
   }) : assert(url != null);
 
   @override
@@ -28,7 +28,7 @@ class FeedbackDialog extends StatefulWidget {
 }
 
 class _FeedbackDialogState extends State<FeedbackDialog> {
-  TextEditingController _feedbackMessage = TextEditingController();
+  final TextEditingController _feedbackMessage = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -39,7 +39,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
       child: SimpleDialog(
         elevation: 4.0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+          borderRadius: const BorderRadius.all(Radius.circular(8.0)),
         ),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -73,7 +73,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
               return text.isEmpty ? widget.isEmptyText : null;
             },
           ),
-          SizedBox(height: 32.0),
+          const SizedBox(height: 32.0),
           Row(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
@@ -92,14 +92,14 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
                         Text(widget.titleButtonLeft),
-                        SizedBox(height: 8.0),
+                        const SizedBox(height: 8.0),
                         Icon(widget.iconButtonLeft),
                       ],
                     ),
                   ),
                 ),
               ),
-              SizedBox(width: 16.0),
+              const SizedBox(width: 16.0),
               Expanded(
                 child: RaisedButton(
                   elevation: 2.0,
@@ -111,7 +111,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
                         Text(widget.titleButtonRight),
-                        SizedBox(height: 8.0),
+                        const SizedBox(height: 8.0),
                         Icon(widget.iconButtonRight),
                       ],
                     ),

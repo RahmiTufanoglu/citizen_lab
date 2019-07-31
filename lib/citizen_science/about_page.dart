@@ -6,7 +6,7 @@ class SimpleInfoPage extends StatefulWidget {
   final String title;
   final String content;
 
-  SimpleInfoPage({
+  const SimpleInfoPage({
     @required this.title,
     @required this.content,
   });
@@ -30,7 +30,7 @@ class _SimpleInfoPageState extends State<SimpleInfoPage> {
   }
 
   Widget _buildAppBar(BuildContext context) {
-    final String back = 'Zurück';
+    const String back = 'Zurück';
 
     return AppBar(
       leading: Tooltip(

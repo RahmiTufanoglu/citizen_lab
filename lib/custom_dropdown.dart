@@ -293,13 +293,13 @@ class _DropdownRouteResult<T> {
 
 class _DropdownRoute<T> extends PopupRoute<_DropdownRouteResult<T>> {
   _DropdownRoute({
+    @required this.style,
     this.items,
     this.padding,
     this.buttonRect,
     this.selectedIndex,
     this.elevation = 8,
     this.theme,
-    @required this.style,
     this.barrierLabel,
   }) : assert(style != null);
 
@@ -469,9 +469,9 @@ class CustomDropdownMenuItem<T> extends StatelessWidget {
   ///
   /// The [child] argument is required.
   const CustomDropdownMenuItem({
+    @required this.child,
     Key key,
     this.value,
-    @required this.child,
   })  : assert(child != null),
         super(key: key);
 
@@ -505,8 +505,8 @@ class DropdownButtonHideUnderline extends InheritedWidget {
   /// Creates a [DropdownButtonHideUnderline]. A non-null [child] must
   /// be given.
   const DropdownButtonHideUnderline({
-    Key key,
     @required Widget child,
+    Key key,
   })  : assert(child != null),
         super(key: key, child: child);
 
@@ -597,12 +597,12 @@ class DropdownButton<T> extends StatefulWidget {
   /// defaults, so do not need to be specified). The boolean [isDense] and
   /// [isExpanded] arguments must not be null.
   DropdownButton({
-    Key key,
     @required this.items,
+    @required this.onChanged,
+    Key key,
     this.value,
     this.hint,
     this.disabledHint,
-    @required this.onChanged,
     this.elevation = 8,
     this.style,
     this.underline,
@@ -962,9 +962,9 @@ class DropdownButtonFormField<T> extends FormField<T> {
   ///
   /// The [DropdownButton] [items] parameters must not be null.
   DropdownButtonFormField({
+    @required List<CustomDropdownMenuItem<T>> items,
     Key key,
     T value,
-    @required List<CustomDropdownMenuItem<T>> items,
     this.onChanged,
     InputDecoration decoration = const InputDecoration(),
     FormFieldSetter<T> onSaved,

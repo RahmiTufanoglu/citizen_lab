@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-final Color mainDarkColor = Color(0xFF3B3B3B);
-final Color mainLightColor = Color(0xFFEBEBEB);
-final Color accentLight = Color(0xFF009FE3);
-final Color accentDark = Color(0xFFBFDFCF);
+const Color mainDarkColor = Color(0xFF3B3B3B);
+const Color mainLightColor = Color(0xFFEBEBEB);
+const Color accentLight = Color(0xFF009FE3);
+const Color accentDark = Color(0xFFBFDFCF);
 
 ThemeData appLightTheme() {
   final ThemeData theme = ThemeData.light();
@@ -25,11 +25,11 @@ ThemeData appLightTheme() {
       backgroundColor: Colors.white,
       foregroundColor: Colors.black,
       shape: ContinuousRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(42.0)),
+        borderRadius: const BorderRadius.all(Radius.circular(42.0)),
       ),
     ),
-    iconTheme: IconThemeData(color: mainDarkColor),
-    appBarTheme: AppBarTheme(
+    iconTheme: const IconThemeData(color: mainDarkColor),
+    appBarTheme: const AppBarTheme(
       color: Colors.white,
       elevation: 4.0,
       //elevation: 0.0,
@@ -40,7 +40,7 @@ ThemeData appLightTheme() {
       color: Colors.white,
       elevation: 4.0,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+        borderRadius: const BorderRadius.all(Radius.circular(8.0)),
       ),
     ),
     splashColor: accentLight.withOpacity(0.2),
@@ -50,7 +50,7 @@ ThemeData appLightTheme() {
       splashColor: accentLight.withOpacity(0.2),
       highlightColor: accentLight.withOpacity(0.2),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+        borderRadius: const BorderRadius.all(Radius.circular(8.0)),
       ),
     ),
     indicatorColor: Colors.black,
@@ -83,11 +83,11 @@ ThemeData appDarkTheme() {
       backgroundColor: Colors.white,
       foregroundColor: Colors.black,
       shape: ContinuousRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(42.0)),
+        borderRadius: const BorderRadius.all(Radius.circular(42.0)),
       ),
     ),
-    iconTheme: IconThemeData(color: Colors.white),
-    appBarTheme: AppBarTheme(
+    iconTheme: const IconThemeData(color: Colors.white),
+    appBarTheme: const AppBarTheme(
       color: mainDarkColor,
       elevation: 4.0,
       iconTheme: IconThemeData(color: Colors.white),
@@ -97,7 +97,7 @@ ThemeData appDarkTheme() {
       color: mainDarkColor,
       elevation: 4.0,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+        borderRadius: const BorderRadius.all(Radius.circular(8.0)),
       ),
     ),
     splashColor: accentDark.withOpacity(0.2),
@@ -107,7 +107,7 @@ ThemeData appDarkTheme() {
       splashColor: accentDark.withOpacity(0.2),
       highlightColor: accentDark.withOpacity(0.2),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+        borderRadius: const BorderRadius.all(Radius.circular(8.0)),
       ),
     ),
     indicatorColor: Colors.white,

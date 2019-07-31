@@ -4,7 +4,7 @@ class SetTitleWidget extends StatefulWidget {
   final TextEditingController titleTextEditingController;
   final GestureTapCallback onPressed;
 
-  SetTitleWidget({
+  const SetTitleWidget({
     @required this.titleTextEditingController,
     @required this.onPressed,
   })  : assert(titleTextEditingController != null),
@@ -23,9 +23,9 @@ class _SetTitleWidgetState extends State<SetTitleWidget> {
   }
 
   Widget _setTitleDialog() {
-    final String title = 'Titel';
-    final String descHere = 'Beschreibung hier';
-    final String plsEnterATitle = 'Bitte einen Titel eingeben';
+    const String title = 'Titel';
+    const String descHere = 'Beschreibung hier';
+    const String plsEnterATitle = 'Bitte einen Titel eingeben';
 
     return Form(
       key: _formKey,
@@ -33,7 +33,7 @@ class _SetTitleWidgetState extends State<SetTitleWidget> {
       child: SimpleDialog(
         elevation: 4.0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(
+          borderRadius: const BorderRadius.all(
             Radius.circular(8.0),
           ),
         ),
@@ -65,7 +65,7 @@ class _SetTitleWidgetState extends State<SetTitleWidget> {
             ),
             validator: (text) => text.isEmpty ? plsEnterATitle : null,
           ),
-          SizedBox(height: 16.0),
+          const SizedBox(height: 16.0),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
@@ -79,7 +79,7 @@ class _SetTitleWidgetState extends State<SetTitleWidget> {
                   child: Icon(Icons.remove),
                 ),
               ),
-              SizedBox(width: 16.0),
+              const SizedBox(width: 16.0),
               Expanded(
                 child: RaisedButton(
                   onPressed: () async {

@@ -8,11 +8,11 @@ class AlarmDialog extends StatefulWidget {
   final String text;
   final GestureTapCallback onTap;
 
-  AlarmDialog({
-    this.iconColor = Colors.redAccent,
+  const AlarmDialog({
     @required this.icon,
     @required this.text,
     @required this.onTap,
+    this.iconColor = Colors.redAccent,
   })  : assert(icon != null),
         assert(text != null),
         assert(onTap != null);
@@ -31,7 +31,9 @@ class _AlarmDialogState extends State<AlarmDialog> {
       contentPadding: const EdgeInsets.all(16.0),
       elevation: 4.0,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+        borderRadius: const BorderRadius.all(
+          Radius.circular(8.0),
+        ),
       ),
       children: <Widget>[
         Column(
@@ -44,7 +46,7 @@ class _AlarmDialogState extends State<AlarmDialog> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             Center(
               child: Icon(
                 widget.icon,
@@ -52,7 +54,7 @@ class _AlarmDialogState extends State<AlarmDialog> {
                 size: 42.0,
               ),
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             Row(
               children: <Widget>[
                 Expanded(
@@ -60,7 +62,7 @@ class _AlarmDialogState extends State<AlarmDialog> {
                     elevation: 4.0,
                     highlightElevation: 16.0,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(
+                      borderRadius: const BorderRadius.all(
                         Radius.circular(8.0),
                       ),
                     ),
@@ -71,7 +73,7 @@ class _AlarmDialogState extends State<AlarmDialog> {
                     ),
                   ),
                 ),
-                SizedBox(width: 8.0),
+                const SizedBox(width: 8.0),
                 Expanded(
                   child: RaisedButton(
                     highlightColor: Colors.red.withOpacity(0.4),
@@ -79,7 +81,7 @@ class _AlarmDialogState extends State<AlarmDialog> {
                     elevation: 4.0,
                     highlightElevation: 16.0,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(
+                      borderRadius: const BorderRadius.all(
                         Radius.circular(8.0),
                       ),
                     ),

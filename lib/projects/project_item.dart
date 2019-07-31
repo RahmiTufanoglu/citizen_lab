@@ -6,7 +6,7 @@ class ProjectItem extends StatelessWidget {
   final GestureTapCallback onTap;
   final GestureTapCallback onLongPress;
 
-  ProjectItem({
+  const ProjectItem({
     @required this.project,
     @required this.onTap,
     @required this.onLongPress,
@@ -43,7 +43,7 @@ class ProjectItem extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(color: Color(project.cardTextColor)),
                         ),
-                        SizedBox(height: 8.0),
+                        const SizedBox(height: 8.0),
                         Text(
                           //TODO add edited attribute to project
                           'Erstellt am: ${project.createdAt}',

@@ -23,7 +23,7 @@ class TablePage extends StatefulWidget {
   final Note note;
   final String uuid;
 
-  TablePage({
+  const TablePage({
     @required this.note,
     @required this.uuid,
   });
@@ -104,8 +104,8 @@ class _TablePageState extends State<TablePage> {
   }
 
   Widget _buildAppBar() {
-    final String back = 'Zurück';
-    final String noteType = 'Tabellennotiz';
+    const String back = 'Zurück';
+    const String noteType = 'Tabellennotiz';
 
     return AppBar(
       leading: IconButton(
@@ -178,7 +178,7 @@ class _TablePageState extends State<TablePage> {
   }
 
   void _backToHomePage() {
-    final String cancel = 'Notiz abbrechen und zur Hauptseite zurückkehren?';
+    const String cancel = 'Notiz abbrechen und zur Hauptseite zurückkehren?';
     showDialog(
       context: context,
       builder: (_) => NoYesDialog(
@@ -200,7 +200,7 @@ class _TablePageState extends State<TablePage> {
       child: WillPopScope(
         onWillPop: () => _saveNote(),
         child: Padding(
-          padding: EdgeInsets.only(bottom: 88.0),
+          padding: const EdgeInsets.only(bottom: 88.0),
           child: _column != null || _row != null
               ? TableWidget(
                   listTextEditingController: _listTextEditingController,
@@ -254,15 +254,15 @@ class _TablePageState extends State<TablePage> {
 
   List<List> _csvToList(File myCsvFile) {
     final List<List<dynamic>> listCreated =
-        CsvToListConverter().convert(myCsvFile.readAsStringSync());
+        const CsvToListConverter().convert(myCsvFile.readAsStringSync());
     return listCreated;
   }
 
   String _listToCsv(List listToConvert) =>
-      ListToCsvConverter().convert(listToConvert);
+      const ListToCsvConverter().convert(listToConvert);
 
   Widget _buildFabs() => Padding(
-        padding: EdgeInsets.only(left: 32.0),
+        padding: const EdgeInsets.only(left: 32.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
@@ -288,7 +288,7 @@ class _TablePageState extends State<TablePage> {
               elevation: 4.0,
               highlightElevation: 16.0,
               onPressed: () => _buildTableCreate(),
-              child: Icon(Icons.add),
+              child: const Icon(Icons.add),
             ),
           ],
         ),
@@ -396,7 +396,7 @@ class _TablePageState extends State<TablePage> {
       file.writeAsBytesSync(uint8List);
 
       const channelName = 'rahmitufanoglu.citizenlab';
-      final channel = const MethodChannel('channel:$channelName.share/share');
+      const channel = MethodChannel('channel:$channelName.share/share');
       await channel.invokeMethod('shareTable', '$_title.csv');
     } else if (Platform.isIOS) {
       final ByteData bytes = await rootBundle.load(_csv.path);
@@ -441,7 +441,7 @@ class _TablePageState extends State<TablePage> {
   }
 
   void _buildTableCreate() {
-    final String enterTableSize = 'Titel und Tabellengröße festlegen.';
+    const String enterTableSize = 'Titel und Tabellengröße festlegen.';
     showDialog(
       context: context,
       builder: (_) {
@@ -508,7 +508,7 @@ class _TablePageState extends State<TablePage> {
   Widget _buildSnackBar({@required String text}) {
     return SnackBar(
       backgroundColor: Colors.black87,
-      duration: Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 500),
       content: Text(
         text,
         style: TextStyle(
@@ -523,12 +523,12 @@ class _TablePageState extends State<TablePage> {
     @required String text,
     @required GestureTapCallback onPressed,
   }) {
-    final String no = 'Nein';
-    final String yes = 'Ja';
+    const String no = 'Nein';
+    const String yes = 'Ja';
 
     return SnackBar(
       backgroundColor: Colors.black87,
-      duration: Duration(seconds: 3),
+      duration: const Duration(seconds: 3),
       content: Row(
         children: <Widget>[
           Expanded(
@@ -541,28 +541,28 @@ class _TablePageState extends State<TablePage> {
               ),
             ),
           ),
-          SizedBox(width: 8.0),
+          const SizedBox(width: 8.0),
           Expanded(
             flex: 1,
             child: RaisedButton(
               color: Colors.green,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                borderRadius: const BorderRadius.all(Radius.circular(8.0)),
               ),
               onPressed: () => _scaffoldKey.currentState.hideCurrentSnackBar(),
-              child: Text(no),
+              child: const Text(no),
             ),
           ),
-          SizedBox(width: 8.0),
+          const SizedBox(width: 8.0),
           Expanded(
             flex: 1,
             child: RaisedButton(
               color: Colors.red,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                borderRadius: const BorderRadius.all(Radius.circular(8.0)),
               ),
               onPressed: onPressed,
-              child: Text(yes),
+              child: const Text(yes),
             ),
           ),
         ],

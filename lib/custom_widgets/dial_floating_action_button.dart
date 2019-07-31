@@ -11,13 +11,13 @@ class DialFloatingActionButton extends StatefulWidget {
   final List<String> stringList;
   final Function function;
 
-  DialFloatingActionButton({
-    this.firstIcon = Icons.add,
-    this.secondIcon = Icons.add,
+  const DialFloatingActionButton({
     @required this.iconList,
     //@required this.colorList,
     @required this.stringList,
     @required this.function,
+    this.firstIcon = Icons.add,
+    this.secondIcon = Icons.add,
   })  : assert(iconList != null),
         assert(stringList != null),
         assert(function != null);
@@ -69,7 +69,7 @@ class _DialFloatingActionButtonState extends State<DialFloatingActionButton>
             ),
           ),
           child: Padding(
-            padding: EdgeInsets.only(top: 16.0),
+            padding: const EdgeInsets.only(top: 16.0),
             child: FloatingActionButton(
               heroTag: null,
               //mini: true,
@@ -87,7 +87,7 @@ class _DialFloatingActionButtonState extends State<DialFloatingActionButton>
       }).toList()
         ..add(
           Padding(
-            padding: EdgeInsets.only(top: 16.0),
+            padding: const EdgeInsets.only(top: 16.0),
             child: FloatingActionButton(
               heroTag: null,
               onPressed: () {

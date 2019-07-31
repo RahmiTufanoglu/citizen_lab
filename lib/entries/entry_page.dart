@@ -28,7 +28,7 @@ class EntryPage extends StatefulWidget {
   final Project project;
   final Note note;
 
-  EntryPage({
+  const EntryPage({
     @required this.isFromProjectPage,
     @required this.isFromProjectSearchPage,
     @required this.projectTitle,
@@ -182,9 +182,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
     return SafeArea(
       child: WillPopScope(
         //onWillPop: () async => Navigator.pop(context, true),
-        onWillPop: () {
-          Navigator.pop(context, true);
-        },
+        onWillPop: _onWillPop,
         child: _noteList.isNotEmpty
             ? ListView.builder(
                 itemCount: _noteList.length,
@@ -205,19 +203,23 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
     );
   }
 
+  void _onWillPop() => Navigator.pop(context, true);
+
   Widget _buildDismissible(Key key, Note note, int index) {
     return Dismissible(
       key: key,
       direction: DismissDirection.startToEnd,
       background: Container(
         alignment: Alignment.centerLeft,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.all(
+            Radius.circular(8.0),
+          ),
         ),
         child: Row(
           children: <Widget>[
             Icon(Icons.arrow_forward, size: 28.0),
-            SizedBox(width: 8.0),
+            const SizedBox(width: 8.0),
             Icon(Icons.delete, size: 28.0),
           ],
         ),
@@ -226,61 +228,6 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
       child: _buildItem(note, index),
     );
   }
-
-  /*Widget _buildBody2(AsyncSnapshot snapshot) {
-    return SafeArea(
-      child: WillPopScope(
-        onWillPop: _onBackPressed,
-        //child: _noteList.isNotEmpty
-        child: (snapshot.hasData)
-            ? Container(
-                child: ListView.builder(
-                  //itemCount: _noteList.length,
-                  itemCount: snapshot.data.length,
-                  padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 88.0),
-                  itemBuilder: (context, index) {
-                    //final note = _noteList[index];
-                    final note = snapshot.data[index];
-                    //_noteList.add(note);
-                    final key = Key('${note.hashCode}');
-                    return Dismissible(
-                      key: key,
-                      direction: DismissDirection.startToEnd,
-                      background: Container(
-                        alignment: Alignment.centerLeft,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                        ),
-                        child: Row(
-                          children: <Widget>[
-                            Icon(Icons.arrow_forward, size: 28.0),
-                            SizedBox(width: 8.0),
-                            Icon(Icons.delete, size: 28.0),
-                          ],
-                        ),
-                      ),
-                      //onDismissed: (_) => _deleteNote(index),
-                      onDismissed: (_) {
-                        //_notesBloc.delete(note.id);
-                        _notesBloc.delete(note);
-                        _deleteNote(snapshot, index);
-                      },
-                      //onDismissed: (_) => _notesBloc.delete(note.id),
-                      //child: _buildItem(index),
-                      child: _buildItem(snapshot, index),
-                    );
-                  },
-                ),
-              )
-            : Center(
-                child: Text(
-                  empty_list,
-                  style: TextStyle(fontSize: 24.0),
-                ),
-              ),
-      ),
-    );
-  }*/
 
   Widget _buildItem(Note note, int index) {
     final double screenHeight =
@@ -309,7 +256,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
       builder: (context) => SimpleDialog(
         contentPadding: const EdgeInsets.all(0.0),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+          borderRadius: const BorderRadius.all(Radius.circular(8.0)),
         ),
         children: <Widget>[
           Scrollbar(
@@ -367,11 +314,11 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   }
 
   Widget _buildFabs() {
-    final String darkModus = 'Darkmodus';
-    final String edit = 'Editieren';
+    const String darkModus = 'Darkmodus';
+    const String edit = 'Editieren';
 
     return Padding(
-      padding: EdgeInsets.only(left: 32.0),
+      padding: const EdgeInsets.only(left: 32.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -473,7 +420,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
           child: Stack(
             children: <Widget>[
               Padding(
-                padding: EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(8.0),
                 child: Center(
                   child: (!centerIcon)
                       ? Row(
@@ -494,7 +441,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
                         ),
                 ),
               ),
-              Divider(height: 1.0, color: Colors.black),
+              const Divider(height: 1.0, color: Colors.black),
             ],
           ),
         ),
@@ -538,7 +485,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   }
 
   Future<void> _setPermission() async {
-    var _permissions = await Permission.getPermissionsStatus(
+    final _permissions = await Permission.getPermissionsStatus(
         [PermissionName.Microphone, PermissionName.Storage]);
     await Permission.requestPermissions(
         [PermissionName.Microphone, PermissionName.Storage]);
@@ -643,7 +590,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   }
 
   void _deleteAllNotes(BuildContext contextSnackBar) {
-    final String doYouWantToDeleteAllNotes =
+    const String doYouWantToDeleteAllNotes =
         'Wollen sie alle Einträge löschen?';
 
     showDialog(
@@ -721,7 +668,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   Widget _buildSnackBar({@required String text}) {
     return SnackBar(
       backgroundColor: Colors.black.withOpacity(0.5),
-      duration: Duration(seconds: 1),
+      duration: const Duration(seconds: 1),
       content: Text(text,
           style: TextStyle(
             fontWeight: FontWeight.bold,

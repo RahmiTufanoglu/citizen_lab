@@ -7,12 +7,12 @@ class CollapsingAppBarPage extends StatelessWidget {
   final Widget text;
   final Widget body;
 
-  CollapsingAppBarPage({
-    this.fontSize = 16.0,
-    this.appBarElevation = 0.0,
+  const CollapsingAppBarPage({
     @required this.text,
     @required this.image,
     @required this.body,
+    this.fontSize = 16.0,
+    this.appBarElevation = 0.0,
   });
 
   @override

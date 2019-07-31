@@ -17,37 +17,37 @@ class DatabaseHelper implements ProjectDao, NoteDao {
   Database _db;
 
   static const int dbVersion = 1;
-  static final String dbName = 'citizen_lab_projects2.db';
+  static const String dbName = 'citizen_lab_projects2.db';
 
-  static final String projectTable = 'projects';
-  static final String columnProjectId = 'id';
+  static const String projectTable = 'projects';
+  static const String columnProjectId = 'id';
 
-  static final String columnProjectUuid = 'uuid';
-  static final String columnProjectNoteId = 'note_id';
-  static final String columnProjectTitle = 'title';
-  static final String columnProjectDesc = 'description';
-  static final String columnProjectCreatedAt = 'created_at';
-  static final String columnProjectUpdatedAt = 'updated_at';
-  static final String columnProjectCardColor = 'card_color';
-  static final String columnProjectCardTextColor = 'card_text_color';
+  static const String columnProjectUuid = 'uuid';
+  static const String columnProjectNoteId = 'note_id';
+  static const String columnProjectTitle = 'title';
+  static const String columnProjectDesc = 'description';
+  static const String columnProjectCreatedAt = 'created_at';
+  static const String columnProjectUpdatedAt = 'updated_at';
+  static const String columnProjectCardColor = 'card_color';
+  static const String columnProjectCardTextColor = 'card_text_color';
 
-  static final String noteTable = 'notes';
-  static final String columnNoteId = 'id';
-  static final String columnNoteProject = 'project';
-  static final String columnNoteType = 'type';
-  static final String columnNoteTitle = 'title';
-  static final String columnNoteDescription = 'description';
-  static final String columnNoteContent = 'content';
-  static final String columnNoteTableColumn = 'table_column';
-  static final String columnNoteTableRow = 'table_row';
-  static final String columnNoteCreatedAt = 'created_at';
-  static final String columnNoteUpdatedAt = 'updated_at';
-  static final String columnNoteIsFirstTime = 'first_time';
-  static final String columnNoteIsEdited = 'edited';
-  static final String columnNoteCardColor = 'card_color';
-  static final String columnNoteCardTextColor = 'card_text_color';
+  static const String noteTable = 'notes';
+  static const String columnNoteId = 'id';
+  static const String columnNoteProject = 'project';
+  static const String columnNoteType = 'type';
+  static const String columnNoteTitle = 'title';
+  static const String columnNoteDescription = 'description';
+  static const String columnNoteContent = 'content';
+  static const String columnNoteTableColumn = 'table_column';
+  static const String columnNoteTableRow = 'table_row';
+  static const String columnNoteCreatedAt = 'created_at';
+  static const String columnNoteUpdatedAt = 'updated_at';
+  static const String columnNoteIsFirstTime = 'first_time';
+  static const String columnNoteIsEdited = 'edited';
+  static const String columnNoteCardColor = 'card_color';
+  static const String columnNoteCardTextColor = 'card_text_color';
 
-  static final String createProjectTable = 'CREATE TABLE $projectTable('
+  static const String createProjectTable = 'CREATE TABLE $projectTable('
       '$columnProjectId INTEGER PRIMARY KEY AUTOINCREMENT,'
       '$columnProjectNoteId INTEGER REFERENCES $noteTable($columnNoteId),'
       '$columnProjectUuid TEXT NOT NULL, '
@@ -58,7 +58,7 @@ class DatabaseHelper implements ProjectDao, NoteDao {
       '$columnProjectCardColor INTEGER NOT NULL, '
       '$columnProjectCardTextColor INTEGER NOT NULL)';
 
-  static final String createNoteTable = 'CREATE TABLE $noteTable('
+  static const String createNoteTable = 'CREATE TABLE $noteTable('
       '$columnNoteId INTEGER PRIMARY KEY AUTOINCREMENT,'
       '$columnProjectUuid TEXT NOT NULL, '
       '$columnNoteType TEXT NOT NULL, '
@@ -129,9 +129,9 @@ class DatabaseHelper implements ProjectDao, NoteDao {
   @override
   Future<List<Project>> getAllProjects() async {
     final db = await database;
-    final res = await db.query(projectTable);
-    final List<Project> list = res.isNotEmpty
-        ? res.map((map) {
+    final result = await db.query(projectTable);
+    final list = result.isNotEmpty
+        ? result.map((map) {
             return Project.fromMap(map);
           }).toList()
         : [];
@@ -152,8 +152,8 @@ class DatabaseHelper implements ProjectDao, NoteDao {
 
   @override
   Future<int> deleteProject({@required int id}) async {
-    final Database db = await database;
-    return await db.delete(
+    final db = await database;
+    return db.delete(
       projectTable,
       where: '$columnProjectId = ?',
       whereArgs: [id],
@@ -162,14 +162,14 @@ class DatabaseHelper implements ProjectDao, NoteDao {
 
   @override
   Future<int> deleteAllProjects() async {
-    final Database db = await database;
-    return await db.delete(projectTable);
+    final db = await database;
+    return db.delete(projectTable);
   }
 
   @override
   Future<int> updateProject({@required Project newProject}) async {
-    final Database db = await database;
-    final int result = await db.update(
+    final db = await database;
+    final result = await db.update(
       projectTable,
       newProject.toMap(),
       where: '$columnProjectId = ?',
@@ -180,7 +180,7 @@ class DatabaseHelper implements ProjectDao, NoteDao {
 
   @override
   Future<int> getProjectCount() async {
-    final Database db = await database;
+    final db = await database;
     return Sqflite.firstIntValue(
       await db.rawQuery('SELECT COUNT (*) FROM $projectTable'),
     );
@@ -191,19 +191,20 @@ class DatabaseHelper implements ProjectDao, NoteDao {
   Future<List<Note>> getNotesOfProject({@required String uuid}) async {
     final db = await database;
     //final List<Map<String, dynamic>> maps = await db.query(
-    final res = await db.query(
+    final result = await db.query(
       noteTable,
-      //where: '$columnNoteProject = ?',
       where: '$columnProjectUuid = ?',
       //whereArgs: [id],
       whereArgs: [uuid],
       //orderBy: order == null ? '$columnNoteCreatedAt DESC' : order,
       orderBy: '$columnNoteCreatedAt DESC',
-      //orderBy: order,
     );
     //return maps.toList();
-    final List<Note> list =
-        res.isNotEmpty ? res.map((c) => Note.fromMap(c)).toList() : [];
+    final List<Note> list = result.isNotEmpty
+        ? result.map((map) {
+            return Note.fromMap(map);
+          }).toList()
+        : [];
     return list;
   }
 
@@ -254,7 +255,7 @@ class DatabaseHelper implements ProjectDao, NoteDao {
   @override
   Future<int> deleteNote({@required int id}) async {
     final Database db = await database;
-    return await db.delete(
+    return db.delete(
       noteTable,
       where: '$columnNoteId = ?',
       whereArgs: [id],
@@ -264,14 +265,14 @@ class DatabaseHelper implements ProjectDao, NoteDao {
   @override
   Future<int> deleteAllNotes() async {
     final Database db = await database;
-    return await db.delete(noteTable);
+    return db.delete(noteTable);
   }
 
   @override
   Future<int> deleteAllNotesFromProject({@required String uuid}) async {
     print('deleteAllNotesFromProject');
     final Database db = await database;
-    return await db.delete(
+    return db.delete(
       noteTable,
       where: '$columnProjectUuid= ?',
       //where: '$columnNoteId = ?',

@@ -8,7 +8,7 @@ class MadeWithLoveTextBox extends StatelessWidget {
   final double iconRightPadding;
   final double iconLeftPadding;
 
-  MadeWithLoveTextBox({
+  const MadeWithLoveTextBox({
     @required this.place,
     this.iconColorHeart = Colors.red,
     this.iconColorSmile = Colors.green,
@@ -19,8 +19,8 @@ class MadeWithLoveTextBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String madeWith = 'Made with';
-    final String and = 'and';
+    const String madeWith = 'Made with';
+    const String and = 'and';
 
     return Card(
       margin: const EdgeInsets.all(8.0),
@@ -29,7 +29,7 @@ class MadeWithLoveTextBox extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(madeWith),
+            const Text(madeWith),
             Padding(
               padding: EdgeInsets.only(
                 right: iconRightPadding,
@@ -41,7 +41,7 @@ class MadeWithLoveTextBox extends StatelessWidget {
                 color: iconColorHeart,
               ),
             ),
-            Text(and),
+            const Text(and),
             Padding(
               padding: EdgeInsets.only(
                 right: iconRightPadding,

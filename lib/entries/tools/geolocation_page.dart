@@ -33,19 +33,22 @@ class _GeolocationPageState extends State<GeolocationPage>
   void initState() {
     if (!mounted) return;
 
-    _timer = Timer.periodic(Duration(seconds: 1), (_) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       setState(() {
         _getLocation().then((position) => _position = position);
       });
     });
 
     _animationController = AnimationController(
-      duration: Duration(seconds: 2),
+      duration: const Duration(seconds: 2),
       vsync: this,
     );
 
-    _animation = Tween(begin: 0.0, end: 1.0).animate(_animationController)
-      ..addListener(() {});
+    _animation = Tween(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(_animationController)
+      ..addListener(() {}); // ..addListener ???
 
     _animationController.forward();
 
@@ -74,8 +77,8 @@ class _GeolocationPageState extends State<GeolocationPage>
   }
 
   Widget _buildAppBar() {
-    final String back = 'Zurück';
-    final String noteType = 'Ortsbestimmung';
+    const String back = 'Zurück';
+    const String noteType = 'Ortsbestimmung';
 
     return AppBar(
       elevation: 4.0,
@@ -85,7 +88,7 @@ class _GeolocationPageState extends State<GeolocationPage>
           width: double.infinity,
           child: Tooltip(
             message: noteType,
-            child: Text(noteType),
+            child: const Text(noteType),
           ),
         ),
       ),
@@ -121,7 +124,7 @@ class _GeolocationPageState extends State<GeolocationPage>
   }*/
 
   void _shareContent() {
-    final String sharingNotPossible = 'Teilvorgang nicht möglich.';
+    const String sharingNotPossible = 'Teilvorgang nicht möglich.';
 
     if (_position != null) {
       final String _content =
@@ -135,7 +138,7 @@ class _GeolocationPageState extends State<GeolocationPage>
   }
 
   Future<void> _backToHomePage() async {
-    final String cancel = 'Notiz abbrechen und zur Hauptseite zurückkehren?';
+    const String cancel = 'Notiz abbrechen und zur Hauptseite zurückkehren?';
 
     await showDialog(
       context: context,
@@ -183,7 +186,7 @@ class _GeolocationPageState extends State<GeolocationPage>
                   ),
             Center(
               child: AnimatedContainer(
-                duration: Duration(seconds: 1),
+                duration: const Duration(seconds: 1),
                 height: _animation.value * screenHeight,
                 width: _animation.value * screenWidth,
                 decoration: BoxDecoration(
@@ -222,8 +225,8 @@ class _GeolocationPageState extends State<GeolocationPage>
   }
 
   void _copyContent() {
-    final copyContent = 'Inhalt kopiert';
-    final copyNotPossible = 'Kein Inhalt zum kopieren';
+    const copyContent = 'Inhalt kopiert';
+    const copyNotPossible = 'Kein Inhalt zum kopieren';
     final String _content =
         'Latitude: ${_position.latitude.toString()}\nLongitude: ${_position.longitude.toString()}\nAccuracy: ${_position.accuracy.toString()}';
     if (_content != null) {
@@ -246,7 +249,7 @@ class _GeolocationPageState extends State<GeolocationPage>
   Widget _buildSnackBar({@required String text}) {
     return SnackBar(
       backgroundColor: Colors.black.withOpacity(0.5),
-      duration: Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 500),
       content: Text(
         text,
         style: TextStyle(

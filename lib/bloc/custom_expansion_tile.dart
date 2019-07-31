@@ -27,9 +27,9 @@ class CustomExpansionTile extends StatefulWidget {
   /// the tile to reveal or hide the [children]. The [initiallyExpanded] property must
   /// be non-null.
   const CustomExpansionTile({
+    @required this.title,
     Key key,
     this.leading,
-    @required this.title,
     this.backgroundColor,
     this.onExpansionChanged,
     this.children = const <Widget>[],
@@ -151,7 +151,7 @@ class _CustomExpansionTileState extends State<CustomExpansionTile>
           top: BorderSide(color: borderSideColor),
           bottom: BorderSide(color: borderSideColor),
         ),*/
-        borderRadius: BorderRadius.all(
+        borderRadius: const BorderRadius.all(
           Radius.circular(16.0),
         ),
       ),
@@ -201,7 +201,7 @@ class _CustomExpansionTileState extends State<CustomExpansionTile>
   Widget build(BuildContext context) {
     final bool closed = !_isExpanded && _controller.isDismissed;
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         borderRadius: BorderRadius.all(
           Radius.circular(8.0),
         ),

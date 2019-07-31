@@ -40,8 +40,8 @@ class _StopwatchPageState extends State<StopwatchPage>
   }
 
   Widget _buildAppBar() {
-    final String stopWatch = 'Stoppuhr';
-    final String back = 'Zurück';
+    const String stopWatch = 'Stoppuhr';
+    const String back = 'Zurück';
 
     return AppBar(
       leading: IconButton(
@@ -55,7 +55,7 @@ class _StopwatchPageState extends State<StopwatchPage>
           width: double.infinity,
           child: Tooltip(
             message: stopWatch,
-            child: Text(stopWatch),
+            child: const Text(stopWatch),
           ),
         ),
       ),
@@ -81,7 +81,7 @@ class _StopwatchPageState extends State<StopwatchPage>
   }
 
   void _shareContent(String content) {
-    final String sharingNotPossible = 'Teilvorgang nicht möglich.';
+    const String sharingNotPossible = 'Teilvorgang nicht möglich.';
 
     if (_elapsedTime != '00:00:000') {
       Share.share(content);
@@ -93,7 +93,7 @@ class _StopwatchPageState extends State<StopwatchPage>
   }
 
   void _backToHomePage() {
-    final String cancel = 'Notiz abbrechen und zur Hauptseite zurückkehren?';
+    const String cancel = 'Notiz abbrechen und zur Hauptseite zurückkehren?';
 
     showDialog(
       context: context,
@@ -118,7 +118,7 @@ class _StopwatchPageState extends State<StopwatchPage>
     return SafeArea(
       child: Center(
         child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(vertical: 16.0),
+          padding: const EdgeInsets.symmetric(vertical: 16.0),
           child: Column(
             children: <Widget>[
               Center(
@@ -127,7 +127,7 @@ class _StopwatchPageState extends State<StopwatchPage>
                   style: TextStyle(fontSize: 56.0),
                 ),
               ),
-              SizedBox(height: 56.0),
+              const SizedBox(height: 56.0),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
@@ -148,7 +148,7 @@ class _StopwatchPageState extends State<StopwatchPage>
                   ),
                 ],
               ),
-              SizedBox(height: 56.0),
+              const SizedBox(height: 56.0),
               Container(
                 //height: 200.0,
                 height: MediaQuery.of(context).orientation ==
@@ -164,7 +164,7 @@ class _StopwatchPageState extends State<StopwatchPage>
                   itemBuilder: (BuildContext context, int index) {
                     final String content = _elapsedTimeList[index];
                     return Padding(
-                      padding: EdgeInsets.fromLTRB(42.0, 0.0, 42.0, 0.0),
+                      padding: const EdgeInsets.fromLTRB(42.0, 0.0, 42.0, 0.0),
                       child: Row(
                         children: <Widget>[
                           Expanded(
@@ -177,7 +177,7 @@ class _StopwatchPageState extends State<StopwatchPage>
                               style: TextStyle(fontSize: 20.0),
                             ),
                           ),
-                          Spacer(),
+                          const Spacer(),
                           Expanded(
                             flex: 2,
                             child: IconButton(
@@ -185,7 +185,7 @@ class _StopwatchPageState extends State<StopwatchPage>
                               onPressed: () => _shareContent(content),
                             ),
                           ),
-                          Spacer(flex: 2),
+                          const Spacer(flex: 2),
                           Expanded(
                             flex: 2,
                             child: IconButton(
@@ -273,7 +273,7 @@ class _StopwatchPageState extends State<StopwatchPage>
 
   Widget _buildFabs() {
     return Padding(
-      padding: EdgeInsets.only(left: 32.0),
+      padding: const EdgeInsets.only(left: 32.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
@@ -308,8 +308,8 @@ class _StopwatchPageState extends State<StopwatchPage>
   }
 
   void _copyContent(String content) {
-    final copyContent = 'Inhalt kopiert';
-    final copyNotPossible = 'Kein Inhalt zum kopieren';
+    const copyContent = 'Inhalt kopiert';
+    const copyNotPossible = 'Kein Inhalt zum kopieren';
 
     if (_elapsedTimeList.isNotEmpty) {
       _setClipboard(content, '$copyContent.');
@@ -328,7 +328,7 @@ class _StopwatchPageState extends State<StopwatchPage>
   Widget _buildSnackBar({@required String text}) {
     return SnackBar(
       backgroundColor: Colors.black87,
-      duration: Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 500),
       content: Text(
         text,
         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),

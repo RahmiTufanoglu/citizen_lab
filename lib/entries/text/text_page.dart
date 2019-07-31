@@ -27,10 +27,10 @@ class TextPage extends StatefulWidget {
   final Note note;
   final String uuid;
 
-  TextPage({
-    this.key,
+  const TextPage({
     @required this.note,
     @required this.uuid,
+    this.key,
   }) : super(key: key);
 
   @override
@@ -115,8 +115,8 @@ class _TextPageState extends State<TextPage> {
   }
 
   Widget _buildAppBar() {
-    final String back = 'Zurück';
-    final String noteType = 'Textnotiz';
+    const String back = 'Zurück';
+    const String noteType = 'Textnotiz';
 
     return AppBar(
       leading: IconButton(
@@ -153,7 +153,7 @@ class _TextPageState extends State<TextPage> {
           onPressed: () {
             _createPdf();
             Future.delayed(
-                Duration(milliseconds: 500), () => {_shareContent()});
+                const Duration(milliseconds: 500), () => {_shareContent()});
             //_shareContent();
           },
         ),
@@ -184,7 +184,7 @@ class _TextPageState extends State<TextPage> {
   }
 
   Future<void> _shareContent() async {
-    final String noTitle = 'Bitte einen Titel und eine Beschreibung eingeben';
+    const String noTitle = 'Bitte einen Titel und eine Beschreibung eingeben';
 
     if (_titleEditingController.text.isNotEmpty &&
         _descEditingController.text.isNotEmpty) {
@@ -214,7 +214,7 @@ class _TextPageState extends State<TextPage> {
   }
 
   Future<void> _backToHomePage() async {
-    final String cancel = 'Notiz abbrechen und zur Hauptseite zurückkehren?';
+    const String cancel = 'Notiz abbrechen und zur Hauptseite zurückkehren?';
 
     await showDialog(
       context: context,
@@ -330,7 +330,7 @@ class _TextPageState extends State<TextPage> {
   }
 
   void _refreshTextFormFields() {
-    final String textDeleted = 'Text gelöscht';
+    const String textDeleted = 'Text gelöscht';
 
     _titleEditingController.clear();
     _descEditingController.clear();
@@ -341,8 +341,8 @@ class _TextPageState extends State<TextPage> {
   }
 
   void _copyContent() {
-    final String copyContent = 'Inhalt kopiert';
-    final String copyNotPossible = 'Kein Inhalt zum kopieren';
+    const String copyContent = 'Inhalt kopiert';
+    const String copyNotPossible = 'Kein Inhalt zum kopieren';
 
     if (_titleEditingController.text.isNotEmpty &&
         _descEditingController.text.isNotEmpty) {
@@ -396,7 +396,7 @@ class _TextPageState extends State<TextPage> {
           child: Stack(
             children: <Widget>[
               Padding(
-                padding: EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(8.0),
                 child: Center(
                   child: (!centerIcon)
                       ? Row(
@@ -414,7 +414,7 @@ class _TextPageState extends State<TextPage> {
                         ),
                 ),
               ),
-              Divider(height: 1.0, color: Colors.black),
+              const Divider(height: 1.0, color: Colors.black),
             ],
           ),
         ),
@@ -430,7 +430,7 @@ class _TextPageState extends State<TextPage> {
   Widget _buildSnackBar({@required String text}) {
     return SnackBar(
       backgroundColor: Colors.black87,
-      duration: Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 500),
       content: Text(
         text,
         style: TextStyle(
@@ -445,12 +445,12 @@ class _TextPageState extends State<TextPage> {
     @required String text,
     @required GestureTapCallback onPressed,
   }) {
-    final String yes = 'Ja';
-    final String no = 'Nein';
+    const String yes = 'Ja';
+    const String no = 'Nein';
 
     return SnackBar(
       backgroundColor: Colors.black87,
-      duration: Duration(seconds: 3),
+      duration: const Duration(seconds: 3),
       content: Row(
         children: <Widget>[
           Expanded(
@@ -461,28 +461,28 @@ class _TextPageState extends State<TextPage> {
                   TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
             ),
           ),
-          SizedBox(width: 8.0),
+          const SizedBox(width: 8.0),
           Expanded(
             flex: 1,
             child: RaisedButton(
               color: Colors.green,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                borderRadius: const BorderRadius.all(Radius.circular(8.0)),
               ),
               onPressed: () => _scaffoldKey.currentState.hideCurrentSnackBar(),
-              child: Text(no),
+              child: const Text(no),
             ),
           ),
-          SizedBox(width: 8.0),
+          const SizedBox(width: 8.0),
           Expanded(
             flex: 1,
             child: RaisedButton(
               color: Colors.red,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                borderRadius: const BorderRadius.all(Radius.circular(8.0)),
               ),
               onPressed: onPressed,
-              child: Text(yes),
+              child: const Text(yes),
             ),
           ),
         ],

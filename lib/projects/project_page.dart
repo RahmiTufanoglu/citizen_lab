@@ -12,7 +12,7 @@ import 'package:provider/provider.dart';
 class ProjectPage extends StatefulWidget {
   final bool isFromCreateProjectPage;
 
-  ProjectPage({@required this.isFromCreateProjectPage});
+  const ProjectPage({@required this.isFromCreateProjectPage});
 
   @override
   _ProjectPageState createState() => _ProjectPageState();
@@ -56,7 +56,7 @@ class _ProjectPageState extends State<ProjectPage> {
           width: double.infinity,
           child: Tooltip(
             message: '',
-            child: Text('Experimente'),
+            child: const Text('Experimente'),
           ),
         ),
       ),
@@ -112,14 +112,14 @@ class _ProjectPageState extends State<ProjectPage> {
           RouteGenerator.createProject,
         );
       },
-      child: Icon(Icons.add),
+      child: const Icon(Icons.add),
     );
   }
 
   void _deleteAllProjects(BuildContext contextSnackBar) {
-    final String deleteAllProjects = 'Alle Projekte löschen?';
-    final String projectDeleted = 'Projekte gelöscht.';
-    final String nothingDeleted = 'Nichts gelöscht.';
+    const String deleteAllProjects = 'Alle Projekte löschen?';
+    const String projectDeleted = 'Projekte gelöscht.';
+    const String nothingDeleted = 'Nichts gelöscht.';
 
     showDialog(
       context: context,
@@ -203,7 +203,7 @@ class _ProjectPageState extends State<ProjectPage> {
                     direction: DismissDirection.startToEnd,
                     background: Container(
                       alignment: Alignment.centerLeft,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         borderRadius: BorderRadius.all(
                           Radius.circular(8.0),
                         ),
@@ -214,7 +214,7 @@ class _ProjectPageState extends State<ProjectPage> {
                             Icons.arrow_forward,
                             size: 28.0,
                           ),
-                          SizedBox(width: 8.0),
+                          const SizedBox(width: 8.0),
                           Icon(
                             Icons.delete,
                             size: 28.0,
@@ -261,23 +261,23 @@ class _ProjectPageState extends State<ProjectPage> {
   }
 
   void _showContent(int index) {
-    final String createdAt = 'Erstellt am';
+    const String createdAt = 'Erstellt am';
 
     showDialog(
       context: context,
       builder: (context) => SimpleDialog(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+          borderRadius: const BorderRadius.all(Radius.circular(8.0)),
         ),
-        contentPadding: EdgeInsets.all(16.0),
-        titlePadding: EdgeInsets.only(left: 16.0),
+        contentPadding: const EdgeInsets.all(16.0),
+        titlePadding: const EdgeInsets.only(left: 16.0),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                SizedBox(height: 16.0),
+                const SizedBox(height: 16.0),
                 Text(
                   '$createdAt: '
                   '${_projectList[index].createdAt}',
@@ -286,7 +286,7 @@ class _ProjectPageState extends State<ProjectPage> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 16.0),
+                const SizedBox(height: 16.0),
               ],
             ),
             IconButton(
@@ -303,12 +303,12 @@ class _ProjectPageState extends State<ProjectPage> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(height: 8.0),
+          const SizedBox(height: 8.0),
           Text(
             _projectList[index].title,
             style: TextStyle(fontSize: 16.0),
           ),
-          SizedBox(height: 32.0),
+          const SizedBox(height: 32.0),
           Text(
             '$desc:',
             style: TextStyle(
@@ -316,12 +316,12 @@ class _ProjectPageState extends State<ProjectPage> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(height: 8.0),
+          const SizedBox(height: 8.0),
           Text(
             _projectList[index].description,
             style: TextStyle(fontSize: 16.0),
           ),
-          SizedBox(height: 8.0),
+          const SizedBox(height: 8.0),
         ],
       ),
     );
@@ -330,7 +330,7 @@ class _ProjectPageState extends State<ProjectPage> {
   Widget _buildSnackBar({@required String text}) {
     return SnackBar(
       backgroundColor: Colors.black87,
-      duration: Duration(seconds: 1),
+      duration: const Duration(seconds: 1),
       content: Text(
         text,
         style: TextStyle(fontWeight: FontWeight.bold),

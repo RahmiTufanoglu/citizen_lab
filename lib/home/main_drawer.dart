@@ -6,7 +6,7 @@ class MainDrawer extends StatelessWidget {
   final String location;
   final List<Widget> children;
 
-  MainDrawer({
+  const MainDrawer({
     @required this.drawerWidth,
     @required this.location,
     @required this.children,

@@ -16,7 +16,7 @@ class TopTextCard extends StatelessWidget {
   final GestureTapCallback onTapTitle;
   final GestureTapCallback onTapImage;
 
-  TopTextCard({
+  const TopTextCard({
     @required this.asset,
     @required this.title,
     @required this.onTapTitle,
@@ -47,7 +47,7 @@ class TopTextCard extends StatelessWidget {
                 Container(
                   height: double.infinity,
                   width: double.infinity,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(8.0),
                       topRight: Radius.circular(8.0),
@@ -72,7 +72,7 @@ class TopTextCard extends StatelessWidget {
                   color: Colors.transparent,
                   child: InkWell(
                     onTap: onTapTitle,
-                    borderRadius: BorderRadius.only(
+                    borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(8.0),
                       topRight: Radius.circular(8.0),
                     ),
@@ -93,7 +93,7 @@ class TopTextCard extends StatelessWidget {
                           image: AssetImage(asset),
                           fit: BoxFit.fill,
                         ),
-                        borderRadius: BorderRadius.only(
+                        borderRadius: const BorderRadius.only(
                           bottomLeft: Radius.circular(8.0),
                           bottomRight: Radius.circular(8.0),
                         ),
@@ -103,7 +103,7 @@ class TopTextCard extends StatelessWidget {
                       color: Colors.transparent,
                       child: InkWell(
                         onTap: onTapImage,
-                        borderRadius: BorderRadius.only(
+                        borderRadius: const BorderRadius.only(
                           bottomLeft: Radius.circular(8.0),
                           bottomRight: Radius.circular(8.0),
                         ),

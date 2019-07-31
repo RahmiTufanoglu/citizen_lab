@@ -24,7 +24,7 @@ class AudioRecordPage extends StatefulWidget {
   final Note note;
   final String uuid;
 
-  AudioRecordPage({
+  const AudioRecordPage({
     this.note,
     this.uuid,
   });
@@ -114,8 +114,8 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
   }
 
   Widget _buildAppBar() {
-    final String back = 'Zurück';
-    final String noteType = 'Audioaufzeichnung';
+    const String back = 'Zurück';
+    const String noteType = 'Audioaufzeichnung';
 
     return AppBar(
       leading: IconButton(
@@ -184,7 +184,7 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
   }
 
   void _backToHomePage() {
-    final String cancel = 'Notiz abbrechen und zur Hauptseite zurückkehren?';
+    const String cancel = 'Notiz abbrechen und zur Hauptseite zurückkehren?';
     showDialog(
       context: context,
       builder: (_) {
@@ -202,7 +202,7 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
   }
 
   Widget _buildFabs() {
-    final String editTitleAndDesc = 'Titel und Beschreibung editieren';
+    const String editTitleAndDesc = 'Titel und Beschreibung editieren';
     return Padding(
       padding: const EdgeInsets.only(left: 32.0),
       child: Row(
@@ -257,7 +257,7 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
   Widget _buildBody() {
     return Center(
       child: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -269,7 +269,7 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
                 child: _iconBody,
               ),
             ),
-            SizedBox(height: 24.0),
+            const SizedBox(height: 24.0),
             RichText(
               textAlign: TextAlign.center,
               text: TextSpan(
@@ -460,7 +460,7 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
   Widget _buildSnackBar({@required String text}) {
     return SnackBar(
       backgroundColor: Colors.black87,
-      duration: Duration(seconds: 3),
+      duration: const Duration(seconds: 3),
       content: Text(
         text,
         style: TextStyle(
@@ -477,7 +477,7 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
   }) {
     return SnackBar(
       backgroundColor: Colors.black87,
-      duration: Duration(seconds: 3),
+      duration: const Duration(seconds: 3),
       content: Row(
         children: <Widget>[
           Expanded(
@@ -490,28 +490,28 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
               ),
             ),
           ),
-          SizedBox(width: 8.0),
+          const SizedBox(width: 8.0),
           Expanded(
             flex: 1,
             child: RaisedButton(
               color: Colors.green,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                borderRadius: const BorderRadius.all(Radius.circular(8.0)),
               ),
               onPressed: () => _scaffoldKey.currentState.hideCurrentSnackBar(),
-              child: Text('Nein'),
+              child: const Text('Nein'),
             ),
           ),
-          SizedBox(width: 8.0),
+          const SizedBox(width: 8.0),
           Expanded(
             flex: 1,
             child: RaisedButton(
               color: Colors.red,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                borderRadius: const BorderRadius.all(Radius.circular(8.0)),
               ),
               onPressed: onPressed,
-              child: Text('Ja'),
+              child: const Text('Ja'),
             ),
           ),
         ],

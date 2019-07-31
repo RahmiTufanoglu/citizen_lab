@@ -8,7 +8,7 @@ class MainTableWidet extends StatefulWidget {
   final List<TextEditingController> textEditingController;
   final Function generateTable;
 
-  MainTableWidet({
+  const MainTableWidet({
     @required this.onWillPop,
     @required this.column,
     @required this.row,
@@ -33,7 +33,7 @@ class _MainTableWidetState extends State<MainTableWidet> {
       child: WillPopScope(
         onWillPop: () => widget.onWillPop(),
         child: Padding(
-          padding: EdgeInsets.only(bottom: 88.0),
+          padding: const EdgeInsets.only(bottom: 88.0),
           child: (widget.column != null || widget.row != null)
               ? TableWidget(
                   listTextEditingController: widget.textEditingController,

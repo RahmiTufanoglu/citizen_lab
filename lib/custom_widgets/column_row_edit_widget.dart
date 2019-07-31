@@ -9,7 +9,7 @@ class ColumnRowEditingWidget extends StatefulWidget {
   final GestureTapCallback onPressedClear;
   final GestureTapCallback onPressedCheck;
 
-  ColumnRowEditingWidget({
+  const ColumnRowEditingWidget({
     @required this.title,
     @required this.titleEditingController,
     @required this.columnEditingController,
@@ -36,13 +36,13 @@ class _ColumnRowEditingWidgetState extends State<ColumnRowEditingWidget> {
   }
 
   Widget _buildDialog() {
-    final String plsEnterANumber = 'Bitte eine\nZahl eingeben';
+    const String plsEnterANumber = 'Bitte eine\nZahl eingeben';
     return Form(
       key: _formKey,
       autovalidate: true,
       child: SimpleDialog(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+          borderRadius: const BorderRadius.all(Radius.circular(8.0)),
         ),
         contentPadding: const EdgeInsets.all(16.0),
         titlePadding: const EdgeInsets.only(left: 0.0),
@@ -81,7 +81,7 @@ class _ColumnRowEditingWidgetState extends State<ColumnRowEditingWidget> {
             validator: (text) =>
                 text.isEmpty ? 'Bitte einen Titel eingeben' : null,
           ),
-          SizedBox(height: 8.0),
+          const SizedBox(height: 8.0),
           Row(
             children: <Widget>[
               Expanded(
@@ -151,7 +151,7 @@ class _ColumnRowEditingWidgetState extends State<ColumnRowEditingWidget> {
               ),
             ],
           ),
-          SizedBox(height: 8.0),
+          const SizedBox(height: 8.0),
           Row(
             children: <Widget>[
               Expanded(
@@ -162,7 +162,7 @@ class _ColumnRowEditingWidgetState extends State<ColumnRowEditingWidget> {
                   child: Icon(Icons.remove),
                 ),
               ),
-              SizedBox(width: 8.0),
+              const SizedBox(width: 8.0),
               Expanded(
                 child: RaisedButton(
                   elevation: 4.0,

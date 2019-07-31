@@ -9,7 +9,7 @@ class CitizenScienceWebPage extends StatefulWidget {
   final String title;
   final String url;
 
-  CitizenScienceWebPage({
+  const CitizenScienceWebPage({
     @required this.title,
     @required this.url,
   });
@@ -43,7 +43,7 @@ class _CitizenScienceWebPageState extends State<CitizenScienceWebPage> {
   }
 
   Widget _buildAppBar() {
-    final String back = 'Zurück';
+    const String back = 'Zurück';
 
     return AppBar(
       leading: IconButton(
@@ -84,7 +84,7 @@ class _CitizenScienceWebPageState extends State<CitizenScienceWebPage> {
           //_loadIndicator(),
           _isLoadingPage
               ? Center(
-                  child: CircularProgressIndicator(
+                  child: const CircularProgressIndicator(
                     valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
                   ),
                 )

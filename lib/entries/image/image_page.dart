@@ -25,7 +25,7 @@ class ImagePage extends StatefulWidget {
   final Note note;
   final String uuid;
 
-  ImagePage({
+  const ImagePage({
     this.note,
     this.uuid,
   });
@@ -84,8 +84,8 @@ class _ImagePageState extends State<ImagePage> {
   }
 
   Widget _buildAppBar() {
-    final String back = 'Zurück';
-    final String noteType = 'Bildnotiz';
+    const String back = 'Zurück';
+    const String noteType = 'Bildnotiz';
 
     return AppBar(
       leading: IconButton(
@@ -167,7 +167,7 @@ class _ImagePageState extends State<ImagePage> {
   }
 
   void _backToHomePage() {
-    final String cancel = 'Notiz abbrechen und zur Hauptseite zurückkehren?';
+    const String cancel = 'Notiz abbrechen und zur Hauptseite zurückkehren?';
 
     showDialog(
       context: context,
@@ -186,8 +186,8 @@ class _ImagePageState extends State<ImagePage> {
   }
 
   Widget _buildFabs() {
-    final String editTitleAndDesc = 'Titel und Beschreibung editieren';
-    final String createImage = 'Foto erstellen';
+    const String editTitleAndDesc = 'Titel und Beschreibung editieren';
+    const String createImage = 'Foto erstellen';
 
     return Padding(
       padding: const EdgeInsets.only(left: 32.0),
@@ -231,7 +231,7 @@ class _ImagePageState extends State<ImagePage> {
           child: Center(
             child: (_image != null && _image.path.isNotEmpty)
                 ? PhotoView(
-                    backgroundDecoration: BoxDecoration(),
+                    backgroundDecoration: const BoxDecoration(),
                     minScale: PhotoViewComputedScale.contained * 0.5,
                     imageProvider: FileImage(_image),
                   )
@@ -411,7 +411,7 @@ class _ImagePageState extends State<ImagePage> {
   }) {
     return SnackBar(
       backgroundColor: Colors.black87,
-      duration: Duration(seconds: 3),
+      duration: const Duration(seconds: 3),
       content: Row(
         children: <Widget>[
           Expanded(
@@ -424,28 +424,28 @@ class _ImagePageState extends State<ImagePage> {
               ),
             ),
           ),
-          SizedBox(width: 8.0),
+          const SizedBox(width: 8.0),
           Expanded(
             flex: 1,
             child: RaisedButton(
               color: Colors.green,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                borderRadius: const BorderRadius.all(Radius.circular(8.0)),
               ),
               onPressed: () => _scaffoldKey.currentState.hideCurrentSnackBar(),
-              child: Text('Nein'),
+              child: const Text('Nein'),
             ),
           ),
-          SizedBox(width: 8.0),
+          const SizedBox(width: 8.0),
           Expanded(
             flex: 1,
             child: RaisedButton(
               color: Colors.red,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                borderRadius: const BorderRadius.all(Radius.circular(8.0)),
               ),
               onPressed: onPressed,
-              child: Text('Ja'),
+              child: const Text('Ja'),
             ),
           ),
         ],

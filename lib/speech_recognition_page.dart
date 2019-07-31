@@ -143,21 +143,21 @@ class _SpeechRecognitionPageState extends State<SpeechRecognitionPage> {
     return MaterialApp(
         home: Scaffold(
             appBar: AppBar(
-              title: Text('Flutter TTS'),
+              title: const Text('Flutter TTS'),
             ),
             body: SingleChildScrollView(
                 scrollDirection: Axis.vertical,
                 child: Column(children: [
                   inputSection(),
                   btnSection(),
-                  languages != null ? languageDropDownSection() : Text(""),
-                  voices != null ? voiceDropDownSection() : Text("")
+                  languages != null ? languageDropDownSection() : const Text(''),
+                  voices != null ? voiceDropDownSection() : const Text('')
                 ]))));
   }
 
   Widget inputSection() => Container(
       alignment: Alignment.topCenter,
-      padding: EdgeInsets.only(top: 25.0, left: 25.0, right: 25.0),
+      padding: const EdgeInsets.only(top: 25.0, left: 25.0, right: 25.0),
       child: TextField(
         onChanged: (String value) {
           _onChange(value);
@@ -165,7 +165,7 @@ class _SpeechRecognitionPageState extends State<SpeechRecognitionPage> {
       ));
 
   Widget btnSection() => Container(
-      padding: EdgeInsets.only(top: 50.0),
+      padding: const EdgeInsets.only(top: 50.0),
       child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
         _buildButtonColumn(
             Colors.green, Colors.greenAccent, Icons.play_arrow, 'PLAY', _speak),
@@ -174,7 +174,7 @@ class _SpeechRecognitionPageState extends State<SpeechRecognitionPage> {
       ]));
 
   Widget languageDropDownSection() => Container(
-      padding: EdgeInsets.only(top: 50.0),
+      padding: const EdgeInsets.only(top: 50.0),
       child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         DropdownButton(
           value: language,
@@ -184,7 +184,7 @@ class _SpeechRecognitionPageState extends State<SpeechRecognitionPage> {
       ]));
 
   Widget voiceDropDownSection() => Container(
-      padding: EdgeInsets.only(top: 50.0),
+      padding: const EdgeInsets.only(top: 50.0),
       child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         DropdownButton(
           value: voice,

@@ -15,7 +15,7 @@ class SimpleTimerDialog extends StatefulWidget {
   //final TitleProvider titleProvider;
   //final String title;
 
-  SimpleTimerDialog({
+  const SimpleTimerDialog({
     @required this.createdAt,
     @required this.textEditingController,
     @required this.descEditingController,
@@ -45,7 +45,7 @@ class _SimpleTimerDialogState extends State<SimpleTimerDialog> {
   @override
   void initState() {
     _timeString = dateFormatted();
-    _timer = Timer.periodic(Duration(seconds: 1), (Timer t) => _getTime());
+    _timer = Timer.periodic(const Duration(seconds: 1), (Timer t) => _getTime());
     super.initState();
   }
 
@@ -76,7 +76,7 @@ class _SimpleTimerDialogState extends State<SimpleTimerDialog> {
       child: SimpleDialog(
         elevation: 4.0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+          borderRadius: const BorderRadius.all(Radius.circular(8.0)),
         ),
         contentPadding: const EdgeInsets.all(0.0),
         titlePadding: const EdgeInsets.all(0.0),
@@ -90,7 +90,7 @@ class _SimpleTimerDialogState extends State<SimpleTimerDialog> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  SizedBox(height: 16.0),
+                  const SizedBox(height: 16.0),
                   Text(
                     _timeString,
                     style: TextStyle(
@@ -98,7 +98,7 @@ class _SimpleTimerDialogState extends State<SimpleTimerDialog> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 8.0),
+                  const SizedBox(height: 8.0),
                   Container(
                     width: screenWidth / 1.8,
                     child: Text(
@@ -110,7 +110,7 @@ class _SimpleTimerDialogState extends State<SimpleTimerDialog> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 16.0),
+                  const SizedBox(height: 16.0),
                 ],
               ),
             ),
@@ -220,7 +220,7 @@ class _SimpleTimerDialogState extends State<SimpleTimerDialog> {
             : _titleValidate = false;
             },*/
                 ),
-                SizedBox(height: 56.0),
+                const SizedBox(height: 56.0),
                 _descWidget(),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -234,7 +234,7 @@ class _SimpleTimerDialogState extends State<SimpleTimerDialog> {
                         child: Icon(Icons.remove),
                       ),
                     ),
-                    SizedBox(width: 16.0),
+                    const SizedBox(width: 16.0),
                     Expanded(
                       child: RaisedButton(
                         elevation: 4.0,
@@ -280,7 +280,7 @@ class _SimpleTimerDialogState extends State<SimpleTimerDialog> {
               labelStyle: TextStyle(fontSize: 14.0),
             ),
           ),
-          SizedBox(height: 42.0),
+          const SizedBox(height: 42.0),
         ],
       );
     } else {

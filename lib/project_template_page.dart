@@ -28,7 +28,7 @@ class _ProjectTemplatePageState extends State<ProjectTemplatePage> {
 
   Widget _buildAppBar(BuildContext context) {
     return AppBar(
-      title: Text('Projekt Vorlagen'),
+      title: const Text('Projekt Vorlagen'),
       leading: IconButton(
         icon: Icon(Icons.arrow_back),
         onPressed: () => Navigator.pop(context, true),
@@ -53,7 +53,7 @@ class _ProjectTemplatePageState extends State<ProjectTemplatePage> {
                 ),
               ),
               IconButton(
-                  icon: Icon(Icons.add),
+                  icon: const Icon(Icons.add),
                   onPressed: () {
                     _createTemplateContent(
                       'Vorlage ${index + 1}',
@@ -73,7 +73,7 @@ class _ProjectTemplatePageState extends State<ProjectTemplatePage> {
   Widget _buildSnackBar({@required String text}) {
     return SnackBar(
       backgroundColor: Colors.black87,
-      duration: Duration(seconds: 1),
+      duration: const Duration(seconds: 1),
       content: Text(
         text,
         style: TextStyle(fontWeight: FontWeight.bold),

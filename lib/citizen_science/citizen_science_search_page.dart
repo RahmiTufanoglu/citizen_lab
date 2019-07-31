@@ -31,7 +31,7 @@ class CitizenScienceSearchPage extends SearchDelegate<String> {
         icon: Icon(Icons.clear),
         onPressed: () => query = '',
       ),
-      SizedBox(width: 8.0),
+      const SizedBox(width: 8.0),
     ];
   }
 
@@ -66,7 +66,7 @@ class CitizenScienceSearchPage extends SearchDelegate<String> {
           childAspectRatio: screenWidth / (screenHeight / 1.5),
         ),
         itemCount: suggestionList == null ? 0 : suggestionList.length,
-        padding: EdgeInsets.all(4.0),
+        padding: const EdgeInsets.all(4.0),
         itemBuilder: (context, index) {
           return TopTextCard(
             title: suggestionList[index].title,
