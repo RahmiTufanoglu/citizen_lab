@@ -213,10 +213,10 @@ class _TextPageState extends State<TextPage> {
     return path;
   }
 
-  Future<void> _backToHomePage() async {
+  void _backToHomePage() {
     const String cancel = 'Notiz abbrechen und zur Hauptseite zurückkehren?';
 
-    await showDialog(
+    showDialog(
       context: context,
       builder: (_) {
         return NoYesDialog(

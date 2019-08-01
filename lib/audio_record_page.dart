@@ -359,20 +359,17 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
 
   Future<bool> _checkIfFileExists() async {
     final File file = File(_audioPath);
-    if (await file.exists()) {
-      return true;
-    } else {
-      return false;
-    }
+    //if (await file.exists()) {
+    return file.existsSync() ? true : false;
   }
 
   Future<void> _checkIfTitleIsAlreadyTaken2() async {
     //FileSystemEntity.typeSync(_audioPath) != FileSystemEntityType.notFound;
     final File file = File(_audioPath);
     int i = 2;
-    while (await file.exists()) {
+    while (file.existsSync()) {
       _title = _title + ' ' + '${i++}'.toString();
-      if (!await file.exists()) break;
+      if (!file.existsSync()) break;
     }
   }
 

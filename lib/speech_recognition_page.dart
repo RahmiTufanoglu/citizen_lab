@@ -53,17 +53,13 @@ class _SpeechRecognitionPageState extends State<SpeechRecognitionPage> {
       });
     });
 
-    flutterTts.setCompletionHandler(() {
-      setState(() {
-        ttsState = TtsState.stopped;
-      });
+    /*flutterTts.setCompletionHandler(() {
+      setState(() => ttsState = TtsState.stopped);
     });
 
     flutterTts.setErrorHandler((msg) {
-      setState(() {
-        ttsState = TtsState.stopped;
-      });
-    });
+      setState(() => ttsState = TtsState.stopped);
+    });*/
   }
 
   Future _getLanguages() async {
@@ -150,7 +146,9 @@ class _SpeechRecognitionPageState extends State<SpeechRecognitionPage> {
                 child: Column(children: [
                   inputSection(),
                   btnSection(),
-                  languages != null ? languageDropDownSection() : const Text(''),
+                  languages != null
+                      ? languageDropDownSection()
+                      : const Text(''),
                   voices != null ? voiceDropDownSection() : const Text('')
                 ]))));
   }

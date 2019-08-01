@@ -181,8 +181,9 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   Widget _buildBody() {
     return SafeArea(
       child: WillPopScope(
-        //onWillPop: () async => Navigator.pop(context, true),
-        onWillPop: _onWillPop,
+        onWillPop: () {
+          Navigator.pop(context, true);
+        },
         child: _noteList.isNotEmpty
             ? ListView.builder(
                 itemCount: _noteList.length,
@@ -202,8 +203,6 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
       ),
     );
   }
-
-  void _onWillPop() => Navigator.pop(context, true);
 
   Widget _buildDismissible(Key key, Note note, int index) {
     return Dismissible(
