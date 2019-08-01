@@ -41,9 +41,11 @@ class _TableWidgetState extends State<TableWidget> {
         decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
         child: TextFormField(
           maxLines: 4,
+          keyboardType: TextInputType.text,
           controller: widget.listTextEditingController[index],
           decoration: InputDecoration(
             hintText: index.toString(),
+            hintStyle: TextStyle(color: Colors.grey.withOpacity(0.8)),
             contentPadding: const EdgeInsets.all(8.0),
             focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.transparent),
