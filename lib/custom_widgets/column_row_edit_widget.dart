@@ -36,7 +36,7 @@ class _ColumnRowEditingWidgetState extends State<ColumnRowEditingWidget> {
   }
 
   Widget _buildDialog() {
-    const String plsEnterANumber = 'Bitte eine\nZahl eingeben';
+    const String plsEnterANumber = 'Bitte eine\nZahl unter\n 9 eingeben.';
     return Form(
       key: _formKey,
       autovalidate: true,
@@ -105,7 +105,7 @@ class _ColumnRowEditingWidgetState extends State<ColumnRowEditingWidget> {
                       final bool _columnNumeric =
                           Utils.isNumeric(widget.columnEditingController.text);
 
-                      if (text.isEmpty || !_columnNumeric) {
+                      if (text.isEmpty || !_columnNumeric || text.length > 8) {
                         return plsEnterANumber;
                       } else {
                         return null;

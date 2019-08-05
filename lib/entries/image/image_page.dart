@@ -43,7 +43,7 @@ class _ImagePageState extends State<ImagePage> {
   ThemeChangerProvider _themeChanger;
   File _image;
   String _title;
-  String _createdAt;
+  String _createdAt = '';
 
   @override
   void initState() {

@@ -45,7 +45,8 @@ class _SimpleTimerDialogState extends State<SimpleTimerDialog> {
   @override
   void initState() {
     _timeString = dateFormatted();
-    _timer = Timer.periodic(const Duration(seconds: 1), (Timer t) => _getTime());
+    _timer =
+        Timer.periodic(const Duration(seconds: 1), (Timer t) => _getTime());
     super.initState();
   }
 

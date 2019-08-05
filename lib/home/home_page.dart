@@ -41,7 +41,7 @@ class _HomePageState extends State<HomePage>
   @override
   void initState() {
     super.initState();
-    _loadProjectList(false);
+    _loadProjectList();
 
     _animationController = AnimationController(
       vsync: this,
@@ -112,7 +112,7 @@ class _HomePageState extends State<HomePage>
       delegate: ProjectSearchPage(
         projectList: _projectList,
         isFromProjectSearchPage: false,
-        reloadProjectList: () => _loadProjectList(false),
+        reloadProjectList: () => _loadProjectList(),
       ),
     );
   }
@@ -152,7 +152,7 @@ class _HomePageState extends State<HomePage>
           _scaffoldKey.currentState.showSnackBar(
             _buildSnackBar(text: 'Neues ${result.title} hinzugefügt.'),
           );
-          await _loadProjectList(true);
+          await _loadProjectList();
         }
 
         break;
@@ -166,7 +166,7 @@ class _HomePageState extends State<HomePage>
           _scaffoldKey.currentState.showSnackBar(
             _buildSnackBar(text: 'Neues Projekt hinzugefügt.'),
           );
-          await _loadProjectList(true);
+          await _loadProjectList();
         }
 
         break;
@@ -574,7 +574,7 @@ class _HomePageState extends State<HomePage>
       DatabaseHelper.columnProjectCardTextColor: cardTextColor,
     });
     await _projectDb.updateProject(newProject: updatedProject);
-    await _loadProjectList(true);
+    await _loadProjectList();
     Navigator.pop(context, updatedProject);
   }
 
@@ -590,7 +590,7 @@ class _HomePageState extends State<HomePage>
       },
     );
 
-    if (result != null && result) await _loadProjectList(false);
+    if (result != null && result) await _loadProjectList();
   }
 
   Widget _buildSnackBar({@required String text}) {
@@ -618,7 +618,7 @@ class _HomePageState extends State<HomePage>
     await prefs.setString(_sortOrder, value);
   }
 
-  Future<void> _loadProjectList(bool newProject) async {
+  Future<void> _loadProjectList() async {
     for (int i = 0; i < _projectList.length; i++) {
       _projectList.removeWhere((element) {
         _projectList[i].id = _projectList[i].id;

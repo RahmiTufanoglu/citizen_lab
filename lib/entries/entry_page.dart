@@ -78,11 +78,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
     _createdAt = widget.project.createdAt;
 
     _titleProjectController.addListener(() {
-      setState(() {
-        if (_titleProjectController.text.isNotEmpty) {
-          _title = _titleProjectController.text;
-        }
-      });
+      setState(() => _title = _titleProjectController.text);
     });
   }
 
@@ -377,11 +373,9 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
 
     final List<Widget> experimentItemsWidgets = [];
     for (int i = 0; i < experimentItems.length; i++) {
-      if (i == 0) {
-        experimentItemsWidgets.add(_createTile(experimentItems[i], true));
-      } else {
-        experimentItemsWidgets.add(_createTile(experimentItems[i], false));
-      }
+      i == 0
+          ? experimentItemsWidgets.add(_createTile(experimentItems[i], true))
+          : experimentItemsWidgets.add(_createTile(experimentItems[i], false));
     }
 
     _buildMainBottomSheet(experimentItemsWidgets);
@@ -583,9 +577,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
       _buildSnackBar(text: 'Projekt ${_noteList[index].title} gelöscht.'),
     );
 
-    setState(() {
-      _noteList.removeAt(index);
-    });
+    setState(() => _noteList.removeAt(index));
   }
 
   void _deleteAllNotes(BuildContext contextSnackBar) {
@@ -698,7 +690,11 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
       case sortByReleaseDateAsc:
         setState(() {
           _noteList.sort(
-            (Note a, Note b) => a.createdAt.compareTo(b.createdAt),
+            (Note a, Note b) {
+              final parsedDate1 = DateTime.parse(a.createdAt);
+              final parsedDate2 = DateTime.parse(b.createdAt);
+              return parsedDate1.compareTo(parsedDate2);
+            },
           );
         });
         setSortingOrder(sortByReleaseDateAsc);
@@ -706,7 +702,11 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
       case sortByReleaseDateDesc:
         setState(() {
           _noteList.sort(
-            (Note a, Note b) => b.createdAt.compareTo(a.createdAt),
+            (Note a, Note b) {
+              final parsedDate1 = DateTime.parse(a.createdAt);
+              final parsedDate2 = DateTime.parse(b.createdAt);
+              return parsedDate2.compareTo(parsedDate1);
+            },
           );
         });
         setSortingOrder(sortByReleaseDateDesc);

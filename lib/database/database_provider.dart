@@ -17,7 +17,7 @@ class DatabaseHelper implements ProjectDao, NoteDao {
   Database _db;
 
   static const int dbVersion = 1;
-  static const String dbName = 'citizen_lab_projects2.db';
+  static const String dbName = 'citizen_lab.db';
 
   static const String projectTable = 'projects';
   static const String columnProjectId = 'id';
@@ -128,9 +128,11 @@ class DatabaseHelper implements ProjectDao, NoteDao {
 
   @override
   Future<List<Project>> getAllProjects() async {
+    //Future<List<dynamic>> getAllProjects() async {
     final db = await database;
     final result = await db.query(projectTable);
-    final list = result.isNotEmpty
+    //final list = result.isNotEmpty
+    final List<Project> list = result.isNotEmpty
         ? result.map((map) {
             return Project.fromMap(map);
           }).toList()
