@@ -109,7 +109,7 @@ class _ProjectPageState extends State<ProjectPage> {
       onPressed: () {
         Navigator.pushNamed(
           context,
-          RouteGenerator.createProject,
+          createProjectPage,
         );
       },
       child: const Icon(Icons.add),
@@ -247,7 +247,7 @@ class _ProjectPageState extends State<ProjectPage> {
   Future<void> _navigateToEntry(int index) async {
     final result = await Navigator.pushNamed(
       context,
-      RouteGenerator.entry,
+      projectPage,
       arguments: {
         'project': _projectList[index],
         'projectTitle': _projectList[index].title,
@@ -367,7 +367,7 @@ class _ProjectPageState extends State<ProjectPage> {
     if (widget.isFromCreateProjectPage) {
       Navigator.popUntil(
         context,
-        ModalRoute.withName(RouteGenerator.routeHomePage),
+        ModalRoute.withName(routeHomePage),
       );
       /*} else if (widget.isFromProjectSearchPage) {
       Navigator.pop(context, 'fromEntry');*/

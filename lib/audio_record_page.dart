@@ -173,7 +173,7 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
   void _setInfoPage() {
     Navigator.pushNamed(
       context,
-      RouteGenerator.infoPage,
+      infoPage,
       arguments: {
         'title': 'Audio-Info',
         'tabLength': 2,
@@ -193,7 +193,7 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
           onPressed: () {
             Navigator.popUntil(
               context,
-              ModalRoute.withName(RouteGenerator.routeHomePage),
+              ModalRoute.withName(routeHomePage),
             );
           },
         );

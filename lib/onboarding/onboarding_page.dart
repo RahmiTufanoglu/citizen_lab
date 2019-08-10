@@ -81,8 +81,8 @@ class _OnboardingPageState extends State<OnboardingPage>
                             child: Container(
                               //color: mainLightColor,
                               child: ListView(
-                                padding:
-                                    const EdgeInsets.fromLTRB(36.0, 36.0, 36.0, 80.0),
+                                padding: const EdgeInsets.fromLTRB(
+                                    36.0, 36.0, 36.0, 80.0),
                                 children: <Widget>[
                                   Text(
                                     page.title,
@@ -156,7 +156,7 @@ class _OnboardingPageState extends State<OnboardingPage>
   void _setNavigation() {
     Navigator.pushNamed(
       context,
-      RouteGenerator.homepage,
+      homePage,
     );
   }
 }

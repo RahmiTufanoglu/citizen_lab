@@ -47,6 +47,7 @@ dependencies:
   flutter_sound: ^1.4.2
   permission: ^0.1.2
   uuid: ^2.0.2
+  logger: ^0.7.0+2
 
 dev_dependencies:
   flutter_test:

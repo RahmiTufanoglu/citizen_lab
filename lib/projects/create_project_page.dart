@@ -120,7 +120,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
         'tabChildren': createProjectSingleChildScrollViewList,
       },
     );*/
-    Navigator.pushNamed(context, RouteGenerator.aboutPage, arguments: {
+    Navigator.pushNamed(context, aboutPage, arguments: {
       'title': 'Das Labornotizbuch',
       'content': labNotebook,
     });

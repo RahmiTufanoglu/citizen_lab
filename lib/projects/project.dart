@@ -1,5 +1,5 @@
 import 'package:citizen_lab/database/database_provider.dart';
-import 'package:citizen_lab/entry.dart';
+import 'package:citizen_lab/entries/entry.dart';
 
 class Project implements Entry {
   int id;

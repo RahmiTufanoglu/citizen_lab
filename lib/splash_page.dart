@@ -13,7 +13,7 @@ class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 1), () => _checkFirstSeen());
+    Future.delayed(const Duration(seconds: 1), () => _checkFirstTime());
   }
 
   @override
@@ -30,20 +30,20 @@ class _SplashPageState extends State<SplashPage> {
     );
   }
 
-  Future _checkFirstSeen() async {
+  Future _checkFirstTime() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final bool _seen = prefs.getBool('seen') ?? false;
 
     if (_seen) {
       await Navigator.pushNamed(
         context,
-        RouteGenerator.homepage,
+        homePage,
       );
     } else {
       await prefs.setBool('seen', true);
       await Navigator.pushNamed(
         context,
-        RouteGenerator.onboardingPage,
+        onboardingPage,
       );
     }
   }

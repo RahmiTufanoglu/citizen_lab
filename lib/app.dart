@@ -1,14 +1,11 @@
-import 'package:citizen_lab/splash_page.dart';
 import 'package:citizen_lab/themes/theme.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/title_change_provider.dart';
-import 'package:citizen_lab/utils/constants.dart';
-import 'package:citizen_lab/utils/route_generator.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'citizen_science/timer_provider.dart';
+import 'material_app_with_theme.dart';
 
 class App extends StatefulWidget {
   @override
@@ -35,7 +32,7 @@ class _AppState extends State<App> {
   }
 }
 
-class MaterialAppWithTheme extends StatefulWidget {
+/*class MaterialAppWithTheme extends StatefulWidget {
   @override
   _MaterialAppWithThemeState createState() => _MaterialAppWithThemeState();
 }
@@ -57,9 +54,9 @@ class _MaterialAppWithThemeState extends State<MaterialAppWithTheme> {
       onGenerateRoute: RouteGenerator.routes(),
     );
   }
-}
+}*/
 
-class CustomLocalizationDelegate
+/*class CustomLocalizationDelegate
     extends LocalizationsDelegate<MaterialLocalizations> {
   const CustomLocalizationDelegate();
 
@@ -82,4 +79,4 @@ class CustomLocalization extends DefaultMaterialLocalizations {
 
   @override
   String get searchFieldLabel => 'Suche';
-}
+}*/

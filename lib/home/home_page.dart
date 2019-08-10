@@ -145,7 +145,7 @@ class _HomePageState extends State<HomePage>
       case 'Neues Projekt':
         final Project result = await Navigator.pushNamed(
           context,
-          RouteGenerator.createProject,
+          createProjectPage,
         ) as Project;
 
         if (result != null) {
@@ -159,7 +159,7 @@ class _HomePageState extends State<HomePage>
       case 'Vorlagen':
         final bool result = await Navigator.pushNamed(
           context,
-          RouteGenerator.projectTemplatePage,
+          projectTemplatePage,
         ) as bool;
 
         if (result != null && result) {
@@ -212,7 +212,7 @@ class _HomePageState extends State<HomePage>
                 a.title.toLowerCase().compareTo(b.title.toLowerCase()),
           );
         });
-        setSortingOrder(sortByTitleArc);
+        _setSortingOrder(sortByTitleArc);
         break;
       case sortByTitleDesc:
         setState(() {
@@ -221,7 +221,7 @@ class _HomePageState extends State<HomePage>
                 b.title.toLowerCase().compareTo(a.title.toLowerCase()),
           );
         });
-        setSortingOrder(sortByTitleDesc);
+        _setSortingOrder(sortByTitleDesc);
         break;
       case sortByReleaseDateAsc:
         setState(() {
@@ -229,7 +229,7 @@ class _HomePageState extends State<HomePage>
             (Project a, Project b) => a.createdAt.compareTo(b.createdAt),
           );
         });
-        setSortingOrder(sortByReleaseDateAsc);
+        _setSortingOrder(sortByReleaseDateAsc);
         break;
       case sortByReleaseDateDesc:
         setState(() {
@@ -237,7 +237,7 @@ class _HomePageState extends State<HomePage>
             (Project a, Project b) => b.createdAt.compareTo(a.createdAt),
           );
         });
-        setSortingOrder(sortByReleaseDateDesc);
+        _setSortingOrder(sortByReleaseDateDesc);
         break;
     }
   }
@@ -304,13 +304,13 @@ class _HomePageState extends State<HomePage>
               context: context,
               icon: Icons.public,
               title: appTitle,
-              onTap: () => _setNavigation(RouteGenerator.citizenSciencePage),
+              onTap: () => _setNavigation(citizenSciencePage),
             ),
             _buildDrawerItem(
               context: context,
               icon: Icons.category,
               title: onboarding,
-              onTap: () => _setNavigation(RouteGenerator.onboardingPage),
+              onTap: () => _setNavigation(onboardingPage),
             ),
           ],
         ),
@@ -395,10 +395,10 @@ class _HomePageState extends State<HomePage>
   Future<void> _launchWeb(String title, String url) async {
     return await Navigator.pushNamed(
       context,
-      RouteGenerator.webPage,
+      webPage,
       arguments: {
-        RouteGenerator.title: title,
-        RouteGenerator.url: url,
+        argTitle: title,
+        argUrl: url,
       },
     );
   }
@@ -581,7 +581,7 @@ class _HomePageState extends State<HomePage>
   Future<void> _navigateToEntry(int index) async {
     final result = await Navigator.pushNamed(
       context,
-      RouteGenerator.entry,
+      projectPage,
       arguments: {
         'project': _projectList[index],
         'projectTitle': _projectList[index].title,
@@ -613,7 +613,7 @@ class _HomePageState extends State<HomePage>
     return order;
   }
 
-  Future<void> setSortingOrder(String value) async {
+  Future<void> _setSortingOrder(String value) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString(_sortOrder, value);
   }
@@ -679,11 +679,11 @@ class _HomePageState extends State<HomePage>
           if (experimentItem.name.isEmpty) {
             Navigator.pop(context);
           } else if (experimentItem.name == 'Rechner') {
-            Navigator.popAndPushNamed(context, RouteGenerator.calculatorPage);
+            Navigator.popAndPushNamed(context, calculatorPage);
           } else if (experimentItem.name == 'Stoppuhr') {
-            Navigator.popAndPushNamed(context, RouteGenerator.stopwatchPage);
+            Navigator.popAndPushNamed(context, stopwatchPage);
           } else if (experimentItem.name == 'Ortsbestimmung') {
-            Navigator.popAndPushNamed(context, RouteGenerator.sensorPage);
+            Navigator.popAndPushNamed(context, locationPage);
           }
         },
         child: Container(

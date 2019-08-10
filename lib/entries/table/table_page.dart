@@ -167,12 +167,12 @@ class _TablePageState extends State<TablePage> {
   void _setInfoPage() {
     Navigator.pushNamed(
       context,
-      RouteGenerator.infoPage,
+      infoPage,
       arguments: {
-        RouteGenerator.title: 'Tabellen-Info',
-        RouteGenerator.tabLength: 2,
-        RouteGenerator.tabs: tableTabList,
-        RouteGenerator.tabChildren: tableSingleChildScrollViewList,
+        argTitle: 'Tabellen-Info',
+        argTabLength: 2,
+        argTabs: tableTabList,
+        argTabChildren: tableSingleChildScrollViewList,
       },
     );
   }
@@ -186,7 +186,7 @@ class _TablePageState extends State<TablePage> {
         onPressed: () {
           Navigator.popUntil(
             context,
-            ModalRoute.withName(RouteGenerator.routeHomePage),
+            ModalRoute.withName(routeHomePage),
           );
         },
       ),

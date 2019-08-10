@@ -401,11 +401,11 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
           if (experimentItem.name.isEmpty) {
             Navigator.pop(context);
           } else if (experimentItem.name == 'Rechner') {
-            Navigator.popAndPushNamed(context, RouteGenerator.calculatorPage);
+            Navigator.popAndPushNamed(context, calculatorPage);
           } else if (experimentItem.name == 'Stoppuhr') {
-            Navigator.popAndPushNamed(context, RouteGenerator.stopwatchPage);
+            Navigator.popAndPushNamed(context, stopwatchPage);
           } else if (experimentItem.name == 'Ortsbestimmung') {
-            Navigator.popAndPushNamed(context, RouteGenerator.sensorPage);
+            Navigator.popAndPushNamed(context, locationPage);
           }
         },
         child: Container(
@@ -459,20 +459,20 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   void _openNotePage(String type, [Note note]) {
     switch (type) {
       case 'Text':
-        _setList(note, RouteGenerator.textPage);
+        _setList(note, textPage);
         break;
       case 'Tabelle':
-        _setList(note, RouteGenerator.tablePage);
+        _setList(note, tablePage);
         break;
       case 'Bild':
-        _setList(note, RouteGenerator.imagePage);
+        _setList(note, imagePage);
         break;
       case 'Verlinkung':
-        _setList(note, RouteGenerator.linkingPage);
+        _setList(note, webLinkPage);
         break;
       case 'Audio':
         //_setPermission();
-        _setList(note, RouteGenerator.audioRecordPage);
+        _setList(note, audioRecordPage);
         break;
     }
   }
@@ -489,9 +489,9 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
       context,
       route,
       arguments: {
-        RouteGenerator.projectUuid: widget.project.uuid,
+        argProjectUuid: widget.project.uuid,
         //RouteGenerator.project: widget.project.id,
-        RouteGenerator.note: note,
+        argNote: note,
       },
     ) as Note;
 

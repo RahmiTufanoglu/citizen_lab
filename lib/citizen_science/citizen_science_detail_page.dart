@@ -105,10 +105,10 @@ class _DetailPageState extends State<DetailPage> {
   Future<void> _launchWeb() async {
     return await Navigator.pushNamed(
       context,
-      RouteGenerator.webPage,
+      webPage,
       arguments: {
-        RouteGenerator.title: widget.title,
-        RouteGenerator.url: widget.url,
+        argTitle: widget.title,
+        argUrl: widget.url,
       },
     );
   }

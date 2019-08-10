@@ -156,12 +156,12 @@ class _ImagePageState extends State<ImagePage> {
   void _setInfoPage() {
     Navigator.pushNamed(
       context,
-      RouteGenerator.infoPage,
+      infoPage,
       arguments: {
-        RouteGenerator.title: 'Bild-Info',
-        RouteGenerator.tabLength: 2,
-        RouteGenerator.tabs: imageTabList,
-        RouteGenerator.tabChildren: imageSingleChildScrollViewList,
+        argTitle: 'Bild-Info',
+        argTabLength: 2,
+        argTabs: imageTabList,
+        argTabChildren: imageSingleChildScrollViewList,
       },
     );
   }
@@ -177,7 +177,7 @@ class _ImagePageState extends State<ImagePage> {
           onPressed: () {
             Navigator.popUntil(
               context,
-              ModalRoute.withName(RouteGenerator.routeHomePage),
+              ModalRoute.withName(routeHomePage),
             );
           },
         );

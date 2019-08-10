@@ -148,7 +148,7 @@ class _GeolocationPageState extends State<GeolocationPage>
           onPressed: () {
             Navigator.popUntil(
               context,
-              ModalRoute.withName(RouteGenerator.routeHomePage),
+              ModalRoute.withName(routeHomePage),
             );
           },
         );

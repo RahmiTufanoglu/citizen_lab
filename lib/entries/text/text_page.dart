@@ -224,7 +224,7 @@ class _TextPageState extends State<TextPage> {
           onPressed: () {
             Navigator.popUntil(
               context,
-              ModalRoute.withName(RouteGenerator.routeHomePage),
+              ModalRoute.withName(routeHomePage),
             );
           },
         );
@@ -235,12 +235,12 @@ class _TextPageState extends State<TextPage> {
   void _setInfoPage() {
     Navigator.pushNamed(
       context,
-      RouteGenerator.infoPage,
+      infoPage,
       arguments: {
-        RouteGenerator.title: 'Text-Info',
-        RouteGenerator.tabLength: 3,
-        RouteGenerator.tabs: textTabList,
-        RouteGenerator.tabChildren: textSingleChildScrollViewList,
+        argTitle: 'Text-Info',
+        argTabLength: 3,
+        argTabs: textTabList,
+        argTabChildren: textSingleChildScrollViewList,
       },
     );
   }
