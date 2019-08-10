@@ -6,7 +6,7 @@ import 'dart:ui';
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/custom_widgets/set_title_widget.dart';
 import 'package:citizen_lab/custom_widgets/simple_timer_dialog.dart';
-import 'package:citizen_lab/database/database_provider.dart';
+import 'package:citizen_lab/database/database_helper.dart';
 import 'package:citizen_lab/entries/note.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/utils/date_formatter.dart';
@@ -121,8 +121,7 @@ class _ImagePageState extends State<ImagePage> {
     );
   }
 
-  // TODO: Fehler wird nicht angezeigt
-  Future<void> _shareContent() async {
+  Future _shareContent() async {
     if (_image != null) {
       /*try {
         final channelName = 'rahmitufanoglu.citizenlab';

@@ -22,8 +22,8 @@ class AlarmDialog extends StatefulWidget {
 }
 
 class _AlarmDialogState extends State<AlarmDialog> {
-  final String yes = 'Ja';
-  final String no = 'Nein';
+  final String _yes = 'Ja';
+  final String _no = 'Nein';
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +68,7 @@ class _AlarmDialogState extends State<AlarmDialog> {
                     ),
                     onPressed: () => Navigator.pop(context, false),
                     child: Text(
-                      no,
+                      _no,
                       style: TextStyle(fontSize: 18.0),
                     ),
                   ),
@@ -87,7 +87,7 @@ class _AlarmDialogState extends State<AlarmDialog> {
                     ),
                     onPressed: widget.onTap,
                     child: Text(
-                      yes,
+                      _yes,
                       style: TextStyle(fontSize: 18.0),
                     ),
                   ),

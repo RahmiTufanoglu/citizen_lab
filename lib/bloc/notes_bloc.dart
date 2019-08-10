@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:citizen_lab/database/database_provider.dart';
+import 'package:citizen_lab/database/database_helper.dart';
 import 'package:citizen_lab/entries/note.dart';
 import 'package:meta/meta.dart';
 

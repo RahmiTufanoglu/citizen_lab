@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:citizen_lab/database/database_provider.dart';
+import 'package:citizen_lab/database/database_helper.dart';
 import 'package:citizen_lab/projects/project.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/utils/constants.dart';

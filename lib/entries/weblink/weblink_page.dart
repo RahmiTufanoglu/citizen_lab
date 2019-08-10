@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/custom_widgets/simple_timer_dialog.dart';
-import 'package:citizen_lab/database/database_provider.dart';
+import 'package:citizen_lab/database/database_helper.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/utils/date_formatter.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
@@ -236,7 +236,6 @@ class _WeblinkPageState extends State<WeblinkPage> {
   }
 
   Future _saveNote() async {
-    //if (_titleEditingController.text.isNotEmpty && _url.isNotEmpty) {
     if (_url.isNotEmpty) {
       if (widget.note == null) {
         final Note note = Note(
@@ -254,12 +253,10 @@ class _WeblinkPageState extends State<WeblinkPage> {
           0xFFFFFFFF,
           0xFF000000,
         );
-        //await _noteDb.insertNote(note: newNote);
         Navigator.pop(context, note);
       } else {
         await _updateNote(widget.note);
       }
-      //Navigator.pop(context, true);
     } else {
       /*_scaffoldKey.currentState.showSnackBar(
         _buildSnackBarWithButton(

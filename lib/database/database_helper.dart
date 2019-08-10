@@ -10,8 +10,6 @@ import 'note_dao.dart';
 class DatabaseHelper implements ProjectDao, NoteDao {
   static final DatabaseHelper db = DatabaseHelper._();
 
-  //factory DatabaseProvider() => _instance;
-
   DatabaseHelper._();
 
   Database _db;
@@ -74,10 +72,10 @@ class DatabaseHelper implements ProjectDao, NoteDao {
 
   Future<Database> get database async {
     //return _db != null ? _db : _db = await initDb();
-    return _db ?? await initDb();
+    return _db ?? await _initDb();
   }
 
-  Future<Database> initDb() async {
+  Future<Database> _initDb() async {
     final String databasesPath = await getDatabasesPath();
     final String path = join(databasesPath, projectTable);
     final Database db = await openDatabase(

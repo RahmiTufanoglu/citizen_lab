@@ -6,7 +6,7 @@ import 'package:citizen_lab/custom_widgets/column_row_edit_widget.dart';
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/custom_widgets/simple_timer_dialog.dart';
 import 'package:citizen_lab/custom_widgets/table_widget.dart';
-import 'package:citizen_lab/database/database_provider.dart';
+import 'package:citizen_lab/database/database_helper.dart';
 import 'package:citizen_lab/entries/note.dart';
 import 'package:citizen_lab/entries/table/table_info_page_data.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
@@ -38,7 +38,7 @@ class _TablePageState extends State<TablePage> {
   final _descriptionEditingController = TextEditingController();
   final _rowTextEditingController = TextEditingController();
   final _columnTextEditingController = TextEditingController();
-  final _listTextEditingController = <TextEditingController>[];
+  final _listTextEditingController = List<TextEditingController>();
 
   ThemeChangerProvider _themeChanger;
   File _csv;

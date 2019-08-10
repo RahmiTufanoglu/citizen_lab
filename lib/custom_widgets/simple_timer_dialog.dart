@@ -12,9 +12,6 @@ class SimpleTimerDialog extends StatefulWidget {
   final GestureTapCallback onPressedClose;
   final bool descExists;
 
-  //final TitleProvider titleProvider;
-  //final String title;
-
   const SimpleTimerDialog({
     @required this.createdAt,
     @required this.textEditingController,
@@ -23,8 +20,6 @@ class SimpleTimerDialog extends StatefulWidget {
     @required this.onPressedUpdate,
     @required this.onPressedClose,
     @required this.descExists,
-    //@required this.titleProvider,
-    //@required this.title,
   })  : assert(createdAt != null),
         assert(textEditingController != null),
         assert(descEditingController != null),

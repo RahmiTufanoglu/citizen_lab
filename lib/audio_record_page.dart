@@ -16,7 +16,7 @@ import 'package:provider/provider.dart';
 
 import 'custom_widgets/no_yes_dialog.dart';
 import 'custom_widgets/simple_timer_dialog.dart';
-import 'database/database_provider.dart';
+import 'database/database_helper.dart';
 import 'entries/image/image_info_page_data.dart';
 import 'entries/note.dart';
 

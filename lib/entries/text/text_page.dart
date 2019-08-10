@@ -1,10 +1,9 @@
 import 'dart:async';
 import 'dart:typed_data';
 
-import 'package:citizen_lab/bloc/title_bloc.dart';
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/custom_widgets/title_desc_widget.dart';
-import 'package:citizen_lab/database/database_provider.dart';
+import 'package:citizen_lab/database/database_helper.dart';
 import 'package:citizen_lab/entries/formulation_item.dart';
 import 'package:citizen_lab/entries/note.dart';
 import 'package:citizen_lab/entries/text/text_info_page_data.dart';
@@ -20,7 +19,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../../formulations.dart';
-import '../../title_change_provider.dart';
 
 class TextPage extends StatefulWidget {
   final Key key;
@@ -43,16 +41,12 @@ class _TextPageState extends State<TextPage> {
   final _descEditingController = TextEditingController();
   final _noteDb = DatabaseHelper.db;
 
-  final _titleBloc = TitleBloc();
-
   ThemeChangerProvider _themeChanger;
-  TitleChangerProvider _titleChanger;
+  PdfCreator _pdfCreator;
   String _title = '';
   String _savedTitle = '';
   String _createdAt = '';
   String _editedAt = '';
-
-  PdfCreator _pdfCreator;
 
   @override
   void initState() {
@@ -84,7 +78,6 @@ class _TextPageState extends State<TextPage> {
   void dispose() {
     _titleEditingController.dispose();
     _descEditingController.dispose();
-    _titleBloc.dispose();
     super.dispose();
   }
 
@@ -103,8 +96,6 @@ class _TextPageState extends State<TextPage> {
   Widget _buildBody() {
     return TitleDescWidget(
       uuid: widget.uuid,
-      titleBloc: _titleBloc,
-      titleChanger: _titleChanger,
       title: _title,
       createdAt: _createdAt,
       titleEditingController: _titleEditingController,
@@ -132,19 +123,6 @@ class _TextPageState extends State<TextPage> {
             message: noteType,
             child: Text((_title != null) ? _title : noteType),
           ),
-          /*child: Tooltip(
-            message: noteType,
-            child: StreamBuilder(
-              stream: _titleBloc.title,
-              builder: (
-                BuildContext context,
-                AsyncSnapshot snapshot,
-              ) {
-                print(snapshot.data);
-                return Text((_title != null) ? snapshot.data : noteType);
-              },
-            ),
-          ),*/
         ),
       ),
       actions: <Widget>[
@@ -261,9 +239,7 @@ class _TextPageState extends State<TextPage> {
           0xFFFFFFFF,
           0xFF000000,
         );
-        //await _noteDb.insertNote(note: newNote);
         Navigator.pop(context, note);
-        //_noteBloc.add(newNote);
       } else {
         _checkIfContentEdited() == 1
             ? _updateNote(widget.note)

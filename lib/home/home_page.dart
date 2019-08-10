@@ -1,7 +1,7 @@
 import 'package:citizen_lab/custom_widgets/alarm_dialog.dart';
 import 'package:citizen_lab/custom_widgets/dial_floating_action_button.dart';
 import 'package:citizen_lab/custom_widgets/feedback_dialog.dart';
-import 'package:citizen_lab/database/database_provider.dart';
+import 'package:citizen_lab/database/database_helper.dart';
 import 'package:citizen_lab/entries/formulation_item.dart';
 import 'package:citizen_lab/home/main_drawer.dart';
 import 'package:citizen_lab/projects/project.dart';

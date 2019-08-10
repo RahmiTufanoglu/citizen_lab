@@ -10,13 +10,13 @@ class CalculatorPage extends StatefulWidget {
 
 class _CalculatorPageState extends State<CalculatorPage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  ThemeChangerProvider _themeChanger;
 
+  ThemeChangerProvider _themeChanger;
+  String _out = '0';
   String output = '0';
-  String _output = '0';
-  double num1 = 0.0;
-  double num2 = 0.0;
-  String operand = '';
+  double _num1 = 0.0;
+  double _num2 = 0.0;
+  String _operand = '';
 
   @override
   Widget build(BuildContext context) {
@@ -113,51 +113,51 @@ class _CalculatorPageState extends State<CalculatorPage> {
     );
   }
 
-  _buttonPressed(String buttonText) {
+  void _buttonPressed(String buttonText) {
     if (buttonText == 'CLEAR') {
-      _output = '0';
-      num1 = 0.0;
-      num2 = 0.0;
-      operand = '';
+      _out = '0';
+      _num1 = 0.0;
+      _num2 = 0.0;
+      _operand = '';
     } else if (buttonText == '+' ||
         buttonText == '-' ||
         buttonText == '/' ||
         buttonText == 'X') {
-      num1 = double.parse(output);
-      operand = buttonText;
-      _output = '0';
+      _num1 = double.parse(output);
+      _operand = buttonText;
+      _out = '0';
     } else if (buttonText == '.') {
-      if (_output.contains('.')) {
+      if (_out.contains('.')) {
         return;
       } else {
-        _output = _output + buttonText;
+        _out = _out + buttonText;
       }
     } else if (buttonText == '=') {
-      num2 = double.parse(output);
+      _num2 = double.parse(output);
 
-      switch (operand) {
+      switch (_operand) {
         case '+':
-          _output = (num1 + num2).toString();
+          _out = (_num1 + _num2).toString();
           break;
         case '-':
-          _output = (num1 - num2).toString();
+          _out = (_num1 - _num2).toString();
           break;
         case 'X':
-          _output = (num1 - num2).toString();
+          _out = (_num1 - _num2).toString();
           break;
         case '/':
-          _output = (num1 / num2).toString();
+          _out = (_num1 / _num2).toString();
           break;
       }
 
-      num1 = 0.0;
-      num2 = 0.0;
-      operand = '';
+      _num1 = 0.0;
+      _num2 = 0.0;
+      _operand = '';
     } else {
-      _output = _output + buttonText;
+      _out = _out + buttonText;
     }
 
-    setState(() => output = double.parse(_output).toStringAsFixed(2));
+    setState(() => output = double.parse(_out).toStringAsFixed(2));
   }
 
   Widget _buildButton(String buttonText) {

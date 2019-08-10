@@ -4,7 +4,7 @@ import 'package:citizen_lab/utils/date_formatter.dart';
 import 'package:citizen_lab/utils/utils.dart';
 import 'package:flutter/material.dart';
 
-import 'database/database_provider.dart';
+import 'database/database_helper.dart';
 import 'entries/note.dart';
 
 class ProjectTemplatePage extends StatefulWidget {

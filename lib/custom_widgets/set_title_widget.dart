@@ -18,9 +18,7 @@ class _SetTitleWidgetState extends State<SetTitleWidget> {
   final _formKey = GlobalKey<FormState>();
 
   @override
-  Widget build(BuildContext context) {
-    return _setTitleDialog();
-  }
+  Widget build(BuildContext context) => _setTitleDialog();
 
   Widget _setTitleDialog() {
     const String title = 'Titel';

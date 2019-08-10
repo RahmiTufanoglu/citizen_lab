@@ -18,16 +18,19 @@ class _GeolocationPageState extends State<GeolocationPage>
     with SingleTickerProviderStateMixin {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _geolocator = Geolocator();
+  final String latitude = 'Breitengrad';
+  final String longitude = 'Längengrad';
+  final String accuracy = 'Genauigkeitsgrad';
 
-  Position _position = Position(latitude: 0.0, longitude: 0.0, accuracy: 0.0);
+  Position _position = Position(
+    latitude: 0.0,
+    longitude: 0.0,
+    accuracy: 0.0,
+  );
   AnimationController _animationController;
   Animation<double> _animation;
   Timer _timer;
   ThemeChangerProvider _themeChanger;
-
-  final String latitude = 'Breitengrad';
-  final String longitude = 'Längengrad';
-  final String accuracy = 'Genauigkeitsgrad';
 
   @override
   void initState() {
@@ -65,8 +68,6 @@ class _GeolocationPageState extends State<GeolocationPage>
   @override
   Widget build(BuildContext context) {
     _themeChanger = Provider.of<ThemeChangerProvider>(context);
-    //_themeChanger.checkIfDarkModeEnabled(context);
-    //_checkIfDarkModeEnabled();
 
     return Scaffold(
       key: _scaffoldKey,
@@ -110,19 +111,6 @@ class _GeolocationPageState extends State<GeolocationPage>
     );
   }
 
-  /*void _checkIfDarkModeEnabled() {
-    final ThemeData theme = Theme.of(context);
-    theme.brightness == appDarkTheme().brightness
-        ? _darkModeEnabled = true
-        : _darkModeEnabled = false;
-  }
-
-  void _enableDarkMode() {
-    _darkModeEnabled
-        ? _themeChanger.setTheme(appLightTheme())
-        : _themeChanger.setTheme(appDarkTheme());
-  }*/
-
   void _shareContent() {
     const String sharingNotPossible = 'Teilvorgang nicht möglich.';
 
@@ -137,10 +125,10 @@ class _GeolocationPageState extends State<GeolocationPage>
     }
   }
 
-  Future<void> _backToHomePage() async {
+  void _backToHomePage() {
     const String cancel = 'Notiz abbrechen und zur Hauptseite zurückkehren?';
 
-    await showDialog(
+    showDialog(
       context: context,
       builder: (_) {
         return NoYesDialog(
@@ -212,7 +200,7 @@ class _GeolocationPageState extends State<GeolocationPage>
     );
   }
 
-  Future<Position> _getLocation() async {
+  Future _getLocation() async {
     Position currentPosition;
     try {
       currentPosition = await _geolocator.getCurrentPosition(

@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:citizen_lab/bloc/custom_expansion_tile.dart';
-import 'package:citizen_lab/database/database_provider.dart';
+import 'package:citizen_lab/database/database_helper.dart';
 import 'package:citizen_lab/entries/note.dart';
 import 'package:citizen_lab/projects/project.dart';
 import 'package:citizen_lab/themes/theme.dart';
@@ -9,31 +9,24 @@ import 'package:citizen_lab/utils/date_formatter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../title_change_provider.dart';
-
 class TitleDescWidget extends StatefulWidget {
-  final uuid;
-  final titleBloc;
-  final TitleChangerProvider titleChanger;
+  final String uuid;
   final String title;
   final String createdAt;
-  final titleEditingController;
-  final descEditingController;
+  final TextEditingController titleEditingController;
+  final TextEditingController descEditingController;
   final Function onWillPop;
   final DatabaseHelper db;
 
   const TitleDescWidget({
     @required this.uuid,
-    @required this.titleBloc,
-    @required this.titleChanger,
     @required this.title,
     @required this.createdAt,
     @required this.titleEditingController,
     @required this.descEditingController,
     @required this.onWillPop,
     @required this.db,
-  })  : assert(titleBloc != null),
-        assert(createdAt != null),
+  })  : assert(createdAt != null),
         assert(titleEditingController != null),
         assert(descEditingController != null),
         assert(onWillPop != null);
@@ -43,12 +36,12 @@ class TitleDescWidget extends StatefulWidget {
 }
 
 class _TitleDescWidgetState extends State<TitleDescWidget> {
+  final _titleEditingController = TextEditingController();
   List<Note> noteList = [];
   List<Project> projectList = [];
-  String noteTitle = '';
-  String noteDesc = '';
-  String projectTitle = '';
-  String projectDesc = '';
+  String _noteTitle = '';
+  String _noteDesc = '';
+  String _projectTitle = '';
   Timer _timer;
   String _timeString;
 
@@ -59,6 +52,10 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
 
     _getProjectsFromDb();
     _getNotesFromDb();
+
+    _titleEditingController.addListener(() {
+      setState(() => _projectTitle = _titleEditingController.text);
+    });
 
     super.initState();
   }
@@ -75,9 +72,7 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return _buildWidget();
-  }
+  Widget build(BuildContext context) => _buildWidget();
 
   bool _checkIfDarkModeEnabled() {
     final ThemeData theme = Theme.of(context);
@@ -94,12 +89,7 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
           padding: const EdgeInsets.only(top: 8.0, bottom: 88.0),
           children: <Widget>[
             Card(
-              margin: const EdgeInsets.fromLTRB(
-                16.0,
-                8.0,
-                16.0,
-                0.0,
-              ),
+              margin: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 0.0),
               color: _checkIfDarkModeEnabled() ? Colors.black12 : Colors.white,
               child: CustomExpansionTile(
                 title: const Text(''),
@@ -112,12 +102,7 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
             ),
             _getTextWidget(),
             Card(
-              margin: const EdgeInsets.fromLTRB(
-                16.0,
-                8.0,
-                16.0,
-                0.0,
-              ),
+              margin: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 0.0),
               color: _checkIfDarkModeEnabled() ? Colors.black12 : Colors.white,
               child: CustomExpansionTile(
                 title: const Text(''),
@@ -133,28 +118,6 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
                 children: <Widget>[_getComparisonWidget()],
               ),
             ),
-            /*Card(
-              margin: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 0.0),
-              color: _checkIfDarkModeEnabled() ? Colors.black12 : Colors.white,
-              child: CustomExpansionTile(
-                title: Text(''),
-                leading: Padding(
-                  padding: EdgeInsets.only(left: (screenWith / 2) - 80.0),
-                  child: Row(
-                    children: <Widget>[
-                      Icon(Icons.description),
-                      SizedBox(width: 8.0),
-                      Icon(Icons.compare_arrows),
-                      SizedBox(width: 8.0),
-                      Icon(Icons.description),
-                    ],
-                  ),
-                ),
-                children: <Widget>[
-                  _getComparisonWidget(),
-                ],
-              ),
-            ),*/
           ],
         ),
       ),
@@ -206,12 +169,7 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
     return Column(
       children: <Widget>[
         Card(
-          margin: const EdgeInsets.fromLTRB(
-            16.0,
-            16.0,
-            16.0,
-            8.0,
-          ),
+          margin: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 8.0),
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -224,18 +182,12 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                StreamBuilder(
-                  stream: widget.titleBloc.title,
-                  builder: (BuildContext context, AsyncSnapshot snapshot) =>
-                      _buildTextField(
+                _buildTextField(
                     controller: widget.titleEditingController,
                     maxLength: 100,
                     maxLines: 1,
                     hintText: titleHere,
-                    onChanged: widget.titleBloc.changeTitle,
-                    snapshot: snapshot,
-                  ),
-                ),
+                    errorText: 'Bitte einen Titel eingeben'),
                 const Divider(color: Colors.black),
                 Text(
                   'Beschreibung:',
@@ -250,8 +202,7 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
                   maxLength: 500,
                   maxLines: 10,
                   hintText: contentHere,
-                  onChanged: null,
-                  snapshot: null,
+                  errorText: 'Bitte eine Beschreiung eingeben',
                 ),
               ],
             ),
@@ -312,8 +263,8 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
                 .toList(),
             onChanged: (Note note) {
               setState(() {
-                noteTitle = note.title;
-                noteDesc = note.description;
+                _noteTitle = note.title;
+                _noteDesc = note.description;
               });
             },
             isExpanded: true,
@@ -334,7 +285,7 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
           ),
           const SizedBox(height: 8.0),
           Text(
-            noteTitle,
+            _noteTitle,
             style: TextStyle(fontSize: 16.0),
           ),
           const SizedBox(height: 24.0),
@@ -347,7 +298,7 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
           ),
           const SizedBox(height: 8.0),
           Text(
-            noteDesc,
+            _noteDesc,
             style: TextStyle(fontSize: 16.0),
           ),
         ],
@@ -371,13 +322,12 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
     }
   }
 
-  TextField _buildTextField({
+  Widget _buildTextField({
     @required TextEditingController controller,
     @required int maxLines,
     @required int maxLength,
     @required String hintText,
-    @required ValueChanged<String> onChanged,
-    @required AsyncSnapshot snapshot,
+    @required String errorText,
   }) {
     return TextField(
       controller: controller,
@@ -385,10 +335,9 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
       maxLines: maxLines,
       maxLength: maxLength,
       style: TextStyle(fontSize: 16.0),
-      onChanged: onChanged,
       decoration: InputDecoration(
         hintText: '...',
-        errorText: (snapshot != null) ? snapshot.error : '',
+        errorText: controller.text.isEmpty ? errorText : null,
         focusedErrorBorder: _buildUnderlineInputBorder(),
         errorBorder: _buildUnderlineInputBorder(),
         enabledBorder: _buildUnderlineInputBorder(),

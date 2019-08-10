@@ -34,6 +34,7 @@ class SimpleTimerPage extends StatefulWidget {
 
 class _SimpleTimerPageState extends State<SimpleTimerPage> {
   final _formKey = GlobalKey<FormState>();
+
   String _timeString;
   Timer _timer;
 

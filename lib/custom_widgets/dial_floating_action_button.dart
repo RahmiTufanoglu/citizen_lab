@@ -6,14 +6,11 @@ class DialFloatingActionButton extends StatefulWidget {
   final IconData firstIcon;
   final IconData secondIcon;
   final List<Icon> iconList;
-
-  //final List<Color> colorList;
   final List<String> stringList;
   final Function function;
 
   const DialFloatingActionButton({
     @required this.iconList,
-    //@required this.colorList,
     @required this.stringList,
     @required this.function,
     this.firstIcon = Icons.add,
@@ -30,13 +27,6 @@ class DialFloatingActionButton extends StatefulWidget {
 class _DialFloatingActionButtonState extends State<DialFloatingActionButton>
     with TickerProviderStateMixin {
   AnimationController _animationController;
-
-  /*static const List<IconData> _iconList = const [
-    Icons.link,
-    Icons.camera_alt,
-    Icons.table_chart,
-    Icons.edit,
-  ];*/
 
   @override
   void initState() {
