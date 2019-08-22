@@ -136,7 +136,7 @@ class _GeolocationPageState extends State<GeolocationPage>
           onPressed: () {
             Navigator.popUntil(
               context,
-              ModalRoute.withName(routeHomePage),
+              ModalRoute.withName(CustomRoute.routeHomePage),
             );
           },
         );
@@ -156,7 +156,9 @@ class _GeolocationPageState extends State<GeolocationPage>
             (_position != null)
                 ? Center(
                     child: Text(
-                      '$latitude: ${_position.latitude.toString()}\n$longitude: ${_position.longitude.toString()}\n$accuracy: ${_position.accuracy.toString()}',
+                      '$latitude: ${_position.latitude.toString()}\n'
+                      '$longitude: ${_position.longitude.toString()}\n'
+                      '$accuracy: ${_position.accuracy.toString()}',
                       style: TextStyle(
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold,

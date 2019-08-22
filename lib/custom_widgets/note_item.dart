@@ -95,7 +95,7 @@ class NoteItem extends StatelessWidget {
     );
   }
 
-  Icon _getIcon({@required Note note}) {
+  Widget _getIcon({@required Note note}) {
     switch (note.type) {
       case 'Text':
         return Icon(

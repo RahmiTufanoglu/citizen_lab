@@ -103,7 +103,7 @@ class _ColumnRowEditingWidgetState extends State<ColumnRowEditingWidget> {
                     ),
                     validator: (text) {
                       final bool _columnNumeric =
-                          Utils.isNumeric(widget.columnEditingController.text);
+                          isNumeric(widget.columnEditingController.text);
 
                       if (text.isEmpty || !_columnNumeric || text.length > 8) {
                         return plsEnterANumber;
@@ -138,7 +138,7 @@ class _ColumnRowEditingWidgetState extends State<ColumnRowEditingWidget> {
                     ),
                     validator: (text) {
                       final bool _rowNumeric =
-                          Utils.isNumeric(widget.rowEditingController.text);
+                          isNumeric(widget.rowEditingController.text);
 
                       if (text.isEmpty || !_rowNumeric) {
                         return plsEnterANumber;

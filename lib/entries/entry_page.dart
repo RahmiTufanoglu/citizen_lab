@@ -19,16 +19,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../entry_fab_data.dart';
 import '../note_search_page.dart';
-import 'formulation_item.dart';
+import 'text/text_template_item.dart';
 
-class EntryPage extends StatefulWidget {
+class NotePage extends StatefulWidget {
   final bool isFromProjectPage;
   final bool isFromProjectSearchPage;
   final String projectTitle;
   final Project project;
   final Note note;
 
-  const EntryPage({
+  const NotePage({
     @required this.isFromProjectPage,
     @required this.isFromProjectSearchPage,
     @required this.projectTitle,
@@ -37,38 +37,24 @@ class EntryPage extends StatefulWidget {
   });
 
   @override
-  _EntryPageState createState() => _EntryPageState();
+  _NotePageState createState() => _NotePageState();
 }
 
-class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
+class _NotePageState extends State<NotePage> with TickerProviderStateMixin {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _titleProjectController = TextEditingController();
   final _descProjectController = TextEditingController();
   final _textEditingController = TextEditingController();
   final _projectDb = DatabaseHelper.db;
-
-  //NotesBloc _notesBloc;
-  ThemeChangerProvider _themeChanger;
-
-  String _title;
-  String _createdAt;
-
-  //AsyncSnapshot _snapshot;
   final List<Note> _noteList = [];
 
-  String createdAtDesc = 'created_at DESC';
-  String createdAtAsc = 'created_at ASC';
-  String titleDesc = 'title DESC';
-  String titleAsc = 'title ASC';
+  ThemeChangerProvider _themeChanger;
+  String _title;
+  String _createdAt;
 
   @override
   void initState() {
     super.initState();
-
-    /*_notesBloc = NotesBloc(
-      random: widget.project.random,
-      order: _order,
-    );*/
 
     _loadNoteList();
 
@@ -85,7 +71,6 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   @override
   void dispose() {
     _textEditingController.dispose();
-    //_notesBloc.dispose();
     super.dispose();
   }
 
@@ -117,7 +102,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   Widget _buildAppBar() {
     return AppBar(
       leading: IconButton(
-        tooltip: back,
+        tooltip: Constants.back,
         icon: Icon(Icons.arrow_back),
         onPressed: () {
           Navigator.pop(context, true);
@@ -151,9 +136,9 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
         PopupMenuButton(
           icon: Icon(Icons.sort),
           elevation: 2.0,
-          tooltip: sortOptions,
+          tooltip: Constants.sortOptions,
           onSelected: _choiceSortOption,
-          itemBuilder: (BuildContext context) => choices.map(
+          itemBuilder: (BuildContext context) => Constants.choices.map(
             (String choice) {
               return PopupMenuItem<String>(
                 value: choice,
@@ -192,7 +177,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
               )
             : Center(
                 child: Text(
-                  emptyList,
+                  Constants.emptyList,
                   style: TextStyle(fontSize: 24.0),
                 ),
               ),
@@ -260,7 +245,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
               width: screenWidth / 2,
               child: GridView.builder(
                 padding: const EdgeInsets.all(8.0),
-                itemCount: cardColors.length,
+                itemCount: AppColors().cardColors.length,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 4,
                 ),
@@ -268,13 +253,13 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: FloatingActionButton(
-                      backgroundColor:
-                          Color(cardColors[index].cardBackgroundColor),
+                      backgroundColor: Color(
+                          AppColors().cardColors[index].cardBackgroundColor),
                       onPressed: () {
                         _updateNote(
                           note,
-                          cardColors[index].cardBackgroundColor,
-                          cardColors[index].cardItemColor,
+                          AppColors().cardColors[index].cardBackgroundColor,
+                          AppColors().cardColors[index].cardItemColor,
                         );
                       },
                     ),
@@ -364,11 +349,11 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   }
 
   void _openModalBottomSheet() {
-    final List<FormulationItem> experimentItems = [
-      FormulationItem('', Icons.keyboard_arrow_down),
-      FormulationItem('Rechner', Icons.straighten),
-      FormulationItem('Stoppuhr', Icons.timer),
-      FormulationItem('Ortsbestimmung', Icons.location_on),
+    final List<TextTemplateItem> experimentItems = [
+      TextTemplateItem('', Icons.keyboard_arrow_down),
+      TextTemplateItem('Rechner', Icons.straighten),
+      TextTemplateItem('Stoppuhr', Icons.timer),
+      TextTemplateItem('Ortsbestimmung', Icons.location_on),
     ];
 
     final List<Widget> experimentItemsWidgets = [];
@@ -391,7 +376,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
     );
   }
 
-  Widget _createTile(FormulationItem experimentItem, bool centerIcon) {
+  Widget _createTile(TextTemplateItem experimentItem, bool centerIcon) {
     final double screenHeight = MediaQuery.of(context).size.height;
     final double tileHeight = screenHeight / 12;
 
@@ -401,11 +386,11 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
           if (experimentItem.name.isEmpty) {
             Navigator.pop(context);
           } else if (experimentItem.name == 'Rechner') {
-            Navigator.popAndPushNamed(context, calculatorPage);
+            Navigator.popAndPushNamed(context, CustomRoute.calculatorPage);
           } else if (experimentItem.name == 'Stoppuhr') {
-            Navigator.popAndPushNamed(context, stopwatchPage);
+            Navigator.popAndPushNamed(context, CustomRoute.stopwatchPage);
           } else if (experimentItem.name == 'Ortsbestimmung') {
-            Navigator.popAndPushNamed(context, locationPage);
+            Navigator.popAndPushNamed(context, CustomRoute.locationPage);
           }
         },
         child: Container(
@@ -459,20 +444,20 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
   void _openNotePage(String type, [Note note]) {
     switch (type) {
       case 'Text':
-        _setList(note, textPage);
+        _setList(note, CustomRoute.textPage);
         break;
       case 'Tabelle':
-        _setList(note, tablePage);
+        _setList(note, CustomRoute.tablePage);
         break;
       case 'Bild':
-        _setList(note, imagePage);
+        _setList(note, CustomRoute.imagePage);
         break;
       case 'Verlinkung':
-        _setList(note, webLinkPage);
+        _setList(note, CustomRoute.webLinkPage);
         break;
       case 'Audio':
         //_setPermission();
-        _setList(note, audioRecordPage);
+        _setList(note, CustomRoute.audioRecordPage);
         break;
     }
   }
@@ -521,7 +506,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
     //return prefs.getString(_kSortingOrderPrefs) ?? sort_by_release_date_desc;
     final order = prefs.getString(_sortingOrderPrefs);
     if (order == null) {
-      return sortByReleaseDateDesc;
+      return Constants.sortByReleaseDateDesc;
     }
     return order;
   }
@@ -605,11 +590,11 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
                 );*/
 
             _scaffoldKey.currentState.showSnackBar(
-              _buildSnackBar(text: listDeleted),
+              _buildSnackBar(text: Constants.listDeleted),
             );
           } else {
             _scaffoldKey.currentState.showSnackBar(
-              _buildSnackBar(text: nothingToDelete),
+              _buildSnackBar(text: Constants.nothingToDelete),
             );
           }
 
@@ -669,25 +654,25 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
 
   void _choiceSortOption(String choice) {
     switch (choice) {
-      case sortByTitleArc:
+      case Constants.sortByTitleArc:
         setState(() {
           _noteList.sort(
             (Note a, Note b) =>
                 a.title.toLowerCase().compareTo(b.title.toLowerCase()),
           );
         });
-        setSortingOrder(sortByTitleArc);
+        setSortingOrder(Constants.sortByTitleArc);
         break;
-      case sortByTitleDesc:
+      case Constants.sortByTitleDesc:
         setState(() {
           _noteList.sort(
             (Note a, Note b) =>
                 b.title.toLowerCase().compareTo(a.title.toLowerCase()),
           );
         });
-        setSortingOrder(sortByTitleDesc);
+        setSortingOrder(Constants.sortByTitleDesc);
         break;
-      case sortByReleaseDateAsc:
+      case Constants.sortByReleaseDateAsc:
         setState(() {
           _noteList.sort(
             (Note a, Note b) {
@@ -697,9 +682,9 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
             },
           );
         });
-        setSortingOrder(sortByReleaseDateAsc);
+        setSortingOrder(Constants.sortByReleaseDateAsc);
         break;
-      case sortByReleaseDateDesc:
+      case Constants.sortByReleaseDateDesc:
         setState(() {
           _noteList.sort(
             (Note a, Note b) {
@@ -709,7 +694,7 @@ class _EntryPageState extends State<EntryPage> with TickerProviderStateMixin {
             },
           );
         });
-        setSortingOrder(sortByReleaseDateDesc);
+        setSortingOrder(Constants.sortByReleaseDateDesc);
         break;
     }
   }

@@ -1,4 +1,5 @@
 import 'package:citizen_lab/onboarding/page_indicator.dart';
+import 'package:citizen_lab/onboarding/page_model.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:flutter/material.dart';
 
@@ -156,7 +157,7 @@ class _OnboardingPageState extends State<OnboardingPage>
   void _setNavigation() {
     Navigator.pushNamed(
       context,
-      homePage,
+      CustomRoute.homePage,
     );
   }
 }

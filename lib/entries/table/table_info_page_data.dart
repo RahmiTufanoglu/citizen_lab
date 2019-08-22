@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:citizen_lab/utils/constants.dart';
+import 'package:flutter/material.dart';
 
 List<Widget> tableTabList = [
   Tab(
@@ -25,10 +25,19 @@ List<Widget> tableTabList = [
 List<Widget> tableSingleChildScrollViewList = [
   SingleChildScrollView(
     padding: const EdgeInsets.all(16.0),
-    child: Text(lorem + lorem + lorem + lorem + lorem + lorem),
+    child: const Text(Constants.lorem +
+        Constants.lorem +
+        Constants.lorem +
+        Constants.lorem +
+        Constants.lorem +
+        Constants.lorem),
   ),
   SingleChildScrollView(
     padding: const EdgeInsets.all(16.0),
-    child: Text(lorem + lorem + lorem + lorem + lorem),
+    child: const Text(Constants.lorem +
+        Constants.lorem +
+        Constants.lorem +
+        Constants.lorem +
+        Constants.lorem),
   ),
 ];

@@ -123,13 +123,13 @@ class _EditProjectDialogState extends State<EditProjectDialog> {
           maxLength: 50,
           maxLines: 1,
           decoration: InputDecoration(
-            hintText: '$titleHere.',
+            hintText: '${Constants.titleHere}.',
             labelStyle: TextStyle(fontSize: 14.0),
           ),
         ),
         const SizedBox(height: 42.0),
         Text(
-          '$desc:',
+          '${Constants.desc}:',
           style: TextStyle(
             fontSize: 16.0,
             fontWeight: FontWeight.bold,
@@ -141,7 +141,7 @@ class _EditProjectDialogState extends State<EditProjectDialog> {
           maxLength: 500,
           maxLines: 10,
           decoration: InputDecoration(
-            hintText: '$descHere.',
+            hintText: '${Constants.descHere}.',
             labelStyle: TextStyle(fontSize: 14.0),
           ),
         ),

@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:citizen_lab/bloc/custom_expansion_tile.dart';
+import 'package:citizen_lab/custom_expansion_tile.dart';
 import 'package:citizen_lab/database/database_helper.dart';
 import 'package:citizen_lab/entries/note.dart';
 import 'package:citizen_lab/projects/project.dart';

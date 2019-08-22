@@ -155,7 +155,7 @@ class _ImagePageState extends State<ImagePage> {
   void _setInfoPage() {
     Navigator.pushNamed(
       context,
-      infoPage,
+      CustomRoute.infoPage,
       arguments: {
         argTitle: 'Bild-Info',
         argTabLength: 2,
@@ -176,7 +176,7 @@ class _ImagePageState extends State<ImagePage> {
           onPressed: () {
             Navigator.popUntil(
               context,
-              ModalRoute.withName(routeHomePage),
+              ModalRoute.withName(CustomRoute.routeHomePage),
             );
           },
         );

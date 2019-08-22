@@ -46,7 +46,7 @@ class _ProjectPageState extends State<ProjectPage> {
   Widget _buildAppBar() {
     return AppBar(
       leading: IconButton(
-        tooltip: back,
+        tooltip: Constants.back,
         icon: Icon(Icons.arrow_back),
         onPressed: () => _onBackPressed(),
       ),
@@ -77,10 +77,10 @@ class _ProjectPageState extends State<ProjectPage> {
         PopupMenuButton(
           icon: Icon(Icons.sort),
           elevation: 2.0,
-          tooltip: sortOptions,
+          tooltip: Constants.sortOptions,
           onSelected: _choiceSortOption,
           itemBuilder: (BuildContext context) {
-            return choices.map(
+            return Constants.choices.map(
               (String choice) {
                 return PopupMenuItem<String>(
                   value: choice,
@@ -109,7 +109,7 @@ class _ProjectPageState extends State<ProjectPage> {
       onPressed: () {
         Navigator.pushNamed(
           context,
-          createProjectPage,
+          CustomRoute.createProjectPage,
         );
       },
       child: const Icon(Icons.add),
@@ -148,7 +148,7 @@ class _ProjectPageState extends State<ProjectPage> {
 
   void _choiceSortOption(String choice) {
     switch (choice) {
-      case sortByTitleArc:
+      case Constants.sortByTitleArc:
         setState(() {
           _projectList.sort(
             (Project a, Project b) =>
@@ -156,7 +156,7 @@ class _ProjectPageState extends State<ProjectPage> {
           );
         });
         break;
-      case sortByTitleDesc:
+      case Constants.sortByTitleDesc:
         setState(() {
           _projectList.sort(
             (Project a, Project b) =>
@@ -164,14 +164,14 @@ class _ProjectPageState extends State<ProjectPage> {
           );
         });
         break;
-      case sortByReleaseDateAsc:
+      case Constants.sortByReleaseDateAsc:
         setState(() {
           _projectList.sort(
             (Project a, Project b) => a.createdAt.compareTo(b.createdAt),
           );
         });
         break;
-      case sortByReleaseDateDesc:
+      case Constants.sortByReleaseDateDesc:
         setState(() {
           _projectList.sort(
             (Project a, Project b) => b.createdAt.compareTo(a.createdAt),
@@ -236,7 +236,7 @@ class _ProjectPageState extends State<ProjectPage> {
               )
             : Center(
                 child: Text(
-                  emptyList,
+                  Constants.emptyList,
                   style: TextStyle(fontSize: 24.0),
                 ),
               ),
@@ -247,7 +247,7 @@ class _ProjectPageState extends State<ProjectPage> {
   Future<void> _navigateToEntry(int index) async {
     final result = await Navigator.pushNamed(
       context,
-      projectPage,
+      CustomRoute.projectPage,
       arguments: {
         'project': _projectList[index],
         'projectTitle': _projectList[index].title,
@@ -297,7 +297,7 @@ class _ProjectPageState extends State<ProjectPage> {
         ),
         children: <Widget>[
           Text(
-            '$title:',
+            '${Constants.title}:',
             style: TextStyle(
               fontSize: 16.0,
               fontWeight: FontWeight.bold,
@@ -310,7 +310,7 @@ class _ProjectPageState extends State<ProjectPage> {
           ),
           const SizedBox(height: 32.0),
           Text(
-            '$desc:',
+            '${Constants.desc}:',
             style: TextStyle(
               fontSize: 16.0,
               fontWeight: FontWeight.bold,
@@ -352,7 +352,7 @@ class _ProjectPageState extends State<ProjectPage> {
       setState(() => _projectList.add(Project.map(project)));
     });
 
-    _choiceSortOption(sortByReleaseDateDesc);
+    _choiceSortOption(Constants.sortByReleaseDateDesc);
   }
 
   Future<void> _deleteProject(int index) async {
@@ -367,7 +367,7 @@ class _ProjectPageState extends State<ProjectPage> {
     if (widget.isFromCreateProjectPage) {
       Navigator.popUntil(
         context,
-        ModalRoute.withName(routeHomePage),
+        ModalRoute.withName(CustomRoute.routeHomePage),
       );
       /*} else if (widget.isFromProjectSearchPage) {
       Navigator.pop(context, 'fromEntry');*/

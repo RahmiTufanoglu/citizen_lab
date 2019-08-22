@@ -1,10 +1,10 @@
 import 'package:flutter/widgets.dart';
 
-class FormulationItem {
+class TextTemplateItem {
   String name;
   IconData icon;
 
-  FormulationItem(
+  TextTemplateItem(
     this.name,
     this.icon,
   );

@@ -57,7 +57,7 @@ class _InfoPageState extends State<InfoPage> {
           ),
         ),
       ),
-      actions: <Widget>[],
+      actions: const <Widget>[],
       bottom: TabBar(
         tabs: widget.tabs,
       ),

@@ -22,10 +22,9 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
   final _titleEditingController = TextEditingController();
   final _descEditingController = TextEditingController();
   final _projectDb = DatabaseHelper.db;
-
-  ThemeChangerProvider _themeChanger;
   final List<Project> _projectList = [];
 
+  ThemeChangerProvider _themeChanger;
   Color _buttonColor = Colors.white;
   Color _iconColor = Colors.black;
 
@@ -95,7 +94,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
         child: Container(
           width: double.infinity,
           child: Tooltip(
-            message: createProject,
+            message: Constants.createProject,
             child: const Text(createExperiment),
           ),
         ),
@@ -120,9 +119,9 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
         'tabChildren': createProjectSingleChildScrollViewList,
       },
     );*/
-    Navigator.pushNamed(context, aboutPage, arguments: {
+    Navigator.pushNamed(context, CustomRoute.aboutPage, arguments: {
       'title': 'Das Labornotizbuch',
-      'content': labNotebook,
+      'content': Constants.labNotebook,
     });
   }
 
@@ -195,7 +194,8 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
                     }) {
                       return null;
                     },*/
-                    validator: (text) => text.isEmpty ? enterADesc : null,
+                    validator: (text) =>
+                        text.isEmpty ? Constants.enterADesc : null,
                   ),
                 ],
               ),
@@ -256,20 +256,26 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
   Future<void> _createProject(BuildContext context) async {
     bool _projectExists = false;
     for (int i = 0; i < _projectList.length; i++) {
-      // TODO VORLAGEN BEACHTEN
       if (_projectList[i].title == _titleEditingController.text) {
         _projectExists = true;
         _snackBarKey.currentState.showSnackBar(
-          _buildSnackBar('$chooseAnotherTitle.'),
+          _buildSnackBar('${Constants.chooseAnotherTitle}.'),
         );
         break;
       }
     }
 
+    String randomUuid = generateRandomUuid();
+
+    for (int i = 0; i < _projectList.length; i++) {
+      while (_projectList[i].uuid == randomUuid) {
+        randomUuid = generateRandomUuid();
+      }
+    }
+
     final Project project = Project(
       _titleEditingController.text,
-      //Utils.getRandomNumber(),
-      Utils.generateRandomUuid(),
+      randomUuid,
       _descEditingController.text,
       dateFormatted(),
       dateFormatted(),
@@ -279,14 +285,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
 
     if (_formKey.currentState.validate() && !_projectExists) {
       await _projectDb.insertProject(project: project);
-      // TODO: WORKAROUND
-      //_navigateToEntry(project);
-      //Navigator.pop(context, true);
       Navigator.pop(context, project);
-      /*Navigator.pushNamed(
-        context,
-        RouteGenerator.homePage,
-      );*/
     }
   }
 

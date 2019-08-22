@@ -10,14 +10,14 @@ class PdfCreator {
   String dateCreated;
   String filePath;
 
+  final pdf = Document();
+
   PdfCreator({
     @required this.title,
     @required this.content,
     @required this.dateCreated,
     @required this.filePath,
   });
-
-  final pdf = Document();
 
   void createPdf() {
     pdf.addPage(

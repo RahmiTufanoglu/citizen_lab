@@ -2,7 +2,7 @@ import 'package:citizen_lab/custom_widgets/alarm_dialog.dart';
 import 'package:citizen_lab/custom_widgets/dial_floating_action_button.dart';
 import 'package:citizen_lab/custom_widgets/feedback_dialog.dart';
 import 'package:citizen_lab/database/database_helper.dart';
-import 'package:citizen_lab/entries/formulation_item.dart';
+import 'package:citizen_lab/entries/text/text_template_item.dart';
 import 'package:citizen_lab/home/main_drawer.dart';
 import 'package:citizen_lab/projects/project.dart';
 import 'package:citizen_lab/projects/project_item.dart';
@@ -30,7 +30,6 @@ class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   AnimationController _animationController;
   Animation<double> _animation;
-
   bool _valueSwitch = false;
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -76,8 +75,8 @@ class _HomePageState extends State<HomePage>
         child: Container(
           width: double.infinity,
           child: Tooltip(
-            message: appTitle,
-            child: Text(appTitle),
+            message: Constants.appTitle,
+            child: Text(Constants.appTitle),
           ),
         ),
       ),
@@ -89,10 +88,10 @@ class _HomePageState extends State<HomePage>
         PopupMenuButton(
           icon: Icon(Icons.sort),
           elevation: 2.0,
-          tooltip: sortOptions,
+          tooltip: Constants.sortOptions,
           onSelected: _choiceSortOption,
           itemBuilder: (BuildContext context) {
-            return choices.map(
+            return Constants.choices.map(
               (String choice) {
                 return PopupMenuItem<String>(
                   value: choice,
@@ -145,7 +144,7 @@ class _HomePageState extends State<HomePage>
       case 'Neues Projekt':
         final Project result = await Navigator.pushNamed(
           context,
-          createProjectPage,
+          CustomRoute.createProjectPage,
         ) as Project;
 
         if (result != null) {
@@ -159,7 +158,7 @@ class _HomePageState extends State<HomePage>
       case 'Vorlagen':
         final bool result = await Navigator.pushNamed(
           context,
-          projectTemplatePage,
+          CustomRoute.projectTemplatePage,
         ) as bool;
 
         if (result != null && result) {
@@ -205,39 +204,39 @@ class _HomePageState extends State<HomePage>
 
   void _choiceSortOption(String choice) {
     switch (choice) {
-      case sortByTitleArc:
+      case Constants.sortByTitleArc:
         setState(() {
           _projectList.sort(
             (Project a, Project b) =>
                 a.title.toLowerCase().compareTo(b.title.toLowerCase()),
           );
         });
-        _setSortingOrder(sortByTitleArc);
+        _setSortingOrder(Constants.sortByTitleArc);
         break;
-      case sortByTitleDesc:
+      case Constants.sortByTitleDesc:
         setState(() {
           _projectList.sort(
             (Project a, Project b) =>
                 b.title.toLowerCase().compareTo(a.title.toLowerCase()),
           );
         });
-        _setSortingOrder(sortByTitleDesc);
+        _setSortingOrder(Constants.sortByTitleDesc);
         break;
-      case sortByReleaseDateAsc:
+      case Constants.sortByReleaseDateAsc:
         setState(() {
           _projectList.sort(
             (Project a, Project b) => a.createdAt.compareTo(b.createdAt),
           );
         });
-        _setSortingOrder(sortByReleaseDateAsc);
+        _setSortingOrder(Constants.sortByReleaseDateAsc);
         break;
-      case sortByReleaseDateDesc:
+      case Constants.sortByReleaseDateDesc:
         setState(() {
           _projectList.sort(
             (Project a, Project b) => b.createdAt.compareTo(a.createdAt),
           );
         });
-        _setSortingOrder(sortByReleaseDateDesc);
+        _setSortingOrder(Constants.sortByReleaseDateDesc);
         break;
     }
   }
@@ -281,7 +280,7 @@ class _HomePageState extends State<HomePage>
                 child: Row(
                   children: <Widget>[
                     Text(
-                      appTitle,
+                      Constants.appTitle,
                       style: TextStyle(fontSize: 24.0),
                     ),
                     const Spacer(),
@@ -303,14 +302,14 @@ class _HomePageState extends State<HomePage>
             _buildDrawerItem(
               context: context,
               icon: Icons.public,
-              title: appTitle,
-              onTap: () => _setNavigation(citizenSciencePage),
+              title: Constants.appTitle,
+              onTap: () => _setNavigation(CustomRoute.citizenSciencePage),
             ),
             _buildDrawerItem(
               context: context,
               icon: Icons.category,
-              title: onboarding,
-              onTap: () => _setNavigation(onboardingPage),
+              title: Constants.onboarding,
+              onTap: () => _setNavigation(CustomRoute.onboardingPage),
             ),
           ],
         ),
@@ -344,11 +343,12 @@ class _HomePageState extends State<HomePage>
             _buildDrawerItem(
               context: context,
               icon: Icons.feedback,
-              title: feedback,
+              title: Constants.feedback,
               onTap: () {
                 showDialog(
                   context: context,
-                  builder: (_) => FeedbackDialog(url: fraunhoferUmsichtUrl),
+                  builder: (_) =>
+                      FeedbackDialog(url: Constants.fraunhoferUmsichtUrl),
                 );
               },
             ),
@@ -356,13 +356,15 @@ class _HomePageState extends State<HomePage>
               context: context,
               icon: Icons.info,
               title: about,
-              onTap: () => _launchWeb(about, fraunhoferUmsichtPrivacyStatement),
+              onTap: () => _launchWeb(
+                  about, Constants.fraunhoferUmsichtPrivacyStatement),
             ),
             _buildDrawerItem(
               context: context,
               icon: Icons.info_outline,
               title: impressum,
-              onTap: () => _launchWeb(impressum, fraunhoferUmsichtImpressum),
+              onTap: () =>
+                  _launchWeb(impressum, Constants.fraunhoferUmsichtImpressum),
             ),
           ],
         ),
@@ -395,7 +397,7 @@ class _HomePageState extends State<HomePage>
   Future<void> _launchWeb(String title, String url) async {
     return await Navigator.pushNamed(
       context,
-      webPage,
+      CustomRoute.webPage,
       arguments: {
         argTitle: title,
         argUrl: url,
@@ -533,7 +535,7 @@ class _HomePageState extends State<HomePage>
               width: screenWidth / 2,
               child: GridView.builder(
                 padding: const EdgeInsets.all(8.0),
-                itemCount: cardColors.length,
+                itemCount: AppColors().cardColors.length,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 4,
                 ),
@@ -541,13 +543,13 @@ class _HomePageState extends State<HomePage>
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: FloatingActionButton(
-                      backgroundColor:
-                          Color(cardColors[index].cardBackgroundColor),
+                      backgroundColor: Color(
+                          AppColors().cardColors[index].cardBackgroundColor),
                       onPressed: () {
                         _updateProject(
                           project,
-                          cardColors[index].cardBackgroundColor,
-                          cardColors[index].cardItemColor,
+                          AppColors().cardColors[index].cardBackgroundColor,
+                          AppColors().cardColors[index].cardItemColor,
                         );
                       },
                     ),
@@ -581,7 +583,7 @@ class _HomePageState extends State<HomePage>
   Future<void> _navigateToEntry(int index) async {
     final result = await Navigator.pushNamed(
       context,
-      projectPage,
+      CustomRoute.projectPage,
       arguments: {
         'project': _projectList[index],
         'projectTitle': _projectList[index].title,
@@ -608,7 +610,7 @@ class _HomePageState extends State<HomePage>
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final order = prefs.getString(_sortOrder);
     if (order == null) {
-      return sortByReleaseDateDesc;
+      return Constants.sortByReleaseDateDesc;
     }
     return order;
   }
@@ -640,11 +642,11 @@ class _HomePageState extends State<HomePage>
   }
 
   void _openModalBottomSheet() {
-    final List<FormulationItem> experimentItems = [
-      FormulationItem('', Icons.keyboard_arrow_down),
-      FormulationItem('Rechner', Icons.straighten),
-      FormulationItem('Stoppuhr', Icons.timer),
-      FormulationItem('Ortsbestimmung', Icons.location_on),
+    final List<TextTemplateItem> experimentItems = [
+      TextTemplateItem('', Icons.keyboard_arrow_down),
+      TextTemplateItem('Rechner', Icons.straighten),
+      TextTemplateItem('Stoppuhr', Icons.timer),
+      TextTemplateItem('Ortsbestimmung', Icons.location_on),
     ];
 
     final List<Widget> experimentItemsWidgets = [];
@@ -669,7 +671,7 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  Widget _createTile(FormulationItem experimentItem, bool centerIcon) {
+  Widget _createTile(TextTemplateItem experimentItem, bool centerIcon) {
     final double screenHeight = MediaQuery.of(context).size.height;
     final double tileHeight = screenHeight / 12;
 
@@ -679,11 +681,11 @@ class _HomePageState extends State<HomePage>
           if (experimentItem.name.isEmpty) {
             Navigator.pop(context);
           } else if (experimentItem.name == 'Rechner') {
-            Navigator.popAndPushNamed(context, calculatorPage);
+            Navigator.popAndPushNamed(context, CustomRoute.calculatorPage);
           } else if (experimentItem.name == 'Stoppuhr') {
-            Navigator.popAndPushNamed(context, stopwatchPage);
+            Navigator.popAndPushNamed(context, CustomRoute.stopwatchPage);
           } else if (experimentItem.name == 'Ortsbestimmung') {
-            Navigator.popAndPushNamed(context, locationPage);
+            Navigator.popAndPushNamed(context, CustomRoute.locationPage);
           }
         },
         child: Container(

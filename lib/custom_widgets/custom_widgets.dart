@@ -1,0 +1,20 @@
+library custom_widgets;
+
+export 'alarm_dialog.dart';
+export 'column_row_edit_widget.dart';
+export 'dial_floating_action_button.dart';
+export 'feedback_dialog.dart';
+export 'feedback_dialog.dart';
+export 'info_page.dart';
+export 'made_with_love_text_box.dart';
+export 'main_table_widget.dart';
+export 'no_yes_dialog.dart';
+export 'note_item.dart';
+export 'set_title_widget.dart';
+export 'simple_alert_dialog_with_icon.dart';
+export 'simple_timer_dialog.dart';
+export 'simple_timer_page.dart';
+export 'table_widget.dart';
+export 'title_desc_widget.dart';
+export 'title_desc_widget.dart';
+export 'top_text_card.dart';

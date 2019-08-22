@@ -37,13 +37,13 @@ class _SplashPageState extends State<SplashPage> {
     if (_seen) {
       await Navigator.pushNamed(
         context,
-        homePage,
+        CustomRoute.homePage,
       );
     } else {
       await prefs.setBool('seen', true);
       await Navigator.pushNamed(
         context,
-        onboardingPage,
+        CustomRoute.onboardingPage,
       );
     }
   }

@@ -64,6 +64,17 @@ linter:
     - avoid_types_as_parameter_names
     - prefer_equal_for_default_values
     - no_duplicate_case_values
+    - unrelated_type_equality_checks
+    - unnecessary_statements
+    - prefer_void_to_null
+    - type_init_formals
+    - recursive_getters
+    - prefer_typing_uninitialized_variables
+    - avoid_implementing_value_types
+    - prefer_const_literals_to_create_immutables
+    - package_names
+    - use_function_type_syntax_for_parameters
+    - prefer_adjacent_string_concatenation
 
 analyzer:
   errors:

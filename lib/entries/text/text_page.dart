@@ -1,12 +1,11 @@
 import 'dart:async';
 import 'dart:typed_data';
 
-import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
-import 'package:citizen_lab/custom_widgets/title_desc_widget.dart';
+import 'package:citizen_lab/custom_widgets/custom_widgets.dart';
 import 'package:citizen_lab/database/database_helper.dart';
-import 'package:citizen_lab/entries/formulation_item.dart';
 import 'package:citizen_lab/entries/note.dart';
 import 'package:citizen_lab/entries/text/text_info_page_data.dart';
+import 'package:citizen_lab/entries/text/text_template_item.dart';
 import 'package:citizen_lab/pdf_creator.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/utils/date_formatter.dart';
@@ -18,7 +17,7 @@ import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
-import '../../formulations.dart';
+import 'text_templates.dart';
 
 class TextPage extends StatefulWidget {
   final Key key;
@@ -148,7 +147,7 @@ class _TextPageState extends State<TextPage> {
   }
 
   Future<void> _createPdf() async {
-    final String title = Utils.removeWhiteSpace(_title);
+    final String title = removeWhiteSpace(_title);
 
     _pdfCreator = PdfCreator(
       title: _titleEditingController.text,
@@ -166,7 +165,7 @@ class _TextPageState extends State<TextPage> {
 
     if (_titleEditingController.text.isNotEmpty &&
         _descEditingController.text.isNotEmpty) {
-      final String title = Utils.removeWhiteSpace(_title);
+      final String title = removeWhiteSpace(_title);
       final String path = await _localPath(title);
       final ByteData bytes = await rootBundle.load(path);
       final Uint8List uint8List = bytes.buffer.asUint8List();
@@ -202,7 +201,7 @@ class _TextPageState extends State<TextPage> {
           onPressed: () {
             Navigator.popUntil(
               context,
-              ModalRoute.withName(routeHomePage),
+              ModalRoute.withName(CustomRoute.routeHomePage),
             );
           },
         );
@@ -213,7 +212,7 @@ class _TextPageState extends State<TextPage> {
   void _setInfoPage() {
     Navigator.pushNamed(
       context,
-      infoPage,
+      CustomRoute.infoPage,
       arguments: {
         argTitle: 'Text-Info',
         argTabLength: 3,
@@ -334,10 +333,10 @@ class _TextPageState extends State<TextPage> {
 
   void _openModalBottomSheet() {
     final List<Widget> experimentItemsWidgets = [];
-    for (int i = 0; i < formulations.length; i++) {
+    for (int i = 0; i < textTemplateList.length; i++) {
       i == 0
-          ? experimentItemsWidgets.add(_createTile(formulations[i], true))
-          : experimentItemsWidgets.add(_createTile(formulations[i], false));
+          ? experimentItemsWidgets.add(_createTile(textTemplateList[i], true))
+          : experimentItemsWidgets.add(_createTile(textTemplateList[i], false));
     }
     _buildMainBottomSheet(experimentItemsWidgets);
   }
@@ -353,7 +352,7 @@ class _TextPageState extends State<TextPage> {
   }
 
   Widget _createTile(
-    FormulationItem experimentItem,
+    TextTemplateItem experimentItem,
     bool centerIcon,
   ) {
     final double screenHeight = MediaQuery.of(context).size.height;

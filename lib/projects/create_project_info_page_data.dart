@@ -16,6 +16,11 @@ List<Widget> createProjectTabList = [
 List<Widget> createProjectSingleChildScrollViewList = [
   SingleChildScrollView(
     padding: const EdgeInsets.all(16.0),
-    child: Text(lorem + lorem + lorem + lorem + lorem + lorem),
+    child: const Text(Constants.lorem +
+        Constants.lorem +
+        Constants.lorem +
+        Constants.lorem +
+        Constants.lorem +
+        Constants.lorem),
   ),
 ];

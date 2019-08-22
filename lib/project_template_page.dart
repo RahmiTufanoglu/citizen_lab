@@ -16,6 +16,7 @@ class _ProjectTemplatePageState extends State<ProjectTemplatePage> {
   final _projectDb = DatabaseHelper.db;
   final List<String> _templateList = ['A', 'B', 'C', 'D', 'E'];
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  final List<Project> _projectList = [];
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +25,19 @@ class _ProjectTemplatePageState extends State<ProjectTemplatePage> {
       appBar: _buildAppBar(context),
       body: _buildBody(context),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProjectList();
+  }
+
+  Future<void> _loadProjectList() async {
+    final List projects = await _projectDb.getAllProjects();
+    projects.forEach((project) {
+      _projectList.add(project);
+    });
   }
 
   Widget _buildAppBar(BuildContext context) {
@@ -49,7 +63,7 @@ class _ProjectTemplatePageState extends State<ProjectTemplatePage> {
                 padding: const EdgeInsets.only(left: 16.0),
                 child: Align(
                   alignment: Alignment.bottomLeft,
-                  child: Text('$loremShorter'),
+                  child: Text('${Constants.loremShorter}'),
                 ),
               ),
               IconButton(
@@ -82,10 +96,17 @@ class _ProjectTemplatePageState extends State<ProjectTemplatePage> {
   }
 
   Future<void> _createTemplateContent(String title, String desc) async {
+    String randomUuid = generateRandomUuid();
+
+    for (int i = 0; i < _projectList.length; i++) {
+      while (_projectList[i].uuid == randomUuid) {
+        randomUuid = generateRandomUuid();
+      }
+    }
+
     final Project project = Project(
       title,
-      //Utils.getRandomNumber(),
-      Utils.generateRandomUuid(),
+      randomUuid,
       desc,
       dateFormatted(),
       '',
@@ -112,8 +133,6 @@ class _ProjectTemplatePageState extends State<ProjectTemplatePage> {
       await _projectDb.insertNote(note: note);
     }
   }
-
-  //Future<bool> _onWillPop() async => true;
 
   Future<void> _onBackPressed() async => Navigator.pop(context, true);
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 
 import 'entries/note.dart';
+import 'note_base.dart';
 
 class NoteModel with ChangeNotifier implements NoteBase {
   int id;
@@ -54,12 +55,4 @@ class NoteModel with ChangeNotifier implements NoteBase {
     dateEdited = note.updatedAt;
     edited = note.isFirstTime;
   }
-}
-
-abstract class NoteBase {
-  void saveNote(Note note);
-
-  void updateNote(Note note);
-
-  void deleteNote(Note note);
 }

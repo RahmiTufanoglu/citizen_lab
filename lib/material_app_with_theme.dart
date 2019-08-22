@@ -18,15 +18,14 @@ class _MaterialAppWithThemeState extends State<MaterialAppWithTheme> {
     final theme = Provider.of<ThemeChangerProvider>(context);
 
     return MaterialApp(
-      localizationsDelegates: [
-        const CustomLocalizationDelegate(),
-      ],
+      localizationsDelegates: const [CustomLocalizationDelegate()],
       debugShowCheckedModeBanner: false,
-      title: appTitle,
+      title: Constants.appTitle,
       home: SplashPage(),
       theme: theme.getTheme,
       //darkTheme: appDarkTheme(),
       onGenerateRoute: RouteGenerator.generateRoute(),
+      //key: const ValueKey('MaterialApp'),
     );
   }
 }

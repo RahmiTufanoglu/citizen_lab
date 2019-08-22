@@ -167,7 +167,7 @@ class _TablePageState extends State<TablePage> {
   void _setInfoPage() {
     Navigator.pushNamed(
       context,
-      infoPage,
+      CustomRoute.infoPage,
       arguments: {
         argTitle: 'Tabellen-Info',
         argTabLength: 2,
@@ -186,7 +186,7 @@ class _TablePageState extends State<TablePage> {
         onPressed: () {
           Navigator.popUntil(
             context,
-            ModalRoute.withName(routeHomePage),
+            ModalRoute.withName(CustomRoute.routeHomePage),
           );
         },
       ),

@@ -2,6 +2,11 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
+import 'package:citizen_lab/custom_widgets/simple_timer_dialog.dart';
+import 'package:citizen_lab/database/database_helper.dart';
+import 'package:citizen_lab/entries/image/image_info_page_data.dart';
+import 'package:citizen_lab/entries/note.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/utils/date_formatter.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
@@ -13,12 +18,6 @@ import 'package:flutter_sound/ios_quality.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission/permission.dart';
 import 'package:provider/provider.dart';
-
-import 'custom_widgets/no_yes_dialog.dart';
-import 'custom_widgets/simple_timer_dialog.dart';
-import 'database/database_helper.dart';
-import 'entries/image/image_info_page_data.dart';
-import 'entries/note.dart';
 
 class AudioRecordPage extends StatefulWidget {
   final Note note;
@@ -173,7 +172,7 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
   void _setInfoPage() {
     Navigator.pushNamed(
       context,
-      infoPage,
+      CustomRoute.infoPage,
       arguments: {
         'title': 'Audio-Info',
         'tabLength': 2,
@@ -193,7 +192,7 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
           onPressed: () {
             Navigator.popUntil(
               context,
-              ModalRoute.withName(routeHomePage),
+              ModalRoute.withName(CustomRoute.routeHomePage),
             );
           },
         );
