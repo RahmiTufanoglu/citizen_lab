@@ -2,6 +2,7 @@ import 'package:citizen_lab/utils/utils.dart';
 import 'package:flutter/material.dart';
 
 class ColumnRowEditingWidget extends StatefulWidget {
+  final Key key;
   final String title;
   final TextEditingController titleEditingController;
   final TextEditingController columnEditingController;
@@ -16,12 +17,8 @@ class ColumnRowEditingWidget extends StatefulWidget {
     @required this.rowEditingController,
     @required this.onPressedClear,
     @required this.onPressedCheck,
-  })  : assert(title != null),
-        assert(titleEditingController != null),
-        assert(columnEditingController != null),
-        assert(rowEditingController != null),
-        assert(onPressedClear != null),
-        assert(onPressedClear != null);
+    this.key,
+  }) : super(key: key);
 
   @override
   _ColumnRowEditingWidgetState createState() => _ColumnRowEditingWidgetState();
@@ -31,18 +28,17 @@ class _ColumnRowEditingWidgetState extends State<ColumnRowEditingWidget> {
   final _formKey = GlobalKey<FormState>();
 
   @override
-  Widget build(BuildContext context) {
-    return _buildDialog();
-  }
+  Widget build(BuildContext context) => _buildDialog();
 
   Widget _buildDialog() {
     const String plsEnterANumber = 'Bitte eine\nZahl unter\n 9 eingeben.';
+
     return Form(
       key: _formKey,
       autovalidate: true,
       child: SimpleDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(8.0)),
         ),
         contentPadding: const EdgeInsets.all(16.0),
         titlePadding: const EdgeInsets.only(left: 0.0),
@@ -78,8 +74,7 @@ class _ColumnRowEditingWidgetState extends State<ColumnRowEditingWidget> {
                 borderSide: BorderSide(color: Colors.grey),
               ),
             ),
-            validator: (text) =>
-                text.isEmpty ? 'Bitte einen Titel eingeben' : null,
+            validator: (text) => text.isEmpty ? 'Bitte einen Titel eingeben' : null,
           ),
           const SizedBox(height: 8.0),
           Row(
@@ -102,8 +97,7 @@ class _ColumnRowEditingWidgetState extends State<ColumnRowEditingWidget> {
                       ),
                     ),
                     validator: (text) {
-                      final bool _columnNumeric =
-                          isNumeric(widget.columnEditingController.text);
+                      final bool _columnNumeric = isNumeric(widget.columnEditingController.text);
 
                       if (text.isEmpty || !_columnNumeric || text.length > 8) {
                         return plsEnterANumber;
@@ -137,8 +131,7 @@ class _ColumnRowEditingWidgetState extends State<ColumnRowEditingWidget> {
                       ),
                     ),
                     validator: (text) {
-                      final bool _rowNumeric =
-                          isNumeric(widget.rowEditingController.text);
+                      final bool _rowNumeric = isNumeric(widget.rowEditingController.text);
 
                       if (text.isEmpty || !_rowNumeric) {
                         return plsEnterANumber;

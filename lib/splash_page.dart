@@ -30,11 +30,11 @@ class _SplashPageState extends State<SplashPage> {
     );
   }
 
-  Future _checkFirstTime() async {
+  Future<void> _checkFirstTime() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final bool _seen = prefs.getBool('seen') ?? false;
+    final bool seen = prefs.getBool('seen') ?? false;
 
-    if (_seen) {
+    if (seen) {
       await Navigator.pushNamed(
         context,
         CustomRoute.homePage,

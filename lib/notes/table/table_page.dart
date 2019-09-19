@@ -3,12 +3,11 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:citizen_lab/custom_widgets/column_row_edit_widget.dart';
-import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
+import 'package:citizen_lab/custom_widgets/custom_widgets.dart';
 import 'package:citizen_lab/custom_widgets/simple_timer_dialog.dart';
-import 'package:citizen_lab/custom_widgets/table_widget.dart';
 import 'package:citizen_lab/database/database_helper.dart';
-import 'package:citizen_lab/entries/note.dart';
-import 'package:citizen_lab/entries/table/table_info_page_data.dart';
+import 'package:citizen_lab/notes/note.dart';
+import 'package:citizen_lab/notes/table/table_info_page_data.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/utils/date_formatter.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
@@ -38,9 +37,9 @@ class _TablePageState extends State<TablePage> {
   final _descriptionEditingController = TextEditingController();
   final _rowTextEditingController = TextEditingController();
   final _columnTextEditingController = TextEditingController();
-  final _listTextEditingController = List<TextEditingController>();
+  //final _listTextEditingController = List<TextEditingController>();
+  final _listTextEditingController = <TextEditingController>[];
 
-  ThemeChangerProvider _themeChanger;
   File _csv;
   int _column;
   int _row;
@@ -92,8 +91,6 @@ class _TablePageState extends State<TablePage> {
 
   @override
   Widget build(BuildContext context) {
-    _themeChanger = Provider.of<ThemeChangerProvider>(context);
-
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       key: _scaffoldKey,
@@ -113,16 +110,24 @@ class _TablePageState extends State<TablePage> {
         icon: Icon(Icons.arrow_back),
         onPressed: _saveNote,
       ),
-      title: GestureDetector(
-        onPanStart: (_) => _themeChanger.setTheme(),
-        child: Container(
-          width: double.infinity,
-          child: Tooltip(
-            message: noteType,
-            //child: Text(_title != null ? _title : noteType),
-            child: Text(_title ?? noteType),
-          ),
-        ),
+      title: Consumer(
+        builder: (
+          BuildContext context,
+          ThemeChangerProvider themeChangerProvider,
+          Widget child,
+        ) {
+          return GestureDetector(
+            onPanStart: (_) => themeChangerProvider.setTheme(),
+            child: Container(
+              width: double.infinity,
+              child: Tooltip(
+                message: noteType,
+                //child: Text(_title != null ? _title : noteType),
+                child: Text(_title ?? noteType),
+              ),
+            ),
+          );
+        },
       ),
       actions: <Widget>[
         IconButton(
@@ -132,10 +137,6 @@ class _TablePageState extends State<TablePage> {
         IconButton(
           icon: Icon(Icons.info_outline),
           onPressed: () => _setInfoPage(),
-        ),
-        IconButton(
-          icon: Icon(Icons.home),
-          onPressed: () => _backToHomePage(),
         ),
       ],
     );
@@ -174,22 +175,6 @@ class _TablePageState extends State<TablePage> {
         argTabs: tableTabList,
         argTabChildren: tableSingleChildScrollViewList,
       },
-    );
-  }
-
-  void _backToHomePage() {
-    const String cancel = 'Notiz abbrechen und zur Hauptseite zurückkehren?';
-    showDialog(
-      context: context,
-      builder: (_) => NoYesDialog(
-        text: cancel,
-        onPressed: () {
-          Navigator.popUntil(
-            context,
-            ModalRoute.withName(CustomRoute.routeHomePage),
-          );
-        },
-      ),
     );
   }
 
@@ -253,13 +238,11 @@ class _TablePageState extends State<TablePage> {
   }
 
   List<List> _csvToList(File myCsvFile) {
-    final List<List<dynamic>> listCreated =
-        const CsvToListConverter().convert(myCsvFile.readAsStringSync());
+    final List<List<dynamic>> listCreated = const CsvToListConverter().convert(myCsvFile.readAsStringSync());
     return listCreated;
   }
 
-  String _listToCsv(List listToConvert) =>
-      const ListToCsvConverter().convert(listToConvert);
+  String _listToCsv(List listToConvert) => const ListToCsvConverter().convert(listToConvert);
 
   Widget _buildFabs() => Padding(
         padding: const EdgeInsets.only(left: 32.0),
@@ -316,10 +299,7 @@ class _TablePageState extends State<TablePage> {
   }
 
   Future<void> _saveNote() async {
-    if (_titleEditingController.text.isNotEmpty &&
-        _column != null &&
-        _row != null &&
-        !_checkIfTableIsEmpty()) {
+    if (_titleEditingController.text.isNotEmpty && _column != null && _row != null && !_checkIfTableIsEmpty()) {
       if (widget.note == null) {
         String path = '';
         if (_column != null && _row != null) {
@@ -546,8 +526,8 @@ class _TablePageState extends State<TablePage> {
             flex: 1,
             child: RaisedButton(
               color: Colors.green,
-              shape: RoundedRectangleBorder(
-                borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(8.0)),
               ),
               onPressed: () => _scaffoldKey.currentState.hideCurrentSnackBar(),
               child: const Text(no),
@@ -558,8 +538,8 @@ class _TablePageState extends State<TablePage> {
             flex: 1,
             child: RaisedButton(
               color: Colors.red,
-              shape: RoundedRectangleBorder(
-                borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(8.0)),
               ),
               onPressed: onPressed,
               child: const Text(yes),

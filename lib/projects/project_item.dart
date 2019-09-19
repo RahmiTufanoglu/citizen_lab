@@ -16,8 +16,7 @@ class ProjectItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
     final double screenWidth = MediaQuery.of(context).size.width;
-    final double topBarHeight =
-        MediaQuery.of(context).padding.top + kToolbarHeight;
+    final double topBarHeight = MediaQuery.of(context).padding.top + kToolbarHeight;
 
     return GestureDetector(
       onLongPress: onLongPress,

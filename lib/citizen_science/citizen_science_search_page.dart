@@ -19,9 +19,7 @@ class CitizenScienceSearchPage extends SearchDelegate<String> {
 
   void _checkIfDarkModeEnabled(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    theme.brightness == appDarkTheme().brightness
-        ? _darkModeEnabled = true
-        : _darkModeEnabled = false;
+    theme.brightness == appDarkTheme().brightness ? _darkModeEnabled = true : _darkModeEnabled = false;
   }
 
   @override
@@ -47,18 +45,15 @@ class CitizenScienceSearchPage extends SearchDelegate<String> {
   }
 
   @override
-  Widget buildResults(BuildContext context) {
-    return null;
-  }
+  Widget buildResults(BuildContext context) => null;
 
   @override
   Widget buildSuggestions(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
 
-    final suggestionList = query.isEmpty
-        ? []
-        : _getCitizenScienceTitles(citizenScienceList, query);
+    final suggestionList = query.isEmpty ? [] : _getCitizenScienceTitles(citizenScienceList, query);
+
     return SafeArea(
       child: GridView.builder(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

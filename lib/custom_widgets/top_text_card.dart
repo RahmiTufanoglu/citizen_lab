@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class TopTextCard extends StatelessWidget {
+  final Key key;
   final String asset;
   final String title;
   final double fontSize;
@@ -21,6 +22,7 @@ class TopTextCard extends StatelessWidget {
     @required this.title,
     @required this.onTapTitle,
     @required this.onTapImage,
+    this.key,
     this.fontSize = 36.0,
     this.fontColor = Colors.black,
     this.shadow1Color = Colors.black,
@@ -31,9 +33,7 @@ class TopTextCard extends StatelessWidget {
     this.shadow2OffsetY = 4.0,
     this.shadow1Blur = 12.0,
     this.shadow2Blur = 16.0,
-  })  : assert(asset != null),
-        assert(title != null),
-        assert(onTapImage != null);
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -54,10 +54,7 @@ class TopTextCard extends StatelessWidget {
                     ),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.only(
-                      left: 8.0,
-                      right: 8.0,
-                    ),
+                    padding: const EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 0.0),
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: Text(

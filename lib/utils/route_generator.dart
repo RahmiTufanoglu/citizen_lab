@@ -1,15 +1,15 @@
-import 'package:citizen_lab/citizen_science/about_page.dart';
 import 'package:citizen_lab/citizen_science/citizen_science_detail_page.dart';
 import 'package:citizen_lab/citizen_science/citizen_science_page.dart';
 import 'package:citizen_lab/citizen_science/citizen_science_web.dart';
+import 'package:citizen_lab/citizen_science/simple_info_page.dart';
 import 'package:citizen_lab/custom_widgets/info_page.dart';
-import 'package:citizen_lab/entries/audio/audio_record_page.dart';
-import 'package:citizen_lab/entries/entry_page.dart';
-import 'package:citizen_lab/entries/image/image_page.dart';
-import 'package:citizen_lab/entries/table/table_page.dart';
-import 'package:citizen_lab/entries/text/text_page.dart';
-import 'package:citizen_lab/entries/weblink/weblink_page.dart';
 import 'package:citizen_lab/home/home_page.dart';
+import 'package:citizen_lab/notes/audio/audio_record_page.dart';
+import 'package:citizen_lab/notes/image/image_page.dart';
+import 'package:citizen_lab/notes/note_page.dart';
+import 'package:citizen_lab/notes/table/table_page.dart';
+import 'package:citizen_lab/notes/text/text_page.dart';
+import 'package:citizen_lab/notes/weblink/weblink_page.dart';
 import 'package:citizen_lab/onboarding/onboarding_page.dart';
 import 'package:citizen_lab/projects/create_project_page.dart';
 import 'package:citizen_lab/splash_page.dart';
@@ -18,8 +18,8 @@ import 'package:citizen_lab/tools/geolocation/geolocation_page.dart';
 import 'package:citizen_lab/tools/stopwatch/stopwatch_page.dart';
 import 'package:flutter/material.dart';
 
-import '../custom_log_printer.dart';
-import '../project_template_page.dart';
+import '../template/project_template_page.dart';
+import 'custom_log_printer.dart';
 
 class CustomRoute {
   static const String homePage = '/home_page';
@@ -82,6 +82,7 @@ const String argBuilt = 'built';
 const String argExtended = 'extended';
 const String argContactPerson = 'contact_person';
 const String argContent = 'content';
+const String argSearchEngine = 'search_engine';
 
 class RouteGenerator {
   static RouteFactory generateRoute() {
@@ -93,9 +94,7 @@ class RouteGenerator {
       Widget page;
       String route;
 
-      log.i(
-        'generateRoute | name: $name | arguments: $args',
-      );
+      log.i('generateRoute | name: $name | arguments: $args');
 
       switch (name) {
         case CustomRoute.homePage:
@@ -193,6 +192,7 @@ class RouteGenerator {
           page = WeblinkPage(
             uuid: args[argProjectUuid],
             note: args[argNote],
+            searchEngine: args[argSearchEngine],
           );
           route = CustomRoute.routeLinkingRecordPage;
           break;

@@ -36,11 +36,11 @@ ThemeData appLightTheme() {
       iconTheme: IconThemeData(color: mainDarkColor),
       actionsIconTheme: IconThemeData(color: mainDarkColor),
     ),
-    cardTheme: CardTheme(
+    cardTheme: const CardTheme(
       color: Colors.white,
       elevation: 4.0,
       shape: RoundedRectangleBorder(
-        borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+        borderRadius: BorderRadius.all(Radius.circular(8.0)),
       ),
     ),
     splashColor: accentLight.withOpacity(0.2),
@@ -49,8 +49,8 @@ ThemeData appLightTheme() {
       buttonColor: Colors.white,
       splashColor: accentLight.withOpacity(0.2),
       highlightColor: accentLight.withOpacity(0.2),
-      shape: RoundedRectangleBorder(
-        borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(8.0)),
       ),
     ),
     indicatorColor: Colors.black,
@@ -93,11 +93,11 @@ ThemeData appDarkTheme() {
       iconTheme: IconThemeData(color: Colors.white),
       actionsIconTheme: IconThemeData(color: Colors.white),
     ),
-    cardTheme: CardTheme(
+    cardTheme: const CardTheme(
       color: mainDarkColor,
       elevation: 4.0,
       shape: RoundedRectangleBorder(
-        borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+        borderRadius: BorderRadius.all(Radius.circular(8.0)),
       ),
     ),
     splashColor: accentDark.withOpacity(0.2),
@@ -106,8 +106,8 @@ ThemeData appDarkTheme() {
       buttonColor: mainDarkColor,
       splashColor: accentDark.withOpacity(0.2),
       highlightColor: accentDark.withOpacity(0.2),
-      shape: RoundedRectangleBorder(
-        borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(8.0)),
       ),
     ),
     indicatorColor: Colors.white,

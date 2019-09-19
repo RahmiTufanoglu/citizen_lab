@@ -4,6 +4,7 @@ import 'package:citizen_lab/utils/date_formatter.dart';
 import 'package:flutter/material.dart';
 
 class SimpleTimerDialog extends StatefulWidget {
+  final Key key;
   final String createdAt;
   final TextEditingController textEditingController;
   final TextEditingController descEditingController;
@@ -20,13 +21,8 @@ class SimpleTimerDialog extends StatefulWidget {
     @required this.onPressedUpdate,
     @required this.onPressedClose,
     @required this.descExists,
-  })  : assert(createdAt != null),
-        assert(textEditingController != null),
-        assert(descEditingController != null),
-        assert(onPressedClear != null),
-        assert(onPressedUpdate != null),
-        assert(onPressedClose != null),
-        assert(descExists != null);
+    this.key,
+  }) : super(key: key);
 
   @override
   _SimpleTimerDialogState createState() => _SimpleTimerDialogState();
@@ -39,10 +35,9 @@ class _SimpleTimerDialogState extends State<SimpleTimerDialog> {
 
   @override
   void initState() {
-    _timeString = dateFormatted();
-    _timer =
-        Timer.periodic(const Duration(seconds: 1), (Timer t) => _getTime());
     super.initState();
+    _timeString = dateFormatted();
+    _timer = Timer.periodic(const Duration(seconds: 1), (Timer t) => _getTime());
   }
 
   @override
@@ -53,9 +48,7 @@ class _SimpleTimerDialogState extends State<SimpleTimerDialog> {
 
   void _getTime() {
     final String formattedDateTime = dateFormatted();
-    setState(() {
-      _timeString = formattedDateTime;
-    });
+    setState(() => _timeString = formattedDateTime);
   }
 
   @override
@@ -64,15 +57,14 @@ class _SimpleTimerDialogState extends State<SimpleTimerDialog> {
   Widget _buildDialog() {
     final double screenHeight = MediaQuery.of(context).size.height;
     final double screenWidth = MediaQuery.of(context).size.width;
-    final double keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
 
     return Form(
       key: _formKey,
       autovalidate: true,
       child: SimpleDialog(
         elevation: 4.0,
-        shape: RoundedRectangleBorder(
-          borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(8.0)),
         ),
         contentPadding: const EdgeInsets.all(0.0),
         titlePadding: const EdgeInsets.all(0.0),
@@ -80,9 +72,7 @@ class _SimpleTimerDialogState extends State<SimpleTimerDialog> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(
-                left: 16.0,
-              ),
+              padding: const EdgeInsets.only(left: 16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
@@ -205,8 +195,7 @@ class _SimpleTimerDialogState extends State<SimpleTimerDialog> {
                     hintText: 'Titel hier.',
                     labelStyle: TextStyle(fontSize: 14.0),
                   ),
-                  validator: (text) =>
-                      text.isEmpty ? 'Bitte einen Titel eingeben' : null,
+                  validator: (text) => text.isEmpty ? 'Bitte einen Titel eingeben' : null,
                   //onChanged: (String changed) => widget.textEditingController.text = changed,
                   /*onChanged: (changed) {
               widget.titleProvider.setTitle(changed);

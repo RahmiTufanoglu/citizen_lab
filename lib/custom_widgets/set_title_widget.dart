@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 
 class SetTitleWidget extends StatefulWidget {
+  final Key key;
   final TextEditingController titleTextEditingController;
   final GestureTapCallback onPressed;
 
   const SetTitleWidget({
     @required this.titleTextEditingController,
     @required this.onPressed,
-  })  : assert(titleTextEditingController != null),
-        assert(onPressed != null);
+    this.key,
+  }) : super(key: key);
 
   @override
   _SetTitleWidgetState createState() => _SetTitleWidgetState();
@@ -30,10 +31,8 @@ class _SetTitleWidgetState extends State<SetTitleWidget> {
       autovalidate: true,
       child: SimpleDialog(
         elevation: 4.0,
-        shape: RoundedRectangleBorder(
-          borderRadius: const BorderRadius.all(
-            Radius.circular(8.0),
-          ),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(8.0)),
         ),
         contentPadding: const EdgeInsets.all(16.0),
         titlePadding: const EdgeInsets.all(0.0),

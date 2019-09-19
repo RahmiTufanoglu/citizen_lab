@@ -1,15 +1,14 @@
 import 'dart:ui';
 
-import '../card_colors.dart';
+import 'card_colors.dart';
 
 class AppColors {
   static const Color backgroundGreyLight = Color(0xFFEFEFEF);
   static const Color backgroundGreyDark = Color(0xFFE9E9E9);
-  static const Color backgroundWhite = Color(0xFFFFFFFF);
 
   static const Color mainColor = Color(0xFF009274);
 
-  List<CardColors> cardColors = [
+  static const List<CardColors> cardColors = [
     CardColors(0xFF61BD6D, 0xFF000000),
     CardColors(0xFF1ABC9C, 0xFF000000),
     CardColors(0xFF54ACD2, 0xFF000000),

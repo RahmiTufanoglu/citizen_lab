@@ -1,6 +1,4 @@
-import 'package:citizen_lab/utils/constants.dart';
-import 'package:flutter/material.dart';
-
+/*
 List<Widget> createProjectTabList = [
   Tab(
     child: Text(
@@ -24,3 +22,4 @@ List<Widget> createProjectSingleChildScrollViewList = [
         Constants.lorem),
   ),
 ];
+*/

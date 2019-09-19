@@ -3,14 +3,9 @@ import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'material_app_with_theme.dart';
+import 'main_app.dart';
 
-class App extends StatefulWidget {
-  @override
-  _AppState createState() => _AppState();
-}
-
-class _AppState extends State<App> {
+class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -19,7 +14,7 @@ class _AppState extends State<App> {
           builder: (_) => ThemeChangerProvider(appLightTheme()),
         ),
       ],
-      child: MaterialAppWithTheme(),
+      child: MainApp(),
     );
   }
 }

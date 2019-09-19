@@ -10,8 +10,7 @@ class OnboardingPage extends StatefulWidget {
   _OnboardingPageState createState() => _OnboardingPageState();
 }
 
-class _OnboardingPageState extends State<OnboardingPage>
-    with TickerProviderStateMixin {
+class _OnboardingPageState extends State<OnboardingPage> with TickerProviderStateMixin {
   PageController _pageController;
   int _currentPage = 0;
   bool _lastPage = false;
@@ -20,6 +19,8 @@ class _OnboardingPageState extends State<OnboardingPage>
 
   @override
   void initState() {
+    super.initState();
+
     _pageController = PageController(initialPage: _currentPage);
 
     _animationController = AnimationController(
@@ -28,8 +29,6 @@ class _OnboardingPageState extends State<OnboardingPage>
     );
 
     _scaleAnimation = Tween(begin: 0.0, end: 1.0).animate(_animationController);
-
-    super.initState();
   }
 
   @override
@@ -45,72 +44,7 @@ class _OnboardingPageState extends State<OnboardingPage>
     return Scaffold(
       body: Stack(
         children: <Widget>[
-          PageView.builder(
-            itemCount: pageList.length,
-            controller: _pageController,
-            onPageChanged: (index) {
-              setState(() {
-                _currentPage = index;
-                if (_currentPage == pageList.length - 1) {
-                  _lastPage = true;
-                  _animationController.forward();
-                } else {
-                  _lastPage = false;
-                  _animationController.reset();
-                }
-              });
-            },
-            itemBuilder: (context, index) {
-              return AnimatedBuilder(
-                animation: _pageController,
-                builder: (context, child) {
-                  final PageModel page = pageList[index];
-                  return Stack(
-                    children: <Widget>[
-                      Column(
-                        children: <Widget>[
-                          const SizedBox(height: 16.0),
-                          Expanded(
-                            flex: 3,
-                            child: Image.asset(
-                              page.image,
-                              scale: 2,
-                            ),
-                          ),
-                          Expanded(
-                            flex: 4,
-                            child: Container(
-                              //color: mainLightColor,
-                              child: ListView(
-                                padding: const EdgeInsets.fromLTRB(
-                                    36.0, 36.0, 36.0, 80.0),
-                                children: <Widget>[
-                                  Text(
-                                    page.title,
-                                    style: TextStyle(
-                                      fontSize: 24.0,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    textAlign: TextAlign.left,
-                                  ),
-                                  const SizedBox(height: 36.0),
-                                  Text(
-                                    page.content,
-                                    style: TextStyle(fontSize: 16.0),
-                                    textAlign: TextAlign.left,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
-          ),
+          _buildPageView(),
           Padding(
             padding: const EdgeInsets.only(bottom: 24.0),
             child: Align(
@@ -154,10 +88,80 @@ class _OnboardingPageState extends State<OnboardingPage>
     );
   }
 
+  Widget _buildPageView() {
+    return PageView.builder(
+      controller: _pageController,
+      itemCount: pageList.length,
+      onPageChanged: (index) => _onPageChanged(index),
+      itemBuilder: (context, index) {
+        return AnimatedBuilder(
+          animation: _pageController,
+          builder: (context, child) {
+            final PageModel page = pageList[index];
+            return Stack(
+              children: <Widget>[
+                Column(
+                  children: <Widget>[
+                    const SizedBox(height: 16.0),
+                    Expanded(
+                      flex: 3,
+                      child: Image.asset(
+                        page.image,
+                        scale: 2,
+                      ),
+                    ),
+                    Expanded(
+                      flex: 4,
+                      child: Container(
+                        //color: mainLightColor,
+                        child: ListView(
+                          padding: const EdgeInsets.fromLTRB(36.0, 36.0, 36.0, 80.0),
+                          children: <Widget>[
+                            Text(
+                              page.title,
+                              style: TextStyle(
+                                fontSize: 24.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.left,
+                            ),
+                            const SizedBox(height: 36.0),
+                            Text(
+                              page.content,
+                              style: TextStyle(fontSize: 16.0),
+                              textAlign: TextAlign.left,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   void _setNavigation() {
     Navigator.pushNamed(
       context,
       CustomRoute.homePage,
     );
+  }
+
+  void _onPageChanged(int index) {
+    setState(() {
+      _currentPage = index;
+      if (_currentPage == pageList.length - 1) {
+        _lastPage = true;
+        _animationController.forward();
+      } else {
+        _lastPage = false;
+        _animationController.reset();
+      }
+    });
   }
 }

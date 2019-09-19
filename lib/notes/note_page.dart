@@ -1,14 +1,15 @@
 import 'dart:io';
 
+import 'package:citizen_lab/app_locations.dart';
 import 'package:citizen_lab/custom_widgets/alarm_dialog.dart';
 import 'package:citizen_lab/custom_widgets/dial_floating_action_button.dart';
 import 'package:citizen_lab/custom_widgets/note_item.dart';
 import 'package:citizen_lab/custom_widgets/simple_timer_dialog.dart';
 import 'package:citizen_lab/database/database_helper.dart';
-import 'package:citizen_lab/entries/note.dart';
+import 'package:citizen_lab/notes/note.dart';
 import 'package:citizen_lab/projects/project.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
-import 'package:citizen_lab/utils/colors.dart';
+import 'package:citizen_lab/utils/app_colors.dart';
 import 'package:citizen_lab/utils/constants.dart';
 import 'package:citizen_lab/utils/date_formatter.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
@@ -18,7 +19,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../entry_fab_data.dart';
-import '../note_search_page.dart';
+import 'note_search_page.dart';
 import 'text/text_template_item.dart';
 
 class NotePage extends StatefulWidget {
@@ -46,9 +47,8 @@ class _NotePageState extends State<NotePage> with TickerProviderStateMixin {
   final _descProjectController = TextEditingController();
   final _textEditingController = TextEditingController();
   final _projectDb = DatabaseHelper.db;
-  final List<Note> _noteList = [];
+  final List<Note> _notes = [];
 
-  ThemeChangerProvider _themeChanger;
   String _title;
   String _createdAt;
 
@@ -76,8 +76,6 @@ class _NotePageState extends State<NotePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    _themeChanger = Provider.of<ThemeChangerProvider>(context);
-
     return Scaffold(
       key: _scaffoldKey,
       appBar: _buildAppBar(),
@@ -102,41 +100,33 @@ class _NotePageState extends State<NotePage> with TickerProviderStateMixin {
   Widget _buildAppBar() {
     return AppBar(
       leading: IconButton(
-        tooltip: Constants.back,
+        tooltip: AppLocalizations.of(context).translate('back'),
         icon: Icon(Icons.arrow_back),
-        onPressed: () {
-          Navigator.pop(context, true);
-        },
+        onPressed: () => Navigator.pop(context, true),
       ),
-      title: GestureDetector(
-        onPanStart: (_) => _themeChanger.setTheme(),
-        child: Container(
-          width: double.infinity,
-          child: Tooltip(
-            message: _title,
-            child: Text(_title),
-          ),
-        ),
+      title: Consumer<ThemeChangerProvider>(
+        builder: (BuildContext context, ThemeChangerProvider provider, Widget child) {
+          return GestureDetector(
+            onPanStart: (_) => provider.setTheme(),
+            child: Container(
+              width: double.infinity,
+              child: Tooltip(
+                message: _title,
+                child: Text(_title),
+              ),
+            ),
+          );
+        },
       ),
       actions: <Widget>[
         IconButton(
           icon: Icon(Icons.search),
-          onPressed: () {
-            showSearch(
-              context: context,
-              delegate: NoteSearchPage(
-                noteList: _noteList,
-                isFromNoteSearchPage: false,
-                reloadNoteList: () => _loadNoteList(),
-                openNotePage: _openNotePage,
-              ),
-            );
-          },
+          onPressed: () => _setSearch(),
         ),
         PopupMenuButton(
           icon: Icon(Icons.sort),
           elevation: 2.0,
-          tooltip: Constants.sortOptions,
+          tooltip: AppLocalizations.of(context).translate('sortOptions'),
           onSelected: _choiceSortOption,
           itemBuilder: (BuildContext context) => Constants.choices.map(
             (String choice) {
@@ -159,30 +149,49 @@ class _NotePageState extends State<NotePage> with TickerProviderStateMixin {
     );
   }
 
+  void _setSearch() {
+    showSearch(
+      context: context,
+      delegate: NoteSearchPage(
+        noteList: _notes,
+        isFromNoteSearchPage: false,
+        reloadNoteList: () => _loadNoteList(),
+        openNotePage: _openNotePage,
+      ),
+    );
+  }
+
   Widget _buildBody() {
     return SafeArea(
       child: WillPopScope(
-        onWillPop: () {
-          Navigator.pop(context, true);
-        },
-        child: _noteList.isNotEmpty
+        onWillPop: () => _handleBackPressed(),
+        /*onWillPop: () async {
+          Navigator.pop(context);
+          return false;
+        },*/
+        child: _notes.isNotEmpty
             ? ListView.builder(
-                itemCount: _noteList.length,
+                itemCount: _notes.length,
                 padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 88.0),
                 itemBuilder: (context, index) {
-                  final note = _noteList[index];
+                  final note = _notes[index];
                   final key = Key('${note.hashCode}');
                   return _buildDismissible(key, note, index);
                 },
               )
             : Center(
                 child: Text(
-                  Constants.emptyList,
+                  AppLocalizations.of(context).translate('emptyList'),
                   style: TextStyle(fontSize: 24.0),
                 ),
               ),
       ),
     );
+  }
+
+  Future<bool> _handleBackPressed() async {
+    Navigator.pop(context);
+    return false;
   }
 
   Widget _buildDismissible(Key key, Note note, int index) {
@@ -210,18 +219,15 @@ class _NotePageState extends State<NotePage> with TickerProviderStateMixin {
   }
 
   Widget _buildItem(Note note, int index) {
-    final double screenHeight =
-        MediaQuery.of(context).size.height - kToolbarHeight;
+    final double screenHeight = MediaQuery.of(context).size.height - kToolbarHeight;
 
     return Container(
-      height: MediaQuery.of(context).orientation == Orientation.portrait
-          ? screenHeight / 8
-          : screenHeight / 4,
+      height: MediaQuery.of(context).orientation == Orientation.portrait ? screenHeight / 8 : screenHeight / 4,
       child: NoteItem(
         note: note,
         isFromNoteSearchPage: false,
         close: null,
-        noteFunction: () => _openNotePage(note.type, note),
+        noteFunction: () => _openNotePage(note.type, true, note),
         onLongPress: () => _setCardColor(note),
       ),
     );
@@ -235,8 +241,8 @@ class _NotePageState extends State<NotePage> with TickerProviderStateMixin {
       context: context,
       builder: (context) => SimpleDialog(
         contentPadding: const EdgeInsets.all(0.0),
-        shape: RoundedRectangleBorder(
-          borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(8.0)),
         ),
         children: <Widget>[
           Scrollbar(
@@ -245,21 +251,18 @@ class _NotePageState extends State<NotePage> with TickerProviderStateMixin {
               width: screenWidth / 2,
               child: GridView.builder(
                 padding: const EdgeInsets.all(8.0),
-                itemCount: AppColors().cardColors.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 4,
-                ),
+                itemCount: AppColors.cardColors.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4),
                 itemBuilder: (context, index) {
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: FloatingActionButton(
-                      backgroundColor: Color(
-                          AppColors().cardColors[index].cardBackgroundColor),
+                      backgroundColor: Color(AppColors.cardColors[index].cardBackgroundColor),
                       onPressed: () {
                         _updateNote(
                           note,
-                          AppColors().cardColors[index].cardBackgroundColor,
-                          AppColors().cardColors[index].cardItemColor,
+                          AppColors.cardColors[index].cardBackgroundColor,
+                          AppColors.cardColors[index].cardItemColor,
                         );
                       },
                     ),
@@ -316,10 +319,10 @@ class _NotePageState extends State<NotePage> with TickerProviderStateMixin {
             child: Icon(Icons.keyboard_arrow_up),
           ),
           DialFloatingActionButton(
-            iconList: entryIconList,
-            //colorList: entryColorList,
-            stringList: entryStringList,
+            iconList: entryIcons,
+            stringList: entryStrings,
             function: _openNotePage,
+            isNoteCard: true,
           ),
         ],
       ),
@@ -441,7 +444,7 @@ class _NotePageState extends State<NotePage> with TickerProviderStateMixin {
     await _projectDb.updateProject(newProject: updatedProject);
   }
 
-  void _openNotePage(String type, [Note note]) {
+  void _openNotePage(String type, bool cardPressed, [Note note]) {
     switch (type) {
       case 'Text':
         _setList(note, CustomRoute.textPage);
@@ -452,24 +455,53 @@ class _NotePageState extends State<NotePage> with TickerProviderStateMixin {
       case 'Bild':
         _setList(note, CustomRoute.imagePage);
         break;
-      case 'Verlinkung':
-        _setList(note, CustomRoute.webLinkPage);
-        break;
       case 'Audio':
-        //_setPermission();
         _setList(note, CustomRoute.audioRecordPage);
+        break;
+      case 'Verlinkung':
+        if (cardPressed) {
+          _setList(note, CustomRoute.webLinkPage);
+        } else {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return SimpleDialog(
+                contentPadding: const EdgeInsets.all(0.0),
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                ),
+                children: <Widget>[
+                  _searchEngineButton(note, 'Google', 'https://www.google.de/?hl=de'),
+                  _searchEngineButton(note, 'DuckDuckGo', 'https://duckduckgo.com/'),
+                  _searchEngineButton(note, 'Ecosia', 'https://www.ecosia.org/'),
+                  _searchEngineButton(note, 'Qwant', 'https://www.qwant.com/?l=de'),
+                ],
+              );
+            },
+          );
+        }
         break;
     }
   }
 
-  Future<void> _setPermission() async {
-    final _permissions = await Permission.getPermissionsStatus(
-        [PermissionName.Microphone, PermissionName.Storage]);
-    await Permission.requestPermissions(
-        [PermissionName.Microphone, PermissionName.Storage]);
+  Widget _searchEngineButton(Note note, String title, String url) {
+    return RaisedButton(
+      elevation: 0.0,
+      highlightElevation: 0.0,
+      onPressed: () {
+        Navigator.pop(context);
+        _setList(note, CustomRoute.webLinkPage, url);
+      },
+      child: Text(title),
+    );
   }
 
-  Future<void> _setList(Note note, String route) async {
+  Future<void> _setPermission() async {
+    final _permissions = await Permission.getPermissionsStatus([PermissionName.Microphone, PermissionName.Storage]);
+    await Permission.requestPermissions([PermissionName.Microphone, PermissionName.Storage]);
+  }
+
+  Future<void> _setList(Note note, String route, [String searchEngine]) async {
     final result = await Navigator.pushNamed(
       context,
       route,
@@ -477,6 +509,7 @@ class _NotePageState extends State<NotePage> with TickerProviderStateMixin {
         argProjectUuid: widget.project.uuid,
         //RouteGenerator.project: widget.project.id,
         argNote: note,
+        argSearchEngine: searchEngine ?? searchEngine,
       },
     ) as Note;
 
@@ -490,12 +523,6 @@ class _NotePageState extends State<NotePage> with TickerProviderStateMixin {
       if (result != null) await _projectDb.updateNote(newNote: result);
     }
 
-    if (result != null) {
-      _scaffoldKey.currentState.showSnackBar(
-        _buildSnackBar(text: 'Neues ${result.title} hinzugefügt.'),
-      );
-    }
-
     await _loadNoteList();
   }
 
@@ -506,7 +533,7 @@ class _NotePageState extends State<NotePage> with TickerProviderStateMixin {
     //return prefs.getString(_kSortingOrderPrefs) ?? sort_by_release_date_desc;
     final order = prefs.getString(_sortingOrderPrefs);
     if (order == null) {
-      return Constants.sortByReleaseDateDesc;
+      return AppLocalizations.of(context).translate('sortByReleaseDateDesc');
     }
     return order;
   }
@@ -517,18 +544,17 @@ class _NotePageState extends State<NotePage> with TickerProviderStateMixin {
   }
 
   Future<void> _loadNoteList() async {
-    for (int i = 0; i < _noteList.length; i++) {
-      _noteList.removeWhere((element) {
-        _noteList[i].id = _noteList[i].id;
+    for (int i = 0; i < _notes.length; i++) {
+      _notes.removeWhere((element) {
+        _notes[i].id = _notes[i].id;
         return true;
       });
     }
 
-    final List notes =
-        await _projectDb.getNotesOfProject(uuid: widget.project.uuid);
+    final List notes = await _projectDb.getNotesOfProject(uuid: widget.project.uuid);
 
     for (int i = 0; i < notes.length; i++) {
-      setState(() => _noteList.insert(0, notes[i]));
+      setState(() => _notes.insert(0, notes[i]));
     }
 
     _choiceSortOption(await _getSortingOrder());
@@ -536,38 +562,33 @@ class _NotePageState extends State<NotePage> with TickerProviderStateMixin {
 
   //void _deleteNote(AsyncSnapshot snapshot, int index) async {
   Future<void> _deleteNote(int index) async {
-    await _projectDb.deleteNote(id: _noteList[index].id);
+    await _projectDb.deleteNote(id: _notes[index].id);
     //await _noteDb.deleteNote(id: _noteList[index].id);
 
-    if (_noteList[index].type == 'Tabelle') {
+    if (_notes[index].type == 'Tabelle') {
       //if (snapshot.data[index].type == 'Tabelle') {
-      final File file = File(_noteList[index].filePath);
+      final File file = File(_notes[index].filePath);
       //File file = File(snapshot.data[index].content);
       await file.delete();
     }
 
-    if (_noteList[index].type == 'Bild') {
+    if (_notes[index].type == 'Bild') {
       //if (snapshot.data[index].type == 'Bild') {
-      final File file = File(_noteList[index].filePath);
+      final File file = File(_notes[index].filePath);
       //File file = File(snapshot.data[index].content);
       await file.delete();
     }
 
-    if (_noteList[index].type == 'Audio') {
-      final File file = File(_noteList[index].filePath);
+    if (_notes[index].type == 'Audio') {
+      final File file = File(_notes[index].filePath);
       await file.delete();
     }
 
-    _scaffoldKey.currentState.showSnackBar(
-      _buildSnackBar(text: 'Projekt ${_noteList[index].title} gelöscht.'),
-    );
-
-    setState(() => _noteList.removeAt(index));
+    setState(() => _notes.removeAt(index));
   }
 
   void _deleteAllNotes(BuildContext contextSnackBar) {
-    const String doYouWantToDeleteAllNotes =
-        'Wollen sie alle Einträge löschen?';
+    const String doYouWantToDeleteAllNotes = 'Wollen sie alle Einträge löschen?';
 
     showDialog(
       context: context,
@@ -575,7 +596,7 @@ class _NotePageState extends State<NotePage> with TickerProviderStateMixin {
         text: doYouWantToDeleteAllNotes,
         icon: Icons.warning,
         onTap: () {
-          if (_noteList.isNotEmpty) {
+          if (_notes.isNotEmpty) {
             //final note = snapshot.data[index];
 
             //for (int i = 0; i < _noteList.length; i++) {}
@@ -588,15 +609,7 @@ class _NotePageState extends State<NotePage> with TickerProviderStateMixin {
                   _noteList,
                   widget.project.random,
                 );*/
-
-            _scaffoldKey.currentState.showSnackBar(
-              _buildSnackBar(text: Constants.listDeleted),
-            );
-          } else {
-            _scaffoldKey.currentState.showSnackBar(
-              _buildSnackBar(text: Constants.nothingToDelete),
-            );
-          }
+          } else {}
 
           _loadNoteList();
           Navigator.pop(context);
@@ -605,76 +618,27 @@ class _NotePageState extends State<NotePage> with TickerProviderStateMixin {
     );
   }
 
-  /*Future<bool> _deleteAllNotes2(BuildContext contextSnackBar) async {
-    final String doYouWantToDeleteAllNotes =
-        'Wollen sie alle Einträge löschen?';
-
-    return await showDialog(
-      context: context,
-      builder: (context) => AlarmDialog(
-            text: doYouWantToDeleteAllNotes,
-            icon: Icons.warning,
-            /*onTap: () {
-              if (_noteList.isNotEmpty) {
-                //_noteDb.deleteAllNotes();
-
-                /*_noteDb.deleteAllNotesFromProject(
-                    random: widget.project.random);*/
-                //_notesBloc.deleteAllNotesFromProject(widget.project.random);
-
-                _scaffoldKey.currentState.showSnackBar(
-                  _buildSnackBar(text: list_deleted),
-                );
-              } else {
-                _scaffoldKey.currentState.showSnackBar(
-                  _buildSnackBar(text: nothing_to_delete),
-                );
-              }
-
-              setState(() {
-                _noteList.clear();
-              });
-
-              Navigator.pop(context);
-            },*/
-          ),
-    );
-  }*/
-
-  Widget _buildSnackBar({@required String text}) {
-    return SnackBar(
-      backgroundColor: Colors.black.withOpacity(0.5),
-      duration: const Duration(seconds: 1),
-      content: Text(text,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          )),
-    );
-  }
-
   void _choiceSortOption(String choice) {
     switch (choice) {
       case Constants.sortByTitleArc:
         setState(() {
-          _noteList.sort(
-            (Note a, Note b) =>
-                a.title.toLowerCase().compareTo(b.title.toLowerCase()),
+          _notes.sort(
+            (Note a, Note b) => a.title.toLowerCase().compareTo(b.title.toLowerCase()),
           );
         });
         setSortingOrder(Constants.sortByTitleArc);
         break;
       case Constants.sortByTitleDesc:
         setState(() {
-          _noteList.sort(
-            (Note a, Note b) =>
-                b.title.toLowerCase().compareTo(a.title.toLowerCase()),
+          _notes.sort(
+            (Note a, Note b) => b.title.toLowerCase().compareTo(a.title.toLowerCase()),
           );
         });
         setSortingOrder(Constants.sortByTitleDesc);
         break;
       case Constants.sortByReleaseDateAsc:
         setState(() {
-          _noteList.sort(
+          _notes.sort(
             (Note a, Note b) {
               final parsedDate1 = DateTime.parse(a.createdAt);
               final parsedDate2 = DateTime.parse(b.createdAt);
@@ -686,7 +650,7 @@ class _NotePageState extends State<NotePage> with TickerProviderStateMixin {
         break;
       case Constants.sortByReleaseDateDesc:
         setState(() {
-          _noteList.sort(
+          _notes.sort(
             (Note a, Note b) {
               final parsedDate1 = DateTime.parse(a.createdAt);
               final parsedDate2 = DateTime.parse(b.createdAt);

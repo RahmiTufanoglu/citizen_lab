@@ -1,8 +1,6 @@
 import 'dart:async';
 
-import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
-import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
@@ -14,8 +12,7 @@ class GeolocationPage extends StatefulWidget {
   _GeolocationPageState createState() => _GeolocationPageState();
 }
 
-class _GeolocationPageState extends State<GeolocationPage>
-    with SingleTickerProviderStateMixin {
+class _GeolocationPageState extends State<GeolocationPage> with SingleTickerProviderStateMixin {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _geolocator = Geolocator();
   final String latitude = 'Breitengrad';
@@ -27,13 +24,15 @@ class _GeolocationPageState extends State<GeolocationPage>
     longitude: 0.0,
     accuracy: 0.0,
   );
+
   AnimationController _animationController;
   Animation<double> _animation;
   Timer _timer;
-  ThemeChangerProvider _themeChanger;
 
   @override
   void initState() {
+    super.initState();
+
     if (!mounted) return;
 
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
@@ -53,9 +52,9 @@ class _GeolocationPageState extends State<GeolocationPage>
     ).animate(_animationController)
       ..addListener(() {}); // ..addListener ???
 
-    _animationController.forward();
+    //_animation.addListener(() {});
 
-    super.initState();
+    _animationController.forward();
   }
 
   @override
@@ -67,8 +66,6 @@ class _GeolocationPageState extends State<GeolocationPage>
 
   @override
   Widget build(BuildContext context) {
-    _themeChanger = Provider.of<ThemeChangerProvider>(context);
-
     return Scaffold(
       key: _scaffoldKey,
       appBar: _buildAppBar(),
@@ -83,15 +80,19 @@ class _GeolocationPageState extends State<GeolocationPage>
 
     return AppBar(
       elevation: 4.0,
-      title: GestureDetector(
-        onPanStart: (_) => _themeChanger.setTheme(),
-        child: Container(
-          width: double.infinity,
-          child: Tooltip(
-            message: noteType,
-            child: const Text(noteType),
-          ),
-        ),
+      title: Consumer<ThemeChangerProvider>(
+        builder: (BuildContext context, ThemeChangerProvider provider, Widget child) {
+          return GestureDetector(
+            onPanStart: (_) => provider.setTheme(),
+            child: Container(
+              width: double.infinity,
+              child: Tooltip(
+                message: noteType,
+                child: const Text(noteType),
+              ),
+            ),
+          );
+        },
       ),
       leading: IconButton(
         tooltip: back,
@@ -103,10 +104,6 @@ class _GeolocationPageState extends State<GeolocationPage>
           icon: Icon(Icons.share),
           onPressed: () => _shareContent(),
         ),
-        IconButton(
-          icon: Icon(Icons.home),
-          onPressed: () => _backToHomePage(),
-        ),
       ],
     );
   }
@@ -116,32 +113,16 @@ class _GeolocationPageState extends State<GeolocationPage>
 
     if (_position != null) {
       final String _content =
-          '$latitude: ${_position.latitude.toString()}\n$longitude: ${_position.longitude.toString()}\n$accuracy: ${_position.accuracy.toString()}';
+          //'$latitude: ${_position.latitude.toString()}\n$longitude: ${_position.longitude.toString()}\n$accuracy: ${_position.accuracy.toString()}';
+          '$latitude: ${_position.latitude.toString()}\n'
+          '$longitude: ${_position.longitude.toString()}\n'
+          '$accuracy: ${_position.accuracy.toString()}';
       Share.share(_content);
     } else {
       _scaffoldKey.currentState.showSnackBar(
         _buildSnackBar(text: sharingNotPossible),
       );
     }
-  }
-
-  void _backToHomePage() {
-    const String cancel = 'Notiz abbrechen und zur Hauptseite zurückkehren?';
-
-    showDialog(
-      context: context,
-      builder: (_) {
-        return NoYesDialog(
-          text: cancel,
-          onPressed: () {
-            Navigator.popUntil(
-              context,
-              ModalRoute.withName(CustomRoute.routeHomePage),
-            );
-          },
-        );
-      },
-    );
   }
 
   Widget _buildBody() {
@@ -208,7 +189,7 @@ class _GeolocationPageState extends State<GeolocationPage>
       currentPosition = await _geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.best,
       );
-    } catch (error) {
+    } on Exception {
       currentPosition = null;
     }
     return currentPosition;

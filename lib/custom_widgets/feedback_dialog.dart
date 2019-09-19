@@ -3,6 +3,7 @@ import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class FeedbackDialog extends StatefulWidget {
+  final Key key;
   final String title;
   final String titleButtonLeft;
   final String titleButtonRight;
@@ -14,6 +15,7 @@ class FeedbackDialog extends StatefulWidget {
 
   const FeedbackDialog({
     @required this.url,
+    this.key,
     this.title = 'Feedback',
     this.titleButtonLeft = 'Email',
     this.titleButtonRight = 'Webseite',
@@ -21,14 +23,14 @@ class FeedbackDialog extends StatefulWidget {
     this.isEmptyText = 'Bitte etwas eingeben',
     this.iconButtonLeft = Icons.email,
     this.iconButtonRight = Icons.public,
-  }) : assert(url != null);
+  }) : super(key: key);
 
   @override
   _FeedbackDialogState createState() => _FeedbackDialogState();
 }
 
 class _FeedbackDialogState extends State<FeedbackDialog> {
-  final TextEditingController _feedbackMessage = TextEditingController();
+  final _feedbackMessage = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -38,8 +40,8 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
       autovalidate: true,
       child: SimpleDialog(
         elevation: 4.0,
-        shape: RoundedRectangleBorder(
-          borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(8.0)),
         ),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -82,9 +84,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
                   elevation: 4.0,
                   highlightElevation: 16.0,
                   onPressed: () {
-                    return _formKey.currentState.validate()
-                        ? Share.share(_feedbackMessage.text)
-                        : null;
+                    return _formKey.currentState.validate() ? Share.share(_feedbackMessage.text) : null;
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),

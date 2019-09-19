@@ -55,7 +55,6 @@ linter:
     - avoid_returning_null
     - always_require_non_null_named_parameters
     - always_put_required_named_parameters_first
-    - cascade_invocations
     - directives_ordering
     - null_closures
     - library_prefixes
@@ -75,6 +74,22 @@ linter:
     - package_names
     - use_function_type_syntax_for_parameters
     - prefer_adjacent_string_concatenation
+    - prefer_single_quotes
+    - prefer_interpolation_to_compose_strings
+    - avoid_classes_with_only_static_members
+    - hash_and_equals
+    - avoid_null_checks_in_equality_operators
+    - avoid_positional_boolean_parameters
+    - type_annotate_public_apis
+    - prefer_generic_function_type_aliases
+    - avoid_private_typedef_functions
+    - unnecessary_new
+    - prefer_collection_literals
+    - prefer_iterable_whereType
+    - avoid_catches_without_on_clauses
+    - use_rethrow_when_possible
+    - library_names
+    - comment_references
 
 analyzer:
   errors:

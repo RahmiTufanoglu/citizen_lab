@@ -1,15 +1,16 @@
+import 'package:citizen_lab/app_locations.dart';
 import 'package:citizen_lab/custom_widgets/alarm_dialog.dart';
 import 'package:citizen_lab/custom_widgets/dial_floating_action_button.dart';
 import 'package:citizen_lab/custom_widgets/feedback_dialog.dart';
 import 'package:citizen_lab/database/database_helper.dart';
-import 'package:citizen_lab/entries/text/text_template_item.dart';
 import 'package:citizen_lab/home/main_drawer.dart';
+import 'package:citizen_lab/notes/text/text_template_item.dart';
 import 'package:citizen_lab/projects/project.dart';
 import 'package:citizen_lab/projects/project_item.dart';
 import 'package:citizen_lab/projects/project_search_page.dart';
 import 'package:citizen_lab/themes/theme.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
-import 'package:citizen_lab/utils/colors.dart';
+import 'package:citizen_lab/utils/app_colors.dart';
 import 'package:citizen_lab/utils/constants.dart';
 import 'package:citizen_lab/utils/date_formatter.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
@@ -26,15 +27,14 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage>
-    with SingleTickerProviderStateMixin {
+class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
   AnimationController _animationController;
   Animation<double> _animation;
   bool _valueSwitch = false;
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _projectDb = DatabaseHelper.db;
-  final List<Project> _projectList = [];
+  final List<Project> _projects = [];
   final String _sortOrder = 'sortOrder';
 
   @override
@@ -58,13 +58,15 @@ class _HomePageState extends State<HomePage>
   @override
   Widget build(BuildContext context) {
     return Consumer<ThemeChangerProvider>(
-      builder: (context, themeChanger, child) => Scaffold(
-        key: _scaffoldKey,
-        appBar: _buildAppBar(themeChanger),
-        drawer: _buildDrawer(themeChanger),
-        body: _buildBody(),
-        floatingActionButton: _buildFabs(),
-      ),
+      builder: (context, themeChanger, child) {
+        return Scaffold(
+          key: _scaffoldKey,
+          appBar: _buildAppBar(themeChanger),
+          drawer: _buildDrawer(themeChanger),
+          body: _buildBody(),
+          floatingActionButton: _buildFabs(),
+        );
+      },
     );
   }
 
@@ -76,7 +78,7 @@ class _HomePageState extends State<HomePage>
           width: double.infinity,
           child: Tooltip(
             message: Constants.appTitle,
-            child: Text(Constants.appTitle),
+            child: const Text(Constants.appTitle),
           ),
         ),
       ),
@@ -88,7 +90,7 @@ class _HomePageState extends State<HomePage>
         PopupMenuButton(
           icon: Icon(Icons.sort),
           elevation: 2.0,
-          tooltip: Constants.sortOptions,
+          tooltip: AppLocalizations.of(context).translate('sortOptions'),
           onSelected: _choiceSortOption,
           itemBuilder: (BuildContext context) {
             return Constants.choices.map(
@@ -109,7 +111,7 @@ class _HomePageState extends State<HomePage>
     showSearch(
       context: context,
       delegate: ProjectSearchPage(
-        projectList: _projectList,
+        projectList: _projects,
         isFromProjectSearchPage: false,
         reloadProjectList: () => _loadProjectList(),
       ),
@@ -130,9 +132,10 @@ class _HomePageState extends State<HomePage>
             child: Icon(Icons.keyboard_arrow_up),
           ),
           DialFloatingActionButton(
-            iconList: projectIconList,
-            stringList: projectStringList,
+            iconList: projectIcons,
+            stringList: projectStrings,
             function: _createProject,
+            isNoteCard: false,
           ),
         ],
       ),
@@ -183,7 +186,7 @@ class _HomePageState extends State<HomePage>
         text: deleteAllProjects,
         icon: Icons.warning,
         onTap: () {
-          if (_projectList.isNotEmpty) {
+          if (_projects.isNotEmpty) {
             _projectDb.deleteAllProjects();
             _scaffoldKey.currentState.showSnackBar(
               _buildSnackBar(text: deleteProjects),
@@ -194,7 +197,7 @@ class _HomePageState extends State<HomePage>
             );
           }
 
-          setState(() => _projectList.clear());
+          setState(() => _projects.clear());
 
           Navigator.pop(context);
         },
@@ -206,25 +209,23 @@ class _HomePageState extends State<HomePage>
     switch (choice) {
       case Constants.sortByTitleArc:
         setState(() {
-          _projectList.sort(
-            (Project a, Project b) =>
-                a.title.toLowerCase().compareTo(b.title.toLowerCase()),
+          _projects.sort(
+            (Project a, Project b) => a.title.toLowerCase().compareTo(b.title.toLowerCase()),
           );
         });
         _setSortingOrder(Constants.sortByTitleArc);
         break;
       case Constants.sortByTitleDesc:
         setState(() {
-          _projectList.sort(
-            (Project a, Project b) =>
-                b.title.toLowerCase().compareTo(a.title.toLowerCase()),
+          _projects.sort(
+            (Project a, Project b) => b.title.toLowerCase().compareTo(a.title.toLowerCase()),
           );
         });
         _setSortingOrder(Constants.sortByTitleDesc);
         break;
       case Constants.sortByReleaseDateAsc:
         setState(() {
-          _projectList.sort(
+          _projects.sort(
             (Project a, Project b) => a.createdAt.compareTo(b.createdAt),
           );
         });
@@ -232,7 +233,7 @@ class _HomePageState extends State<HomePage>
         break;
       case Constants.sortByReleaseDateDesc:
         setState(() {
-          _projectList.sort(
+          _projects.sort(
             (Project a, Project b) => b.createdAt.compareTo(a.createdAt),
           );
         });
@@ -244,8 +245,7 @@ class _HomePageState extends State<HomePage>
   Widget _buildDrawer(ThemeChangerProvider theme) {
     final double screenHeight = MediaQuery.of(context).size.height;
     final double statusBarHeight = MediaQuery.of(context).padding.top;
-    final double drawerHeaderHeight =
-        (screenHeight / 3) - kToolbarHeight - statusBarHeight;
+    final double drawerHeaderHeight = (screenHeight / 3) - kToolbarHeight - statusBarHeight;
     final double screenWidth = MediaQuery.of(context).size.width;
     final double drawerWidth = screenWidth / 1.5;
     const String about = 'Über';
@@ -263,8 +263,8 @@ class _HomePageState extends State<HomePage>
         Container(
           height: drawerHeaderHeight,
           child: Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: const BorderRadius.only(
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(8.0),
                 bottomRight: Radius.circular(8.0),
               ),
@@ -323,9 +323,8 @@ class _HomePageState extends State<HomePage>
               title: const Text(''),
               leading: Icon(
                 Icons.settings,
-                color: Theme.of(context).brightness == appDarkTheme().brightness
-                    ? Colors.white
-                    : const Color(0xFF3B3B3B),
+                color:
+                    Theme.of(context).brightness == appDarkTheme().brightness ? Colors.white : const Color(0xFF3B3B3B),
               ),
               children: <Widget>[
                 _buildDrawerItem(
@@ -347,24 +346,22 @@ class _HomePageState extends State<HomePage>
               onTap: () {
                 showDialog(
                   context: context,
-                  builder: (_) =>
-                      FeedbackDialog(url: Constants.fraunhoferUmsichtUrl),
+                  builder: (_) => const FeedbackDialog(url: Constants.fraunhoferUmsichtUrl),
                 );
               },
             ),
             _buildDrawerItem(
               context: context,
               icon: Icons.info,
-              title: about,
-              onTap: () => _launchWeb(
-                  about, Constants.fraunhoferUmsichtPrivacyStatement),
+              //title: about,
+              title: AppLocalizations.of(context).translate('about'),
+              onTap: () => _launchWeb(about, Constants.fraunhoferUmsichtPrivacyStatement),
             ),
             _buildDrawerItem(
               context: context,
               icon: Icons.info_outline,
               title: impressum,
-              onTap: () =>
-                  _launchWeb(impressum, Constants.fraunhoferUmsichtImpressum),
+              onTap: () => _launchWeb(impressum, Constants.fraunhoferUmsichtImpressum),
             ),
           ],
         ),
@@ -406,9 +403,7 @@ class _HomePageState extends State<HomePage>
   }
 
   void _checkIfDarkModeEnabled() {
-    Theme.of(context).brightness == appDarkTheme().brightness
-        ? _valueSwitch = true
-        : _valueSwitch = false;
+    Theme.of(context).brightness == appDarkTheme().brightness ? _valueSwitch = true : _valueSwitch = false;
   }
 
   void _setNavigation(String route, [Object arguments]) {
@@ -458,13 +453,13 @@ class _HomePageState extends State<HomePage>
         onWillPop: () => SystemNavigator.pop(),
         child: FadeTransition(
           opacity: _animation,
-          child: _projectList.isNotEmpty
+          child: _projects.isNotEmpty
               ? ListView.builder(
                   padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 88.0),
                   reverse: false,
-                  itemCount: _projectList.length,
+                  itemCount: _projects.length,
                   itemBuilder: (context, index) {
-                    final project = _projectList[index];
+                    final project = _projects[index];
                     final key = Key('${project.hashCode}');
                     return _buildDismissible(key, project, index);
                   },
@@ -500,13 +495,10 @@ class _HomePageState extends State<HomePage>
   }
 
   Widget _buildItem(Project project, int index) {
-    final double screenHeight =
-        MediaQuery.of(context).size.height - kToolbarHeight;
+    final double screenHeight = MediaQuery.of(context).size.height - kToolbarHeight;
 
     return Container(
-      height: MediaQuery.of(context).orientation == Orientation.portrait
-          ? screenHeight / 8
-          : screenHeight / 4,
+      height: MediaQuery.of(context).orientation == Orientation.portrait ? screenHeight / 8 : screenHeight / 4,
       child: ProjectItem(
         project: project,
         onTap: () => _navigateToEntry(index),
@@ -523,10 +515,8 @@ class _HomePageState extends State<HomePage>
       context: context,
       builder: (context) => SimpleDialog(
         contentPadding: const EdgeInsets.all(0.0),
-        shape: RoundedRectangleBorder(
-          borderRadius: const BorderRadius.all(
-            Radius.circular(8.0),
-          ),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(8.0)),
         ),
         children: <Widget>[
           Scrollbar(
@@ -535,21 +525,18 @@ class _HomePageState extends State<HomePage>
               width: screenWidth / 2,
               child: GridView.builder(
                 padding: const EdgeInsets.all(8.0),
-                itemCount: AppColors().cardColors.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 4,
-                ),
+                itemCount: AppColors.cardColors.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4),
                 itemBuilder: (context, index) {
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: FloatingActionButton(
-                      backgroundColor: Color(
-                          AppColors().cardColors[index].cardBackgroundColor),
+                      backgroundColor: Color(AppColors.cardColors[index].cardBackgroundColor),
                       onPressed: () {
                         _updateProject(
                           project,
-                          AppColors().cardColors[index].cardBackgroundColor,
-                          AppColors().cardColors[index].cardItemColor,
+                          AppColors.cardColors[index].cardBackgroundColor,
+                          AppColors.cardColors[index].cardItemColor,
                         );
                       },
                     ),
@@ -563,8 +550,7 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  Future<void> _updateProject(
-      Project project, int cardColor, int cardTextColor) async {
+  Future<void> _updateProject(Project project, int cardColor, int cardTextColor) async {
     final Project updatedProject = Project.fromMap({
       DatabaseHelper.columnProjectId: project.id,
       DatabaseHelper.columnProjectUuid: project.uuid,
@@ -585,8 +571,8 @@ class _HomePageState extends State<HomePage>
       context,
       CustomRoute.projectPage,
       arguments: {
-        'project': _projectList[index],
-        'projectTitle': _projectList[index].title,
+        'project': _projects[index],
+        'projectTitle': _projects[index].title,
         'isFromProjectPage': true,
         'isFromProjectSearchPage': false,
       },
@@ -621,9 +607,9 @@ class _HomePageState extends State<HomePage>
   }
 
   Future<void> _loadProjectList() async {
-    for (int i = 0; i < _projectList.length; i++) {
-      _projectList.removeWhere((element) {
-        _projectList[i].id = _projectList[i].id;
+    for (int i = 0; i < _projects.length; i++) {
+      _projects.removeWhere((element) {
+        _projects[i].id = _projects[i].id;
         return true;
       });
     }
@@ -635,7 +621,7 @@ class _HomePageState extends State<HomePage>
     });*/
 
     for (int i = 0; i < projects.length; i++) {
-      setState(() => _projectList.insert(0, projects[i]));
+      setState(() => _projects.insert(0, projects[i]));
     }
 
     _choiceSortOption(await _getSortingOrder());
@@ -723,14 +709,14 @@ class _HomePageState extends State<HomePage>
   }
 
   Future<void> _deleteProject(int index) async {
-    await _projectDb.deleteProject(id: _projectList[index].id);
+    await _projectDb.deleteProject(id: _projects[index].id);
 
     _scaffoldKey.currentState.showSnackBar(
-      _buildSnackBar(text: 'Projekt ${_projectList[index].title} gelöscht.'),
+      _buildSnackBar(text: 'Projekt ${_projects[index].title} gelöscht.'),
     );
 
-    if (_projectList.contains(_projectList[index])) {
-      setState(() => _projectList.removeAt(index));
+    if (_projects.contains(_projects[index])) {
+      setState(() => _projects.removeAt(index));
     }
   }
 }

@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 
 class NoYesDialog extends StatelessWidget {
+  final Key key;
   final String text;
   final GestureTapCallback onPressed;
 
   const NoYesDialog({
     @required this.text,
     @required this.onPressed,
-  })  : assert(text != null),
-        assert(onPressed != null);
+    this.key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -21,8 +22,8 @@ class NoYesDialog extends StatelessWidget {
 
     return SimpleDialog(
       elevation: 4.0,
-      shape: RoundedRectangleBorder(
-        borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(8.0)),
       ),
       contentPadding: const EdgeInsets.all(16.0),
       titlePadding: const EdgeInsets.only(

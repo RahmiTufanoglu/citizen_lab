@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:citizen_lab/utils/constants.dart';
+import 'package:citizen_lab/app_locations.dart';
 import 'package:citizen_lab/utils/date_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -34,6 +34,8 @@ class _EditProjectDialogState extends State<EditProjectDialog> {
 
   @override
   void initState() {
+    super.initState();
+
     _timeString = dateFormatted();
     _timer = Timer.periodic(
       const Duration(seconds: 1),
@@ -47,8 +49,6 @@ class _EditProjectDialogState extends State<EditProjectDialog> {
         _title = widget.titleProjectController.text;
       });
     });*/
-
-    super.initState();
   }
 
   @override
@@ -59,19 +59,15 @@ class _EditProjectDialogState extends State<EditProjectDialog> {
 
   void _getTime() {
     final String formattedDateTime = dateFormatted();
-    setState(() {
-      _timeString = formattedDateTime;
-    });
+    setState(() => _timeString = formattedDateTime);
   }
 
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
       elevation: 4.0,
-      shape: RoundedRectangleBorder(
-        borderRadius: const BorderRadius.all(
-          Radius.circular(8.0),
-        ),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(8.0)),
       ),
       contentPadding: const EdgeInsets.all(16.0),
       titlePadding: const EdgeInsets.all(0.0),
@@ -123,13 +119,13 @@ class _EditProjectDialogState extends State<EditProjectDialog> {
           maxLength: 50,
           maxLines: 1,
           decoration: InputDecoration(
-            hintText: '${Constants.titleHere}.',
+            hintText: '${AppLocalizations.of(context).translate('titleHere')}.',
             labelStyle: TextStyle(fontSize: 14.0),
           ),
         ),
         const SizedBox(height: 42.0),
         Text(
-          '${Constants.desc}:',
+          '${AppLocalizations.of(context).translate('desc')}:',
           style: TextStyle(
             fontSize: 16.0,
             fontWeight: FontWeight.bold,
@@ -141,7 +137,7 @@ class _EditProjectDialogState extends State<EditProjectDialog> {
           maxLength: 500,
           maxLines: 10,
           decoration: InputDecoration(
-            hintText: '${Constants.descHere}.',
+            hintText: '${AppLocalizations.of(context).translate('descHere')}.',
             labelStyle: TextStyle(fontSize: 14.0),
           ),
         ),

@@ -1,6 +1,7 @@
 import 'dart:ui';
 
-import 'package:citizen_lab/collapsing_appbar_page.dart';
+import 'package:citizen_lab/app_locations.dart';
+import 'package:citizen_lab/custom_widgets/collapsing_appbar_page.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:flutter/material.dart';
@@ -32,12 +33,8 @@ class DetailPage extends StatefulWidget {
 }
 
 class _DetailPageState extends State<DetailPage> {
-  ThemeChangerProvider _themeChanger;
-
   @override
   Widget build(BuildContext context) {
-    _themeChanger = Provider.of<ThemeChangerProvider>(context);
-
     return Scaffold(
       body: _buildBody(),
       floatingActionButton: _buildFab(),
@@ -46,29 +43,29 @@ class _DetailPageState extends State<DetailPage> {
 
   Widget _buildBody() {
     return CollapsingAppBarPage(
-      text: GestureDetector(
-        onPanStart: (_) => _themeChanger.setTheme(),
-        child: Container(
-          width: double.infinity,
-          child: Tooltip(
-            message: widget.title,
-            child: Text(widget.title),
-          ),
-        ),
+      text: Consumer<ThemeChangerProvider>(
+        builder: (BuildContext context, ThemeChangerProvider provider, Widget child) {
+          return GestureDetector(
+            onPanStart: (_) => provider.setTheme(),
+            child: Container(
+              width: double.infinity,
+              child: Tooltip(
+                message: widget.title,
+                child: Text(widget.title),
+              ),
+            ),
+          );
+        },
       ),
       image: widget.image,
       body: ListView(
         padding: const EdgeInsets.all(8.0),
         children: <Widget>[
-          _titleAndContent('Standort', widget.location),
-          //_dividerWithPadding(),
-          _titleAndContent('Forschungsgegenstand', widget.researchSubject),
-          //_dividerWithPadding(),
-          _titleAndContent('Aufgebaut/Eröffnet', widget.built),
-          //_dividerWithPadding(),
-          _titleAndContent('Erweitert', widget.extended),
-          //_dividerWithPadding(),
-          _titleAndContent('Ansprechpartner', widget.contactPerson),
+          _titleAndContent(AppLocalizations.of(context).translate('location'), widget.location),
+          _titleAndContent(AppLocalizations.of(context).translate('researchSubject'), widget.researchSubject),
+          _titleAndContent(AppLocalizations.of(context).translate('establishedOpened'), widget.built),
+          _titleAndContent(AppLocalizations.of(context).translate('extended'), widget.extended),
+          _titleAndContent(AppLocalizations.of(context).translate('contactPerson'), widget.contactPerson),
         ],
       ),
     );
@@ -96,7 +93,6 @@ class _DetailPageState extends State<DetailPage> {
 
   Widget _buildFab() {
     return FloatingActionButton(
-      //onPressed: () => _launchUrl(),
       onPressed: () => _launchWeb(),
       child: Icon(Icons.web),
     );

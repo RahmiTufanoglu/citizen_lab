@@ -1,3 +1,4 @@
+import 'package:citizen_lab/app_locations.dart';
 import 'package:citizen_lab/custom_widgets/alarm_dialog.dart';
 import 'package:citizen_lab/database/database_helper.dart';
 import 'package:citizen_lab/projects/project.dart';
@@ -23,8 +24,6 @@ class _ProjectPageState extends State<ProjectPage> {
   final _projectDb = DatabaseHelper.db;
   final List<Project> _projectList = [];
 
-  ThemeChangerProvider _themeChanger;
-
   @override
   void initState() {
     super.initState();
@@ -33,8 +32,6 @@ class _ProjectPageState extends State<ProjectPage> {
 
   @override
   Widget build(BuildContext context) {
-    _themeChanger = Provider.of<ThemeChangerProvider>(context);
-
     return Scaffold(
       key: _scaffoldKey,
       appBar: _buildAppBar(),
@@ -46,38 +43,33 @@ class _ProjectPageState extends State<ProjectPage> {
   Widget _buildAppBar() {
     return AppBar(
       leading: IconButton(
-        tooltip: Constants.back,
+        tooltip: AppLocalizations.of(context).translate('back'),
         icon: Icon(Icons.arrow_back),
         onPressed: () => _onBackPressed(),
       ),
-      title: GestureDetector(
-        onPanStart: (_) => _themeChanger.setTheme(),
-        child: Container(
-          width: double.infinity,
-          child: Tooltip(
-            message: '',
-            child: const Text('Experimente'),
-          ),
-        ),
+      title: Consumer<ThemeChangerProvider>(
+        builder: (BuildContext context, ThemeChangerProvider provider, Widget child) {
+          return GestureDetector(
+            onPanStart: (_) => provider.setTheme(),
+            child: Container(
+              width: double.infinity,
+              child: Tooltip(
+                message: '',
+                child: const Text('Experimente'),
+              ),
+            ),
+          );
+        },
       ),
       actions: <Widget>[
         IconButton(
           icon: Icon(Icons.search),
-          onPressed: () {
-            showSearch(
-              context: context,
-              delegate: ProjectSearchPage(
-                projectList: _projectList,
-                isFromProjectSearchPage: false,
-                reloadProjectList: () => _loadProjectList(),
-              ),
-            );
-          },
+          onPressed: () => _setSearch(),
         ),
         PopupMenuButton(
           icon: Icon(Icons.sort),
           elevation: 2.0,
-          tooltip: Constants.sortOptions,
+          tooltip: '',
           onSelected: _choiceSortOption,
           itemBuilder: (BuildContext context) {
             return Constants.choices.map(
@@ -101,6 +93,17 @@ class _ProjectPageState extends State<ProjectPage> {
           },
         ),
       ],
+    );
+  }
+
+  void _setSearch() {
+    showSearch(
+      context: context,
+      delegate: ProjectSearchPage(
+        projectList: _projectList,
+        isFromProjectSearchPage: false,
+        reloadProjectList: () => _loadProjectList(),
+      ),
     );
   }
 
@@ -151,16 +154,14 @@ class _ProjectPageState extends State<ProjectPage> {
       case Constants.sortByTitleArc:
         setState(() {
           _projectList.sort(
-            (Project a, Project b) =>
-                a.title.toLowerCase().compareTo(b.title.toLowerCase()),
+            (Project a, Project b) => a.title.toLowerCase().compareTo(b.title.toLowerCase()),
           );
         });
         break;
       case Constants.sortByTitleDesc:
         setState(() {
           _projectList.sort(
-            (Project a, Project b) =>
-                b.title.toLowerCase().compareTo(a.title.toLowerCase()),
+            (Project a, Project b) => b.title.toLowerCase().compareTo(a.title.toLowerCase()),
           );
         });
         break;
@@ -187,12 +188,7 @@ class _ProjectPageState extends State<ProjectPage> {
         onWillPop: _onBackPressed,
         child: _projectList.isNotEmpty
             ? ListView.builder(
-                padding: const EdgeInsets.fromLTRB(
-                  8.0,
-                  8.0,
-                  8.0,
-                  88.0,
-                ),
+                padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 88.0),
                 reverse: false,
                 itemCount: _projectList.length,
                 itemBuilder: (context, index) {
@@ -204,9 +200,7 @@ class _ProjectPageState extends State<ProjectPage> {
                     background: Container(
                       alignment: Alignment.centerLeft,
                       decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(8.0),
-                        ),
+                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
                       ),
                       child: Row(
                         children: <Widget>[
@@ -236,7 +230,7 @@ class _ProjectPageState extends State<ProjectPage> {
               )
             : Center(
                 child: Text(
-                  Constants.emptyList,
+                  AppLocalizations.of(context).translate('emptyList'),
                   style: TextStyle(fontSize: 24.0),
                 ),
               ),
@@ -266,8 +260,8 @@ class _ProjectPageState extends State<ProjectPage> {
     showDialog(
       context: context,
       builder: (context) => SimpleDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(8.0)),
         ),
         contentPadding: const EdgeInsets.all(16.0),
         titlePadding: const EdgeInsets.only(left: 16.0),
@@ -297,7 +291,7 @@ class _ProjectPageState extends State<ProjectPage> {
         ),
         children: <Widget>[
           Text(
-            '${Constants.title}:',
+            '${AppLocalizations.of(context).translate('title')}:',
             style: TextStyle(
               fontSize: 16.0,
               fontWeight: FontWeight.bold,
@@ -310,7 +304,7 @@ class _ProjectPageState extends State<ProjectPage> {
           ),
           const SizedBox(height: 32.0),
           Text(
-            '${Constants.desc}:',
+            '${AppLocalizations.of(context).translate('desc')}:',
             style: TextStyle(
               fontSize: 16.0,
               fontWeight: FontWeight.bold,
@@ -348,11 +342,16 @@ class _ProjectPageState extends State<ProjectPage> {
 
     final List projects = await _projectDb.getAllProjects();
 
+    /*for (final project in projects) {
+      project.forEach();
+      setState(() => _projectList.add(Project.map(project)));
+    }*/
+
     projects.forEach((project) {
       setState(() => _projectList.add(Project.map(project)));
     });
 
-    _choiceSortOption(Constants.sortByReleaseDateDesc);
+    _choiceSortOption(AppLocalizations.of(context).translate('sortByReleaseDateDesc'));
   }
 
   Future<void> _deleteProject(int index) async {

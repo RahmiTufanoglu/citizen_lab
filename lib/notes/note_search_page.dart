@@ -2,8 +2,8 @@ import 'package:citizen_lab/themes/theme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'custom_widgets/note_item.dart';
-import 'entries/note.dart';
+import '../custom_widgets/note_item.dart';
+import 'note.dart';
 
 class NoteSearchPage extends SearchDelegate<String> {
   List<Note> noteList = [];

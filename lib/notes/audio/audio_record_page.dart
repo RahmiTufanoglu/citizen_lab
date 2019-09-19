@@ -2,11 +2,10 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/custom_widgets/simple_timer_dialog.dart';
 import 'package:citizen_lab/database/database_helper.dart';
-import 'package:citizen_lab/entries/image/image_info_page_data.dart';
-import 'package:citizen_lab/entries/note.dart';
+import 'package:citizen_lab/notes/image/image_info_page_data.dart';
+import 'package:citizen_lab/notes/note.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/utils/date_formatter.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
@@ -37,9 +36,7 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
   final _titleEditingController = TextEditingController();
   final _descEditingController = TextEditingController();
 
-  FlutterSound flutterSound;
-
-  ThemeChangerProvider _themeChanger;
+  FlutterSound _flutterSound;
 
   String _audioPath = '';
   String _title = '';
@@ -56,7 +53,7 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
     //_setPermission();
     //Permission.openSettings();
 
-    flutterSound = FlutterSound();
+    _flutterSound = FlutterSound();
 
     if (widget.note != null) {
       _titleEditingController.text = widget.note.title;
@@ -102,8 +99,6 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
 
   @override
   Widget build(BuildContext context) {
-    _themeChanger = Provider.of<ThemeChangerProvider>(context);
-
     return Scaffold(
       key: _scaffoldKey,
       appBar: _buildAppBar(),
@@ -122,16 +117,24 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
         icon: Icon(Icons.arrow_back),
         onPressed: () => _saveNote(),
       ),
-      title: GestureDetector(
-        onPanStart: (_) => _themeChanger.setTheme(),
-        child: Container(
-          width: double.infinity,
-          child: Tooltip(
-            message: noteType,
-            //child: Text(_title != null ? _title : noteType),
-            child: Text(_title ?? noteType),
-          ),
-        ),
+      title: Consumer<ThemeChangerProvider>(
+        builder: (
+          BuildContext context,
+          ThemeChangerProvider themeChangerProvider,
+          Widget child,
+        ) {
+          return GestureDetector(
+            onPanStart: (_) => themeChangerProvider.setTheme(),
+            child: Container(
+              width: double.infinity,
+              child: Tooltip(
+                message: noteType,
+                //child: Text(_title != null ? _title : noteType),
+                child: Text(_title ?? noteType),
+              ),
+            ),
+          );
+        },
       ),
       actions: <Widget>[
         IconButton(
@@ -141,10 +144,6 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
         IconButton(
           icon: Icon(Icons.info_outline),
           onPressed: () => _setInfoPage(),
-        ),
-        IconButton(
-          icon: Icon(Icons.home),
-          onPressed: () => _backToHomePage(),
         ),
       ],
     );
@@ -182,24 +181,6 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
     );
   }
 
-  void _backToHomePage() {
-    const String cancel = 'Notiz abbrechen und zur Hauptseite zurückkehren?';
-    showDialog(
-      context: context,
-      builder: (_) {
-        return NoYesDialog(
-          text: cancel,
-          onPressed: () {
-            Navigator.popUntil(
-              context,
-              ModalRoute.withName(CustomRoute.routeHomePage),
-            );
-          },
-        );
-      },
-    );
-  }
-
   Widget _buildFabs() {
     const String editTitleAndDesc = 'Titel und Beschreibung editieren';
     return Padding(
@@ -216,9 +197,7 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
           FloatingActionButton(
             heroTag: null,
             tooltip: '',
-            onPressed: () {
-              _buildStartStopAudioButton();
-            },
+            onPressed: () => _buildStartStopAudioButton(),
             child: _iconFab,
           ),
         ],
@@ -308,12 +287,12 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
     }
   }
 
-  Future<void> _playAudio() async => await flutterSound.startPlayer(_audioPath);
+  Future<void> _playAudio() async => await _flutterSound.startPlayer(_audioPath);
 
   Future<void> _stopAudio() async {
     try {
-      await flutterSound.stopPlayer();
-    } catch (e) {
+      await _flutterSound.stopPlayer();
+    } on Exception catch (e) {
       print(e);
     }
   }
@@ -321,10 +300,8 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
   List<Permissions> _permissions;
 
   Future<void> _setPermission() async {
-    _permissions = await Permission.getPermissionsStatus(
-        [PermissionName.Microphone, PermissionName.Storage]);
-    await Permission.requestPermissions(
-        [PermissionName.Microphone, PermissionName.Storage]);
+    _permissions = await Permission.getPermissionsStatus([PermissionName.Microphone, PermissionName.Storage]);
+    await Permission.requestPermissions([PermissionName.Microphone, PermissionName.Storage]);
   }
 
   Future<void> _buildRecordButton() async {
@@ -333,6 +310,7 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
       print('====>>>>>>>>>>>> ${_permissions[i].toString()}');
     }*/
     //_setPermission();
+
     if (_isRecording) {
       setState(() {
         _iconBody = Icon(Icons.mic, size: 56.0);
@@ -367,7 +345,8 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
     final File file = File(_audioPath);
     int i = 2;
     while (file.existsSync()) {
-      _title = _title + ' ' + '${i++}'.toString();
+      _title = '$_title ${i++}';
+      //_title = _title + ' ' + '${i++}'.toString();
       if (!file.existsSync()) break;
     }
   }
@@ -378,7 +357,7 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
 
   Future _startRecord() async {
     // TODO: catchError
-    await flutterSound.startRecorder(
+    await _flutterSound.startRecorder(
       _audioPath,
       bitRate: 320,
       iosQuality: IosQuality.HIGH,
@@ -399,8 +378,8 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
 
   Future<void> _stopRecord() async {
     try {
-      await flutterSound.stopRecorder();
-    } catch (e) {
+      await _flutterSound.stopRecorder();
+    } on RecorderStoppedException catch (e) {
       print(e);
     }
   }
@@ -489,31 +468,37 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
           const SizedBox(width: 8.0),
           Expanded(
             flex: 1,
-            child: RaisedButton(
-              color: Colors.green,
-              shape: RoundedRectangleBorder(
-                borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-              ),
+            child: _buildRaisedButton(
               onPressed: () => _scaffoldKey.currentState.hideCurrentSnackBar(),
-              child: const Text('Nein'),
+              text: 'Nein',
             ),
           ),
           const SizedBox(width: 8.0),
           Expanded(
             flex: 1,
-            child: RaisedButton(
-              color: Colors.red,
-              shape: RoundedRectangleBorder(
-                borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-              ),
+            child: _buildRaisedButton(
               onPressed: onPressed,
-              child: const Text('Ja'),
+              text: 'Ja',
             ),
           ),
         ],
       ),
     );
   }
+}
+
+RaisedButton _buildRaisedButton({
+  @required GestureTapCallback onPressed,
+  @required String text,
+}) {
+  return RaisedButton(
+    color: Colors.red,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(8.0)),
+    ),
+    onPressed: onPressed,
+    child: Text(text),
+  );
 }
 
 enum PermissionStatus { allow, deny, notDecided, notAgain, whenInUse, always }

@@ -3,6 +3,7 @@ import 'package:citizen_lab/citizen_science/citizen_science_search_page.dart';
 import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/custom_widgets/top_text_card.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
+import 'package:citizen_lab/utils/constants.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -13,17 +14,8 @@ class CitizenSciencePage extends StatefulWidget {
 }
 
 class _CitizenSciencePageState extends State<CitizenSciencePage> {
-  //PageController _pageController;
-  //double _currentPage = citizenScienceImages.length - 1.0;
-
-  //List<CitizenScienceModel> _citizenScienceList;
-
-  ThemeChangerProvider _themeChanger;
-
   @override
   Widget build(BuildContext context) {
-    _themeChanger = Provider.of<ThemeChangerProvider>(context);
-
     return Scaffold(
       appBar: _buildAppBar(),
       body: _buildBody(),
@@ -31,30 +23,25 @@ class _CitizenSciencePageState extends State<CitizenSciencePage> {
   }
 
   Widget _buildAppBar() {
-    const String citizenScience = 'Citizen Science';
-
     return AppBar(
-      title: GestureDetector(
-        onPanStart: (_) => _themeChanger.setTheme(),
-        child: Container(
-          width: double.infinity,
-          child: Tooltip(
-            message: citizenScience,
-            child: const Text(citizenScience),
-          ),
-        ),
+      title: Consumer<ThemeChangerProvider>(
+        builder: (BuildContext context, ThemeChangerProvider provider, Widget child) {
+          return GestureDetector(
+            onPanStart: (_) => provider.setTheme(),
+            child: Container(
+              width: double.infinity,
+              child: Tooltip(
+                message: Constants.citizenScience,
+                child: const Text(Constants.citizenScience),
+              ),
+            ),
+          );
+        },
       ),
       actions: <Widget>[
         IconButton(
           icon: Icon(Icons.search),
-          onPressed: () {
-            showSearch(
-              context: context,
-              delegate: CitizenScienceSearchPage(
-                citizenScienceList: citizenScienceModelList,
-              ),
-            );
-          },
+          onPressed: () => _setSearch(),
         ),
         IconButton(
           icon: Icon(Icons.info_outline),
@@ -65,6 +52,15 @@ class _CitizenSciencePageState extends State<CitizenSciencePage> {
           onPressed: () => _backToHomePage(),
         ),
       ],
+    );
+  }
+
+  void _setSearch() {
+    showSearch(
+      context: context,
+      delegate: CitizenScienceSearchPage(
+        citizenScienceList: citizenScienceModels,
+      ),
     );
   }
 
@@ -79,10 +75,10 @@ class _CitizenSciencePageState extends State<CitizenSciencePage> {
     );
   }
 
-  Future<void> _backToHomePage() async {
-    const String cancel = 'Notiz abbrechen und zur Hauptseite zurückkehren?';
+  void _backToHomePage() {
+    const String cancel = 'Zur Hauptseite zurückkehren?';
 
-    await showDialog(
+    showDialog(
       context: context,
       builder: (_) {
         return NoYesDialog(
@@ -102,83 +98,24 @@ class _CitizenSciencePageState extends State<CitizenSciencePage> {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
 
-    /*double dMin = screenHeight / 4;
-    double dMax = screenHeight / 2;
-
-    int iMin = dMin.round();
-    int iMax = dMax.round();
-
-    final _random = Random();
-    int next(int min, int max) => min + _random.nextInt(max - min);
-
-    next(iMin, iMax);*/
-
-    /*return GridView.custom(
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: screenWidth / (screenHeight / 1.5),
-        //childAspectRatio: screenWidth / (next(iMin, iMax)).toDouble(),
-      ),
-      childrenDelegate: SliverChildListDelegate(
-        List.generate(
-          20,
-          (index) {
-            return Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: CardImageWithText(
-                asset: 'assets/images/mushroom.jpg',
-                title: '$index',
-                fontColor: Colors.white,
-                onTap: () => null,
-              ),
-            );
-          },
-        ),
-      ),
-    );*/
-
     return SafeArea(
       child: GridView.builder(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           childAspectRatio: screenWidth / (screenHeight / 1.5),
-          //childAspectRatio: screenWidth / (next(iMin, iMax)).toDouble(),
         ),
-        itemCount: citizenScienceModelList.length,
+        itemCount: citizenScienceModels.length,
         padding: const EdgeInsets.all(4.0),
         itemBuilder: (context, index) {
           return Padding(
             padding: const EdgeInsets.all(4.0),
             child: TopTextCard(
-              title: citizenScienceModelList[index].title,
-              asset: citizenScienceModelList[index].image,
+              title: citizenScienceModels[index].title,
+              asset: citizenScienceModels[index].image,
               fontColor: Colors.white,
               fontSize: 20.0,
-              onTapTitle: () {
-                _showContent(
-                  citizenScienceModelList[index].title,
-                  citizenScienceModelList[index].built,
-                  citizenScienceModelList[index].contactPerson,
-                );
-              },
-              onTapImage: () {
-                Navigator.pushNamed(
-                  context,
-                  CustomRoute.detailPage,
-                  arguments: {
-                    'title': citizenScienceModelList[index].title,
-                    'image': citizenScienceModelList[index].image,
-                    'location': citizenScienceModelList[index].location,
-                    'research_subject':
-                        citizenScienceModelList[index].researchSubject,
-                    'built': citizenScienceModelList[index].built,
-                    'extended': citizenScienceModelList[index].extended,
-                    'contact_person':
-                        citizenScienceModelList[index].contactPerson,
-                    'url': citizenScienceModelList[index].url,
-                  },
-                );
-              },
+              onTapTitle: () => _onTapTitle(index),
+              onTapImage: () => _onTapImage(index),
             ),
           );
         },
@@ -186,20 +123,39 @@ class _CitizenSciencePageState extends State<CitizenSciencePage> {
     );
   }
 
-  Future<void> _showContent(
-    String title,
-    String built,
-    String contactPerson,
-  ) async {
-    await showDialog(
+  void _onTapTitle(int index) {
+    _showContent(
+      citizenScienceModels[index].title,
+      citizenScienceModels[index].built,
+      citizenScienceModels[index].contactPerson,
+    );
+  }
+
+  void _onTapImage(int index) {
+    Navigator.pushNamed(
+      context,
+      CustomRoute.detailPage,
+      arguments: {
+        'title': citizenScienceModels[index].title,
+        'image': citizenScienceModels[index].image,
+        'location': citizenScienceModels[index].location,
+        'research_subject': citizenScienceModels[index].researchSubject,
+        'built': citizenScienceModels[index].built,
+        'extended': citizenScienceModels[index].extended,
+        'contact_person': citizenScienceModels[index].contactPerson,
+        'url': citizenScienceModels[index].url,
+      },
+    );
+  }
+
+  void _showContent(String title, String built, String contactPerson) {
+    showDialog(
       context: context,
       builder: (_) {
         return SimpleDialog(
           contentPadding: const EdgeInsets.all(16.0),
-          shape: RoundedRectangleBorder(
-            borderRadius: const BorderRadius.all(
-              Radius.circular(8.0),
-            ),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(8.0)),
           ),
           children: <Widget>[
             Text(

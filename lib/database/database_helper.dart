@@ -1,7 +1,6 @@
 import 'package:citizen_lab/database/project_dao.dart';
-import 'package:citizen_lab/entries/note.dart';
+import 'package:citizen_lab/notes/note.dart';
 import 'package:citizen_lab/projects/project.dart';
-import 'package:meta/meta.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -70,10 +69,7 @@ class DatabaseHelper implements ProjectDao, NoteDao {
       '$columnNoteCardColor INTEGER NOT NULL, '
       '$columnNoteCardTextColor INTEGER NOT NULL)';
 
-  Future<Database> get database async {
-    //return _db != null ? _db : _db = await initDb();
-    return _db ?? await _initDb();
-  }
+  Future<Database> get database async => _db ?? await _initDb();
 
   Future<Database> _initDb() async {
     final String databasesPath = await getDatabasesPath();
@@ -92,7 +88,7 @@ class DatabaseHelper implements ProjectDao, NoteDao {
   }
 
   @override
-  Future<int> insertProject({@required Project project}) async {
+  Future<int> insertProject({Project project}) async {
     final Database db = await database;
     final int result = await db.insert(
       projectTable,
@@ -103,7 +99,7 @@ class DatabaseHelper implements ProjectDao, NoteDao {
   }
 
   @override
-  Future<Project> getProject({@required int id}) async {
+  Future<Project> getProject({int id}) async {
     final Database db = await database;
     final List<Map> maps = await db.query(
       projectTable,
@@ -151,7 +147,7 @@ class DatabaseHelper implements ProjectDao, NoteDao {
   }*/
 
   @override
-  Future<int> deleteProject({@required int id}) async {
+  Future<int> deleteProject({int id}) async {
     final db = await database;
     return db.delete(
       projectTable,
@@ -167,7 +163,7 @@ class DatabaseHelper implements ProjectDao, NoteDao {
   }
 
   @override
-  Future<int> updateProject({@required Project newProject}) async {
+  Future<int> updateProject({Project newProject}) async {
     final db = await database;
     final result = await db.update(
       projectTable,
@@ -188,7 +184,7 @@ class DatabaseHelper implements ProjectDao, NoteDao {
 
   @override
   //Future<List> getNotesOfProject({@required String id}) async {
-  Future<List<Note>> getNotesOfProject({@required String uuid}) async {
+  Future<List<Note>> getNotesOfProject({String uuid}) async {
     final db = await database;
     //final List<Map<String, dynamic>> maps = await db.query(
     final result = await db.query(
@@ -221,7 +217,7 @@ class DatabaseHelper implements ProjectDao, NoteDao {
   }
 
   @override
-  Future<int> insertNote({@required Note note}) async {
+  Future<int> insertNote({Note note}) async {
     final Database db = await database;
     final int result = await db.insert(
       noteTable,
@@ -232,7 +228,7 @@ class DatabaseHelper implements ProjectDao, NoteDao {
   }
 
   @override
-  Future<Note> getNote({@required int id}) async {
+  Future<Note> getNote({int id}) async {
     final Database db = await database;
     final List<Map> maps = await db.query(
       noteTable,
@@ -253,7 +249,7 @@ class DatabaseHelper implements ProjectDao, NoteDao {
   }*/
 
   @override
-  Future<int> deleteNote({@required int id}) async {
+  Future<int> deleteNote({int id}) async {
     final Database db = await database;
     return db.delete(
       noteTable,
@@ -269,7 +265,7 @@ class DatabaseHelper implements ProjectDao, NoteDao {
   }
 
   @override
-  Future<int> deleteAllNotesFromProject({@required String uuid}) async {
+  Future<int> deleteAllNotesFromProject({String uuid}) async {
     print('deleteAllNotesFromProject');
     final Database db = await database;
     return db.delete(
@@ -281,7 +277,7 @@ class DatabaseHelper implements ProjectDao, NoteDao {
   }
 
   @override
-  Future<int> updateNote({@required Note newNote}) async {
+  Future<int> updateNote({Note newNote}) async {
     final Database db = await database;
     final int result = await db.update(
       noteTable,

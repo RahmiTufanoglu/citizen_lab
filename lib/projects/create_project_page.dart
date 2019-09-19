@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:citizen_lab/app_locations.dart';
 import 'package:citizen_lab/database/database_helper.dart';
 import 'package:citizen_lab/projects/project.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
@@ -24,7 +25,6 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
   final _projectDb = DatabaseHelper.db;
   final List<Project> _projectList = [];
 
-  ThemeChangerProvider _themeChanger;
   Color _buttonColor = Colors.white;
   Color _iconColor = Colors.black;
 
@@ -35,8 +35,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
 
   void _checkTextsAreNotEmpty() {
     setState(() {
-      if (_titleEditingController.text.isNotEmpty &&
-          _descEditingController.text.isNotEmpty) {
+      if (_titleEditingController.text.isNotEmpty && _descEditingController.text.isNotEmpty) {
         _buttonColor = Colors.green;
         _iconColor = Colors.white;
       } else {
@@ -54,6 +53,12 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
 
   Future<void> _loadProjectList() async {
     final List projects = await _projectDb.getAllProjects();
+
+    /*for (final project in projects) {
+      project.forEach();
+      _projectList.add(project);
+    }*/
+
     projects.forEach((project) {
       //_projectList.add(Project.map(project));
       _projectList.add(project);
@@ -69,8 +74,6 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
 
   @override
   Widget build(BuildContext context) {
-    _themeChanger = Provider.of<ThemeChangerProvider>(context);
-
     return Scaffold(
       key: _snackBarKey,
       appBar: _buildAppBar(),
@@ -89,15 +92,23 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
         icon: Icon(Icons.arrow_back),
         onPressed: () => Navigator.pop(context),
       ),
-      title: GestureDetector(
-        onPanStart: (_) => _themeChanger.setTheme(),
-        child: Container(
-          width: double.infinity,
-          child: Tooltip(
-            message: Constants.createProject,
-            child: const Text(createExperiment),
-          ),
-        ),
+      title: Consumer<ThemeChangerProvider>(
+        builder: (
+          BuildContext context,
+          ThemeChangerProvider provider,
+          Widget child,
+        ) {
+          return GestureDetector(
+            onPanStart: (_) => provider.setTheme(),
+            child: Container(
+              width: double.infinity,
+              child: Tooltip(
+                message: AppLocalizations.of(context).translate('createProject'),
+                child: const Text(createExperiment),
+              ),
+            ),
+          );
+        },
       ),
       actions: <Widget>[
         IconButton(
@@ -164,8 +175,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
                     }) {
                       return null;
                     },*/
-                    validator: (text) =>
-                        text.isEmpty ? 'Bitte einen Titel eingeben' : null,
+                    validator: (text) => text.isEmpty ? 'Bitte einen Titel eingeben' : null,
                   ),
                   const Divider(color: Colors.black),
                   const SizedBox(height: 8.0),
@@ -194,8 +204,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
                     }) {
                       return null;
                     },*/
-                    validator: (text) =>
-                        text.isEmpty ? Constants.enterADesc : null,
+                    validator: (text) => text.isEmpty ? AppLocalizations.of(context).translate('enterADesc') : null,
                   ),
                 ],
               ),
@@ -236,8 +245,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
                 animation: _animationChecked,
               ),*/
               onPressed: () {
-                if (_titleEditingController.text.isNotEmpty &&
-                    _descEditingController.text.isNotEmpty) {
+                if (_titleEditingController.text.isNotEmpty && _descEditingController.text.isNotEmpty) {
                   _createProject(context);
                 }
               },
@@ -259,7 +267,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
       if (_projectList[i].title == _titleEditingController.text) {
         _projectExists = true;
         _snackBarKey.currentState.showSnackBar(
-          _buildSnackBar('${Constants.chooseAnotherTitle}.'),
+          _buildSnackBar('${AppLocalizations.of(context).translate('chooseAnotherTitle')}.'),
         );
         break;
       }

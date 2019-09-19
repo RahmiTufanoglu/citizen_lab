@@ -25,9 +25,7 @@ class ProjectSearchPage extends SearchDelegate<String> {
 
   void _checkIfDarkModeEnabled(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    theme.brightness == appDarkTheme().brightness
-        ? _darkModeEnabled = true
-        : _darkModeEnabled = false;
+    theme.brightness == appDarkTheme().brightness ? _darkModeEnabled = true : _darkModeEnabled = false;
   }
 
   @override
@@ -59,12 +57,11 @@ class ProjectSearchPage extends SearchDelegate<String> {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    final suggestionList =
-        query.isEmpty ? [] : _getProjectTitles(projectList, query);
+    final suggestionList = query.isEmpty ? [] : _getProjectTitles(projectList, query);
     return SafeArea(
       child: ListView.builder(
+        padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 0.0),
         itemCount: suggestionList == null ? 0 : suggestionList.length,
-        padding: const EdgeInsets.all(4.0),
         itemBuilder: (context, index) {
           return ProjectItem(
             project: suggestionList[index],

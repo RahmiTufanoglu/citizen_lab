@@ -5,12 +5,22 @@ class Constants {
 
   static const String onboarding = 'Onboarding';
 
-  static const String fraunhoferUmsichtUrl =
-      'https://www.umsicht.fraunhofer.de/';
+  static const String citizenScience = 'Citizen Science';
+
+  static const String fraunhoferUmsichtUrl = 'https://www.umsicht.fraunhofer.de/';
   static const String fraunhoferUmsichtPrivacyStatement =
       'https://www.umsicht.fraunhofer.de/de/datenschutzerklaerung.html';
-  static const String fraunhoferUmsichtImpressum =
-      'https://www.umsicht.fraunhofer.de/de/impressum.html';
+  static const String fraunhoferUmsichtImpressum = 'https://www.umsicht.fraunhofer.de/de/impressum.html';
+
+  static const String googleUrl = 'https://www.google.de';
+
+  static const String webLink = 'Weblink';
+
+  /*static const String location = 'Standort';
+  static const String researchSubject = 'Forschungsgegenstand';
+  static const String establishedOpened = 'Aufgebaut/Eröffnet';
+  static const String extended = 'Erweitert';
+  static const String contactPerson = 'Ansprechpartner';*/
 
   static const String sortByTitleArc = 'Nach Titel sortieren A-Z';
   static const String sortByTitleDesc = 'Nach Titel Sortieren Z-A';
@@ -36,14 +46,13 @@ class Constants {
   static const String loremShorter =
       'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.';
 
-  static const String back = 'Zurück';
+  /*static const String back = 'Zurück';
 
   static const String sortOptions = 'Sortieroptionen';
 
   static const String emptyList = 'Leere Liste';
 
-  static const String projectTitleAndDesc =
-      'Titel und Beschreibung des Projektes ändern';
+  static const String projectTitleAndDesc = 'Titel und Beschreibung des Projektes ändern';
 
   static const String title = 'Titel';
 
@@ -63,8 +72,7 @@ class Constants {
 
   static const String image = 'Bild';
 
-  static const String doYouWantToDeleteAll =
-      'Wollen sie alle Einträge löschen?';
+  static const String doYouWantToDeleteAll = 'Wollen sie alle Einträge löschen?';
 
   static const String listDeleted = 'Liste gelöscht';
 
@@ -76,12 +84,12 @@ class Constants {
 
   static const String enterADesc = 'Bitte eine Beschreibung eingeben';
 
-  static const String chooseAnotherTitle = 'Bitte einen anderen Titel wählen';
+  static const String chooseAnotherTitle = 'Bitte einen anderen Titel wählen';*/
 
   static const String howToOpenCsvInExcel =
       'Auf der Startseite auf das Feld eine "Leere Arbeitsmappe" gehen.\nDen Reiter "Daten" gehen und "Aus Text/CSV" betätigen.\nDie CSV-Datei auswählen.';
 
-  static const labNotebook = """ 
+  static const labNotebook = ''' 
 Das Labornotizbuch gilt als die bekannteste wissenschaftliche Dokumentation und dient zugleich als die offizielle Aufzeichnungsmethode von Labormessungen sowie Beobachtungen.\n
 Experimentellen Ideen, Beobachtungen und Ergebnisse wurden traditionell von Wissenschaftlern auf Papiernotizbüchern verfolgt.\n
 Ein entscheidender Punkt aller Laborarbeiten ist die genaue Aufzeichnung der durchgeführten Experimente.\n
@@ -93,5 +101,7 @@ Häufig sind Kopien jeder Seite eines Labornotizbuches in Unternehmen oder Insti
 Eine Signierung sowie Datierung vom Wissenschaftler und von einem unabhängigen Zeugen auf jeder Seite muss innerhalb von zwei Wochen erfolgen.\n
 Der Grund dafür ist die Möglichkeit der Zurückverfolgung des jeweiligen Wissenschaftlers, um das Lesen und die Gegenzeichnung zu bestätigen.\n
 Nach Luka Zupancic sind immer noch Papier-Labornotizbücher die weltweit am weitesten verbreitete Form der experimentellen Datenerfassung in Laboren. Sie existieren schon seit Jahrhunderten und auch der berühmte Forscher Leonardo da Vinci verwendete eines.\n
-""";
+''';
+
+  static const String cancelNote = 'Notiz abbrechen und zur Hauptseite zurückkehren?';
 }

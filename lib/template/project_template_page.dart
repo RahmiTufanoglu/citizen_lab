@@ -1,11 +1,10 @@
 import 'package:citizen_lab/projects/project.dart';
-import 'package:citizen_lab/utils/constants.dart';
 import 'package:citizen_lab/utils/date_formatter.dart';
 import 'package:citizen_lab/utils/utils.dart';
 import 'package:flutter/material.dart';
 
-import 'database/database_helper.dart';
-import 'entries/note.dart';
+import '../database/database_helper.dart';
+import '../notes/note.dart';
 
 class ProjectTemplatePage extends StatefulWidget {
   @override
@@ -14,9 +13,16 @@ class ProjectTemplatePage extends StatefulWidget {
 
 class _ProjectTemplatePageState extends State<ProjectTemplatePage> {
   final _projectDb = DatabaseHelper.db;
-  final List<String> _templateList = ['A', 'B', 'C', 'D', 'E'];
+  final _templateList = ['A', 'B', 'C', 'D'];
+  final _contentList = [
+    '3x Text',
+    '5x Text',
+    '10x Text',
+    '15x Text',
+  ];
+  final _textCounts = [3, 5, 10, 15];
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  final List<Project> _projectList = [];
+  final _projectList = [];
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +41,12 @@ class _ProjectTemplatePageState extends State<ProjectTemplatePage> {
 
   Future<void> _loadProjectList() async {
     final List projects = await _projectDb.getAllProjects();
+
+    /*for (final project in projects) {
+      project.forEach();
+      _projectList.add(project);
+    }*/
+
     projects.forEach((project) {
       _projectList.add(project);
     });
@@ -63,20 +75,22 @@ class _ProjectTemplatePageState extends State<ProjectTemplatePage> {
                 padding: const EdgeInsets.only(left: 16.0),
                 child: Align(
                   alignment: Alignment.bottomLeft,
-                  child: Text('${Constants.loremShorter}'),
+                  child: Text(_contentList[index]),
                 ),
               ),
               IconButton(
-                  icon: const Icon(Icons.add),
-                  onPressed: () {
-                    _createTemplateContent(
-                      'Vorlage ${index + 1}',
-                      'Vorlage Beschreibung ${index + 1}',
-                    );
-                    _scaffoldKey.currentState.showSnackBar(
-                      _buildSnackBar(text: 'Vorlage ${index + 1} hinzugefügt.'),
-                    );
-                  }),
+                icon: const Icon(Icons.add),
+                onPressed: () {
+                  _createTemplateContent(
+                    'Vorlage ${index + 1}',
+                    'Vorlage Beschreibung ${index + 1}',
+                    _textCounts[index],
+                  );
+                  _scaffoldKey.currentState.showSnackBar(
+                    _buildSnackBar(text: 'Vorlage ${index + 1} hinzugefügt.'),
+                  );
+                },
+              ),
             ],
           );
         },
@@ -95,7 +109,7 @@ class _ProjectTemplatePageState extends State<ProjectTemplatePage> {
     );
   }
 
-  Future<void> _createTemplateContent(String title, String desc) async {
+  Future<void> _createTemplateContent(String title, String desc, int textCount) async {
     String randomUuid = generateRandomUuid();
 
     for (int i = 0; i < _projectList.length; i++) {
@@ -104,7 +118,7 @@ class _ProjectTemplatePageState extends State<ProjectTemplatePage> {
       }
     }
 
-    final Project project = Project(
+    final project = Project(
       title,
       randomUuid,
       desc,
@@ -115,7 +129,7 @@ class _ProjectTemplatePageState extends State<ProjectTemplatePage> {
     );
     await _projectDb.insertProject(project: project);
 
-    final Note note = Note(
+    final note = Note(
       project.uuid,
       'Text',
       'Vorlage Titel',
@@ -129,8 +143,10 @@ class _ProjectTemplatePageState extends State<ProjectTemplatePage> {
       0xFF000000,
     );
 
-    if (project != null) {
-      await _projectDb.insertNote(note: note);
+    for (int i = 0; i < textCount; i++) {
+      if (project != null) {
+        await _projectDb.insertNote(note: note);
+      }
     }
   }
 

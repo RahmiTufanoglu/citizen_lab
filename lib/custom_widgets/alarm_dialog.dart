@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class AlarmDialog extends StatefulWidget {
+  final Key key;
   final IconData icon;
   final Color iconColor;
   final String text;
@@ -12,10 +13,9 @@ class AlarmDialog extends StatefulWidget {
     @required this.icon,
     @required this.text,
     @required this.onTap,
+    this.key,
     this.iconColor = Colors.redAccent,
-  })  : assert(icon != null),
-        assert(text != null),
-        assert(onTap != null);
+  }) : super(key: key);
 
   @override
   _AlarmDialogState createState() => _AlarmDialogState();
@@ -30,10 +30,8 @@ class _AlarmDialogState extends State<AlarmDialog> {
     return SimpleDialog(
       contentPadding: const EdgeInsets.all(16.0),
       elevation: 4.0,
-      shape: RoundedRectangleBorder(
-        borderRadius: const BorderRadius.all(
-          Radius.circular(8.0),
-        ),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(8.0)),
       ),
       children: <Widget>[
         Column(
@@ -42,7 +40,7 @@ class _AlarmDialogState extends State<AlarmDialog> {
               widget.text,
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 18.0,
+                fontSize: 16.0,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -58,38 +56,20 @@ class _AlarmDialogState extends State<AlarmDialog> {
             Row(
               children: <Widget>[
                 Expanded(
-                  child: RaisedButton(
-                    elevation: 4.0,
-                    highlightElevation: 16.0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(8.0),
-                      ),
-                    ),
+                  child: _buildRaisedButton(
+                    Colors.grey.withOpacity(0.4),
+                    Colors.grey.withOpacity(0.8),
                     onPressed: () => Navigator.pop(context, false),
-                    child: Text(
-                      _no,
-                      style: TextStyle(fontSize: 18.0),
-                    ),
+                    text: _no,
                   ),
                 ),
                 const SizedBox(width: 8.0),
                 Expanded(
-                  child: RaisedButton(
-                    highlightColor: Colors.red.withOpacity(0.4),
-                    splashColor: Colors.red.withOpacity(0.8),
-                    elevation: 4.0,
-                    highlightElevation: 16.0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(8.0),
-                      ),
-                    ),
+                  child: _buildRaisedButton(
+                    Colors.red.withOpacity(0.4),
+                    Colors.red.withOpacity(0.8),
                     onPressed: widget.onTap,
-                    child: Text(
-                      _yes,
-                      style: TextStyle(fontSize: 18.0),
-                    ),
+                    text: _yes,
                   ),
                 ),
               ],
@@ -97,6 +77,28 @@ class _AlarmDialogState extends State<AlarmDialog> {
           ],
         ),
       ],
+    );
+  }
+
+  Widget _buildRaisedButton(
+    Color highlightColor,
+    Color splashColor, {
+    @required VoidCallback onPressed,
+    @required String text,
+  }) {
+    return RaisedButton(
+      highlightColor: highlightColor,
+      splashColor: splashColor,
+      elevation: 4.0,
+      highlightElevation: 16.0,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+      ),
+      onPressed: onPressed,
+      child: Text(
+        text,
+        style: TextStyle(fontSize: 16.0),
+      ),
     );
   }
 }

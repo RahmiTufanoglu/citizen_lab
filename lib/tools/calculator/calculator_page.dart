@@ -11,7 +11,6 @@ class CalculatorPage extends StatefulWidget {
 class _CalculatorPageState extends State<CalculatorPage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  ThemeChangerProvider _themeChanger;
   String _out = '0';
   String output = '0';
   double _num1 = 0.0;
@@ -20,8 +19,6 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
   @override
   Widget build(BuildContext context) {
-    _themeChanger = Provider.of<ThemeChangerProvider>(context);
-
     return Scaffold(
       key: _scaffoldKey,
       appBar: _buildAppBar(),
@@ -34,15 +31,23 @@ class _CalculatorPageState extends State<CalculatorPage> {
     const String calculator = 'Rechner';
 
     return AppBar(
-      title: GestureDetector(
-        onPanStart: (_) => _themeChanger.setTheme(),
-        child: Container(
-          width: double.infinity,
-          child: Tooltip(
-            message: calculator,
-            child: const Text(calculator),
-          ),
-        ),
+      title: Consumer<ThemeChangerProvider>(
+        builder: (
+          BuildContext context,
+          ThemeChangerProvider provider,
+          Widget child,
+        ) {
+          return GestureDetector(
+            onPanStart: (_) => provider.setTheme(),
+            child: Container(
+              width: double.infinity,
+              child: Tooltip(
+                message: calculator,
+                child: const Text(calculator),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -196,9 +201,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
   }
 
   void _setClipboard(String text, String snackText) {
-    Clipboard.setData(
-      ClipboardData(text: text),
-    );
+    Clipboard.setData(ClipboardData(text: text));
 
     _scaffoldKey.currentState.showSnackBar(
       _buildSnackBar(text: snackText),

@@ -12,10 +12,7 @@ class ThemeChangerProvider with ChangeNotifier {
   bool get getDarkModeStatus => _darkModeEnabled;
 
   void setTheme() {
-    _darkModeEnabled
-        ? _themeData = appLightTheme()
-        : _themeData = appDarkTheme();
-
+    _darkModeEnabled ? _themeData = appLightTheme() : _themeData = appDarkTheme();
     _darkModeEnabled = !_darkModeEnabled;
     notifyListeners();
   }

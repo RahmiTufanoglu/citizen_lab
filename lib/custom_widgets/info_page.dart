@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class InfoPage extends StatefulWidget {
+  final Key key;
   final String title;
   final int tabLength;
   final List<Widget> tabs;
@@ -13,22 +14,16 @@ class InfoPage extends StatefulWidget {
     @required this.tabLength,
     @required this.tabs,
     @required this.tabChildren,
-  })  : assert(title != null),
-        assert(tabLength != null),
-        assert(tabs != null),
-        assert(tabChildren != null);
+    this.key,
+  }) : super(key: key);
 
   @override
   _InfoPageState createState() => _InfoPageState();
 }
 
 class _InfoPageState extends State<InfoPage> {
-  ThemeChangerProvider _themeChanger;
-
   @override
   Widget build(BuildContext context) {
-    _themeChanger = Provider.of<ThemeChangerProvider>(context);
-
     return DefaultTabController(
       length: widget.tabLength,
       child: Scaffold(
@@ -39,23 +34,29 @@ class _InfoPageState extends State<InfoPage> {
   }
 
   Widget _buildAppBar(BuildContext context) {
-    const String back = 'Zurück';
-
     return AppBar(
       leading: IconButton(
-        tooltip: back,
+        tooltip: 'Go to last page',
         icon: Icon(Icons.arrow_back),
         onPressed: () => Navigator.pop(context),
       ),
-      title: GestureDetector(
-        onPanStart: (_) => _themeChanger.setTheme(),
-        child: Container(
-          width: double.infinity,
-          child: Tooltip(
-            message: '',
-            child: Text(widget.title),
-          ),
-        ),
+      title: Consumer<ThemeChangerProvider>(
+        builder: (
+          BuildContext context,
+          ThemeChangerProvider provider,
+          Widget child,
+        ) {
+          return GestureDetector(
+            onPanStart: (_) => provider.setTheme(),
+            child: Container(
+              width: double.infinity,
+              child: Tooltip(
+                message: widget.title,
+                child: Text(widget.title),
+              ),
+            ),
+          );
+        },
       ),
       actions: const <Widget>[],
       bottom: TabBar(

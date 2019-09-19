@@ -16,13 +16,8 @@ class SimpleInfoPage extends StatefulWidget {
 }
 
 class _SimpleInfoPageState extends State<SimpleInfoPage> {
-  ThemeChangerProvider _themeChanger;
-
   @override
   Widget build(BuildContext context) {
-    _themeChanger = Provider.of<ThemeChangerProvider>(context);
-    //_themeChanger.checkIfDarkModeEnabled(context);
-
     return Scaffold(
       appBar: _buildAppBar(context),
       body: _buildBody(),
@@ -40,15 +35,23 @@ class _SimpleInfoPageState extends State<SimpleInfoPage> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      title: GestureDetector(
-        onPanStart: (_) => _themeChanger.setTheme(),
-        child: Container(
-          width: double.infinity,
-          child: Tooltip(
-            message: '',
-            child: Text(widget.title),
-          ),
-        ),
+      title: Consumer<ThemeChangerProvider>(
+        builder: (
+          BuildContext context,
+          ThemeChangerProvider provider,
+          Widget child,
+        ) {
+          return GestureDetector(
+            onPanStart: (_) => provider.setTheme(),
+            child: Container(
+              width: double.infinity,
+              child: Tooltip(
+                message: widget.title,
+                child: Text(widget.title),
+              ),
+            ),
+          );
+        },
       ),
     );
   }

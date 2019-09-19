@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:citizen_lab/custom_expansion_tile.dart';
+import 'package:citizen_lab/custom_widgets/custom_expansion_tile.dart';
 import 'package:citizen_lab/database/database_helper.dart';
-import 'package:citizen_lab/entries/note.dart';
+import 'package:citizen_lab/notes/note.dart';
 import 'package:citizen_lab/projects/project.dart';
 import 'package:citizen_lab/themes/theme.dart';
 import 'package:citizen_lab/utils/date_formatter.dart';
@@ -10,6 +10,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class TitleDescWidget extends StatefulWidget {
+  final Key key;
   final String uuid;
   final String title;
   final String createdAt;
@@ -26,10 +27,8 @@ class TitleDescWidget extends StatefulWidget {
     @required this.descEditingController,
     @required this.onWillPop,
     @required this.db,
-  })  : assert(createdAt != null),
-        assert(titleEditingController != null),
-        assert(descEditingController != null),
-        assert(onWillPop != null);
+    this.key,
+  }) : super(key: key);
 
   @override
   _TitleDescWidgetState createState() => _TitleDescWidgetState();
@@ -47,6 +46,8 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
 
   @override
   void initState() {
+    super.initState();
+
     _timeString = dateFormatted();
     _timer = Timer.periodic(const Duration(seconds: 1), (_) => _getTime());
 
@@ -56,8 +57,6 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
     _titleEditingController.addListener(() {
       setState(() => _projectTitle = _titleEditingController.text);
     });
-
-    super.initState();
   }
 
   @override
@@ -178,7 +177,7 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
                 Text(
                   'Titel:',
                   style: TextStyle(
-                    fontSize: 16.0,
+                    fontSize: 14.0,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -192,7 +191,7 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
                 Text(
                   'Beschreibung:',
                   style: TextStyle(
-                    fontSize: 16.0,
+                    fontSize: 14.0,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -334,7 +333,7 @@ class _TitleDescWidgetState extends State<TitleDescWidget> {
       keyboardType: TextInputType.text,
       maxLines: maxLines,
       maxLength: maxLength,
-      style: TextStyle(fontSize: 16.0),
+      style: TextStyle(fontSize: 12.0),
       decoration: InputDecoration(
         hintText: '...',
         errorText: controller.text.isEmpty ? errorText : null,

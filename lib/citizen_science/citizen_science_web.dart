@@ -24,8 +24,6 @@ class _CitizenScienceWebPageState extends State<CitizenScienceWebPage> {
 
   bool _isLoadingPage;
 
-  ThemeChangerProvider _themeChanger;
-
   @override
   void initState() {
     super.initState();
@@ -34,8 +32,6 @@ class _CitizenScienceWebPageState extends State<CitizenScienceWebPage> {
 
   @override
   Widget build(BuildContext context) {
-    _themeChanger = Provider.of<ThemeChangerProvider>(context);
-
     return Scaffold(
       appBar: _buildAppBar(),
       body: _buildBody(),
@@ -51,15 +47,23 @@ class _CitizenScienceWebPageState extends State<CitizenScienceWebPage> {
         icon: Icon(Icons.arrow_back),
         onPressed: () => Navigator.pop(context),
       ),
-      title: GestureDetector(
-        onPanStart: (_) => _themeChanger.setTheme(),
-        child: Container(
-          width: double.infinity,
-          child: Tooltip(
-            message: widget.title,
-            child: Text(widget.title),
-          ),
-        ),
+      title: Consumer<ThemeChangerProvider>(
+        builder: (
+          BuildContext context,
+          ThemeChangerProvider provider,
+          Widget child,
+        ) {
+          return GestureDetector(
+            onPanStart: (_) => provider.setTheme(),
+            child: Container(
+              width: double.infinity,
+              child: Tooltip(
+                message: widget.title,
+                child: Text(widget.title),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -76,9 +80,7 @@ class _CitizenScienceWebPageState extends State<CitizenScienceWebPage> {
               _webViewController.complete(webViewController);
             },
             onPageFinished: (_) {
-              setState(() {
-                _isLoadingPage = false;
-              });
+              setState(() => _isLoadingPage = false);
             },
           ),
           //_loadIndicator(),

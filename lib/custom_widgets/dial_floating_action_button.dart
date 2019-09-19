@@ -3,39 +3,39 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 class DialFloatingActionButton extends StatefulWidget {
+  final Key key;
   final IconData firstIcon;
   final IconData secondIcon;
   final List<Icon> iconList;
   final List<String> stringList;
   final Function function;
+  final bool isNoteCard;
 
   const DialFloatingActionButton({
     @required this.iconList,
     @required this.stringList,
     @required this.function,
+    @required this.isNoteCard,
+    this.key,
     this.firstIcon = Icons.add,
     this.secondIcon = Icons.add,
-  })  : assert(iconList != null),
-        assert(stringList != null),
-        assert(function != null);
+  }) : super(key: key);
 
   @override
-  _DialFloatingActionButtonState createState() =>
-      _DialFloatingActionButtonState();
+  _DialFloatingActionButtonState createState() => _DialFloatingActionButtonState();
 }
 
-class _DialFloatingActionButtonState extends State<DialFloatingActionButton>
-    with TickerProviderStateMixin {
+class _DialFloatingActionButtonState extends State<DialFloatingActionButton> with TickerProviderStateMixin {
   AnimationController _animationController;
 
   @override
   void initState() {
+    super.initState();
+
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 250),
       vsync: this,
     );
-
-    super.initState();
   }
 
   @override
@@ -49,7 +49,7 @@ class _DialFloatingActionButtonState extends State<DialFloatingActionButton>
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: List.generate(widget.iconList.length, (int index) {
-        final Widget child = ScaleTransition(
+        final Widget scaleTransition = ScaleTransition(
           scale: CurvedAnimation(
             parent: _animationController,
             curve: Interval(
@@ -59,43 +59,39 @@ class _DialFloatingActionButtonState extends State<DialFloatingActionButton>
             ),
           ),
           child: Padding(
-            padding: const EdgeInsets.only(top: 16.0),
+            padding: const EdgeInsets.only(top: 8.0),
             child: FloatingActionButton(
               heroTag: null,
-              //mini: true,
-              //backgroundColor: widget.colorList[index],
+              mini: false,
               tooltip: '${widget.stringList[index]}note erstellen.',
               onPressed: () {
                 _animationController.reverse();
-                widget.function(widget.stringList[index]);
+                widget.isNoteCard
+                    ? widget.function(widget.stringList[index], false)
+                    : widget.function(widget.stringList[index]);
               },
               child: widget.iconList[index],
             ),
           ),
         );
-        return child;
+        return scaleTransition;
       }).toList()
         ..add(
           Padding(
-            padding: const EdgeInsets.only(top: 16.0),
+            padding: const EdgeInsets.only(top: 8.0),
             child: FloatingActionButton(
               heroTag: null,
               onPressed: () {
-                _animationController.isDismissed
-                    ? _animationController.forward()
-                    : _animationController.reverse();
+                _animationController.isDismissed ? _animationController.forward() : _animationController.reverse();
               },
               child: AnimatedBuilder(
                 animation: _animationController,
                 builder: (BuildContext context, Widget child) {
                   return Transform(
-                    transform: Matrix4.rotationZ(
-                        _animationController.value * 0.25 * pi),
+                    transform: Matrix4.rotationZ(_animationController.value * 0.25 * pi),
                     alignment: FractionalOffset.center,
                     child: Icon(
-                      _animationController.isDismissed
-                          ? widget.firstIcon
-                          : widget.secondIcon,
+                      _animationController.isDismissed ? widget.firstIcon : widget.secondIcon,
                     ),
                   );
                 },

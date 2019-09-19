@@ -1,7 +1,7 @@
 import 'package:citizen_lab/utils/constants.dart';
 import 'package:flutter/material.dart';
 
-List<Widget> textTabList = [
+List<Widget> textTabs = [
   Tab(
     child: Text(
       '1',
@@ -31,30 +31,19 @@ List<Widget> textTabList = [
   ),
 ];
 
-List<Widget> textSingleChildScrollViewList = [
+List<Widget> textSingleChildScrollViews = [
   SingleChildScrollView(
     padding: const EdgeInsets.all(16.0),
-    child: Text(Constants.lorem +
-        Constants.lorem +
-        Constants.lorem +
-        Constants.lorem +
-        Constants.lorem +
-        Constants.lorem),
+    child: const Text(
+      Constants.lorem + Constants.lorem + Constants.lorem + Constants.lorem + Constants.lorem + Constants.lorem,
+    ),
   ),
   SingleChildScrollView(
     padding: const EdgeInsets.all(16.0),
-    child: Text(Constants.lorem +
-        Constants.lorem +
-        Constants.lorem +
-        Constants.lorem +
-        Constants.lorem),
+    child: const Text(Constants.lorem + Constants.lorem + Constants.lorem + Constants.lorem + Constants.lorem),
   ),
   SingleChildScrollView(
     padding: const EdgeInsets.all(16.0),
-    child: Text(Constants.lorem +
-        Constants.lorem +
-        Constants.lorem +
-        Constants.lorem +
-        Constants.lorem),
+    child: const Text(Constants.lorem + Constants.lorem + Constants.lorem + Constants.lorem + Constants.lorem),
   ),
 ];

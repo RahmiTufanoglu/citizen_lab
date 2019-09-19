@@ -10,7 +10,7 @@ class PdfCreator {
   String dateCreated;
   String filePath;
 
-  final pdf = Document();
+  final Document pdf = Document();
 
   PdfCreator({
     @required this.title,

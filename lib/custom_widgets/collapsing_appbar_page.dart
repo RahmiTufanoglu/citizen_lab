@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CollapsingAppBarPage extends StatelessWidget {
+  final Key key;
   final double fontSize;
   final double appBarElevation;
   final String image;
@@ -11,9 +12,10 @@ class CollapsingAppBarPage extends StatelessWidget {
     @required this.text,
     @required this.image,
     @required this.body,
+    this.key,
     this.fontSize = 16.0,
     this.appBarElevation = 0.0,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

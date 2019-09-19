@@ -2,6 +2,7 @@ import 'package:citizen_lab/custom_widgets/table_widget.dart';
 import 'package:flutter/material.dart';
 
 class MainTableWidet extends StatefulWidget {
+  final Key key;
   final Function onWillPop;
   final int column;
   final int row;
@@ -14,11 +15,8 @@ class MainTableWidet extends StatefulWidget {
     @required this.row,
     @required this.textEditingController,
     @required this.generateTable,
-  })  : assert(onWillPop != null),
-        assert(column != null),
-        assert(row != null),
-        assert(textEditingController != null),
-        assert(generateTable != null);
+    this.key,
+  }) : super(key: key);
 
   @override
   _MainTableWidetState createState() => _MainTableWidetState();

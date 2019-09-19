@@ -1,8 +1,6 @@
 import 'dart:async';
 
-import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
-import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -14,14 +12,12 @@ class StopwatchPage extends StatefulWidget {
   _StopwatchPageState createState() => _StopwatchPageState();
 }
 
-class _StopwatchPageState extends State<StopwatchPage>
-    with TickerProviderStateMixin {
+class _StopwatchPageState extends State<StopwatchPage> with TickerProviderStateMixin {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _stopWatch = Stopwatch();
   final _timeout = const Duration(milliseconds: 30);
   final _scrollController = ScrollController();
 
-  ThemeChangerProvider _themeChanger;
   String _stopWatchText = '00:00:000';
   String _elapsedTime = '00:00:000';
   Icon _icon = Icon(Icons.play_arrow);
@@ -29,8 +25,6 @@ class _StopwatchPageState extends State<StopwatchPage>
 
   @override
   Widget build(BuildContext context) {
-    _themeChanger = Provider.of<ThemeChangerProvider>(context);
-
     return Scaffold(
       key: _scaffoldKey,
       appBar: _buildAppBar(),
@@ -49,15 +43,23 @@ class _StopwatchPageState extends State<StopwatchPage>
         icon: Icon(Icons.arrow_back),
         onPressed: () => _onBackPressed(),
       ),
-      title: GestureDetector(
-        onPanStart: (_) => _themeChanger.setTheme(),
-        child: Container(
-          width: double.infinity,
-          child: Tooltip(
-            message: stopWatch,
-            child: const Text(stopWatch),
-          ),
-        ),
+      title: Consumer<ThemeChangerProvider>(
+        builder: (
+          BuildContext context,
+          ThemeChangerProvider provider,
+          Widget child,
+        ) {
+          return GestureDetector(
+            onPanStart: (_) => provider.setTheme(),
+            child: Container(
+              width: double.infinity,
+              child: Tooltip(
+                message: stopWatch,
+                child: const Text(stopWatch),
+              ),
+            ),
+          );
+        },
       ),
       actions: <Widget>[
         IconButton(
@@ -67,14 +69,10 @@ class _StopwatchPageState extends State<StopwatchPage>
             final StringBuffer content = StringBuffer();
             for (int i = 0; i < _elapsedTimeList.length; i++) {
               //content += _elapsedTimeList[i] + '\n';
-              content.write(_elapsedTimeList[i] + '\n');
+              content.write('${_elapsedTimeList[i]}\n');
             }
             _shareContent(content.toString());
           },
-        ),
-        IconButton(
-          icon: Icon(Icons.home),
-          onPressed: () => _backToHomePage(),
         ),
       ],
     );
@@ -90,25 +88,6 @@ class _StopwatchPageState extends State<StopwatchPage>
         _buildSnackBar(text: sharingNotPossible),
       );
     }
-  }
-
-  void _backToHomePage() {
-    const String cancel = 'Notiz abbrechen und zur Hauptseite zurückkehren?';
-
-    showDialog(
-      context: context,
-      builder: (_) {
-        return NoYesDialog(
-          text: cancel,
-          onPressed: () {
-            Navigator.popUntil(
-              context,
-              ModalRoute.withName(CustomRoute.routeHomePage),
-            );
-          },
-        );
-      },
-    );
   }
 
   Widget _buildBody() {
@@ -151,8 +130,7 @@ class _StopwatchPageState extends State<StopwatchPage>
               const SizedBox(height: 56.0),
               Container(
                 //height: 200.0,
-                height: MediaQuery.of(context).orientation ==
-                        Orientation.portrait
+                height: MediaQuery.of(context).orientation == Orientation.portrait
                     ? (screenHeight / 2.5) - kToolbarHeight - statusBarHeight
                     : (screenHeight / 1.5) - kToolbarHeight - statusBarHeight,
                 decoration: BoxDecoration(color: Colors.grey.withOpacity(0.2)),
@@ -174,7 +152,7 @@ class _StopwatchPageState extends State<StopwatchPage>
                                   ? 'Letzte Zeit:\t${_elapsedTimeList[index]}'
                                   : _elapsedTimeList[index],
                               textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 20.0),
+                              style: TextStyle(fontSize: 16.0),
                             ),
                           ),
                           const Spacer(),
@@ -264,11 +242,15 @@ class _StopwatchPageState extends State<StopwatchPage>
   }
 
   void _setStopwatchText() {
-    _stopWatchText = _stopWatch.elapsed.inMinutes.toString().padLeft(2, '0') +
+    /*_stopWatchText = _stopWatch.elapsed.inMinutes.toString().padLeft(2, '0') +
         ':' +
         (_stopWatch.elapsed.inSeconds % 60).toString().padLeft(2, '0') +
         ':' +
-        (_stopWatch.elapsed.inMilliseconds % 1000).toString().padLeft(3, '0');
+        (_stopWatch.elapsed.inMilliseconds % 1000).toString().padLeft(3, '0');*/
+
+    _stopWatchText = '${_stopWatch.elapsed.inMinutes.toString().padLeft(2, '0')}:'
+        '${(_stopWatch.elapsed.inSeconds % 60).toString().padLeft(2, '0')}:'
+        '${(_stopWatch.elapsed.inMilliseconds % 1000).toString().padLeft(3, '0')}';
   }
 
   Widget _buildFabs() {
@@ -290,7 +272,7 @@ class _StopwatchPageState extends State<StopwatchPage>
               final StringBuffer content = StringBuffer();
               for (int i = 0; i < _elapsedTimeList.length; i++) {
                 //content += _elapsedTimeList[i] + '\n';
-                content.write(_elapsedTimeList[i] + '\n');
+                content.write('${_elapsedTimeList[i]}\n');
               }
               _copyContent(content.toString());
             },

@@ -1,27 +1,30 @@
 import 'dart:async';
 
-import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/custom_widgets/simple_timer_dialog.dart';
 import 'package:citizen_lab/database/database_helper.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
+import 'package:citizen_lab/utils/constants.dart';
 import 'package:citizen_lab/utils/date_formatter.dart';
-import 'package:citizen_lab/utils/route_generator.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:share/share.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
+import '../../app_locations.dart';
 import '../note.dart';
 
 class WeblinkPage extends StatefulWidget {
   final Key key;
   final Note note;
   final String uuid;
+  final String searchEngine;
 
   const WeblinkPage({
     @required this.note,
     @required this.uuid,
+    @required this.searchEngine,
     this.key,
   }) : super(key: key);
 
@@ -36,7 +39,6 @@ class _WeblinkPageState extends State<WeblinkPage> {
   final _webViewController = Completer<WebViewController>();
   final _uniqueKey = UniqueKey();
 
-  ThemeChangerProvider _themeChanger;
   String _url = '';
   String _title = '';
   String _createdAt = '';
@@ -52,7 +54,7 @@ class _WeblinkPageState extends State<WeblinkPage> {
       _url = widget.note.filePath;
       _createdAt = widget.note.createdAt;
     } else {
-      _url = 'https://www.google.de';
+      _url = widget.searchEngine;
       _createdAt = dateFormatted();
     }
 
@@ -70,8 +72,6 @@ class _WeblinkPageState extends State<WeblinkPage> {
 
   @override
   Widget build(BuildContext context) {
-    _themeChanger = Provider.of<ThemeChangerProvider>(context);
-
     return Scaffold(
       key: _scaffoldKey,
       appBar: _buildAppBar(),
@@ -81,51 +81,48 @@ class _WeblinkPageState extends State<WeblinkPage> {
   }
 
   Widget _buildAppBar() {
-    const String back = 'Zurück';
-    const String linking = 'Weblink';
-
     return AppBar(
-      leading: IconButton(
-        tooltip: back,
-        icon: Icon(Icons.arrow_back),
-        onPressed: _saveNote,
-      ),
-      title: GestureDetector(
-        onPanStart: (_) => _themeChanger.setTheme(),
-        child: Container(
-          width: double.infinity,
-          child: Tooltip(
-            message: linking,
-            child: const Text(linking),
-          ),
-        ),
+      leading: _saveOnBackWidget(),
+      title: Consumer<ThemeChangerProvider>(
+        builder: (
+          BuildContext context,
+          ThemeChangerProvider provider,
+          Widget child,
+        ) {
+          return GestureDetector(
+            onPanStart: (_) => provider.setTheme(),
+            child: Container(
+              width: double.infinity,
+              child: Tooltip(
+                message: Constants.webLink,
+                child: const Text(Constants.webLink),
+              ),
+            ),
+          );
+        },
       ),
       actions: <Widget>[
         IconButton(
           icon: Icon(Icons.share),
           onPressed: () => Share.share(_url),
         ),
-        IconButton(
-          icon: Icon(Icons.home),
-          onPressed: () => _backToHomePage(),
-        ),
       ],
     );
   }
 
-  void _backToHomePage() {
-    const String cancel = 'Notiz abbrechen und zur Hauptseite zurückkehren?';
-
-    showDialog(
-      context: context,
-      builder: (_) {
-        return NoYesDialog(
-          text: cancel,
-          onPressed: () {
-            Navigator.popUntil(
-              context,
-              ModalRoute.withName(CustomRoute.routeHomePage),
-            );
+  Widget _saveOnBackWidget() {
+    return FutureBuilder<WebViewController>(
+      future: _webViewController.future,
+      builder: (
+        BuildContext context,
+        AsyncSnapshot<WebViewController> snapshot,
+      ) {
+        return IconButton(
+          tooltip: AppLocalizations.of(context).translate('back'),
+          icon: Icon(Icons.arrow_back),
+          onPressed: () async {
+            _url = await snapshot.data.currentUrl();
+            await _saveNote();
           },
         );
       },
@@ -133,19 +130,49 @@ class _WeblinkPageState extends State<WeblinkPage> {
   }
 
   Widget _buildBody() {
-    return SafeArea(
-      child: WillPopScope(
-        onWillPop: () => _saveNote(),
-        child: WebView(
-          key: _uniqueKey,
-          javascriptMode: JavascriptMode.unrestricted,
-          initialUrl: _url,
-          onWebViewCreated: (WebViewController webViewController) {
-            _webViewController.complete(webViewController);
-          },
-          onPageFinished: (String url) {
-            debugPrint('$url finished loading.');
-          },
+    return FutureBuilder<WebViewController>(
+      future: _webViewController.future,
+      builder: (
+        BuildContext context,
+        AsyncSnapshot<WebViewController> snapshot,
+      ) {
+        return SafeArea(
+          child: WillPopScope(
+            onWillPop: () async {
+              _url = await snapshot.data.currentUrl();
+              await _saveNote();
+              return false;
+            },
+            child: _buildWebView(),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildWebView() {
+    return WebView(
+      key: _uniqueKey,
+      initialUrl: _url,
+      javascriptMode: JavascriptMode.unrestricted,
+      onWebViewCreated: (WebViewController webViewController) {
+        _webViewController.complete(webViewController);
+      },
+      onPageFinished: (String url) {
+        debugPrint('$url finished loading.');
+      },
+    );
+  }
+
+  Widget _buildSnackBar({@required String text}) {
+    return SnackBar(
+      backgroundColor: Colors.black87,
+      duration: const Duration(milliseconds: 500),
+      content: Text(
+        text,
+        style: TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
         ),
       ),
     );
@@ -162,19 +189,46 @@ class _WeblinkPageState extends State<WeblinkPage> {
             onPressed: () => _showEditDialog(),
             child: Icon(Icons.description),
           ),
+          _buildPreviousUrlFab(),
           _buildCopyCurrentLinkFab(),
         ],
       ),
     );
   }
 
-  Widget _buildCopyCurrentLinkFab() {
+  Widget _buildPreviousUrlFab() {
     return FutureBuilder<WebViewController>(
       future: _webViewController.future,
       builder: (
         BuildContext context,
         AsyncSnapshot<WebViewController> snapshot,
       ) {
+        return FloatingActionButton(
+          heroTag: null,
+          onPressed: () => _navigateToPreviousUrl(context, snapshot.data, goBack: true),
+          child: Icon(Icons.arrow_back),
+        );
+      },
+    );
+  }
+
+  Future<void> _navigateToPreviousUrl(
+    BuildContext context,
+    WebViewController controller, {
+    bool goBack = false,
+  }) async {
+    final bool canNavigate = goBack ? await controller.canGoBack() : await controller.canGoForward();
+    if (canNavigate) {
+      goBack ? await controller.goBack() : await controller.goForward();
+    } else {
+      await controller.loadUrl(Constants.googleUrl);
+    }
+  }
+
+  Widget _buildCopyCurrentLinkFab() {
+    return FutureBuilder<WebViewController>(
+      future: _webViewController.future,
+      builder: (BuildContext context, AsyncSnapshot<WebViewController> snapshot) {
         if (snapshot.hasData) {
           return FloatingActionButton(
             heroTag: null,
@@ -212,10 +266,10 @@ class _WeblinkPageState extends State<WeblinkPage> {
     );
   }
 
-  Future _showEditDialog() async {
+  void _showEditDialog() {
     final String oldTitle = _title;
 
-    await showDialog(
+    showDialog(
       context: context,
       builder: (context) => SimpleTimerDialog(
         createdAt: _createdAt,
@@ -235,15 +289,13 @@ class _WeblinkPageState extends State<WeblinkPage> {
     );
   }
 
-  Future _saveNote() async {
+  Future<void> _saveNote() async {
     if (_url.isNotEmpty) {
       if (widget.note == null) {
         final Note note = Note(
           widget.uuid,
           'Verlinkung',
-          _titleEditingController.text.isEmpty
-              ? 'Weblink'
-              : _titleEditingController.text,
+          _titleEditingController.text.isEmpty ? 'Weblink' : _titleEditingController.text,
           _descEditingController.text,
           _url,
           _createdAt,
@@ -267,7 +319,7 @@ class _WeblinkPageState extends State<WeblinkPage> {
     }
   }
 
-  Future _updateNote(Note note) async {
+  Future<void> _updateNote(Note note) async {
     final Note newNote = Note.fromMap({
       DatabaseHelper.columnNoteId: note.id,
       DatabaseHelper.columnProjectUuid: note.uuid,
@@ -284,19 +336,5 @@ class _WeblinkPageState extends State<WeblinkPage> {
     });
     //await _noteDb.updateNote(newNote: newNote);
     Navigator.pop(context, newNote);
-  }
-
-  Widget _buildSnackBar({@required String text}) {
-    return SnackBar(
-      backgroundColor: Colors.black.withOpacity(0.5),
-      duration: const Duration(seconds: 1),
-      content: Text(
-        text,
-        style: TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
   }
 }

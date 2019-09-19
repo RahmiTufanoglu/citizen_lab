@@ -7,7 +7,7 @@ import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/custom_widgets/set_title_widget.dart';
 import 'package:citizen_lab/custom_widgets/simple_timer_dialog.dart';
 import 'package:citizen_lab/database/database_helper.dart';
-import 'package:citizen_lab/entries/note.dart';
+import 'package:citizen_lab/notes/note.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/utils/date_formatter.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
@@ -40,13 +40,14 @@ class _ImagePageState extends State<ImagePage> {
   final _titleEditingController = TextEditingController();
   final _descEditingController = TextEditingController();
 
-  ThemeChangerProvider _themeChanger;
   File _image;
   String _title;
   String _createdAt = '';
 
   @override
   void initState() {
+    super.initState();
+
     if (widget.note != null) {
       _titleEditingController.text = widget.note.title;
       _title = _titleEditingController.text;
@@ -60,8 +61,6 @@ class _ImagePageState extends State<ImagePage> {
     _titleEditingController.addListener(() {
       setState(() => _title = _titleEditingController.text);
     });
-
-    super.initState();
   }
 
   @override
@@ -73,8 +72,6 @@ class _ImagePageState extends State<ImagePage> {
 
   @override
   Widget build(BuildContext context) {
-    _themeChanger = Provider.of<ThemeChangerProvider>(context);
-
     return Scaffold(
       key: _scaffoldKey,
       appBar: _buildAppBar(),
@@ -93,16 +90,20 @@ class _ImagePageState extends State<ImagePage> {
         icon: Icon(Icons.arrow_back),
         onPressed: () => _saveNote(),
       ),
-      title: GestureDetector(
-        onPanStart: (_) => _themeChanger.setTheme(),
-        child: Container(
-          width: double.infinity,
-          child: Tooltip(
-            message: noteType,
-            //child: Text(_title != null ? _title : noteType),
-            child: Text(_title ?? noteType),
-          ),
-        ),
+      title: Consumer(
+        builder: (BuildContext context, ThemeChangerProvider provider, Widget child) {
+          return GestureDetector(
+            onPanStart: (_) => provider.setTheme(),
+            child: Container(
+              width: double.infinity,
+              child: Tooltip(
+                message: noteType,
+                //child: Text(_title != null ? _title : noteType),
+                child: Text(_title ?? noteType),
+              ),
+            ),
+          );
+        },
       ),
       actions: <Widget>[
         IconButton(
@@ -112,10 +113,6 @@ class _ImagePageState extends State<ImagePage> {
         IconButton(
           icon: Icon(Icons.info_outline),
           onPressed: () => _setInfoPage(),
-        ),
-        IconButton(
-          icon: Icon(Icons.home),
-          onPressed: () => _backToHomePage(),
         ),
       ],
     );
@@ -161,25 +158,6 @@ class _ImagePageState extends State<ImagePage> {
         argTabLength: 2,
         argTabs: imageTabList,
         argTabChildren: imageSingleChildScrollViewList,
-      },
-    );
-  }
-
-  void _backToHomePage() {
-    const String cancel = 'Notiz abbrechen und zur Hauptseite zurückkehren?';
-
-    showDialog(
-      context: context,
-      builder: (_) {
-        return NoYesDialog(
-          text: cancel,
-          onPressed: () {
-            Navigator.popUntil(
-              context,
-              ModalRoute.withName(CustomRoute.routeHomePage),
-            );
-          },
-        );
       },
     );
   }
@@ -266,7 +244,7 @@ class _ImagePageState extends State<ImagePage> {
     }
   }
 
-  Future _getImage(bool isCamera) async {
+  Future<void> _getImage(bool isCamera) async {
     File image;
 
     isCamera
@@ -274,20 +252,7 @@ class _ImagePageState extends State<ImagePage> {
         : image = await ImagePicker.pickImage(source: ImageSource.gallery);
 
     if (image != null) {
-      // using your method of getting an image
-      //final File image = await ImagePicker.pickImage(source: imageSource);
-
-      // getting a directory path for saving
-      //final dir = await getApplicationDocumentsDirectory();
-
-      // copy the file to a new path
-      //final File newImage = await image.copy('${dir.path}/image1.png');
-
-      //_test(image);
-      // if image created ...
-
       setState(() => _image = image);
-
       await _createCachedImage();
     }
   }
@@ -372,13 +337,8 @@ class _ImagePageState extends State<ImagePage> {
             Navigator.pop(context);
           },
           onPressedClear: () {
-            if (_titleEditingController.text.isNotEmpty) {
-              _titleEditingController.clear();
-            }
-
-            if (_descEditingController.text.isNotEmpty) {
-              _descEditingController.clear();
-            }
+            _titleEditingController.clear();
+            _descEditingController.clear();
           },
           onPressedUpdate: () {
             _createCachedImage();
@@ -428,8 +388,8 @@ class _ImagePageState extends State<ImagePage> {
             flex: 1,
             child: RaisedButton(
               color: Colors.green,
-              shape: RoundedRectangleBorder(
-                borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(8.0)),
               ),
               onPressed: () => _scaffoldKey.currentState.hideCurrentSnackBar(),
               child: const Text('Nein'),
@@ -440,8 +400,8 @@ class _ImagePageState extends State<ImagePage> {
             flex: 1,
             child: RaisedButton(
               color: Colors.red,
-              shape: RoundedRectangleBorder(
-                borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(8.0)),
               ),
               onPressed: onPressed,
               child: const Text('Ja'),

@@ -3,12 +3,12 @@ import 'dart:typed_data';
 
 import 'package:citizen_lab/custom_widgets/custom_widgets.dart';
 import 'package:citizen_lab/database/database_helper.dart';
-import 'package:citizen_lab/entries/note.dart';
-import 'package:citizen_lab/entries/text/text_info_page_data.dart';
-import 'package:citizen_lab/entries/text/text_template_item.dart';
-import 'package:citizen_lab/pdf_creator.dart';
+import 'package:citizen_lab/notes/note.dart';
+import 'package:citizen_lab/notes/text/text_info_page_data.dart';
+import 'package:citizen_lab/notes/text/text_template_item.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
 import 'package:citizen_lab/utils/date_formatter.dart';
+import 'package:citizen_lab/utils/pdf_creator.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
 import 'package:citizen_lab/utils/utils.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
@@ -40,7 +40,6 @@ class _TextPageState extends State<TextPage> {
   final _descEditingController = TextEditingController();
   final _noteDb = DatabaseHelper.db;
 
-  ThemeChangerProvider _themeChanger;
   PdfCreator _pdfCreator;
   String _title = '';
   String _savedTitle = '';
@@ -82,8 +81,6 @@ class _TextPageState extends State<TextPage> {
 
   @override
   Widget build(BuildContext context) {
-    _themeChanger = Provider.of<ThemeChangerProvider>(context);
-
     return Scaffold(
       key: _scaffoldKey,
       appBar: _buildAppBar(),
@@ -114,15 +111,19 @@ class _TextPageState extends State<TextPage> {
         icon: Icon(Icons.arrow_back),
         onPressed: () => _saveNote(),
       ),
-      title: GestureDetector(
-        onPanStart: (_) => _themeChanger.setTheme(),
-        child: Container(
-          width: double.infinity,
-          child: Tooltip(
-            message: noteType,
-            child: Text((_title != null) ? _title : noteType),
-          ),
-        ),
+      title: Consumer<ThemeChangerProvider>(
+        builder: (BuildContext context, ThemeChangerProvider themeChangerProvider, Widget child) {
+          return GestureDetector(
+            onPanStart: (_) => themeChangerProvider.setTheme(),
+            child: Container(
+              width: double.infinity,
+              child: Tooltip(
+                message: noteType,
+                child: Text((_title != null) ? _title : noteType),
+              ),
+            ),
+          );
+        },
       ),
       actions: <Widget>[
         IconButton(
@@ -130,17 +131,15 @@ class _TextPageState extends State<TextPage> {
           onPressed: () {
             _createPdf();
             Future.delayed(
-                const Duration(milliseconds: 500), () => {_shareContent()});
+              const Duration(milliseconds: 500),
+              () => {_shareContent()},
+            );
             //_shareContent();
           },
         ),
         IconButton(
           icon: Icon(Icons.info_outline),
           onPressed: () => _setInfoPage(),
-        ),
-        IconButton(
-          icon: Icon(Icons.home),
-          onPressed: () => _backToHomePage(),
         ),
       ],
     );
@@ -163,17 +162,16 @@ class _TextPageState extends State<TextPage> {
   Future<void> _shareContent() async {
     const String noTitle = 'Bitte einen Titel und eine Beschreibung eingeben';
 
-    if (_titleEditingController.text.isNotEmpty &&
-        _descEditingController.text.isNotEmpty) {
+    if (_titleEditingController.text.isNotEmpty && _descEditingController.text.isNotEmpty) {
       final String title = removeWhiteSpace(_title);
       final String path = await _localPath(title);
       final ByteData bytes = await rootBundle.load(path);
-      final Uint8List uint8List = bytes.buffer.asUint8List();
+      final Uint8List uint8s = bytes.buffer.asUint8List();
 
       await Share.file(
         'text',
         '$title.pdf',
-        uint8List,
+        uint8s,
         'text/pdf',
         text: _title,
       );
@@ -190,25 +188,6 @@ class _TextPageState extends State<TextPage> {
     return path;
   }
 
-  void _backToHomePage() {
-    const String cancel = 'Notiz abbrechen und zur Hauptseite zurückkehren?';
-
-    showDialog(
-      context: context,
-      builder: (_) {
-        return NoYesDialog(
-          text: cancel,
-          onPressed: () {
-            Navigator.popUntil(
-              context,
-              ModalRoute.withName(CustomRoute.routeHomePage),
-            );
-          },
-        );
-      },
-    );
-  }
-
   void _setInfoPage() {
     Navigator.pushNamed(
       context,
@@ -216,8 +195,8 @@ class _TextPageState extends State<TextPage> {
       arguments: {
         argTitle: 'Text-Info',
         argTabLength: 3,
-        argTabs: textTabList,
-        argTabChildren: textSingleChildScrollViewList,
+        argTabs: textTabs,
+        argTabChildren: textSingleChildScrollViews,
       },
     );
   }
@@ -240,9 +219,7 @@ class _TextPageState extends State<TextPage> {
         );
         Navigator.pop(context, note);
       } else {
-        _checkIfContentEdited() == 1
-            ? _updateNote(widget.note)
-            : Navigator.pop(context);
+        _checkIfContentEdited() == 1 ? _updateNote(widget.note) : Navigator.pop(context);
       }
     } else {
       _scaffoldKey.currentState.showSnackBar(
@@ -319,10 +296,9 @@ class _TextPageState extends State<TextPage> {
     const String copyContent = 'Inhalt kopiert';
     const String copyNotPossible = 'Kein Inhalt zum kopieren';
 
-    if (_titleEditingController.text.isNotEmpty &&
-        _descEditingController.text.isNotEmpty) {
-      final String fullContent =
-          _titleEditingController.text + '\n' + _descEditingController.text;
+    if (_titleEditingController.text.isNotEmpty && _descEditingController.text.isNotEmpty) {
+      //final String fullContent = _titleEditingController.text + '\n' + _descEditingController.text;
+      final String fullContent = '${_titleEditingController.text}\n${_descEditingController.text}';
       _setClipboard(fullContent, '$copyContent.');
     } else {
       _scaffoldKey.currentState.showSnackBar(
@@ -351,10 +327,7 @@ class _TextPageState extends State<TextPage> {
     );
   }
 
-  Widget _createTile(
-    TextTemplateItem experimentItem,
-    bool centerIcon,
-  ) {
+  Widget _createTile(TextTemplateItem experimentItem, bool centerIcon) {
     final double screenHeight = MediaQuery.of(context).size.height;
 
     return Material(
@@ -432,8 +405,7 @@ class _TextPageState extends State<TextPage> {
             flex: 2,
             child: Text(
               text,
-              style:
-                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
             ),
           ),
           const SizedBox(width: 8.0),
@@ -441,8 +413,8 @@ class _TextPageState extends State<TextPage> {
             flex: 1,
             child: RaisedButton(
               color: Colors.green,
-              shape: RoundedRectangleBorder(
-                borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(8.0)),
               ),
               onPressed: () => _scaffoldKey.currentState.hideCurrentSnackBar(),
               child: const Text(no),
@@ -453,8 +425,8 @@ class _TextPageState extends State<TextPage> {
             flex: 1,
             child: RaisedButton(
               color: Colors.red,
-              shape: RoundedRectangleBorder(
-                borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(8.0)),
               ),
               onPressed: onPressed,
               child: const Text(yes),

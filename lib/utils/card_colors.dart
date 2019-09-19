@@ -1,9 +1,8 @@
 class CardColors {
+  final int _cardBackgroundColor;
+  final int _cardItemColor;
 
-  int _cardBackgroundColor;
-  int _cardItemColor;
-  
-  CardColors(
+  const CardColors(
     this._cardBackgroundColor,
     this._cardItemColor,
   );

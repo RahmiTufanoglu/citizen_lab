@@ -25,19 +25,11 @@ List<Widget> imageTabList = [
 List<Widget> imageSingleChildScrollViewList = [
   SingleChildScrollView(
     padding: const EdgeInsets.all(16.0),
-    child: Text(Constants.lorem +
-        Constants.lorem +
-        Constants.lorem +
-        Constants.lorem +
-        Constants.lorem +
-        Constants.lorem),
+    child: const Text(
+        Constants.lorem + Constants.lorem + Constants.lorem + Constants.lorem + Constants.lorem + Constants.lorem),
   ),
   SingleChildScrollView(
     padding: const EdgeInsets.all(16.0),
-    child: Text(Constants.lorem +
-        Constants.lorem +
-        Constants.lorem +
-        Constants.lorem +
-        Constants.lorem),
+    child: const Text(Constants.lorem + Constants.lorem + Constants.lorem + Constants.lorem + Constants.lorem),
   ),
 ];
