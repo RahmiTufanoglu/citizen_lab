@@ -30,9 +30,9 @@ class _CitizenSciencePageState extends State<CitizenSciencePage> {
             onPanStart: (_) => provider.setTheme(),
             child: Container(
               width: double.infinity,
-              child: Tooltip(
+              child: const Tooltip(
                 message: Constants.citizenScience,
-                child: const Text(Constants.citizenScience),
+                child: Text(Constants.citizenScience),
               ),
             ),
           );
@@ -43,14 +43,14 @@ class _CitizenSciencePageState extends State<CitizenSciencePage> {
           icon: Icon(Icons.search),
           onPressed: () => _setSearch(),
         ),
-        IconButton(
+        /*IconButton(
           icon: Icon(Icons.info_outline),
           onPressed: () => _setInfoPage(),
         ),
         IconButton(
           icon: Icon(Icons.home),
           onPressed: () => _backToHomePage(),
-        ),
+        ),*/
       ],
     );
   }

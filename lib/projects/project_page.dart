@@ -53,9 +53,9 @@ class _ProjectPageState extends State<ProjectPage> {
             onPanStart: (_) => provider.setTheme(),
             child: Container(
               width: double.infinity,
-              child: Tooltip(
+              child: const Tooltip(
                 message: '',
-                child: const Text('Experimente'),
+                child: Text('Experimente'),
               ),
             ),
           );

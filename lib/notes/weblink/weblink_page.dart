@@ -84,18 +84,14 @@ class _WeblinkPageState extends State<WeblinkPage> {
     return AppBar(
       leading: _saveOnBackWidget(),
       title: Consumer<ThemeChangerProvider>(
-        builder: (
-          BuildContext context,
-          ThemeChangerProvider provider,
-          Widget child,
-        ) {
+        builder: (BuildContext context, ThemeChangerProvider provider, Widget child) {
           return GestureDetector(
             onPanStart: (_) => provider.setTheme(),
             child: Container(
               width: double.infinity,
-              child: Tooltip(
+              child: const Tooltip(
                 message: Constants.webLink,
-                child: const Text(Constants.webLink),
+                child: Text(Constants.webLink),
               ),
             ),
           );

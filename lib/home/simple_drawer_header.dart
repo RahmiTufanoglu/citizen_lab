@@ -17,19 +17,15 @@ class SimpleDrawerHeader extends StatelessWidget {
     this.backgroundColor2 = Colors.white,
     this.fontSize = 24.0,
     this.padding = 8.0,
-  })  : assert(title != null),
-        assert(titleColor != null),
-        assert(backgroundColor != null),
-        assert(fontSize != null);
+  });
 
   @override
   Widget build(BuildContext context) {
     return DrawerHeader(
       padding: EdgeInsets.all(padding),
       decoration: BoxDecoration(
-        //color: backgroundColor,
         color: Colors.black.withOpacity(0.8),
-          shape: BoxShape.rectangle,
+        shape: BoxShape.rectangle,
       ),
       child: Align(
         alignment: Alignment.bottomLeft,

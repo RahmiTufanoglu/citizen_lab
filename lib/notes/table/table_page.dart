@@ -37,7 +37,6 @@ class _TablePageState extends State<TablePage> {
   final _descriptionEditingController = TextEditingController();
   final _rowTextEditingController = TextEditingController();
   final _columnTextEditingController = TextEditingController();
-  //final _listTextEditingController = List<TextEditingController>();
   final _listTextEditingController = <TextEditingController>[];
 
   File _csv;
@@ -122,7 +121,6 @@ class _TablePageState extends State<TablePage> {
               width: double.infinity,
               child: Tooltip(
                 message: noteType,
-                //child: Text(_title != null ? _title : noteType),
                 child: Text(_title ?? noteType),
               ),
             ),
@@ -144,20 +142,8 @@ class _TablePageState extends State<TablePage> {
 
   void _shareContent() {
     if (_title != null && !_checkIfTableIsEmpty()) {
-      // TODO: Check if File exists
       if (_csv == null) _createCsv(_title);
-
-      /*_scaffoldKey.currentState.showSnackBar(
-        _buildSnackBarWithButton(
-          text: 'Tabelle erstellt. Teilen?',
-          onPressed: () => _shareCsv(),
-        ),
-      );*/
-
       Future.delayed(const Duration(milliseconds: 500), () => _shareCsv());
-      /*_scaffoldKey.currentState.showSnackBar(
-        _buildSnackBar(text: 'Tabelle kann nicht geteilt werden.'),
-      );*/
     } else {
       _scaffoldKey.currentState.showSnackBar(
         _buildSnackBar(text: 'Bitte einen Titel eingeben.'),
@@ -322,8 +308,6 @@ class _TablePageState extends State<TablePage> {
         Navigator.pop(context, note);
       } else {
         await _csv.delete();
-        //String path = _csv.path;
-        // TODO: Do not create CSV if exists
         final String path = await _createCsv(_title);
         await _updateNote(widget.note, path);
       }
@@ -356,17 +340,6 @@ class _TablePageState extends State<TablePage> {
   }
 
   Future<void> _shareCsv() async {
-    //try {
-    /*final ByteData bytes = await rootBundle.load(_csv.path);
-      final Uint8List uint8List = bytes.buffer.asUint8List();
-      await Share.file(
-        'table',
-        '$_title.csv',
-        uint8List,
-        'table/csv',
-        text: _title,
-      );*/
-
     if (Platform.isAndroid) {
       final ByteData bytes = await rootBundle.load(_csv.path);
       final Uint8List uint8List = bytes.buffer.asUint8List();
@@ -375,8 +348,8 @@ class _TablePageState extends State<TablePage> {
       final file = await File('${tempDir.path}/$_title.csv').create();
       file.writeAsBytesSync(uint8List);
 
-      const channelName = 'rahmitufanoglu.citizenlab';
-      const channel = MethodChannel('channel:$channelName.share/share');
+      const String channelName = 'rahmitufanoglu.citizenlab';
+      const MethodChannel channel = MethodChannel('channel:$channelName.share/share');
       await channel.invokeMethod('shareTable', '$_title.csv');
     } else if (Platform.isIOS) {
       final ByteData bytes = await rootBundle.load(_csv.path);
@@ -388,9 +361,6 @@ class _TablePageState extends State<TablePage> {
         text: _title,
       );
     }
-    /*} catch (error) {
-      debugPrint('Share $error');
-    }*/
   }
 
   void _showDialogEditImage() {
@@ -450,9 +420,6 @@ class _TablePageState extends State<TablePage> {
         graphArray[x][y] = _listTextEditingController[i++].text;
       }
     }
-
-    //String dir = (await getTemporaryDirectory()).absolute.path + '/';
-    //_csv = File('$dir$title.csv');
 
     _csv = File(await _localPath(title));
 

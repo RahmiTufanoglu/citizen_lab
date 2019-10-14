@@ -110,16 +110,6 @@ class DatabaseHelper implements ProjectDao, NoteDao {
     return maps.isNotEmpty ? Project.fromMap(maps.first) : null;
   }
 
-  /*@override
-  Future<List> getAllProjects() async {
-    final Database db = await this.database;
-    final List<Map<String, dynamic>> result = await db.query(
-      projectTable,
-      orderBy: '$columnProjectCreatedAt ASC',
-    );
-    return result.toList();
-  }*/
-
   @override
   Future<List<Project>> getAllProjects() async {
     //Future<List<dynamic>> getAllProjects() async {
@@ -133,18 +123,6 @@ class DatabaseHelper implements ProjectDao, NoteDao {
         : [];
     return list;
   }
-
-  /*@override
-  Future<List<Project>> getAllProjects() async {
-    final Database db = await this.database;
-    var res = await db.query(noteTable);
-    List<Project> list = res.isNotEmpty
-        ? res.map((project) {
-            return Project.fromMap(project);
-          }).toList()
-        : [];
-    return list;
-  }*/
 
   @override
   Future<int> deleteProject({int id}) async {
@@ -183,19 +161,14 @@ class DatabaseHelper implements ProjectDao, NoteDao {
   }
 
   @override
-  //Future<List> getNotesOfProject({@required String id}) async {
   Future<List<Note>> getNotesOfProject({String uuid}) async {
     final db = await database;
-    //final List<Map<String, dynamic>> maps = await db.query(
     final result = await db.query(
       noteTable,
       where: '$columnProjectUuid = ?',
-      //whereArgs: [id],
       whereArgs: [uuid],
-      //orderBy: order == null ? '$columnNoteCreatedAt DESC' : order,
       orderBy: '$columnNoteCreatedAt DESC',
     );
-    //return maps.toList();
     final List<Note> list = result.isNotEmpty
         ? result.map((map) {
             return Note.fromMap(map);
@@ -222,7 +195,6 @@ class DatabaseHelper implements ProjectDao, NoteDao {
     final int result = await db.insert(
       noteTable,
       note.toMap(),
-      //conflictAlgorithm: ConflictAlgorithm.replace,
     );
     return result;
   }
@@ -238,15 +210,6 @@ class DatabaseHelper implements ProjectDao, NoteDao {
     );
     return maps.isNotEmpty ? Note.fromMap(maps.first) : null;
   }
-
-  /*Future<List> getAllNotes() async {
-    final Database db = await this.db;
-    final List<Map<String, dynamic>> result = await db.query(
-      noteTable,
-      orderBy: '$columnNoteCreatedAt DESC',
-    );
-    return result.toList();
-  }*/
 
   @override
   Future<int> deleteNote({int id}) async {
@@ -271,7 +234,6 @@ class DatabaseHelper implements ProjectDao, NoteDao {
     return db.delete(
       noteTable,
       where: '$columnProjectUuid= ?',
-      //where: '$columnNoteId = ?',
       whereArgs: [uuid],
     );
   }

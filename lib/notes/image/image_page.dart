@@ -3,7 +3,6 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
 
-import 'package:citizen_lab/custom_widgets/no_yes_dialog.dart';
 import 'package:citizen_lab/custom_widgets/set_title_widget.dart';
 import 'package:citizen_lab/custom_widgets/simple_timer_dialog.dart';
 import 'package:citizen_lab/database/database_helper.dart';
@@ -120,16 +119,6 @@ class _ImagePageState extends State<ImagePage> {
 
   Future _shareContent() async {
     if (_image != null) {
-      /*try {
-        final channelName = 'rahmitufanoglu.citizenlab';
-        final channel = MethodChannel('channel:$channelName.share/share');
-        channel.invokeMethod('shareImage', '$_title');
-      } catch (error) {
-        print('Share error: $error');
-        final String sharingNotPossible = 'Teilvorgang nicht möglich';
-        _scaffoldKey.currentState
-            .showSnackBar(_buildSnackBar(text: '$sharingNotPossible.'));
-      }*/
       final ByteData bytes = await rootBundle.load(_image.path);
       final Uint8List uint8List = bytes.buffer.asUint8List();
       await Share.file(
@@ -262,14 +251,9 @@ class _ImagePageState extends State<ImagePage> {
     final Uint8List uint8List = bytes.buffer.asUint8List();
     final tempDir = await getTemporaryDirectory();
     final File file = File('${tempDir.path}/$_title.jpg');
-    //TODO
-    //final dir = await getApplicationDocumentsDirectory();
-    //filo = await image.copy('${dir.path}/image1.png');
     await file.create();
     file.writeAsBytesSync(uint8List);
   }
-
-  //String operation;
 
   Future<void> _saveNote() async {
     if (_titleEditingController.text.isNotEmpty && (_image != null)) {
@@ -305,7 +289,6 @@ class _ImagePageState extends State<ImagePage> {
     final Note newNote = Note.fromMap({
       DatabaseHelper.columnNoteId: note.id,
       DatabaseHelper.columnProjectUuid: note.uuid,
-      //ProjectDatabaseHelper.columnNoteProject: note.project,
       DatabaseHelper.columnNoteType: note.type,
       DatabaseHelper.columnNoteTitle: _titleEditingController.text,
       DatabaseHelper.columnNoteDescription: _descEditingController.text,
@@ -317,7 +300,6 @@ class _ImagePageState extends State<ImagePage> {
       DatabaseHelper.columnNoteCardColor: note.cardColor,
       DatabaseHelper.columnNoteCardTextColor: note.cardTextColor,
     });
-    //await _noteDb.updateNote(newNote: newNote);
     Navigator.pop(context, newNote);
   }
 
@@ -342,27 +324,12 @@ class _ImagePageState extends State<ImagePage> {
           },
           onPressedUpdate: () {
             _createCachedImage();
-            //_title = _titleEditingController.text;
             Navigator.pop(context);
           },
         );
       },
     );
   }
-
-  /*Widget _buildSnackBar(String text) {
-    return SnackBar(
-      backgroundColor: Colors.black.withOpacity(0.5),
-      duration: Duration(seconds: 1),
-      content: Text(
-        text,
-        style: TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
-  }*/
 
   Widget _buildSnackBarWithButton({
     @required String text,

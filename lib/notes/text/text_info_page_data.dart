@@ -35,7 +35,7 @@ List<Widget> textSingleChildScrollViews = [
   SingleChildScrollView(
     padding: const EdgeInsets.all(16.0),
     child: const Text(
-      Constants.lorem + Constants.lorem + Constants.lorem + Constants.lorem + Constants.lorem + Constants.lorem,
+      Constants.textInfo,
     ),
   ),
   SingleChildScrollView(

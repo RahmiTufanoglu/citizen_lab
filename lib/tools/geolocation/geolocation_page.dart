@@ -86,9 +86,9 @@ class _GeolocationPageState extends State<GeolocationPage> with SingleTickerProv
             onPanStart: (_) => provider.setTheme(),
             child: Container(
               width: double.infinity,
-              child: Tooltip(
+              child: const Tooltip(
                 message: noteType,
-                child: const Text(noteType),
+                child: Text(noteType),
               ),
             ),
           );

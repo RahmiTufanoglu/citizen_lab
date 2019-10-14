@@ -41,9 +41,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
             onPanStart: (_) => provider.setTheme(),
             child: Container(
               width: double.infinity,
-              child: Tooltip(
+              child: const Tooltip(
                 message: calculator,
-                child: const Text(calculator),
+                child: Text(calculator),
               ),
             ),
           );
@@ -72,36 +72,16 @@ class _CalculatorPageState extends State<CalculatorPage> {
               child: Column(
                 children: [
                   Row(
-                    children: [
-                      _buildButton('7'),
-                      _buildButton('8'),
-                      _buildButton('9'),
-                      _buildButton('/')
-                    ],
+                    children: [_buildButton('7'), _buildButton('8'), _buildButton('9'), _buildButton('/')],
                   ),
                   Row(
-                    children: [
-                      _buildButton('4'),
-                      _buildButton('5'),
-                      _buildButton('6'),
-                      _buildButton('X')
-                    ],
+                    children: [_buildButton('4'), _buildButton('5'), _buildButton('6'), _buildButton('X')],
                   ),
                   Row(
-                    children: [
-                      _buildButton('1'),
-                      _buildButton('2'),
-                      _buildButton('3'),
-                      _buildButton('-')
-                    ],
+                    children: [_buildButton('1'), _buildButton('2'), _buildButton('3'), _buildButton('-')],
                   ),
                   Row(
-                    children: [
-                      _buildButton('.'),
-                      _buildButton('0'),
-                      _buildButton('00'),
-                      _buildButton('+')
-                    ],
+                    children: [_buildButton('.'), _buildButton('0'), _buildButton('00'), _buildButton('+')],
                   ),
                   Row(
                     children: [
@@ -124,10 +104,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
       _num1 = 0.0;
       _num2 = 0.0;
       _operand = '';
-    } else if (buttonText == '+' ||
-        buttonText == '-' ||
-        buttonText == '/' ||
-        buttonText == 'X') {
+    } else if (buttonText == '+' || buttonText == '-' || buttonText == '/' || buttonText == 'X') {
       _num1 = double.parse(output);
       _operand = buttonText;
       _out = '0';

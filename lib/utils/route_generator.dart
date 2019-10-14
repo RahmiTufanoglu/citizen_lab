@@ -4,7 +4,7 @@ import 'package:citizen_lab/citizen_science/citizen_science_web.dart';
 import 'package:citizen_lab/citizen_science/simple_info_page.dart';
 import 'package:citizen_lab/custom_widgets/info_page.dart';
 import 'package:citizen_lab/home/home_page.dart';
-import 'package:citizen_lab/notes/audio/audio_record_page.dart';
+import 'package:citizen_lab/notes/audio/audio_page.dart';
 import 'package:citizen_lab/notes/image/image_page.dart';
 import 'package:citizen_lab/notes/note_page.dart';
 import 'package:citizen_lab/notes/table/table_page.dart';
@@ -208,7 +208,7 @@ class RouteGenerator {
           route = CustomRoute.routeProjectTemplatePage;
           break;
         case CustomRoute.audioRecordPage:
-          page = AudioRecordPage(
+          page = AudioPage(
             uuid: args[argProjectUuid],
             note: args[argNote],
           );

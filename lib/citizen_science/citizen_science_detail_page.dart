@@ -98,8 +98,8 @@ class _DetailPageState extends State<DetailPage> {
     );
   }
 
-  Future<void> _launchWeb() async {
-    return await Navigator.pushNamed(
+  void _launchWeb() {
+    Navigator.pushNamed(
       context,
       CustomRoute.webPage,
       arguments: {

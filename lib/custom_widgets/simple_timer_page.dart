@@ -128,9 +128,6 @@ class _SimpleTimerPageState extends State<SimpleTimerPage> {
                   hintText: 'Titel hier.',
                   labelStyle: TextStyle(fontSize: 14.0),
                 ),
-                /*validator: (text) {
-              return text.isEmpty ? 'Bitte einen Titel eingeben' : null;
-            },*/
               ),
               const SizedBox(height: 56.0),
               _descWidget(),

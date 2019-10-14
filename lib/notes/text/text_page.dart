@@ -7,6 +7,7 @@ import 'package:citizen_lab/notes/note.dart';
 import 'package:citizen_lab/notes/text/text_info_page_data.dart';
 import 'package:citizen_lab/notes/text/text_template_item.dart';
 import 'package:citizen_lab/themes/theme_changer_provider.dart';
+import 'package:citizen_lab/utils/constants.dart';
 import 'package:citizen_lab/utils/date_formatter.dart';
 import 'package:citizen_lab/utils/pdf_creator.dart';
 import 'package:citizen_lab/utils/route_generator.dart';
@@ -130,10 +131,7 @@ class _TextPageState extends State<TextPage> {
           icon: Icon(Icons.share),
           onPressed: () {
             _createPdf();
-            Future.delayed(
-              const Duration(milliseconds: 500),
-              () => {_shareContent()},
-            );
+            Future.delayed(const Duration(milliseconds: 500), () => {_shareContent()});
             //_shareContent();
           },
         ),
@@ -193,7 +191,8 @@ class _TextPageState extends State<TextPage> {
       context,
       CustomRoute.infoPage,
       arguments: {
-        argTitle: 'Text-Info',
+        //argTitle: 'Text-Info',
+        argTitle: Constants.textInfoTitle,
         argTabLength: 3,
         argTabs: textTabs,
         argTabChildren: textSingleChildScrollViews,
@@ -297,7 +296,6 @@ class _TextPageState extends State<TextPage> {
     const String copyNotPossible = 'Kein Inhalt zum kopieren';
 
     if (_titleEditingController.text.isNotEmpty && _descEditingController.text.isNotEmpty) {
-      //final String fullContent = _titleEditingController.text + '\n' + _descEditingController.text;
       final String fullContent = '${_titleEditingController.text}\n${_descEditingController.text}';
       _setClipboard(fullContent, '$copyContent.');
     } else {
@@ -339,7 +337,6 @@ class _TextPageState extends State<TextPage> {
           Navigator.pop(context);
         },
         child: Container(
-          //height: 50.0,
           height: screenHeight / 16,
           child: Stack(
             children: <Widget>[
@@ -354,7 +351,6 @@ class _TextPageState extends State<TextPage> {
                               experimentItem.name,
                               style: TextStyle(fontSize: 16.0),
                             ),
-                            //Icon(experimentItem.icon, size: 20.0),
                           ],
                         )
                       : Center(

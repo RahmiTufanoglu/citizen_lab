@@ -12,9 +12,7 @@ class NoYesDialog extends StatelessWidget {
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return _buildNoYesDialog(context);
-  }
+  Widget build(BuildContext context) => _buildNoYesDialog(context);
 
   Widget _buildNoYesDialog(BuildContext context) {
     const String no = 'Nein';

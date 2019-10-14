@@ -53,9 +53,9 @@ class _StopwatchPageState extends State<StopwatchPage> with TickerProviderStateM
             onPanStart: (_) => provider.setTheme(),
             child: Container(
               width: double.infinity,
-              child: Tooltip(
+              child: const Tooltip(
                 message: stopWatch,
-                child: const Text(stopWatch),
+                child: Text(stopWatch),
               ),
             ),
           );

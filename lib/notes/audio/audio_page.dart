@@ -18,20 +18,20 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission/permission.dart';
 import 'package:provider/provider.dart';
 
-class AudioRecordPage extends StatefulWidget {
+class AudioPage extends StatefulWidget {
   final Note note;
   final String uuid;
 
-  const AudioRecordPage({
+  const AudioPage({
     this.note,
     this.uuid,
   });
 
   @override
-  _AudioRecordPageState createState() => _AudioRecordPageState();
+  _AudioPageState createState() => _AudioPageState();
 }
 
-class _AudioRecordPageState extends State<AudioRecordPage> {
+class _AudioPageState extends State<AudioPage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _titleEditingController = TextEditingController();
   final _descEditingController = TextEditingController();
@@ -50,8 +50,6 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
   @override
   void initState() {
     super.initState();
-    //_setPermission();
-    //Permission.openSettings();
 
     _flutterSound = FlutterSound();
 
@@ -75,12 +73,6 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
   }
 
   Future<void> _setPlatformPath() async {
-    /*if (Platform.isAndroid) {
-      _audioPath = '/sdcard/$_title.mp3';
-    } else if (Platform.isIOS) {
-      _audioPath = '$_title.mp3';
-    }*/
-
     _audioPath = await _localPath(_title);
   }
 
@@ -129,7 +121,6 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
               width: double.infinity,
               child: Tooltip(
                 message: noteType,
-                //child: Text(_title != null ? _title : noteType),
                 child: Text(_title ?? noteType),
               ),
             ),
@@ -287,7 +278,7 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
     }
   }
 
-  Future<void> _playAudio() async => await _flutterSound.startPlayer(_audioPath);
+  Future<void> _playAudio() async => _flutterSound.startPlayer(_audioPath);
 
   Future<void> _stopAudio() async {
     try {
@@ -305,12 +296,6 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
   }
 
   Future<void> _buildRecordButton() async {
-    //if (!await _checkIfFileExists()) {
-    /*for (int i = 0; i < _permissions.length; i++) {
-      print('====>>>>>>>>>>>> ${_permissions[i].toString()}');
-    }*/
-    //_setPermission();
-
     if (_isRecording) {
       setState(() {
         _iconBody = Icon(Icons.mic, size: 56.0);
@@ -320,18 +305,9 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
       setState(() {
         _iconBody = Icon(Icons.mic_none, size: 56.0);
       });
-      //_startRecord().then(null, onError: (e) {}).catchError(_setPermission);
       await _startRecord();
     }
     setState(() => _isRecording = !_isRecording);
-    /*} else {
-      _scaffoldKey.currentState.showSnackBar(
-        _buildSnackBar(
-          text:
-              'Datei mit aktuellen Titel ist vergeben.\nBitte einen anderen Titel wählen.',
-        ),
-      );
-    }*/
   }
 
   Future<bool> _checkIfFileExists() async {
@@ -341,12 +317,10 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
   }
 
   Future<void> _checkIfTitleIsAlreadyTaken2() async {
-    //FileSystemEntity.typeSync(_audioPath) != FileSystemEntityType.notFound;
     final File file = File(_audioPath);
     int i = 2;
     while (file.existsSync()) {
       _title = '$_title ${i++}';
-      //_title = _title + ' ' + '${i++}'.toString();
       if (!file.existsSync()) break;
     }
   }
@@ -356,24 +330,11 @@ class _AudioRecordPageState extends State<AudioRecordPage> {
   int next(int min, int max) => min + random.nextInt(max - min);
 
   Future _startRecord() async {
-    // TODO: catchError
     await _flutterSound.startRecorder(
       _audioPath,
       bitRate: 320,
       iosQuality: IosQuality.HIGH,
     );
-
-    /*Future.delayed(Duration(milliseconds: 500), () {
-      flutterSound.startRecorder(
-        _audioPath,
-        bitRate: 320,
-        iosQuality: IosQuality.HIGH,
-      );
-    }).then((value) {
-      //
-    }).catchError((error) {
-      //
-    });*/
   }
 
   Future<void> _stopRecord() async {

@@ -41,11 +41,7 @@ class _InfoPageState extends State<InfoPage> {
         onPressed: () => Navigator.pop(context),
       ),
       title: Consumer<ThemeChangerProvider>(
-        builder: (
-          BuildContext context,
-          ThemeChangerProvider provider,
-          Widget child,
-        ) {
+        builder: (BuildContext context, ThemeChangerProvider provider, Widget child) {
           return GestureDetector(
             onPanStart: (_) => provider.setTheme(),
             child: Container(
@@ -59,9 +55,9 @@ class _InfoPageState extends State<InfoPage> {
         },
       ),
       actions: const <Widget>[],
-      bottom: TabBar(
+      /*bottom: TabBar(
         tabs: widget.tabs,
-      ),
+      ),*/
     );
   }
 

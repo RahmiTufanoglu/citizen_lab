@@ -1,7 +1,5 @@
 import 'package:citizen_lab/app_locations.dart';
-import 'package:citizen_lab/custom_widgets/alarm_dialog.dart';
-import 'package:citizen_lab/custom_widgets/dial_floating_action_button.dart';
-import 'package:citizen_lab/custom_widgets/feedback_dialog.dart';
+import 'package:citizen_lab/custom_widgets/custom_widgets.dart';
 import 'package:citizen_lab/database/database_helper.dart';
 import 'package:citizen_lab/home/main_drawer.dart';
 import 'package:citizen_lab/notes/text/text_template_item.dart';
@@ -76,9 +74,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         onPanStart: (_) => themeData.setTheme(),
         child: Container(
           width: double.infinity,
-          child: Tooltip(
+          child: const Tooltip(
             message: Constants.appTitle,
-            child: const Text(Constants.appTitle),
+            child: Text(Constants.appTitle),
           ),
         ),
       ),
@@ -151,9 +149,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         ) as Project;
 
         if (result != null) {
-          _scaffoldKey.currentState.showSnackBar(
+          /*_scaffoldKey.currentState.showSnackBar(
             _buildSnackBar(text: 'Neues ${result.title} hinzugefügt.'),
-          );
+          );*/
           await _loadProjectList();
         }
 
@@ -392,7 +390,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   }
 
   Future<void> _launchWeb(String title, String url) async {
-    return await Navigator.pushNamed(
+    return Navigator.pushNamed(
       context,
       CustomRoute.webPage,
       arguments: {
@@ -615,10 +613,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     }
 
     final List projects = await _projectDb.getAllProjects();
-
-    /*projects.forEach((project) {
-      setState(() => _projectList.insert(0, Project.map(project)));
-    });*/
 
     for (int i = 0; i < projects.length; i++) {
       setState(() => _projects.insert(0, projects[i]));

@@ -46,6 +46,19 @@ class Constants {
   static const String loremShorter =
       'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.';
 
+  static const String textInfoTitle = 'Aufbau und Inhalt von wissenschaftlichen Labornotizbüchern';
+  static const String textInfo = '''
+Eine bedeutende Aufgabe des Labornotizbuches besteht darin, als Nachschlagwerk für den Außenstehenden zu dienen, damit alle gravierenden Schritte eines Experimentes nachvollziehbar sind. Ein Labornotizbuch hat generell das Format DIN A5 oder A4 sowie durchnummerierte Seiten. Es beinhaltet ein ausführliches Inhaltsverzeichnis aller Einzelexperimente mit Titel, Datum, Versuchsnummer und Seitenzahl, um das Auffinden bestimmter Protokolle und Daten zu erleichtern.\n
+Die folgenden technischen Schritte eines Experimentes basieren auf den Leitfaden zur Protokollerstellung von Marion Ansorge-Schumacher mit weiteren Ergänzungen von Kremer und Bannwarth:\n
+- Deckblatt: Hier wird der Titel, Zeitraum der Durchführung und Name/n der teilnehmenden Person/en angegeben.\n
+- Einleitung: Auch hier wird der Titel aufgeschrieben sowie eine kurze Einführung in den zu bestreitenden Versuch. Zudem folgt die Erläuterung des Versuchshintergrundes.\n
+- Materialien: Hier werden alle benötigten technischen Mittel sowie Chemikalien für das Experiment aufgelistet. Zu beachten ist, dass genaue wissenschaftliche Namen mit Stamm- bzw. Zelllinien-Nummer, Herkunft und allen sonstigen bedeutenden Angaben bei biochemischen Versuchen mit definierten Versuchsorganismen benannt werden. Außerdem wird hier der Versuchsaufbau dargestellt.\n
+- Versuchsdurchführung: Das Kernstück eines Versuchsprotokolls ist die Aufzeichnung der Versuchsdurchführung. Alle Schritte werden einzeln mit der jeweiligen zeitlichen Abfolge dokumentiert.\n
+- Beobachtung: Die Zusammentragung der Messergebnisse erfolgt in Textform oder durch passende Grafiken wie einer Tabelle. Alles Abgelesene muss festgehalten werden.\n
+- Ergebnis: Hier wird die Schlussfolgerung verfasst. Es erfolgt die Auswertung der Rohdaten mit den Rechenschritten und Umformungen.\n
+- Ergebnisdiskussion: Hier werden kritische Bewertungen der Versuchsergebnisse festgehalten. Auch fehlgeschlagene Messungen sind Bestandteil des Ergebnisses.\n
+''';
+
   /*static const String back = 'Zurück';
 
   static const String sortOptions = 'Sortieroptionen';

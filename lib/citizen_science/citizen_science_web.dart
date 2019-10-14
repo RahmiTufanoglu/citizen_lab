@@ -83,7 +83,6 @@ class _CitizenScienceWebPageState extends State<CitizenScienceWebPage> {
               setState(() => _isLoadingPage = false);
             },
           ),
-          //_loadIndicator(),
           _isLoadingPage
               ? Center(
                   child: const CircularProgressIndicator(

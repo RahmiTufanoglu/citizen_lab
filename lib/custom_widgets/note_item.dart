@@ -25,11 +25,6 @@ class NoteItem extends StatelessWidget {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double topBarHeight = MediaQuery.of(context).padding.top + kToolbarHeight;
 
-    /*final DateFormat formatter = DateFormat('yyyy-MM.dd dd:mm:ss');
-    final DateTime dt = formatter.parse(note.createdAt);
-    final String createdDate =
-        '${dt.day}.${dt.month}.${dt.year} ${dt.minute}:${dt.second}:${dt.millisecondsSinceEpoch}';*/
-
     return GestureDetector(
       onLongPress: onLongPress,
       child: Container(
