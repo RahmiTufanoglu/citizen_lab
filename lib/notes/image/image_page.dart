@@ -121,13 +121,7 @@ class _ImagePageState extends State<ImagePage> {
     if (_image != null) {
       final ByteData bytes = await rootBundle.load(_image.path);
       final Uint8List uint8List = bytes.buffer.asUint8List();
-      await Share.file(
-        'image',
-        '$_title.png',
-        uint8List,
-        'image/png',
-        text: _title,
-      );
+      await Share.file('image', '$_title.png', uint8List, 'image/png', text: _title);
     } else {
       _scaffoldKey.currentState.showSnackBar(
         _buildSnackBarWithButton(

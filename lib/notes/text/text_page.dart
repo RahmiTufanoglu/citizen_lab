@@ -131,8 +131,9 @@ class _TextPageState extends State<TextPage> {
           icon: Icon(Icons.share),
           onPressed: () {
             _createPdf();
+            //_showShareDialog();
+            //final s = await _localPath(_title);
             Future.delayed(const Duration(milliseconds: 500), () => {_shareContent()});
-            //_shareContent();
           },
         ),
         IconButton(
@@ -141,6 +142,35 @@ class _TextPageState extends State<TextPage> {
         ),
       ],
     );
+  }
+
+  void _showShareDialog() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return SimpleDialog(
+            title: Text('Teilen'),
+            children: <Widget>[
+              FlatButton(
+                child: Text('Erstellen'),
+                onPressed: () {
+                  _createPdf();
+                  setState(() {});
+                },
+              ),
+              FlatButton(
+                child: Text('Ja'),
+                onPressed: () {
+                  _shareContent();
+                },
+              ),
+              FlatButton(
+                child: Text('Nein'),
+                onPressed: () {},
+              ),
+            ],
+          );
+        });
   }
 
   Future<void> _createPdf() async {
@@ -163,26 +193,24 @@ class _TextPageState extends State<TextPage> {
     if (_titleEditingController.text.isNotEmpty && _descEditingController.text.isNotEmpty) {
       final String title = removeWhiteSpace(_title);
       final String path = await _localPath(title);
+      //final String path = await _localPath(title);
+      print('>>>>>>>>>>>>>>>' + path);
       final ByteData bytes = await rootBundle.load(path);
-      final Uint8List uint8s = bytes.buffer.asUint8List();
+      //final file = File(await _localPath(_title));
+      //final ByteData bytes = await rootBundle.load(file.path);
+      //final Uint8List uint8s = bytes.buffer.asUint8List();
 
-      await Share.file(
-        'text',
-        '$title.pdf',
-        uint8s,
-        'text/pdf',
-        text: _title,
-      );
+      await Share.file('text', '$title.pdf', bytes.buffer.asUint8List(), 'text/pdf', text: _title);
     } else {
-      _scaffoldKey.currentState.showSnackBar(
-        _buildSnackBar(text: noTitle),
-      );
+      _scaffoldKey.currentState.showSnackBar(_buildSnackBar(text: noTitle));
     }
   }
 
   Future<String> _localPath(String title) async {
-    final directory = await getApplicationDocumentsDirectory();
-    final path = '${directory.path}/$title.pdf';
+    final String s = removeWhiteSpace(title);
+    //final directory = await getApplicationDocumentsDirectory();
+    final directory = await getTemporaryDirectory();
+    final String path = '${directory.path}/$s.pdf';
     return path;
   }
 
