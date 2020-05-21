@@ -1,6 +1,6 @@
 # Citizen Lab
 
-A research diary that is currently under development.
+A research diary 'under development'.
 
 Feel free to report issues.
 
